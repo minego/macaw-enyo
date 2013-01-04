@@ -93,15 +93,14 @@ gotTweets: function()
 	var		count	= Math.floor(1 + (Math.random() * 15));
 
 	/* Remove the previous newcount indicator */
-	for (var i = 0, r; r = this.results[i]; i++) {
-		if (r.newcount) {
-			this.results.splice(i, 1);
-			break;
-		}
+	if (this.newcount) {
+		this.results.splice(this.newcount, 1);
 	}
 
 	/* Insert a new newcount indicator */
 	if (count && this.results.length) {
+		this.newcount = count;
+
 		this.results.unshift({
 			newcount:	count
 		});
