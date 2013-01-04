@@ -85,7 +85,7 @@ gotTweets: function()
 	for (var i = 0; i < count; i++) {
 		var		offset	= Math.floor(1 + (Math.random() * 100));
 
-		this.results.push({
+		this.results.unshift({
 			'offset': offset
 		});
 	}
