@@ -1,0 +1,6 @@
+{
+	"logLevel":			9999,
+	"debuggingEnabled":	true,
+	"timingEnabled":	false,
+	"logEvents":		false
+}

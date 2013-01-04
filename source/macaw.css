@@ -1,0 +1,138 @@
+body {
+	width:					100%;
+	height:					100%;
+	background:				#c3bdb1 !important;
+}
+
+body.Pre3 {
+	zoom:					150%;
+}
+
+.panels {
+	width:					100%;
+	height:					100%;
+}
+
+.panel {
+	width:					320px;
+}
+
+/*
+	When the screen is less than 800px a single panel will be displayed and will
+	take the whole screen width.
+
+	When showing a single column display a single tab bar instead of showing the
+	tab headings.
+*/
+@media screen and (min-width:800px) {
+	.panelheader {
+		height:				48px;
+		margin:				0px;
+		padding:			0px;
+	}
+
+	.tabbar {
+		display:			none;
+	}
+}
+
+@media screen and (max-width:799px) {
+	.panelheader {
+		display:			none;
+	}
+
+	.tabbar {
+		height:				32px;
+		margin-left:		0px;
+		margin-right:		0px;
+	}
+}
+
+.panelheader .tab,
+.tabbar .tab {
+	display:				inline-block;
+	height:					100%;
+	background-position:	center center;
+	width:					24px;
+}
+
+.panelheader .tab {
+	margin-top:				0;
+	margin-bottom:			0;
+}
+
+.panelheader div {
+}
+
+.tabbar .tab {
+	margin:					auto 0 auto 0;
+}
+
+.tab-timeline {
+	background:				url(../assets/icons/tweets.png)		no-repeat;
+}
+.tab-mentions {
+	background:				url(../assets/icons/mentions.png)	no-repeat;
+}
+.tab-messages {
+	background:				url(../assets/icons/messages.png)	no-repeat;
+}
+.tab-favorites {
+	background:				url(../assets/icons/favorite.png)	no-repeat;
+
+	/* The favorite icon is larger since it is used in other places */
+	background-size:		16px;
+}
+.tab-list,
+.tab-lists {
+	background:				url(../assets/icons/lists.png)		no-repeat;
+}
+.tab-search,
+.tab-searchresults {
+	background:				url(../assets/icons/search.png)		no-repeat;
+}
+
+.toolbar {
+	height:					48px;
+	margin:					0px;
+	padding:				0px;
+}
+
+.toolbar .username {
+	text-align:				center;
+
+	/*
+		Since this is a fittable column enyo sets a height, which messes up the
+		vertical centering of the toolbar. Override it here to correct it.
+	*/
+	height:					auto !important;
+}
+
+.toolbar .compose {
+	background:				url(../assets/icons/compose.png)	no-repeat;
+}
+.toolbar .refresh {
+	background:				url(../assets/icons/refresh.png)	no-repeat;
+}
+
+.toolbar .button {
+	width:					32px;
+	height:					100%;
+	background-position:	center center;
+}
+
+/*
+	The ptr lists only work if using the fittables to set the size, which causes
+	the tab bar to be sized wrong.
+
+	These classes are used to adjust for the height of the panel headers.
+*/
+@media screen and (min-width:800px) {
+	.ptrlist.paddingtop {
+		padding-top:		48px;
+	}
+
+	.ptrlist.paddingbottom {
+		padding-bottom:		48px;
+	}
+}

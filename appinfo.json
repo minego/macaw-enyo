@@ -1,0 +1,12 @@
+{
+	"id":			"net.minego.macaw",
+	"version":		"autoversion",
+	"vendor":		"minego",
+	"type":			"web",
+	"main":			"index.html",
+	"title":		"Macaw",
+	"icon":			"icon64.png",
+	"splashicon":	"splash-icon.png",
+	"uiRevision":	2,
+	"noWindow":		false
+}
