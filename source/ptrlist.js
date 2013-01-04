@@ -16,6 +16,9 @@
 
 enyo.kind({
 
+// TODO	Remove this when we have real data...
+names: [ "bob", "tim", "jake", "sarah", "sally", "susan", "sven", "jill", "tom", "robert" ],
+
 name:								"ptrlist",
 
 classes:							"enyo-unselectable enyo-fit ptrlist",
@@ -61,18 +64,24 @@ rendered: function()
 
 pullRelease: function()
 {
-	setTimeout(enyo.bind(this, function() {
-		this.getTweets();
-	}), 500);
+	if (!this.pulled) {
+		this.pulled = true;
+
+		setTimeout(enyo.bind(this, function() {
+			this.getTweets();
+		}), 500);
+	}
 },
 
 pullComplete: function()
 {
 	this.$.list.reset();
+	this.pulled = false;
 },
 
 getTweets: function()
 {
+	// TODO	Make an actual call to load real tweets
 	setTimeout(enyo.bind(this, function() {
 		this.gotTweets();
 	}), 500);
@@ -80,7 +89,23 @@ getTweets: function()
 
 gotTweets: function()
 {
+	// TODO	This will eventually need to display real data
 	var		count	= Math.floor(1 + (Math.random() * 15));
+
+	/* Remove the previous newcount indicator */
+	for (var i = 0, r; r = this.results[i]; i++) {
+		if (r.newcount) {
+			this.results.splice(i, 1);
+			break;
+		}
+	}
+
+	/* Insert a new newcount indicator */
+	if (count && this.results.length) {
+		this.results.unshift({
+			newcount:	count
+		});
+	}
 
 	for (var i = 0; i < count; i++) {
 		var		offset	= Math.floor(1 + (Math.random() * 100));
@@ -91,6 +116,7 @@ gotTweets: function()
 	}
 
 	this.$.list.setCount(this.results.length);
+
 	this.$.list.refresh();
 	this.$.list.completePull();
 },
@@ -100,9 +126,13 @@ setupItem: function(sender, event)
 	var i		= event.index;
 	var item	= this.results[i];
 
-	var names	= [ "bob", "tim", "jake", "sarah", "sally", "susan", "sven", "jill", "tom", "robert" ];
-
-	this.$.text.setContent(names[item.offset % names.length]);
+	if (item.newcount) {
+		this.$.text.setContent(item.newcount + ' new tweets');
+		this.$.text.setClasses('tweet newcount');
+	} else {
+		this.$.text.setContent(this.names[item.offset % this.names.length]);
+		this.$.text.setClasses('tweet');
+	}
 },
 
 smartscroll: function()
