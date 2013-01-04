@@ -7,3 +7,6 @@
 [submodule "enyo"]
 	path = enyo
 	url = git://github.com/enyojs/enyo.git
+[submodule "enyo1-to-enyo2-kinds"]
+	path = source/enyo1-to-enyo2-kinds
+	url = git://github.com/ArthurThornton/enyo1-to-enyo2-kinds.git
