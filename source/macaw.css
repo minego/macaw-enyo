@@ -15,6 +15,7 @@ body.Pre3 {
 
 .panel {
 	width:					320px;
+	background:				url('../assets/vertical-border.png') left bottom repeat-y;
 }
 
 /*
@@ -138,5 +139,36 @@ body.Pre3 {
 }
 
 .newcount {
-	background:				gray;
+	text-align:				center;
+	font-size:				15px;
+	font-weight:			bold;
+	color:					#d2d2d2;
+	padding:				7px 0px 9px 0px;
+	background:				url(../assets/highlight.png)		center top		repeat-x,
+							url(../assets/highlight-bottom.png)	center bottom	repeat-x;
 }
+
+.tweet {
+	padding:				3px 7px 3px 7px;
+
+	// background:				url(../assets/horizontal-border.png) center bottom repeat-x;
+}
+
+.tweet .avatar {
+}
+
+.tweet .name {
+}
+
+.tweet .username {
+}
+
+.tweet .text {
+}
+
+.tweet .time {
+}
+
+.tweet .via {
+}
+

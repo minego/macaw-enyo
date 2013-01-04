@@ -126,8 +126,13 @@ setupItem: function(sender, event)
 	var item	= this.results[i];
 
 	if (item.newcount) {
-		this.$.text.setContent(item.newcount + ' new tweets');
-		this.$.text.setClasses('tweet newcount');
+		if (item.newcount > 1) {
+			this.$.text.setContent(item.newcount + ' new tweets');
+		} else {
+			this.$.text.setContent(item.newcount + ' new tweet');
+		}
+
+		this.$.text.setClasses('newcount');
 	} else {
 		this.$.text.setContent(this.names[item.offset % this.names.length]);
 		this.$.text.setClasses('tweet');
