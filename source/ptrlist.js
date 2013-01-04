@@ -103,6 +103,16 @@ setupItem: function(sender, event)
 	var names	= [ "bob", "tim", "jake", "sarah", "sally", "susan", "sven", "jill", "tom", "robert" ];
 
 	this.$.text.setContent(names[item.offset % names.length]);
+},
+
+smartscroll: function()
+{
+this.log('moo');
+	if (0 == this.$.list.getScrollTop()) {
+		this.$.list.scrollToBottom();
+	} else {
+		this.$.list.scrollToTop();
+	}
 }
 
 });

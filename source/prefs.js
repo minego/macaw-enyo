@@ -14,8 +14,8 @@ var prefs =
 			The order that toolbars should display. Either toolbar can be turned
 			off by replacing it's name with null.
 		*/
-		// layout: [ "toolbar", "tabs" ]
-		layout: [ "tabs", "toolbar" ]
+		layout: [ "toolbar", "tabs" ]
+		// layout: [ "tabs", "toolbar" ]
 	},
 
 	get: function get(name)

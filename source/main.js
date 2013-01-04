@@ -147,12 +147,12 @@ create: function()
 		}
 
 		var components = [{
-			name:				"panel" + t,
 			classes:			"panel",
 			fit:				true,
 
 			components: [
 				{
+					name:		"panel" + t,
 					kind:		"ptrlist",
 					classes:	ptrclasses
 				}
@@ -170,7 +170,9 @@ create: function()
 					{
 						classes:	"tab tab-" + tab.type.toLowerCase()
 					},
-					{ content:		tab.label }
+					{
+						content:	tab.label
+					}
 				]
 			};
 
@@ -248,14 +250,18 @@ create: function()
 
 selectpanel: function(sender, event)
 {
-	this.$.panels.setIndex(sender.index);
+this.log('moo');
+	if (sender.index != this.$.panels.getIndex()) {
+		this.$.panels.setIndex(sender.index);
+	} else {
+		this.smartscroll(sender, event);
+	}
 },
 
 smartscroll: function(sender, event)
 {
-	// TODO	If at the top of the list then scroll to the bottom, otherwise 
-	//		scroll to the top.
-	this.log('write me...', sender.index);
+this.log('moo');
+	this.$['panel' + sender.index].smartscroll();
 },
 
 compose: function(sender, event)
