@@ -8,9 +8,7 @@
 .compose .txt {
 	color:					#fff;
 	border-width:			12px;
-
-	/* TODO	Get the border image working for non webkit browsers */
-	-webkit-border-image:	url('../../assets/compose-border.png') 12 stretch;
+	border-image:			url('../../assets/compose-border.png') 12 12 fill stretch;
 	min-height:				80px;
 
 	margin:					5px;
