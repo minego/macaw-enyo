@@ -23,7 +23,7 @@ ${DEPLOY}/appinfo.json: ${DEPLOY}
 	cat appinfo.json | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/appinfo.json
 
 deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
-	palm-package ${DEPLOY}
+	palm-package --exclude=assets/old-images ${DEPLOY}
 
 all: ${DEPLOY}
 
