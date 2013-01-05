@@ -33,9 +33,6 @@ components: [
 				name:						"panels",
 				classes:					"panels",
 				fit:						true,
-
-				// TODO Use LeftRightArranger on small screens?? It shows just a bit of
-				//		the next column on the sides, which could be a cool effect.
 				arrangerKind:				"CarouselArranger"
 			},
 			{
@@ -46,8 +43,29 @@ components: [
 	},
 
 	{
+		kind:								"enyo.AppMenu",
+		name:								"appmenu",
+
+		components: [
+			{
+				content:					$L("Refresh"),
+				ontap:						"refresh"
+			},
+			{
+				content:					$L("Compose"),
+				ontap:						"compose"
+			}
+		]
+	},
+
+	{
 		name:								"toasters",
 		kind:								"toaster-chain"
+	},
+
+	{
+		name:								"webos",
+		kind:								"webOSHelper"
 	}
 ],
 
@@ -290,9 +308,15 @@ refresh: function(sender, event)
 	var id = this.$.toasters.length + 1;
 
 	this.$.toasters.push({
-		content: "This is a toaster: " + id,
-		style: "height: " + (id * 100) + "px"
+		content:	"This is a toaster: " + id,
+		style:		"height: " + (id * 100) + "px",
+		ontap:		"back"
 	}, { owner: this, noscrim: true });
+},
+
+back: function(sender, event)
+{
+	this.$.toasters.pop();
 }
 
 
