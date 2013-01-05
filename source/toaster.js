@@ -41,11 +41,17 @@
 		All toasters may be removed at once by calling:
 			this.$.toasters.pop(this.$.toasters.length);
 
-*/
 
-// TODO	Implement a scrim to capture clicks behind the toasters
-// TODO	Implement options specifying if the scrim should be shown and how it
-//		should behave.
+	The following options may be included when pushing a toaster:
+		owner:			The object that should own the created component.
+
+		modal:			If true then tapping on the scrim will NOT close the
+						toaster chain.
+
+		transparent:	If true then the scrim will be invisible
+
+		noscrim:		If true then the scrim will be disabled
+*/
 
 enyo.kind({
 
@@ -57,7 +63,17 @@ published: {
 },
 
 items:							[],
-components:						[],
+components: [
+	{
+		kind:					onyx.Scrim,
+		name:					"scrim",
+
+		classes:				"onyx-scrim-translucent",
+		// classes:				"onyx-scrim-transparent",
+
+		ontap:					"handleScrim"
+	}
+],
 
 create: function()
 {
@@ -68,6 +84,8 @@ push: function(component, options)
 {
 	var toaster;
 
+	options = options || {};
+
 	if (this.items.length) {
 		this.items[this.items.length - 1].close();
 	}
@@ -76,16 +94,16 @@ push: function(component, options)
 		kind:					"toaster",
 
 		components:				[ component ]
-	}, options);
+	}, { owner: options.owner || this });
 
+	toaster.options = options;
 	toaster.render();
+
 	this.items.push(toaster);
 
 	setTimeout(enyo.bind(this, function() {
-		toaster.open();
-	}), 50);
-
-	this.length = this.items.length;
+		this.showTopToaster();
+	}), 10);
 },
 
 pop: function(count)
@@ -121,9 +139,52 @@ pop: function(count)
 
 	if (this.items.length) {
 		this.items[this.items.length - 1].open();
+	} else {
+		/* The toaster's ZIndex is 300 */
+		this.$.scrim.hideAtZIndex(299);
 	}
 
 	this.length = this.items.length;
+},
+
+showTopToaster: function()
+{
+	/* The toaster's ZIndex is 300 */
+	if (this.items.length) {
+		var		toaster	= this.items[this.items.length - 1];
+
+		if (toaster.options.noscrim) {
+			this.$.scrim.hideAtZIndex(299);
+		} else {
+			if (toaster.options.transparent) {
+				this.$.scrim.setClasses("onyx-scrim-transparent");
+			} else {
+				this.$.scrim.setClasses("onyx-scrim-translucent");
+			}
+
+			this.$.scrim.showAtZIndex(299);
+		}
+
+		toaster.open();
+	} else {
+		this.$.scrim.hideAtZIndex(299);
+	}
+
+	this.length = this.items.length;
+},
+
+handleScrim: function()
+{
+	var	options;
+
+	if (this.items.length) {
+		options = this.items[this.items.length - 1].options;
+	}
+	options = options || {};
+
+	if (!options.modal) {
+		this.pop(this.length);
+	}
 }
 
 });

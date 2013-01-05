@@ -285,12 +285,14 @@ refresh: function(sender, event)
 	// TODO	write me
 	this.log('write me...');
 
+
 	// TODO	Testing, Remove this
 	var id = this.$.toasters.length + 1;
+
 	this.$.toasters.push({
 		content: "This is a toaster: " + id,
 		style: "height: " + (id * 100) + "px"
-	}, { owner: this });
+	}, { owner: this, noscrim: true });
 }
 
 
