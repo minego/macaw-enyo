@@ -31,7 +31,6 @@ enyo.kind({
 
 	//* @public
 	toggle: function() {
-this.log('moo');
 		// if we're visible, hide it; else, show it
 		if (this.showing) {
 			this.hide();

@@ -72,6 +72,10 @@ components: [
 		// classes:				"onyx-scrim-transparent",
 
 		ontap:					"handleScrim"
+	},
+	{
+		kind:					enyo.Signals,
+		onbackbutton:			"pop"
 	}
 ],
 
