@@ -172,24 +172,4 @@ body.Pre3 {
 .tweet .via {
 }
 
-.toaster {
-	width:					100%;
-
-	position:				fixed;
-	bottom:					-1024px;
-	left:					0px;
-	right:					0px;
-
-	-webkit-transition:		bottom .5s;
-	transition:				bottom .5s;
-	z-index:				300;
-	background:				url('../assets/toaster-bg.png') left top repeat-x;
-	color:					#d2d2d2;
-	max-height:				1024px;
-}
-
-.toaster.show {
-	bottom:					0px;
-	display:				block !important;
-}
 
