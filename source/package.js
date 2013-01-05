@@ -5,8 +5,7 @@ enyo.depends(
 	"webos",
 	"BackGesture.js",
 
-	"toaster.js",
-	"toaster.css",
+	"toasters",
 
 	"macaw.css",
 	"main.js",
