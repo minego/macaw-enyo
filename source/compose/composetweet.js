@@ -61,7 +61,13 @@ rendered: function(sender, event)
 
 change: function(sender, event)
 {
-	this.$.counter.setContent(140 - this.$.txt.getValue().length);
+	var node;
+	var value;
+
+	if ((node = this.$.txt.hasNode()) && (value = node.innerText.trim())) {
+this.log(value);
+		this.$.counter.setContent(140 - value.length);
+	}
 }
 
 });
