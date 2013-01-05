@@ -51,6 +51,9 @@
 		transparent:	If true then the scrim will be invisible
 
 		noscrim:		If true then the scrim will be disabled
+
+		nobg:			If true then the default toaster background will not be
+						used.
 */
 
 enyo.kind({
@@ -91,7 +94,7 @@ push: function(component, options)
 	options = options || {};
 
 	if (this.items.length) {
-		this.items[this.items.length - 1].close();
+		this.items[this.items.length - 1].removeClass('show');
 	}
 
 	toaster = this.createComponent({
@@ -130,7 +133,7 @@ pop: function(count)
 					destroy the others immediately since they aren't showing
 					anyway.
 				*/
-				toaster.close();
+				toaster.removeClass('show');
 
 				setTimeout(enyo.bind(this, function() {
 					toaster.destroy();
@@ -142,7 +145,7 @@ pop: function(count)
 	}
 
 	if (this.items.length) {
-		this.items[this.items.length - 1].open();
+		this.showTopToaster();
 	} else {
 		/* The toaster's ZIndex is 300 */
 		this.$.scrim.hideAtZIndex(299);
@@ -154,6 +157,8 @@ pop: function(count)
 showTopToaster: function()
 {
 	/* The toaster's ZIndex is 300 */
+	this.$.scrim.hideAtZIndex(299);
+
 	if (this.items.length) {
 		var		toaster	= this.items[this.items.length - 1];
 
@@ -169,9 +174,11 @@ showTopToaster: function()
 			this.$.scrim.showAtZIndex(299);
 		}
 
-		toaster.open();
-	} else {
-		this.$.scrim.hideAtZIndex(299);
+		toaster.addClass('show');
+
+		if (!toaster.options.nobg) {
+			toaster.addClass('bg');
+		}
 	}
 
 	this.length = this.items.length;
@@ -196,22 +203,7 @@ handleScrim: function()
 enyo.kind({
 
 name:							"toaster",
-classes:						"toaster",
-
-create: function()
-{
-	this.inherited(arguments);
-},
-
-open: function()
-{
-	this.addClass('show');
-},
-
-close: function()
-{
-	this.removeClass('show');
-}
+classes:						"toaster"
 
 });
 

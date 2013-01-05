@@ -291,11 +291,13 @@ this.log('moo');
 
 compose: function(sender, event)
 {
-	// TODO	write me
-	this.log('write me...');
-
-	// TODO	Testing, Remove this
-	this.$.toasters.pop();
+	this.$.toasters.push({
+		kind:		"compose"
+	}, {
+		owner:		this,
+		noscrim:	true,
+		nobg:		true
+	});
 },
 
 refresh: function(sender, event)
@@ -311,7 +313,7 @@ refresh: function(sender, event)
 		content:	"This is a toaster: " + id,
 		style:		"height: " + (id * 100) + "px",
 		ontap:		"back"
-	}, { owner: this, noscrim: true });
+	}, { owner: this });
 },
 
 back: function(sender, event)

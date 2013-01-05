@@ -6,6 +6,7 @@ enyo.depends(
 	"BackGesture.js",
 
 	"toasters",
+	"compose",
 
 	"macaw.css",
 	"main.js",

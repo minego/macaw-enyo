@@ -9,9 +9,12 @@
 	-webkit-transition:		bottom .5s;
 	transition:				bottom .5s;
 	z-index:				300;
-	background:				url('../../assets/toaster-bg.png') left top repeat-x;
 	color:					#d2d2d2;
 	max-height:				1024px;
+}
+
+.toaster.bg {
+	background:				url('../../assets/toaster-bg.png') left top repeat-x;
 }
 
 .toaster.show {

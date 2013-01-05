@@ -1,0 +1,38 @@
+.compose {
+	width:					100%;
+
+	background:				url('../../assets/compose-bg.png') left top repeat-x;
+	padding-top:			60px;
+}
+
+.compose .txt {
+	color:					#fff;
+	border-width:			12px;
+
+	/* TODO	Get the border image working for non webkit browsers */
+	-webkit-border-image:	url('../../assets/compose-border.png') 12 stretch;
+	min-height:				80px;
+
+	margin:					5px;
+	padding:				0;
+}
+
+/*
+	Prevent showing an annoying border when the field is selected. Of course it
+	is selected... It is the only field.
+*/
+.compose .txt:focus {
+	outline:				none !important;
+}
+
+.compose .counter {
+	position:				absolute;
+	right:					13px;
+
+	color:					#4d5154;
+	font-weight:			bold;
+	bottom:					70px;
+	font-size:				40px;
+	font-family:			Prelude, Arial, Helvetica, sans-serif;
+}
+
