@@ -7,9 +7,15 @@
 */
 
 (function() {
-	document.addEventListener('keyup', function(ev) {
-		if (ev.keyIdentifier == "U+1200001" || ev.keyIdentifier == "U+001B") {
-			enyo.Signals && enyo.Signals.send && enyo.Signals.send('onbackbutton');
+	document.addEventListener('keyup', function(e) {
+		switch (e.keyIdentifier) {
+			case "U+1200001":
+			case "U+001B":
+			case "Back":
+				enyo.Signals && enyo.Signals.send && enyo.Signals.send('onbackbutton');
+				break;
 		}
+
+		e.preventDefault();
 	}, false);
 })();

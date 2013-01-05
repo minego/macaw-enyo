@@ -6,7 +6,6 @@ if (window.PalmSystem) {
 		Mojo.relaunch = function() {
 			var params = enyo.json.parse(PalmSystem.launchParams) || {};
 
-console.log(PalmSystem.launchParams);
 			if (params['palm-command'] == 'open-app-menu') {
 				enyo.Signals.send("onToggleAppMenu");
 			} else {
