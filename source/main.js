@@ -16,27 +16,38 @@
 
 enyo.kind({
 
-name:											"net.minego.macaw.main",
-layoutKind:										"FittableRowsLayout",
+name:										"net.minego.macaw.main",
 
 components: [
 	{
-		name:									"top",
-		classes:								"top"
-	},
-	{
-		kind:									enyo.Panels,
-		name:									"panels",
-		classes:								"panels",
-		fit:									true,
+		layoutKind:							"FittableRowsLayout",
+		style:								"height: 100%;",
 
-		// TODO Use LeftRightArranger on small screens?? It shows just a bit of
-		//		the next column on the sides, which could be a cool effect.
-		arrangerKind:							"CarouselArranger"
+		components: [
+			{
+				name:						"top",
+				classes:					"top"
+			},
+			{
+				kind:						enyo.Panels,
+				name:						"panels",
+				classes:					"panels",
+				fit:						true,
+
+				// TODO Use LeftRightArranger on small screens?? It shows just a bit of
+				//		the next column on the sides, which could be a cool effect.
+				arrangerKind:				"CarouselArranger"
+			},
+			{
+				name:						"bottom",
+				classes:					"bottom"
+			}
+		]
 	},
+
 	{
-		name:									"bottom",
-		classes:								"bottom"
+		name:								"toasters",
+		kind:								"toaster-chain"
 	}
 ],
 
@@ -131,21 +142,6 @@ create: function()
 				break;
 		}
 
-		var ptrclasses;
-		switch (layout.indexOf("tabs")) {
-			case -1:
-				ptrclasses = "ptrlist";
-				break;
-
-			case 0:
-				ptrclasses = "ptrlist paddingtop";
-				break;
-
-			default:
-				ptrclasses = "ptrlist paddingbottom";
-				break;
-		}
-
 		var components = [{
 			classes:			"panel",
 			fit:				true,
@@ -154,7 +150,7 @@ create: function()
 				{
 					name:		"panel" + t,
 					kind:		"ptrlist",
-					classes:	ptrclasses
+					classes:	"ptrlist"
 				}
 			]
 		}];
@@ -188,6 +184,20 @@ create: function()
 			components:			components
 		}, { owner: this });
 	}
+
+	this.$.panels.removeClass("tabsontop");
+	this.$.panels.removeClass("tabsonbottom");
+
+	switch (layout.indexOf("tabs")) {
+		case 0:
+			this.$.panels.addClass("tabsontop");
+			break;
+
+		default:
+			this.$.panels.addClass("tabsonbottom");
+			break;
+	}
+
 
 	var where	= [ "top", "bottom" ];
 	for (var i = 0, l; l = layout[i]; i++) {
@@ -244,13 +254,10 @@ create: function()
 				break;
 		}
 	}
-
-	// TODO	Create a toaster kind to use for showing tweet details, compose etc
 },
 
 selectpanel: function(sender, event)
 {
-this.log('moo');
 	if (sender.index != this.$.panels.getIndex()) {
 		this.$.panels.setIndex(sender.index);
 	} else {
@@ -268,12 +275,22 @@ compose: function(sender, event)
 {
 	// TODO	write me
 	this.log('write me...');
+
+	// TODO	Testing, Remove this
+	this.$.toasters.pop();
 },
 
 refresh: function(sender, event)
 {
 	// TODO	write me
 	this.log('write me...');
+
+	// TODO	Testing, Remove this
+	var id = this.$.toasters.length + 1;
+	this.$.toasters.push({
+		content: "This is a toaster: " + id,
+		style: "height: " + (id * 100) + "px"
+	}, { owner: this });
 }
 
 

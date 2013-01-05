@@ -7,6 +7,7 @@ enyo.depends(
 
 	"prefs.js",
 	"ptrlist.js",
+	"toaster.js",
 
 	"webos-ext",
 	"enyo1-to-enyo2-kinds"
