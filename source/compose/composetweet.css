@@ -29,8 +29,14 @@
 
 	color:					#4d5154;
 	font-weight:			bold;
-	bottom:					70px;
+	bottom:					50px;
 	font-size:				40px;
 	font-family:			Prelude, Arial, Helvetica, sans-serif;
 }
 
+.compose .button {
+	width:					125px;
+	margin:					7px !important;
+
+	font-weight:			bold;
+}

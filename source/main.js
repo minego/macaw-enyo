@@ -285,19 +285,27 @@ selectpanel: function(sender, event)
 
 smartscroll: function(sender, event)
 {
-this.log('moo');
 	this.$['panel' + sender.index].smartscroll();
 },
 
 compose: function(sender, event)
 {
+	this.$.toasters.pop(this.$.toasters.length);
 	this.$.toasters.push({
-		kind:		"compose"
+		kind:		"compose",
+		onCancel:	"closecompose",
+		onSent:		"closecompose"
 	}, {
 		owner:		this,
 		noscrim:	true,
-		nobg:		true
+		nobg:		true,
+		modal:		true
 	});
+},
+
+closecompose: function(sender, event)
+{
+	this.$.toasters.pop(this.$.toasters.length);
 },
 
 refresh: function(sender, event)

@@ -18,6 +18,11 @@ enyo.kind({
 name:							"compose",
 classes:						"compose",
 
+events: {
+	onCancel:					"",
+	onSent:						""
+},
+
 components: [
 	{
 		name:					"txt",
@@ -38,12 +43,26 @@ components: [
 	},
 
 	{
-		kind:					onyx.Button,
-		content:				"Cancel"
-	},
-	{
-		kind:					onyx.Button,
-		content:				"Submit"
+		layoutKind:				"FittableColumnsLayout",
+		components: [
+			{
+				kind:			onyx.Button,
+				classes:		"button onyx-negative",
+				content:		"Cancel",
+
+				ontap:			"cancel"
+			},
+			{
+				fit:			true
+			},
+			{
+				kind:			onyx.Button,
+				classes:		"button onyx-affirmative",
+				content:		"Post Tweet",
+
+				ontap:			"send"
+			}
+		]
 	}
 ],
 
@@ -64,10 +83,34 @@ change: function(sender, event)
 	var node;
 	var value;
 
-	if ((node = this.$.txt.hasNode()) && (value = node.innerText.trim())) {
-this.log(value);
-		this.$.counter.setContent(140 - value.length);
+	if ((node = this.$.txt.hasNode())) {
+		value = node.innerText.trim();
+	} else {
+		value = '';
 	}
+
+	this.$.counter.setContent(140 - value.length);
+},
+
+cancel: function(sender, event)
+{
+	this.doCancel({});
+},
+
+send: function(sender, event)
+{
+	var node;
+	var value;
+
+	if ((node = this.$.txt.hasNode())) {
+		value = node.innerText.trim();
+	} else {
+		value = '';
+	}
+
+	// TODO	Actually send the tweet
+
+	this.doSent({ text: value });
 }
 
 });

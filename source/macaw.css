@@ -93,7 +93,7 @@ body.Pre3 {
 	background:				url(../assets/icons/search.png)		no-repeat;
 }
 
-.toolbar {
+.toolbar, .toolbar div {
 	height:					48px;
 	margin:					0px;
 	padding:				0px;
