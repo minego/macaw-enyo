@@ -27,6 +27,17 @@ deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
 
 all: ${DEPLOY}
 
+init:
+	@git submodule init
+	@git submodule update
+
+initrepo:
+	@git remote add upstream git://github.com/dkirker/macaw-enyo.git
+
+update:
+	@git fetch upstream
+	@git merge upstream/master
+
 webos: deploy/${APPID}_${VERSION}_all.ipk
 
 openwebos: webos
