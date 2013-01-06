@@ -102,7 +102,9 @@ pullComplete: function()
 
 refresh: function()
 {
-	var params = {};
+	var params = {
+		include_entities:		true
+	};
 
 	if (this.results.length) {
 		if (this.results.length == 1) {
@@ -115,6 +117,12 @@ refresh: function()
 			*/
 			params.since_id = this.results[1].id_str;
 		}
+
+		/* Load as many as possible to avoid gaps, max allowed is 200 */
+		params.count = 200;
+	} else {
+		/* Load a reasonable amount */
+		params.count = 50;
 	}
 
 	this.twitter.getTweets(this.resource, enyo.bind(this, this.gotTweets), params);
@@ -175,6 +183,12 @@ gotTweets: function(success, results)
 
 	this.$.list.refresh();
 	this.$.list.completePull();
+
+	if (this.newcount) {
+		this.$.list.scrollToRow(this.newcount);
+	} else {
+		this.$.list.scrollToRow(0);
+	}
 
 	/*
 		Cache the 20 most recent items
