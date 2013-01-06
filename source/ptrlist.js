@@ -102,20 +102,35 @@ pullComplete: function()
 
 refresh: function()
 {
+	if (this.loading) {
+		return;
+	}
+
+	this.loading = true;
+
 	var params = {
 		include_entities:		true
 	};
 
 	if (this.results.length) {
-		if (this.results.length == 1) {
-			/* We don't have enough results to prevent gaps... */
-			params.since_id = this.results[0].id_str;
-		} else {
-			/*
-				Format the request such that the most recent tweet will be
-				included. This will allow us to determine when there is a gap.
-			*/
-			params.since_id = this.results[1].id_str;
+		/* Request a bit of an overlap in order to try to detect gaps */
+		for (var i = 4; i >= 0; i--) {
+			if (this.results[i].id_str) {
+				params.since_id = this.results[i].id_str;
+				this.sinceIndex = i;
+				break;
+			}
+		}
+
+		if (!params.since_id) {
+			/* Really? The most recent 5 items didn't have an id? Weird... */
+			while (this.results.length && !this.results[0].id_str) {
+				this.results.splice(0, 1);
+			}
+
+			if (this.results.length && this.results[0].id_str) {
+				params.since_id = this.results[0].id_str;
+			}
 		}
 
 		/* Load as many as possible to avoid gaps, max allowed is 200 */
@@ -133,6 +148,7 @@ gotTweets: function(success, results)
 	/* Remove the previous newcount indicator */
 	if (this.newcount) {
 		this.results.splice(this.newcount, 1);
+		this.newcount = null;
 	}
 
 	if (!success) {
@@ -141,30 +157,47 @@ gotTweets: function(success, results)
 		this.$.list.completePull();
 
 		// TODO	Display an error...
+		this.loading = false;
 		return;
 	}
 
 	/*
 		Gap detection
 
-		The results should include the most recent tweet that we already had. If
-		there isn't an overlapping tweet then there is a gap.
+		The results may include up to 5 overlapping tweets.
 	*/
 	if (this.results.length > 0 && results.length > 0) {
-		var	a = this.results[0];
-		var b = results[results.length - 1];
+		var ot, nt;
+		var match = false;
 
-		if (a.id_str !== b.id_str) {
+		for (var o = 0; o < 5; o++) {
+			var ot = this.results[o];
+
+			for (var n = 1; n <= 5; n++) {
+				var nt = results[results.length - n];
+
+				if (nt.id_str == ot.id_str) {
+					match = true;
+					break;
+				}
+			}
+
+			if (match) {
+				break;
+			}
+		}
+
+		if (match) {
+			/* We found our match, there is no gap */
+			results.splice(results.length - n, n);
+		} else {
 			/* We have a gap! */
 			this.results.unshift({
 				gap: {
-					before:	a.id_str,
-					after:	b.id_str
+					before:	this.results[0].id_str,
+					after:	results[results.length - 1].id_str
 				}
 			});
-		} else {
-			/* There is no gap. Get rid of the overlapping item */
-			results.splice(results.length - 1, 1);
 		}
 	}
 
@@ -184,11 +217,13 @@ gotTweets: function(success, results)
 	this.$.list.refresh();
 	this.$.list.completePull();
 
-	if (this.newcount) {
-		this.$.list.scrollToRow(this.newcount);
-	} else {
-		this.$.list.scrollToRow(0);
-	}
+	setTimeout(enyo.bind(this, function() {
+		if (this.newcount && this.newcount > 1) {
+			this.$.list.scrollToRow(this.newcount - 1);
+		} else {
+			this.$.list.scrollToRow(0);
+		}
+	}), 500);
 
 	/*
 		Cache the 20 most recent items
@@ -202,6 +237,7 @@ gotTweets: function(success, results)
 	}
 
 	prefs.set('cachedtweets:' + this.user.user_id + ':' + this.resource, cache);
+	this.loading = false;
 },
 
 setupItem: function(sender, event)
