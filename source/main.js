@@ -73,62 +73,18 @@ create: function()
 {
 	this.inherited(arguments);
 
-	/* Set classes on the main body based on the device */
-	try {
-		var classes	= document.body.className;
-		var info	= enyo.webOS.deviceInfo();
-		var name	= null;
-
-		if ("Emulator" != info.modelNameAscii) {
-			name = info.modelNameAscii;
-		} else {
-			/* Detect sizes known to be supported by the webOS emulator */
-			if (info.screenWidth == 480 && info.screenHeight == 800) {
-				name = "Pre3";
-			} else if (info.screenWidth == 320 && info.screenHeight == 480) {
-				name = "Pre";
-			} else if (info.screenWidth == 320 && info.screenHeight == 400) {
-				name = "Veer";
-			}
-		}
-
-		if (name) {
-			document.body.className = [ name, classes ].join(' ');
-			// this.log('Adding class to body: ' + name);
-		}
-	} catch (e) {};
-
-
-	// TODO	Read the user's preferences and display the appropriate toolbars and
-	//		panels.
-	//
-	//		A base kind should be created for a panel, and should be extended
-	//		for the more specific types.
-	//
-	//		panel
-	//			tweetlist
-	//				timeline
-	//				mentions
-	//				favorites
-	//				listtimeline
-	//				searchresults
-	//			lists
-	//			search
-	//			compose
-	//
-	//		Each panel should be self contained and have a common set of
-	//		interfaces (show, refresh, etc).
-	//
-	//		The account details should be passed to the panel when it is created
-	//
-	//
-	//		Allow the user to configure what buttons show up in each toolbar?
-	//		Currently PM just lets you configure if each bar should be there or
-	//		not...
-
 	var layout		= prefs.get("layout");
 	this.tabs		= prefs.get("tabs");
 	this.tabwidth	= 100 / this.tabs.length;
+
+	// TODO	Remove, this is just debug... We need to implement account
+	//		authentication and save the ID of the account to use for each panel.
+	var user = {
+		id:			'',
+		username:	'',
+		token:		'',
+		secret:		''
+	};
 
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
 		var kind	= "panel";
@@ -168,7 +124,10 @@ create: function()
 				{
 					name:		"panel" + t,
 					kind:		"ptrlist",
-					classes:	"ptrlist"
+					classes:	"ptrlist",
+
+					user:		user,
+					resource:	tab.type
 				}
 			]
 		}];
@@ -312,7 +271,6 @@ refresh: function(sender, event)
 {
 	// TODO	write me
 	this.log('write me...');
-
 
 	// TODO	Testing, Remove this
 	var id = this.$.toasters.length + 1;

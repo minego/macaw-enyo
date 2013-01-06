@@ -24,6 +24,11 @@ name:								"ptrlist",
 classes:							"enyo-unselectable enyo-fit ptrlist",
 kind:								"FittableRows",
 
+published: {
+	user:							null,
+	timeline:						'home'
+},
+
 components: [
 	{
 		name:						"list",
@@ -52,13 +57,20 @@ components: [
 	}
 ],
 
+create: function()
+{
+	this.inherited(arguments);
+
+	this.twitter = new TwitterAPI(this.user);
+},
+
 rendered: function()
 {
 	this.results = [];
 
 	this.inherited(arguments);
 
-	this.getTweets();
+	this.refresh();
 	this.$.list.reset();
 },
 
@@ -68,7 +80,7 @@ pullRelease: function()
 		this.pulled = true;
 
 		setTimeout(enyo.bind(this, function() {
-			this.getTweets();
+			this.refresh();
 		}), 500);
 	}
 },
@@ -79,45 +91,45 @@ pullComplete: function()
 	this.pulled = false;
 },
 
-getTweets: function()
+refresh: function()
 {
-	// TODO	Make an actual call to load real tweets
-	setTimeout(enyo.bind(this, function() {
-		this.gotTweets();
-	}), 500);
+	// TODO	Request things newer than what we already had loaded...
+	this.twitter.getTweets(this.resource, enyo.bind(this, this.gotTweets));
 },
 
-gotTweets: function()
+gotTweets: function(success, results)
 {
-	// TODO	This will eventually need to display real data
-	var		count	= Math.floor(1 + (Math.random() * 15));
-
 	/* Remove the previous newcount indicator */
 	if (this.newcount) {
 		this.results.splice(this.newcount, 1);
 	}
 
+	if (!success) {
+		/* Failed */
+		this.$.list.refresh();
+		this.$.list.completePull();
+
+		// TODO	Display an error...
+		return;
+	}
+
 	/* Insert a new newcount indicator */
-	if (count && this.results.length) {
-		this.newcount = count;
+	if (results.length && this.results.length) {
+		this.newcount = results.length;
 
 		this.results.unshift({
 			newcount:	count
 		});
 	}
 
-	for (var i = 0; i < count; i++) {
-		var		offset	= Math.floor(1 + (Math.random() * 100));
-
-		this.results.unshift({
-			'offset': offset
-		});
-	}
-
+	this.results = this.results.concat(results);
 	this.$.list.setCount(this.results.length);
 
 	this.$.list.refresh();
 	this.$.list.completePull();
+
+	// TODO	Save a cache of the last x tweets, and what not so we can load them
+	//		again when loading up...
 },
 
 setupItem: function(sender, event)
@@ -133,10 +145,11 @@ setupItem: function(sender, event)
 		}
 
 		this.$.text.setClasses('newcount');
-	} else {
-		this.$.text.setContent(this.names[item.offset % this.names.length]);
-		this.$.text.setClasses('tweet');
+		return;
 	}
+
+	this.$.text.setContent(item.text);
+	this.$.text.setClasses('tweet');
 },
 
 smartscroll: function()
