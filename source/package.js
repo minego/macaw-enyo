@@ -1,7 +1,7 @@
 enyo.depends(
 	"$lib/layout",
 	"$lib/onyx",
-	"$lib/OAuth",
+	"$lib/jsOAuth",
 
 	"webos",
 	"BackGesture.js",
@@ -9,10 +9,11 @@ enyo.depends(
 
 	"toasters",
 	"compose",
+	"authorize",
 
 	"macaw.css",
 	"main.js",
+	"ptrlist.js",
 
-	"prefs.js",
-	"ptrlist.js"
+	"prefs.js"
 );

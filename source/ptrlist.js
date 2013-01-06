@@ -16,9 +16,6 @@
 
 enyo.kind({
 
-// TODO	Remove this when we have real data...
-names: [ "bob", "tim", "jake", "sarah", "sally", "susan", "sven", "jill", "tom", "robert" ],
-
 name:								"ptrlist",
 
 classes:							"enyo-unselectable enyo-fit ptrlist",
@@ -26,7 +23,7 @@ kind:								"FittableRows",
 
 published: {
 	user:							null,
-	timeline:						'home'
+	resource:						'home'
 },
 
 components: [
@@ -60,17 +57,29 @@ components: [
 create: function()
 {
 	this.inherited(arguments);
-
 	this.twitter = new TwitterAPI(this.user);
 },
 
 rendered: function()
 {
-	this.results = [];
-
 	this.inherited(arguments);
 
-	this.refresh();
+	this.results = [];
+
+	/* Load cached tweets */
+	var results = prefs.get('cachedtweets:' + this.user.user_id + ':' + this.resource) || [];
+
+	// Testing... Remove the most recent entries from the cached results so that
+	// we can immediately load them again as if they where new.
+	// results.splice(0, 5);
+
+	if (results && results.length) {
+		this.log('Loaded ' + results.length + ' tweets from the cache', this.resource);
+		this.gotTweets(true, results);
+	} else {
+		this.log('Refreshing', this.resource);
+		this.refresh();
+	}
 	this.$.list.reset();
 },
 
@@ -93,8 +102,22 @@ pullComplete: function()
 
 refresh: function()
 {
-	// TODO	Request things newer than what we already had loaded...
-	this.twitter.getTweets(this.resource, enyo.bind(this, this.gotTweets));
+	var params = {};
+
+	if (this.results.length) {
+		if (this.results.length == 1) {
+			/* We don't have enough results to prevent gaps... */
+			params.since_id = this.results[0].id_str;
+		} else {
+			/*
+				Format the request such that the most recent tweet will be
+				included. This will allow us to determine when there is a gap.
+			*/
+			params.since_id = this.results[1].id_str;
+		}
+	}
+
+	this.twitter.getTweets(this.resource, enyo.bind(this, this.gotTweets), params);
 },
 
 gotTweets: function(success, results)
@@ -113,23 +136,58 @@ gotTweets: function(success, results)
 		return;
 	}
 
+	/*
+		Gap detection
+
+		The results should include the most recent tweet that we already had. If
+		there isn't an overlapping tweet then there is a gap.
+	*/
+	if (this.results.length > 0 && results.length > 0) {
+		var	a = this.results[0];
+		var b = results[results.length - 1];
+
+		if (a.id_str !== b.id_str) {
+			/* We have a gap! */
+			this.results.unshift({
+				gap: {
+					before:	a.id_str,
+					after:	b.id_str
+				}
+			});
+		} else {
+			/* There is no gap. Get rid of the overlapping item */
+			results.splice(results.length - 1, 1);
+		}
+	}
+
+
 	/* Insert a new newcount indicator */
 	if (results.length && this.results.length) {
 		this.newcount = results.length;
 
 		this.results.unshift({
-			newcount:	count
+			newcount:	this.newcount
 		});
 	}
 
-	this.results = this.results.concat(results);
+	this.results = results.concat(this.results);
 	this.$.list.setCount(this.results.length);
 
 	this.$.list.refresh();
 	this.$.list.completePull();
 
-	// TODO	Save a cache of the last x tweets, and what not so we can load them
-	//		again when loading up...
+	/*
+		Cache the 20 most recent items
+
+		Do not include the new count indicator. Gap indicators are okay though.
+	*/
+	var cache = this.results.slice(0, 20);
+
+	if (this.newcount) {
+		cache.splice(this.newcount, 1);
+	}
+
+	prefs.set('cachedtweets:' + this.user.user_id + ':' + this.resource, cache);
 },
 
 setupItem: function(sender, event)
@@ -148,13 +206,18 @@ setupItem: function(sender, event)
 		return;
 	}
 
+	if (item.gap) {
+		// TODO	When tapped load the gap
+		this.$.text.setContent('Tap to load missing tweets');
+		return;
+	}
+
 	this.$.text.setContent(item.text);
 	this.$.text.setClasses('tweet');
 },
 
 smartscroll: function()
 {
-this.log('moo');
 	if (0 == this.$.list.getScrollTop()) {
 		this.$.list.scrollToBottom();
 	} else {

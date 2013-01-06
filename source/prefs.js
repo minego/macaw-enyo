@@ -17,6 +17,8 @@
 var prefs =
 {
 	defaults: {
+		accounts: [],
+
 		tabs: [
 			{ "type": "timeline"	},
 			{ "type": "mentions"	},

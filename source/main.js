@@ -54,6 +54,10 @@ components: [
 			{
 				content:					$L("Compose"),
 				ontap:						"compose"
+			},
+			{
+				content:					$L("Create Account"),
+				ontap:						"createAccount"
 			}
 		]
 	},
@@ -73,21 +77,44 @@ create: function()
 {
 	this.inherited(arguments);
 
-	var layout		= prefs.get("layout");
-	this.tabs		= prefs.get("tabs");
-	this.tabwidth	= 100 / this.tabs.length;
+	this.users		= prefs.get('accounts');
+	this.tabs		= [];
+	this.tabwidth	= 0;
 
-	// TODO	Remove, this is just debug... We need to implement account
-	//		authentication and save the ID of the account to use for each panel.
-	var user = {
-		id:			'',
-		username:	'',
-		token:		'',
-		secret:		''
-	};
+	if (this.users.length) {
+		this.createTabs();
+	} else {
+		this.createAccount();
+	}
+},
+
+// TODO	Split most of this off into a function to create a single tab so that it
+//		can be called when a new tab is added.
+
+// TODO	Rework the panel headers so that they can be moved from top to bottom
+//		when prefs change instead of requiring a re-render.
+
+// TODO	When called remove any tabs that already exist
+createTabs: function()
+{
+	var layout		= prefs.get('layout');
+
+	this.tabs		= prefs.get('tabs');
+	this.tabwidth	= 100 / this.tabs.length;
 
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
 		var kind	= "panel";
+		var user	= this.users[0];
+
+		/* Find the correct account for this tab */
+		if (tab.user_id) {
+			for (var i = 0, u; u = this.users[i]; i++) {
+				if (u.user_id == tab.user_id) {
+					user = u;
+					break;
+				}
+			}
+		}
 
 		switch (tab.type.toLowerCase()) {
 			case "timeline":
@@ -194,7 +221,7 @@ create: function()
 							ontap:		"refresh"
 						},
 						{
-							content:	"@_minego",
+							content:	'@' + user.screen_name,
 							name:		"username",
 							classes:	"username",
 							fit:		true
@@ -249,11 +276,17 @@ smartscroll: function(sender, event)
 
 compose: function(sender, event)
 {
+	if (!this.users || !this.users.length) {
+		return;
+	}
+
 	this.$.toasters.pop(this.$.toasters.length);
 	this.$.toasters.push({
 		kind:		"compose",
-		onCancel:	"closecompose",
-		onSent:		"closecompose"
+		user:		this.users[0],
+
+		onCancel:	"closeAllToasters",
+		onSent:		"closeAllToasters"
 	}, {
 		owner:		this,
 		noscrim:	true,
@@ -262,7 +295,30 @@ compose: function(sender, event)
 	});
 },
 
-closecompose: function(sender, event)
+createAccount: function()
+{
+	this.$.toasters.push({
+		kind:		"authorize",
+
+		onCancel:	"closeAllToasters",
+		onSuccess:	"accountCreated"
+	}, {
+		owner:		this,
+		nobg:		true
+	});
+},
+
+accountCreated: function(sender, event)
+{
+	this.closeAllToasters();
+
+	this.users.push(event.account);
+	prefs.set('accounts', this.users);
+
+	this.createTabs();
+},
+
+closeAllToasters: function(sender, event)
 {
 	this.$.toasters.pop(this.$.toasters.length);
 },
@@ -271,15 +327,6 @@ refresh: function(sender, event)
 {
 	// TODO	write me
 	this.log('write me...');
-
-	// TODO	Testing, Remove this
-	var id = this.$.toasters.length + 1;
-
-	this.$.toasters.push({
-		content:	"This is a toaster: " + id,
-		style:		"height: " + (id * 100) + "px",
-		ontap:		"back"
-	}, { owner: this });
 },
 
 back: function(sender, event)

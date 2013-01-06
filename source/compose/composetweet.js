@@ -33,7 +33,6 @@ components: [
 		allowHtml:				false,
 		defaultFocus:			true,
 
-		// TODO	onchange doesn't appear to work for a richtext...
 		onchange:				"change",
 		onkeyup:				"change"
 	},
@@ -69,6 +68,7 @@ components: [
 create: function()
 {
 	this.inherited(arguments);
+	this.twitter = new TwitterAPI(this.user);
 },
 
 rendered: function(sender, event)
@@ -108,9 +108,14 @@ send: function(sender, event)
 		value = '';
 	}
 
-	// TODO	Actually send the tweet
+	// TODO	Add support for DMs, replies, etc
 
-	this.doSent({ text: value });
+	/* Actually send it */
+	this.twitter.sendTweet('update', function() {
+		this.doSent({ text: value });
+	}.bind(this), {
+		status:		value
+	});
 }
 
 });

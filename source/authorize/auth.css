@@ -1,0 +1,44 @@
+.authorize {
+	background:				url('../../assets/compose-bg.png') left top repeat-x;
+	padding-top:			60px;
+}
+
+.authorize .step {
+	width:					300px;
+	margin-left:			auto;
+	margin-right:			auto;
+}
+
+.authorize .instructions {
+	margin:					10px 0 10px 0;
+}
+
+.authorize .button,
+.authorize .pin {
+	width:					100%;
+	margin:					10px 0px 10px 0px !important;
+	font-weight:			bold;
+}
+
+.authorize .pin {
+	width:					276px;
+
+	color:					#fff;
+	border-width:			12px;
+	background:				none;
+
+	border-image:			url('../../assets/compose-border.png') 12 12 fill stretch;
+
+	font-weight:			bold;
+	font-size:				40px;
+	font-family:			Prelude, Arial, Helvetica, sans-serif;
+}
+
+/*
+	Prevent showing an annoying border when the field is selected. Of course it
+	is selected... It is the only field.
+*/
+.authorize .step2 .pin:focus {
+	outline:				none !important;
+}
+
