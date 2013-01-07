@@ -13,7 +13,7 @@ enyo.depends(
 
 	"macaw.css",
 	"main.js",
-	"ptrlist.js",
+	"tweetlist.js",
 
 	"prefs.js"
 );

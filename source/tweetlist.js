@@ -16,9 +16,9 @@
 
 enyo.kind({
 
-name:								"ptrlist",
+name:								"tweetlist",
 
-classes:							"enyo-unselectable enyo-fit ptrlist",
+classes:							"enyo-unselectable enyo-fit tweetlist",
 kind:								"FittableRows",
 
 published: {
@@ -42,15 +42,23 @@ components: [
 		touch:						true,
 		thumb:						true,
 
-		components: [
-			{
-				components: [
-					{
-						name:		"text"
-					}
-				]
-			}
-		]
+		components: [{
+			name:					"tweet",
+			components: [
+				{
+					name:			"screen_name"
+				},
+				{
+					name:			"user_name"
+				},
+				{
+					name:			"text"
+				}
+			]
+		}, {
+			name:					"msg",
+			classes:				"hide"
+		}]
 	}
 ],
 
@@ -247,23 +255,36 @@ setupItem: function(sender, event)
 
 	if (item.newcount) {
 		if (item.newcount > 1) {
-			this.$.text.setContent(item.newcount + ' new tweets');
+			this.$.msg.setContent(item.newcount + ' new tweets');
 		} else {
-			this.$.text.setContent(item.newcount + ' new tweet');
+			this.$.msg.setContent(item.newcount + ' new tweet');
 		}
 
-		this.$.text.setClasses('newcount');
+		this.$.tweet.setClasses('hide');
+		this.$.msg.setClasses('newcount');
 		return;
 	}
 
 	if (item.gap) {
 		// TODO	When tapped load the gap
-		this.$.text.setContent('Tap to load missing tweets');
+		this.$.msg.setContent('Tap to load missing tweets');
+
+		this.$.tweet.setClasses('hide');
+		this.$.msg.setClasses('gap');
 		return;
 	}
 
+	this.$.msg.setClasses('hide');
+	this.$.msg.setContent('');
+
 	this.$.text.setContent(item.text);
-	this.$.text.setClasses('tweet');
+
+	var user = item.user || item.sender;
+
+	this.$.screen_name.setContent('@' + user.screen_name);
+	this.$.user_name.setContent(user.name);
+
+	this.$.tweet.setClasses('tweet');
 },
 
 smartscroll: function()

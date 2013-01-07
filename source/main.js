@@ -150,8 +150,8 @@ createTabs: function()
 			components: [
 				{
 					name:		"panel" + t,
-					kind:		"ptrlist",
-					classes:	"ptrlist",
+					kind:		"tweetlist",
+					classes:	"tweetlist",
 
 					user:		user,
 					resource:	tab.type

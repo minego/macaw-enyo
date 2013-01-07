@@ -8,6 +8,10 @@ body.Pre3 {
 	zoom:					150%;
 }
 
+.hide {
+	display:				none;
+}
+
 .panels {
 	width:					100%;
 	height:					100%;
@@ -129,15 +133,16 @@ body.Pre3 {
 	These classes are used to adjust for the height of the panel headers.
 */
 @media screen and (min-width:800px) {
-	.tabsontop .ptrlist {
+	.tabsontop .tweetlist {
 		padding-top:		48px;
 	}
 
-	.tabsonbottom .ptrlist {
+	.tabsonbottom .tweetlist {
 		padding-bottom:		48px;
 	}
 }
 
+.gap,
 .newcount {
 	text-align:				center;
 	font-size:				15px;
@@ -151,7 +156,7 @@ body.Pre3 {
 .tweet {
 	padding:				3px 7px 3px 7px;
 
-	// background:				url(../assets/horizontal-border.png) center bottom repeat-x;
+	background:				url(../assets/horizontal-border.png) center bottom repeat-x;
 }
 
 .tweet .avatar {
