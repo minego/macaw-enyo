@@ -60,8 +60,8 @@ components: [
 				ontap:						"createAccount"
 			},
 			{
-				content:					$L("Delete Account"),
-				ontap:						"deleteAccount"
+				content:					$L("Delete all account"),
+				ontap:						"deleteAllAccount"
 			}
 		]
 	},
@@ -312,10 +312,10 @@ createAccount: function()
 	});
 },
 
-deleteAccount: function()
+deleteAllAccount: function()
 {
-	this.users.slice(0, 1);
-	prefs.set('accounts', this.users);
+	this.users = [];
+	prefs.set('accounts', []);
 },
 
 accountCreated: function(sender, event)
