@@ -9,6 +9,7 @@
 	color:					#fff;
 	border-width:			12px;
 	border-image:			url('../../assets/compose-border.png') 12 12 fill stretch;
+	-webkit-border-image:	url('../../assets/compose-border.png') 12 stretch;
 	min-height:				80px;
 
 	margin:					5px;

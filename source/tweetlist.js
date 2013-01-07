@@ -39,7 +39,6 @@ components: [
 		horizontal:					"hidden",
 		vertical:					"scroll",
 
-		touch:						true,
 		thumb:						true,
 
 		components: [{

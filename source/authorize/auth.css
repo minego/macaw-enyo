@@ -28,6 +28,7 @@
 	background:				none;
 
 	border-image:			url('../../assets/compose-border.png') 12 12 fill stretch;
+	-webkit-border-image:	url('../../assets/compose-border.png') 12 stretch;
 
 	font-weight:			bold;
 	font-size:				40px;
