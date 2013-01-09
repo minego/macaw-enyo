@@ -58,7 +58,6 @@ body.Pre3 {
 /* Add padding to the top or bottom to adjust for the toolbars */
 .toolbar {
 	display:				none;
-	z-index:				998;
 
 	height:					48px;
 	margin:					0px;
@@ -137,7 +136,6 @@ body.Pre3 {
 .indicator {
 	width:					16px;
 	height:					10px;
-	z-index:				999;
 
 	position:				absolute;
 	background-position:	center center !important;
