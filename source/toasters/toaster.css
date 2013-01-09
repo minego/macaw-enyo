@@ -1,5 +1,6 @@
 .toaster {
 	width:					100%;
+	z-index:				1000;
 
 	position:				fixed;
 	bottom:					-1024px;
@@ -8,7 +9,6 @@
 
 	-webkit-transition:		bottom .5s;
 	transition:				bottom .5s;
-	z-index:				300;
 	color:					#d2d2d2;
 	max-height:				1024px;
 }

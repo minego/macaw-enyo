@@ -11,7 +11,7 @@ clean:
 ${DEPLOY}:
 	rm -rf deploy build
 	mkdir -p deploy/macaw
-	cp -r assets enyo lib source package.js icon* framework_config.json deploy/macaw/
+	cp -r assets enyo lib source package.js *.png framework_config.json deploy/macaw/
 	cp debug.html deploy/macaw/index.html
 
 release:

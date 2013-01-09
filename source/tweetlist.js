@@ -40,6 +40,8 @@ components: [
 		vertical:					"scroll",
 
 		thumb:						true,
+		enableSwipe:				false,
+		noSelect:					true,
 
 		components: [{
 			name:					"tweet",
