@@ -58,7 +58,6 @@ body.Pre3 {
 /* Add padding to the top or bottom to adjust for the toolbars */
 .toolbar {
 	display:				none;
-	z-index:				998;
 
 	height:					48px;
 	margin:					0px;
@@ -80,6 +79,8 @@ body.Pre3 {
 
 	margin:					0px;
 	padding:				0px;
+	background:				url(../assets/vertical-border.png) left bottom no-repeat,
+							url(../assets/vertical-border.png) right bottom no-repeat;
 }
 
 .toolbar.topbar {
@@ -114,13 +115,10 @@ body.Pre3 {
 .tabbar .tab {
 	display:				inline-block;
 	height:					100%;
-	background-position:	center center;
 	width:					24px;
 
 	pointer-events:			auto;
-}
 
-.tabbar .tab {
 	margin:					auto 0 auto 0;
 }
 
@@ -138,7 +136,6 @@ body.Pre3 {
 .indicator {
 	width:					16px;
 	height:					10px;
-	z-index:				999;
 
 	position:				absolute;
 	background-position:	center center !important;
@@ -148,27 +145,27 @@ body.Pre3 {
 }
 
 .tab-timeline {
-	background:				url(../assets/icons/tweets.png)		no-repeat;
+	background:				url(../assets/icons/tweets.png)		center center no-repeat;
 }
 .tab-mentions {
-	background:				url(../assets/icons/mentions.png)	no-repeat;
+	background:				url(../assets/icons/mentions.png)	center center no-repeat;
 }
 .tab-messages {
-	background:				url(../assets/icons/messages.png)	no-repeat;
+	background:				url(../assets/icons/messages.png)	center center no-repeat;
 }
 .tab-favorites {
-	background:				url(../assets/icons/favorite.png)	no-repeat;
+	background:				url(../assets/icons/favorite.png)	center center no-repeat;
 
 	/* The favorite icon is larger since it is used in other places */
 	background-size:		16px;
 }
 .tab-list,
 .tab-lists {
-	background:				url(../assets/icons/lists.png)		no-repeat;
+	background:				url(../assets/icons/lists.png)		center center no-repeat;
 }
 .tab-search,
 .tab-searchresults {
-	background:				url(../assets/icons/search.png)		no-repeat;
+	background:				url(../assets/icons/search.png)		center center no-repeat;
 }
 
 .toolbar .title {
@@ -178,14 +175,14 @@ body.Pre3 {
 }
 
 .toolbar .compose {
-	background:				url(../assets/icons/compose.png)	no-repeat;
+	background:				url(../assets/icons/compose.png)	center center no-repeat;
 }
 .toolbar .refresh {
-	background:				url(../assets/icons/refresh.png)	no-repeat;
+	background:				url(../assets/icons/refresh.png)	center center no-repeat;
 }
 
 .toolbar .button {
-	width:					32px;
+	width:					48px;
 	height:					100%;
 	background-position:	center center;
 }

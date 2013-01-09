@@ -40,6 +40,7 @@ create: function()
 		kind:							enyo.PulldownList,
 		fit:							true,
 
+		ontap:							"itemTap",
 		onSetupItem:					"setupItem",
 		onPullRelease:					"pullRelease",
 		onPullComplete:					"pullComplete",
@@ -106,7 +107,6 @@ rendered: function()
 		this.log('Refreshing', this.resource);
 		this.refresh();
 	}
-	this.$.list.reset();
 },
 
 pullRelease: function()
@@ -132,6 +132,7 @@ refresh: function()
 		return;
 	}
 
+	// TODO	Add a visual indicator that this panel is refreshing..
 	this.loading = true;
 
 	var params = {
@@ -266,10 +267,16 @@ gotTweets: function(success, results)
 	this.loading = false;
 },
 
+itemTap: function(sender, event)
+{
+	var item	= this.results[event.index];
+
+	this.log('Open a toaster with details for:', item.id_str);
+},
+
 setupItem: function(sender, event)
 {
-	var i		= event.index;
-	var item	= this.results[i];
+	var item	= this.results[event.index];
 
 	if (item.newcount) {
 		if (item.newcount > 1) {

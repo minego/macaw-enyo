@@ -376,8 +376,9 @@ closeAllToasters: function(sender, event)
 
 refresh: function(sender, event)
 {
-	// TODO	write me
-	this.log('write me...');
+	for (var t = 0, tab; tab = this.tabs[t]; t++) {
+		this.$['panel' + t].refresh();
+	}
 },
 
 back: function(sender, event)

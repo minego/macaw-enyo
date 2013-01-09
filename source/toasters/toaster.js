@@ -111,6 +111,14 @@ push: function(component, options)
 	setTimeout(enyo.bind(this, function() {
 		this.showTopToaster();
 	}), 10);
+
+	setTimeout(function() {
+		/*
+			I have no idea why, but sometimes opening a toaster makes the main
+			control scroll slightly... I don't approve.
+		*/
+		document.getElementById("main").scrollTop = 0;
+	}, 300);
 },
 
 pop: function(count)
