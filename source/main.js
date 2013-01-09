@@ -24,19 +24,12 @@ components: [
 		onbackbutton:						"back"
 	},
 	{
-		style:								"height: 100%;",
+		kind:								enyo.Panels,
+		name:								"panels",
+		classes:							"panels",
+		arrangerKind:						"CarouselArranger",
 
-		components: [
-			{
-				kind:						enyo.Panels,
-				name:						"panels",
-				classes:					"panels",
-				fit:						true,
-				arrangerKind:				"CarouselArranger",
-
-				onTransitionStart:			"moveIndicator"
-			}
-		]
+		onTransitionStart:					"moveIndicator"
 	},
 
 	{
@@ -129,18 +122,18 @@ create: function()
 	}
 
 	this.addClass('font-tiny');
-    
+
     try {
         var info	= enyo.webOS.deviceInfo();
         var name    = info.modelNameAscii;
-        
+
         if (name.indexOf("Pre") !== -1 ||
             name.indexOf("Veer") !== -1 ||
             name.indexOf("Pixi") !== -1) {
             this.devType = "webOSPhone";
         }
     } catch (e) {
-    
+
     }
 },
 
