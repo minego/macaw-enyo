@@ -20,24 +20,59 @@ name:										"net.minego.macaw.main",
 
 components: [
 	{
-		layoutKind:							"FittableRowsLayout",
+		kind:								enyo.Signals,
+		onbackbutton:						"back"
+	},
+	{
 		style:								"height: 100%;",
 
 		components: [
-			{
-				name:						"top",
-				classes:					"top"
-			},
 			{
 				kind:						enyo.Panels,
 				name:						"panels",
 				classes:					"panels",
 				fit:						true,
-				arrangerKind:				"CarouselArranger"
+				arrangerKind:				"CarouselArranger",
+
+				onTransitionStart:			"moveIndicator"
+			}
+		]
+	},
+
+	{
+		name:								"toolbar",
+		classes:							"toolbar",
+
+		layoutKind:							"FittableColumnsLayout",
+		components: [
+			{
+					classes:				"refresh button",
+					ontap:					"refresh"
 			},
 			{
-				name:						"bottom",
-				classes:					"bottom"
+				content:					'',
+				name:						"title",
+				classes:					"title",
+				fit:						true
+			},
+			{
+				classes:					"compose button",
+				ontap:						"compose"
+			}
+		]
+	},
+
+	{
+		name:								"tabbar",
+		classes:							"toolbar tabbar",
+
+		components: [
+			{
+				name:						"indicator",
+				classes:					"indicator"
+			},
+			{
+				name:						"tabcontainer"
 			}
 		]
 	},
@@ -83,7 +118,7 @@ create: function()
 
 	this.users		= prefs.get('accounts');
 	this.tabs		= [];
-	this.tabwidth	= 0;
+	this.tabWidth	= 0;
 
 	if (this.users.length) {
 		this.createTabs();
@@ -95,16 +130,12 @@ create: function()
 // TODO	Split most of this off into a function to create a single tab so that it
 //		can be called when a new tab is added.
 
-// TODO	Rework the panel headers so that they can be moved from top to bottom
-//		when prefs change instead of requiring a re-render.
-
 // TODO	When called remove any tabs that already exist
 createTabs: function()
 {
-	var layout		= prefs.get('layout');
-
+	this.barlayout	= prefs.get('layout');
 	this.tabs		= prefs.get('tabs');
-	this.tabwidth	= 100 / this.tabs.length;
+	this.tabWidth	= 100 / this.tabs.length;
 
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
 		var kind	= "panel";
@@ -147,121 +178,114 @@ createTabs: function()
 				break;
 		}
 
-		var components = [{
-			classes:			"panel",
-			fit:				true,
-
-			components: [
-				{
-					name:		"panel" + t,
-					kind:		"tweetlist",
-					classes:	"tweetlist",
-
-					user:		user,
-					resource:	tab.type
-				}
-			]
-		}];
-
-		if (-1 != layout.indexOf("tabs")) {
-			var header = {
-				kind:				onyx.Toolbar,
-				classes:			"panelheader",
-				index:				t,
-				ontap:				"smartscroll",
+		this.$.panels.createComponent({
+			layoutKind:				"FittableRowsLayout",
+			components: [{
+				classes:			"panel",
+				fit:				true,
 
 				components: [
 					{
-						classes:	"tab tab-" + tab.type.toLowerCase()
-					},
-					{
-						content:	tab.label
+						name:		"panel" + t,
+						kind:		"tweetlist",
+						classes:	"tweetlist",
+
+						user:		user,
+						resource:	tab.type
 					}
 				]
-			};
-
-			if (0 == layout.indexOf("tabs")) {
-				components.unshift(header);
-			} else {
-				components.push(header);
-			}
-		}
-
-		this.$.panels.createComponent({
-			layoutKind:			"FittableRowsLayout",
-			components:			components
+			}]
 		}, { owner: this });
 	}
 
-	this.$.panels.removeClass("tabsontop");
-	this.$.panels.removeClass("tabsonbottom");
+	/* Recreate the tabs */
+	var tabs = [];
+	for (var t = 0, tab; tab = this.tabs[t]; t++) {
+		var icon;
 
-	switch (layout.indexOf("tabs")) {
-		case 0:
-			this.$.panels.addClass("tabsontop");
-			break;
+		tabs.push({
+			classes:		"tab tab-" + tab.type.toLowerCase(),
+			style:			"width: " + this.tabWidth + "%;",
 
-		default:
-			this.$.panels.addClass("tabsonbottom");
-			break;
+			index:			t,
+			ontap:			"selectpanel"
+		});
+	}
+	this.$.tabcontainer.destroyComponents();
+	this.$.tabcontainer.createComponents(tabs, { owner: this });
+
+	/* Set a title */
+	this.$.title.setContent('@' + user.screen_name);
+
+	this.barLayoutChanged();
+},
+
+barLayoutChanged: function()
+{
+	var classes = [ 'topbar', 'bottombar' ];
+
+	/* Reset */
+	for (var i = 0, c; c = classes[i]; i++) {
+		this.$.tabbar.removeClass(c);
+		this.$.toolbar.removeClass(c);
 	}
 
-
-	var where	= [ "top", "bottom" ];
-	for (var i = 0, l; l = layout[i]; i++) {
-		var w = this.$[where.shift()];
-
-		switch (l.toLowerCase()) {
-			case "toolbar":
-				w.createComponent({
-					kind:				onyx.Toolbar,
-
-					classes:			"toolbar",
-					layoutKind:			"FittableColumnsLayout",
-
-					components: [
-						{
-							classes:	"refresh button",
-							ontap:		"refresh"
-						},
-						{
-							content:	'@' + user.screen_name,
-							name:		"username",
-							classes:	"username",
-							fit:		true
-						},
-						{
-							classes:	"compose button",
-							ontap:		"compose"
-						}
-					]
-				}, { owner: this });
+	/*
+		Set a class of "top", "bottom", or "hide" on the tabbar, toolbar and
+		indicator based on the layout.
+	*/
+	for (var i = 0, c; this.barlayout[i] && (c = classes[i]); i++) {
+		switch (this.barlayout[i]) {
+			case "tabs":
+				this.$.tabbar.addClass(c);
 				break;
 
-			case "tabs":
-				var tabs = [];
-
-				for (var t = 0, tab; tab = this.tabs[t]; t++) {
-					var icon;
-
-					tabs.push({
-						classes:		"tab tab-" + tab.type.toLowerCase(),
-						style:			"width: " + this.tabwidth + "%;",
-
-						index:			t,
-						ontap:			"selectpanel"
-					});
-				}
-
-				w.createComponent({
-					kind:				onyx.Toolbar,
-
-					components:			tabs,
-					classes:			"tabbar"
-				}, { owner: this });
+			case "toolbar":
+				this.$.toolbar.addClass(c);
 				break;
 		}
 	}
+
+	/*
+		Setting the proper padding on the main panels to adjust for the height
+		of the bars on top and/or bottom.
+	*/
+	if ("-" === this.barlayout[0]) {
+		this.$.panels.removeClass("padtop");
+	} else {
+		this.$.panels.addClass("padtop");
+	}
+
+	if ("-" === this.barlayout[1]) {
+		this.$.panels.removeClass("padbottom");
+	} else {
+		this.$.panels.addClass("padbottom");
+	}
+
+	/* Force the panels to notice the resize */
+	this.$.panels.resized();
+},
+
+// TODO	Remove this, just for testing
+nextLayout: function()
+{
+	var layouts = [
+		[ "toolbar", "tabs" ],
+		[ "tabs", "toolbar" ],
+		[ "-", "toolbar" ],
+		[ "toolbar", "-" ],
+		[ "-", "tabs" ],
+		[ "tabs", "-" ],
+		[ "-", "-" ]
+	];
+
+	if (isNaN(this.layoutindex)) {
+		this.layoutindex = 0;
+	}
+	this.layoutindex++;
+
+	this.barlayout = layouts[this.layoutindex % layouts.length];
+	this.barLayoutChanged();
 },
 
 selectpanel: function(sender, event)
@@ -341,8 +365,14 @@ refresh: function(sender, event)
 
 back: function(sender, event)
 {
-	this.$.toasters.pop();
-}
+	// TODO	This is just debug
+	this.nextLayout();
+},
 
+moveIndicator: function(sender, event)
+{
+	this.$.indicator.applyStyle('width', this.tabWidth + '%');
+	this.$.indicator.applyStyle('left', (event.toIndex * this.tabWidth) + '%');
+}
 
 });

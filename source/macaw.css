@@ -2,6 +2,8 @@ body {
 	width:					100%;
 	height:					100%;
 	background:				#c3bdb1 !important;
+
+	overflow:				none !important;
 }
 
 body.Pre3 {
@@ -13,64 +15,120 @@ body.Pre3 {
 }
 
 .panels {
-	width:					100%;
-	height:					100%;
+	padding:				0;
+	margin:					0;
+
+	position:				absolute;
+	top:					0px;
+	right:					0px;
+	bottom:					0px;
+	left:					0px;
 }
+
+.panels.padtop {
+	top:					48px;
+}
+
+.panels.padbottom {
+	bottom:					48px;
+}
+
 
 .panel {
 	width:					320px;
 	background:				url('../assets/vertical-border.png') left bottom repeat-y;
 }
 
+/* Add padding to the top or bottom to adjust for the toolbars */
+.toolbar {
+	display:				none;
+	z-index:				998;
+
+	height:					48px;
+	margin:					0px;
+	padding:				0px;
+
+	position:				absolute;
+	left:					0px;
+	right:					0px;
+
+	pointer-events:			none;
+	border:					none;
+}
+
+.toolbar * {
+	pointer-events:			auto;
+
+	height:					48px;
+	line-height:			48px;
+
+	margin:					0px;
+	padding:				0px;
+}
+
+.toolbar.topbar {
+	display:				block;
+
+	top:					0px;
+	background:				url(../assets/top-bar.png)			left -18px repeat-x;
+	padding-bottom:			18px;
+}
+
+.toolbar.bottombar {
+	display:				block;
+
+	bottom:					0px;
+	background:				url(../assets/bottom-bar.png)		left bottom repeat-x;
+	padding-top:			20px;
+}
+
 /*
 	When the screen is less than 800px a single panel will be displayed and will
 	take the whole screen width.
 
-	When showing a single column display a single tab bar instead of showing the
-	tab headings.
+	When showing multiple columns at once the indicator is not very useful, so
+	hide it.
 */
 @media screen and (min-width:800px) {
-	.panelheader {
-		height:				48px;
-		margin:				0px;
-		padding:			0px;
-	}
-
-	.tabbar {
+	.indicator {
 		display:			none;
 	}
 }
 
-@media screen and (max-width:799px) {
-	.panelheader {
-		display:			none;
-	}
-
-	.tabbar {
-		height:				32px;
-		margin-left:		0px;
-		margin-right:		0px;
-	}
-}
-
-.panelheader .tab,
 .tabbar .tab {
 	display:				inline-block;
 	height:					100%;
 	background-position:	center center;
 	width:					24px;
-}
 
-.panelheader .tab {
-	margin-top:				0;
-	margin-bottom:			0;
-}
-
-.panelheader div {
+	pointer-events:			auto;
 }
 
 .tabbar .tab {
 	margin:					auto 0 auto 0;
+}
+
+.bottombar .indicator {
+	bottom:					48px;
+	background:				url(../assets/indicator-up.png)		no-repeat;
+}
+
+.topbar .indicator {
+	top:					46px;
+
+	background:				url(../assets/indicator-down.png)	no-repeat;
+}
+
+.indicator {
+	width:					16px;
+	height:					10px;
+	z-index:				999;
+
+	position:				absolute;
+	background-position:	center center !important;
+
+	-webkit-transition:		left .25s;
+	transition:				left .25s;
 }
 
 .tab-timeline {
@@ -97,20 +155,10 @@ body.Pre3 {
 	background:				url(../assets/icons/search.png)		no-repeat;
 }
 
-.toolbar, .toolbar div {
-	height:					48px;
-	margin:					0px;
-	padding:				0px;
-}
-
-.toolbar .username {
+.toolbar .title {
 	text-align:				center;
 
-	/*
-		Since this is a fittable column enyo sets a height, which messes up the
-		vertical centering of the toolbar. Override it here to correct it.
-	*/
-	height:					auto !important;
+	color:					white;
 }
 
 .toolbar .compose {
@@ -124,22 +172,6 @@ body.Pre3 {
 	width:					32px;
 	height:					100%;
 	background-position:	center center;
-}
-
-/*
-	The ptr lists only work if using the fittables to set the size, which causes
-	the tab bar to be sized wrong.
-
-	These classes are used to adjust for the height of the panel headers.
-*/
-@media screen and (min-width:800px) {
-	.tabsontop .tweetlist {
-		padding-top:		48px;
-	}
-
-	.tabsonbottom .tweetlist {
-		padding-bottom:		48px;
-	}
 }
 
 .gap,
