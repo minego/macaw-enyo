@@ -2,6 +2,7 @@ enyo.depends(
 	"$lib/layout",
 	"$lib/onyx",
 	"$lib/jsOAuth",
+    "$lib/webos-ext",
 
 	"webos",
 	"BackGesture.js",
@@ -10,7 +11,7 @@ enyo.depends(
 	"toasters",
 	"compose",
 	"authorize",
-	"tweetlist",
+	"TweetList",
 
 	"macaw.css",
 	"main.js",

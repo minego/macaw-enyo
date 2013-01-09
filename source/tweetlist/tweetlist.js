@@ -16,18 +16,26 @@
 
 enyo.kind({
 
-name:									"tweetlist",
+name:									"TweetList",
 
 classes:								"enyo-unselectable enyo-fit tweetlist",
 kind:									"FittableRows",
 
 published: {
 	user:								null,
-	resource:							"home"
+	resource:							"home",
+    rowsPerPage:                        5 /* 50 This is supposed to be overridden by webOSPhoneTweetList below... */
 },
 
 components: [
-	{
+],
+
+create: function()
+{
+	this.inherited(arguments);
+	this.twitter = new TwitterAPI(this.user);
+    
+    this.createComponent({
 		name:							"list",
 		kind:							enyo.PulldownList,
 		fit:							true,
@@ -40,8 +48,12 @@ components: [
 		vertical:						"scroll",
 
 		thumb:							true,
+        touch:                          true,
+        strategyKind:                   "TouchScrollStrategy",
 		enableSwipe:					false,
 		noSelect:						true,
+        
+        rowsPerPage:                    this.rowsPerPage,
 
 		components: [{
 			name:						"tweet",
@@ -59,6 +71,7 @@ components: [
 				},
 				{
 					name:				"text",
+                    classes:            "text",
 					allowHtml:			true
 				}
 			]
@@ -66,13 +79,11 @@ components: [
 			name:						"msg",
 			classes:					"hide"
 		}]
-	}
-],
+	}, { owner: this });
+},
 
-create: function()
-{
-	this.inherited(arguments);
-	this.twitter = new TwitterAPI(this.user);
+importProps: function(inProps) {
+    this.inherited(arguments);
 },
 
 rendered: function()
@@ -306,3 +317,15 @@ smartscroll: function()
 }
 
 });
+
+/* 
+    Right now we are just generalizing.. This should probably be tweaked based on screen size.
+    Then we can use the device name + TweetList (i.e. Pre3TweetList, VeerTweetList, PreTweetList.
+ */
+enyo.kind({
+    name:                               "webOSPhoneTweetList",
+    kind:                               "TweetList",
+    
+    rowsPerPage:                        2
+});
+

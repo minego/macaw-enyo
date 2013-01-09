@@ -112,6 +112,8 @@ components: [
 	}
 ],
 
+devType: "", /* Blank for just about everything, or webOSPhone for a webOS phone. */
+
 create: function()
 {
 	this.inherited(arguments);
@@ -127,6 +129,19 @@ create: function()
 	}
 
 	this.addClass('font-tiny');
+    
+    try {
+        var info	= enyo.webOS.deviceInfo();
+        var name    = info.modelNameAscii;
+        
+        if (name.indexOf("Pre") !== -1 ||
+            name.indexOf("Veer") !== -1 ||
+            name.indexOf("Pixi") !== -1) {
+            this.devType = "webOSPhone";
+        }
+    } catch (e) {
+    
+    }
 },
 
 // TODO	Split most of this off into a function to create a single tab so that it
@@ -189,7 +204,7 @@ createTabs: function()
 				components: [
 					{
 						name:		"panel" + t,
-						kind:		"tweetlist",
+						kind:		this.devType + "TweetList",
 						classes:	"tweetlist",
 
 						user:		user,
