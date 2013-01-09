@@ -16,49 +16,55 @@
 
 enyo.kind({
 
-name:								"tweetlist",
+name:									"tweetlist",
 
-classes:							"enyo-unselectable enyo-fit tweetlist",
-kind:								"FittableRows",
+classes:								"enyo-unselectable enyo-fit tweetlist",
+kind:									"FittableRows",
 
 published: {
-	user:							null,
-	resource:						'home'
+	user:								null,
+	resource:							"home"
 },
 
 components: [
 	{
-		name:						"list",
-		kind:						enyo.PulldownList,
-		fit:						true,
+		name:							"list",
+		kind:							enyo.PulldownList,
+		fit:							true,
 
-		onSetupItem:				"setupItem",
-		onPullRelease:				"pullRelease",
-		onPullComplete:				"pullComplete",
+		onSetupItem:					"setupItem",
+		onPullRelease:					"pullRelease",
+		onPullComplete:					"pullComplete",
 
-		horizontal:					"hidden",
-		vertical:					"scroll",
+		horizontal:						"hidden",
+		vertical:						"scroll",
 
-		thumb:						true,
-		enableSwipe:				false,
-		noSelect:					true,
+		thumb:							true,
+		enableSwipe:					false,
+		noSelect:						true,
 
 		components: [{
-			name:					"tweet",
+			name:						"tweet",
 			components: [
 				{
-					name:			"screen_name"
+					name:				"screenname",
+					classes:			"screenname"
 				},
 				{
-					name:			"user_name"
+					name:				"username",
+					classes:			"username"
 				},
 				{
-					name:			"text"
+					tag:				"br"
+				},
+				{
+					name:				"text",
+					allowHtml:			true
 				}
 			]
 		}, {
-			name:					"msg",
-			classes:				"hide"
+			name:						"msg",
+			classes:					"hide"
 		}]
 	}
 ],
@@ -282,8 +288,10 @@ setupItem: function(sender, event)
 
 	var user = item.user || item.sender;
 
-	this.$.screen_name.setContent('@' + user.screen_name);
-	this.$.user_name.setContent(user.name);
+	this.$.screenname.setContent('@' + user.screen_name);
+	this.$.username.setContent(user.name);
+
+	this.$.tweet.applyStyle('background-image', 'url(' + user.profile_image_url + ')');
 
 	this.$.tweet.setClasses('tweet');
 },

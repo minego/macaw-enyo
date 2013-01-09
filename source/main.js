@@ -125,6 +125,8 @@ create: function()
 	} else {
 		this.createAccount();
 	}
+
+	this.addClass('font-tiny');
 },
 
 // TODO	Split most of this off into a function to create a single tab so that it

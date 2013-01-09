@@ -10,10 +10,10 @@ enyo.depends(
 	"toasters",
 	"compose",
 	"authorize",
+	"tweetlist",
 
 	"macaw.css",
 	"main.js",
-	"tweetlist.js",
 
 	"prefs.js"
 );

@@ -10,6 +10,22 @@ body.Pre3 {
 	zoom:					150%;
 }
 
+.font-tiny {
+	font-size:				12px;
+}
+.font-small {
+	font-size:				14px;
+}
+.font-medium{
+	font-size:				16px;
+}
+.font-large{
+	font-size:				18px;
+}
+.font-huge {
+	font-size:				22px;
+}
+
 .hide {
 	display:				none;
 }
@@ -173,40 +189,4 @@ body.Pre3 {
 	height:					100%;
 	background-position:	center center;
 }
-
-.gap,
-.newcount {
-	text-align:				center;
-	font-size:				15px;
-	font-weight:			bold;
-	color:					#d2d2d2;
-	padding:				7px 0px 9px 0px;
-	background:				url(../assets/highlight.png)		center top		repeat-x,
-							url(../assets/highlight-bottom.png)	center bottom	repeat-x;
-}
-
-.tweet {
-	padding:				3px 7px 3px 7px;
-
-	background:				url(../assets/horizontal-border.png) center bottom repeat-x;
-}
-
-.tweet .avatar {
-}
-
-.tweet .name {
-}
-
-.tweet .username {
-}
-
-.tweet .text {
-}
-
-.tweet .time {
-}
-
-.tweet .via {
-}
-
 

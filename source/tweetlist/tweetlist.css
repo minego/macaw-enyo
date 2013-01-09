@@ -1,0 +1,55 @@
+.gap,
+.newcount {
+	text-align:				center;
+	font-size:				15px;
+	font-weight:			bold;
+	color:					#d2d2d2;
+	padding:				7px 0px 9px 0px;
+	background:				url(../../assets/highlight.png)			center top		repeat-x,
+							url(../../assets/highlight-bottom.png)	center bottom	repeat-x;
+}
+
+.tweet {
+	/* The avatar is displayed as a background in the margin */
+	padding:				5px 7px 7px 60px;
+	min-height:				55px;
+	background-position:	5px 5px;
+	background-repeat:		no-repeat;
+
+	clear:					both;
+}
+
+.tweet .avatar {
+	display:				inline-block;
+
+	height:					48px;
+	width:					48px;
+	background-size:		48px;
+	margin:					5px 8px 0px 0px;
+
+	float:					left;
+}
+
+.tweet .screenname {
+	float:					left;
+	color:					#777;
+	display:				inline-block;
+}
+
+.tweet .username {
+	float:					right;
+	color:					#777;
+	display:				inline-block;
+}
+
+.tweet .text {
+	clear:					both;
+}
+
+.tweet .time {
+}
+
+.tweet .via {
+}
+
+
