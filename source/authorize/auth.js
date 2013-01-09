@@ -228,10 +228,12 @@ pinChanged: function()
 
 	this.$.step2btn.setDisabled(true);
 
-	value = parseInt(value, 10);
+	if (isNaN(value)) {
+		value = parseInt(value, 10);
+		this.$.pin.setValue(value);
+	}
 
 	if (!isNaN(value)) {
-		this.$.pin.setValue(value);
 		this.$.step2btn.setDisabled(false);
 	} else {
 		this.$.pin.setValue('');
