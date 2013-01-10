@@ -30,6 +30,19 @@ body.Pre3 {
 	display:				none;
 }
 
+.error {
+	padding:				7px 5px 7px 32px;
+	background:				black;
+	background-image:		url(../assets/error.png);
+	background-position:	7px center;
+	background-repeat:		no-repeat;
+
+	height:					24px;
+	line-height:			24px;
+
+	width:					100%;
+}
+
 .panels {
 	padding:				0;
 	margin:					0;
@@ -52,7 +65,7 @@ body.Pre3 {
 
 .panel {
 	width:					320px;
-	background:				url('../assets/vertical-border.png') left bottom repeat-y;
+	background:				url(../assets/vertical-border.png) left bottom repeat-y;
 }
 
 /* Add padding to the top or bottom to adjust for the toolbars */

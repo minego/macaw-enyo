@@ -183,7 +183,7 @@ gotTweets: function(success, results)
 		this.$.list.refresh();
 		this.$.list.completePull();
 
-		// TODO	Display an error...
+		ex("Refresh failed");
 		this.loading = false;
 		return;
 	}
@@ -309,7 +309,7 @@ setupItem: function(sender, event)
 	this.$.msg.setClasses('hide');
 	this.$.msg.setContent('');
 
-	this.$.text.setContent(item.text);
+	this.$.tweet.setClasses('tweet');
 
 	var user = item.user || item.sender;
 
@@ -318,7 +318,7 @@ setupItem: function(sender, event)
 
 	this.$.tweet.applyStyle('background-image', 'url(' + user.profile_image_url + ')');
 
-	this.$.tweet.setClasses('tweet');
+	this.$.text.setContent(item.text);
 },
 
 smartscroll: function()

@@ -48,6 +48,9 @@
 		modal:			If true then tapping on the scrim will NOT close the
 						toaster chain.
 
+		ignoreback:		If true then a back gesture/key or escape key will NOT
+						cloase the toaster chain.
+
 		transparent:	If true then the scrim will be invisible
 
 		noscrim:		If true then the scrim will be disabled
@@ -65,7 +68,7 @@ published: {
 	length:						0,
 
 	/* May be top, right, bottom or left */
-	slideInFrom:				"bottom"
+	flyInFrom:					"bottom"
 },
 
 items:							[],
@@ -81,7 +84,7 @@ components: [
 	},
 	{
 		kind:					enyo.Signals,
-		onbackbutton:			"pop"
+		onbackbutton:			"handleBack"
 	}
 ],
 
@@ -99,7 +102,7 @@ slideInFromChanged: function()
 	this.removeClass('left');
 	this.removeClass('right');
 
-	this.addClass(this.slideInFrom);
+	this.addClass(this.flyInFrom);
 },
 
 push: function(component, options)
@@ -217,6 +220,20 @@ handleScrim: function()
 	options = options || {};
 
 	if (!options.modal) {
+		this.pop(this.length);
+	}
+},
+
+handleBack: function()
+{
+	var	options;
+
+	if (this.items.length) {
+		options = this.items[this.items.length - 1].options;
+	}
+	options = options || {};
+
+	if (!options.ignoreback) {
 		this.pop(this.length);
 	}
 }

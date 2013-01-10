@@ -13,6 +13,7 @@
 	OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+var ex;
 
 enyo.kind({
 
@@ -100,6 +101,13 @@ components: [
 	},
 
 	{
+		name:								"notifications",
+		kind:								"toaster-chain",
+
+		flyInFrom:							"top"
+	},
+
+	{
 		name:								"webos",
 		kind:								"webOSHelper"
 	}
@@ -135,6 +143,50 @@ create: function()
     } catch (e) {
 
     }
+
+	/*
+		Create a global error notification function
+
+		Calling ex("oh noes, something happened); from anywhere in the app will
+		display a small bar at the top of the screen, with an error icon and the
+		specified text.
+
+		This should be used throughout the app to display errors to the user.
+
+		This currently uses the notification toaster. Ideally this should tie
+		into the native notification system for each OS. The notification
+		toaster is meant to act as a fallback when an OS mechanism does not
+		exist or can't be used.
+	*/
+	// TODO	Tie into platform specific notification systems when possible
+	ex = function(error) {
+		console.log('ex:', error);
+
+		this.$.notifications.pop(this.$.notifications.length);
+		this.$.notifications.push({
+			classes:		"error",
+			content:		error,
+
+			ontap:			"clearError"
+		}, {
+			owner:			this,
+
+			noscrim:		true,
+			modal:			true,
+			ignoreback:		true
+		});
+
+		clearTimeout(this.$.notifications.timeout);
+
+		this.$.notifications.timeout = setTimeout(function() {
+			this.$.notifications.pop(1);
+		}.bind(this), 3000);
+	}.bind(this);
+},
+
+clearError: function()
+{
+	this.$.notifications.pop(this.$.notifications.length);
 },
 
 // TODO	Split most of this off into a function to create a single tab so that it
@@ -296,6 +348,7 @@ nextLayout: function()
 
 	this.barlayout = layouts[this.layoutindex % layouts.length];
 	this.barLayoutChanged();
+	ex("Try this layout: " + this.barlayout);
 },
 
 selectpanel: function(sender, event)
