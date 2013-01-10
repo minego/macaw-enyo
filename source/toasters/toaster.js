@@ -62,7 +62,10 @@ name:							"toaster-chain",
 classes:						"toaster-chain",
 
 published: {
-	length:						0
+	length:						0,
+
+	/* May be top, right, bottom or left */
+	slideInFrom:				"bottom"
 },
 
 items:							[],
@@ -85,6 +88,18 @@ components: [
 create: function()
 {
 	this.inherited(arguments);
+
+	this.slideInFromChanged();
+},
+
+slideInFromChanged: function()
+{
+	this.removeClass('top');
+	this.removeClass('bottom');
+	this.removeClass('left');
+	this.removeClass('right');
+
+	this.addClass(this.slideInFrom);
 },
 
 push: function(component, options)

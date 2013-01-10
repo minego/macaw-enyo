@@ -3,14 +3,57 @@
 	z-index:				1000;
 
 	position:				fixed;
+
+	color:					#d2d2d2;
+	max-height:				1024px;
+}
+
+.toaster-chain.bottom .toaster {
 	bottom:					-1024px;
 	left:					0px;
 	right:					0px;
 
 	-webkit-transition:		bottom .5s;
 	transition:				bottom .5s;
-	color:					#d2d2d2;
-	max-height:				1024px;
+}
+.toaster-chain.bottom .toaster.show {
+	bottom:					0;
+}
+
+.toaster-chain.top .toaster {
+	top:					-1024px;
+	left:					0px;
+	right:					0px;
+
+	-webkit-transition:		top .5s;
+	transition:				top .5s;
+}
+.toaster-chain.top .toaster.show {
+	top:					0;
+}
+
+.toaster-chain.left .toaster {
+	left:					-1024px;
+	top:					0px;
+	bottom:					0px;
+
+	-webkit-transition:		left .5s;
+	transition:				left .5s;
+}
+.toaster-chain.left .toaster.show {
+	left:					0;
+}
+
+.toaster-chain.right .toaster {
+	right:					-1024px;
+	top:					0px;
+	bottom:					0px;
+
+	-webkit-transition:		right .5s;
+	transition:				right .5s;
+}
+.toaster-chain.right .toaster.show {
+	right:					0;
 }
 
 .toaster.bg {
@@ -18,7 +61,6 @@
 }
 
 .toaster.show {
-	bottom:					0px;
 	display:				block !important;
 }
 
