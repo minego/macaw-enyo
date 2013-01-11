@@ -192,7 +192,7 @@ create: function()
 			return;
 		}
 
-		if (this.$.toasters.length) {
+		if (this.$.toasters.getLength() > 0) {
 			/* Ignore key presses when a toaster is visible */
 			return;
 		}
@@ -208,7 +208,6 @@ create: function()
 		// TODO	Possibly allow binding of actions to keystrokes?
 		if (s) {
 			/* Open the compose toaster with this string */
-this.log(s);
 			this.compose({ text: s });
 		}
 	}.bind(this), false);
@@ -413,7 +412,7 @@ compose: function(options)
 		return;
 	}
 
-	this.$.toasters.pop(this.$.toasters.length);
+	this.$.toasters.pop(this.$.toasters.getLength());
 	this.$.toasters.push(options, {
 		owner:		this,
 		noscrim:	true,
@@ -453,7 +452,7 @@ accountCreated: function(sender, event)
 
 closeAllToasters: function(sender, event)
 {
-	this.$.toasters.pop(this.$.toasters.length);
+	this.$.toasters.pop(this.$.toasters.getLength());
 },
 
 refresh: function(sender, event)

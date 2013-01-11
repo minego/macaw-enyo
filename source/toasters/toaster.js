@@ -105,6 +105,11 @@ slideInFromChanged: function()
 	this.addClass(this.flyInFrom);
 },
 
+getLength: function()
+{
+	return(this.items.length);
+},
+
 push: function(component, options)
 {
 	var toaster;
@@ -176,8 +181,6 @@ pop: function(count)
 		/* The toaster's ZIndex is 300 */
 		this.$.scrim.hideAtZIndex(299);
 	}
-
-	this.length = this.items.length;
 },
 
 showTopToaster: function()
@@ -206,8 +209,6 @@ showTopToaster: function()
 			toaster.addClass('bg');
 		}
 	}
-
-	this.length = this.items.length;
 },
 
 handleScrim: function()
@@ -220,7 +221,7 @@ handleScrim: function()
 	options = options || {};
 
 	if (!options.modal) {
-		this.pop(this.length);
+		this.pop(this.items.length);
 	}
 },
 
@@ -234,7 +235,7 @@ handleBack: function()
 	options = options || {};
 
 	if (!options.ignoreback) {
-		this.pop(this.length);
+		this.pop(this.items.length);
 	}
 }
 
