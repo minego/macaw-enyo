@@ -60,6 +60,10 @@ create: function()
 			name:						"tweet",
 			components: [
 				{
+					name:				"avatar",
+					classes:			"avatar"
+				},
+				{
 					name:				"screenname",
 					classes:			"screenname"
 				},
@@ -316,7 +320,7 @@ setupItem: function(sender, event)
 	this.$.screenname.setContent('@' + user.screen_name);
 	this.$.username.setContent(user.name);
 
-	this.$.tweet.applyStyle('background-image', 'url(' + user.profile_image_url + ')');
+	this.$.avatar.applyStyle('background-image', 'url(' + user.profile_image_url + ')');
 
 	this.$.text.setContent(item.text);
 },

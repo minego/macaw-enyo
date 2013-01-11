@@ -10,8 +10,16 @@
 }
 
 .tweet {
-	/* The avatar is displayed as a background in the margin */
-	padding:				5px 7px 7px 60px;
+	/*
+		Position (but don't actually move) the tweet relative so that the avatar
+		can use absolute positioning and be relative to the tweet.
+	*/
+	position:				relative;
+
+	/* Leave a space on the side for the avatar */
+	margin-left:			55px;
+
+	padding:				5px;
 	min-height:				55px;
 	background-position:	5px 5px;
 	background-repeat:		no-repeat;
@@ -20,14 +28,16 @@
 }
 
 .tweet .avatar {
-	display:				inline-block;
+	-webkit-border-radius:	5px;
+	border-radius:			5px;
+
+	position:				absolute;
+	top:					5px;
+	left:					-50px;
 
 	height:					48px;
 	width:					48px;
 	background-size:		48px;
-	margin:					5px 8px 0px 0px;
-
-	float:					left;
 }
 
 .tweet .screenname {
