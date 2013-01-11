@@ -23,6 +23,10 @@ events: {
 	onSent:						""
 },
 
+published: {
+	text:						""
+},
+
 components: [
 	{
 		name:					"txt",
@@ -69,6 +73,13 @@ create: function()
 {
 	this.inherited(arguments);
 	this.twitter = new TwitterAPI(this.user);
+
+	this.$.txt.setContent('');
+},
+
+textChanged: function()
+{
+	this.$.txt.setContent(this.text);
 },
 
 rendered: function(sender, event)
@@ -81,15 +92,14 @@ rendered: function(sender, event)
 change: function(sender, event)
 {
 	var node;
-	var value;
 
 	if ((node = this.$.txt.hasNode())) {
-		value = node.innerText.trim();
+		this.text = node.innerText.trim();
 	} else {
-		value = '';
+		this.text = '';
 	}
 
-	this.$.counter.setContent(140 - value.length);
+	this.$.counter.setContent(140 - this.text.length);
 },
 
 cancel: function(sender, event)

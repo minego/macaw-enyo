@@ -51,7 +51,7 @@ components: [
 			},
 			{
 				classes:					"compose button",
-				ontap:						"compose"
+				ontap:						"composeHandler"
 			}
 		]
 	},
@@ -82,7 +82,7 @@ components: [
 			},
 			{
 				content:					$L("Compose"),
-				ontap:						"compose"
+				ontap:						"composeHandler"
 			},
 			{
 				content:					$L("Create Account"),
@@ -182,6 +182,36 @@ create: function()
 			this.$.notifications.pop(1);
 		}.bind(this), 3000);
 	}.bind(this);
+
+	/*
+		Listen for keyboard events for the sake of keyboard shortcuts and/or
+		starting compose by typing.
+	*/
+	document.addEventListener('keypress', function(e) {
+		if (e.altKey || e.ctrlKey || e.metaKey) {
+			return;
+		}
+
+		if (this.$.toasters.length) {
+			/* Ignore key presses when a toaster is visible */
+			return;
+		}
+
+		var s;
+
+		try {
+			s = String.fromCharCode(event.which);
+		} catch (e) {
+			s = null;
+		}
+
+		// TODO	Possibly allow binding of actions to keystrokes?
+		if (s) {
+			/* Open the compose toaster with this string */
+this.log(s);
+			this.compose({ text: s });
+		}
+	}.bind(this), false);
 },
 
 clearError: function()
@@ -365,20 +395,26 @@ smartscroll: function(sender, event)
 	this.$['panel' + sender.index].smartscroll();
 },
 
-compose: function(sender, event)
+composeHandler: function(sender, event)
 {
+	this.compose();
+},
+
+compose: function(options)
+{
+	options = options || {};
+
+	options.kind		= "compose";
+	options.user		= this.users[0];
+	options.onCancel	= "closeAllToasters";
+	options.onSent		= "closeAllToasters";
+
 	if (!this.users || !this.users.length) {
 		return;
 	}
 
 	this.$.toasters.pop(this.$.toasters.length);
-	this.$.toasters.push({
-		kind:		"compose",
-		user:		this.users[0],
-
-		onCancel:	"closeAllToasters",
-		onSent:		"closeAllToasters"
-	}, {
+	this.$.toasters.push(options, {
 		owner:		this,
 		noscrim:	true,
 		nobg:		true,
