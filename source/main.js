@@ -14,6 +14,7 @@
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 var ex;
+var global	= { };
 
 enyo.kind({
 
@@ -143,6 +144,12 @@ create: function()
     } catch (e) {
 
     }
+
+	/*
+		Store a global handle to the toasters so other kinds can easily push
+		items.
+	*/
+	global.toasters = this.$.toasters;
 
 	/*
 		Create a global error notification function
