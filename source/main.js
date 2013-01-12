@@ -41,6 +41,11 @@ components: [
 		layoutKind:							"FittableColumnsLayout",
 		components: [
 			{
+					classes:				"options button",
+					ontap:					"options",
+					name:					"options"
+			},
+			{
 					classes:				"refresh button",
 					ontap:					"refresh"
 			},
@@ -136,13 +141,18 @@ create: function()
         var info	= enyo.webOS.deviceInfo();
         var name    = info.modelNameAscii;
 
-        if (name.indexOf("Pre") !== -1 ||
-            name.indexOf("Veer") !== -1 ||
-            name.indexOf("Pixi") !== -1) {
+        if (name.indexOf("pre")  !== -1 ||
+            name.indexOf("veer") !== -1 ||
+            name.indexOf("pixi") !== -1)
+		{
             this.devType = "webOSPhone";
-        }
+		}
+		/*
+			Hide the options button on webOS devices since they have the app
+			menu.
+		*/
+		this.$.options.hide();
     } catch (e) {
-
     }
 
 	/*
@@ -460,6 +470,11 @@ accountCreated: function(sender, event)
 closeAllToasters: function(sender, event)
 {
 	this.$.toasters.pop(this.$.toasters.getLength());
+},
+
+options: function(sender, event)
+{
+	this.$.appmenu.toggle();
 },
 
 refresh: function(sender, event)

@@ -190,6 +190,9 @@ body.Pre3 {
 .toolbar .compose {
 	background:				url(../assets/icons/compose.png)	center center no-repeat;
 }
+.toolbar .options {
+	background:				url(../assets/icons/opts.png)		center center no-repeat;
+}
 .toolbar .refresh {
 	background:				url(../assets/icons/refresh.png)	center center no-repeat;
 }

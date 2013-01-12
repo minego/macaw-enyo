@@ -41,15 +41,13 @@ enyo.kind({
 
 	//* @public
 	show: function() {
-		var height = 30 * this.controls.length - 1; /* take the scroller out of the equation */
+		var bounds = this.getBounds();
 
-		if (height > this.maxHeight) {
-			height = this.maxHeight;
+		if (bounds.height > this.maxHeight) {
+			this.setBounds({
+				height: this.maxHeight
+			});
 		}
-
-		this.setBounds({
-			height: height
-		});
 
 		this.inherited(arguments);
 	},
