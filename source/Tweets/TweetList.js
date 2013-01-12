@@ -36,7 +36,7 @@ create: function()
     this.createComponent({
 		name:							"list",
 		kind:							enyo.PulldownList,
-		fit:							true,
+		classes:						"enyo-fit",
 
 		ontap:							"itemTap",
 		onSetupItem:					"setupItem",
@@ -47,8 +47,6 @@ create: function()
 		vertical:						"scroll",
 
 		thumb:							true,
-        touch:                          true,
-        strategyKind:                   "TouchScrollStrategy",
 		enableSwipe:					false,
 		noSelect:						true,
 
