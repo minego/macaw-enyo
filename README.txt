@@ -34,7 +34,8 @@ Install package on a webOS device:
 Test on webOS device:
 	make test
 
-PwdHash HD license:
+
+Macaw License
 ================================================================================
 
 You may do whatever you want with this source code with the following conditions:
@@ -42,8 +43,8 @@ You may do whatever you want with this source code with the following conditions
 	this source code or included images, graphics, or other media for commercial
 	purposes
 
- 2.	You may not use the "Project Macaw" name or marks, or Micah N Gorrell, or
-	minego in a manner that implies endorsement or "official" involvement.
+ 2.	You may not use the name "Macaw" or the name of any contributor in a manner
+	that implies endorsement or "official" involvement.
 
  3.	You must retain this license notice.
 
