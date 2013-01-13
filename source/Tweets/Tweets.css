@@ -10,21 +10,14 @@
 }
 
 .tweet {
-	/*
-		Position (but don't actually move) the tweet relative so that the avatar
-		can use absolute positioning and be relative to the tweet.
-	*/
-	position:				relative;
-
 	padding:				5px;
-	min-height:				55px;
-	background-position:	5px 5px;
-	background-repeat:		no-repeat;
-
 	clear:					both;
 }
 
-.tweet *:link {
+.tweet *:link,
+.tweet *:visited,
+.tweet *:active,
+.tweet *:hover {
 	text-decoration:		none;
 	font-weight:			bold;
 	color:					#777;
@@ -56,6 +49,15 @@
 .showAvatar .tweet {
 	/* Leave a space on the side for the avatar */
 	margin-left:			55px;
+
+	/*
+		Position (but don't actually move) the tweet relative so that the avatar
+		can use absolute positioning and be relative to the tweet.
+	*/
+	position:				relative;
+	min-height:				55px;
+	background-position:	5px 5px;
+	background-repeat:		no-repeat;
 }
 
 .showAvatar .tweet .avatar {
@@ -73,6 +75,38 @@
 	background-size:		48px;
 }
 
+.showAvatar .tweet .rt .avatar {
+	left:					-25px;
+
+	height:					24px;
+	width:					24px;
+	background-size:		24px;
+}
+
+.showAvatar .tweet .rt {
+	/* Leave a space on the side for the avatar */
+	margin-left:			28px;
+
+	/*
+		Position (but don't actually move) the tweet relative so that the avatar
+		can use absolute positioning and be relative to the tweet.
+	*/
+	position:				relative;
+	height:					28px;
+	background-position:	0px 0px;
+	background-repeat:		no-repeat;
+}
+
+.tweet .details,
+.tweet .rt .byline {
+	color:					#777;
+	height:					12px;
+	line-height:			12px;
+	font-size:				12px;
+
+	padding:				3px 0px 0px 5px;
+}
+
 .tweet .screenname {
 	float:					left;
 	color:					#777;
@@ -85,6 +119,7 @@
 	display:				none;
 }
 
+.tweet .rt,
 .tweet .text {
 	clear:					both;
 }
@@ -93,7 +128,6 @@
 }
 
 .tweet .via {
-	float:					right;
 	color:					#777;
 	display:				none;
 }
