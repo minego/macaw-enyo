@@ -194,15 +194,6 @@ components: [
 						]
 					}
 				]
-			},
-
-			{
-				components: [
-					{
-						content:					$L("Advanced"),
-						classes:					"title"
-					}
-				]
 			}
 		]
 	}
