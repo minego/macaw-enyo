@@ -97,13 +97,13 @@ body.Pre3 {
 }
 
 /*
-	When the screen is less than 800px a single panel will be displayed and will
+	When the screen is less than 640px a single panel will be displayed and will
 	take the whole screen width.
 
 	When showing multiple columns at once the indicator is not very useful, so
 	hide it.
 */
-@media screen and (min-width:800px) {
+@media screen and (min-width:640px) {
 	.indicator {
 		display:			none;
 	}
