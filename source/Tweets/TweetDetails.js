@@ -16,39 +16,84 @@
 
 enyo.kind({
 
-name:									"TweetDetails",
-classes:								"tweetdetails",
+name:										"TweetDetails",
+
+classes: [
+	"tweetdetails",
+
+	/* Show all portions of the tweet in the details view */
+	"showAvatar",
+	"showTimeRelative",
+	"showTimeAbsolute",
+	"showUserName",
+	"showScreenName",
+	"showVia"
+].join(' '),
+
 
 published: {
-	user:								null,
-	item:								null,
-	twitter:							null
+	user:									null,
+	item:									null,
+	twitter:								null
 },
 
 components: [
 	{
-		name:							"tweet",
-		classes:						"tweet",
+		name:								"tweet",
+		classes:							"tweet",
 		components: [
 			{
-				name:					"avatar",
-				classes:				"avatar"
+				name:						"avatar",
+				classes:					"avatar"
 			},
 			{
-				name:					"screenname",
-				classes:				"screenname"
+				name:						"screenname",
+				classes:					"screenname"
 			},
 			{
-				name:					"username",
-				classes:				"username"
+				name:						"username",
+				classes:					"username"
 			},
 			{
-				tag:					"br"
+				tag:						"br"
 			},
 			{
-				name:					"text",
-				classes:				"text",
-				allowHtml:				true
+				name:						"text",
+				classes:					"text",
+				allowHtml:					true
+			},
+
+			{
+				name:						"rt",
+
+				components: [
+					{
+						name:				"rtAvatar",
+						classes:			"avatar"
+					},
+					{
+						classes:			"details",
+						components: [
+							{
+								name:		"relativeTime",
+								classes:	"time relative"
+							},
+							{
+								name:		"absoluteTime",
+								classes:	"time absolute"
+							},
+							{
+								name:		"via",
+								classes:	"via",
+								allowHtml:	true
+							}
+						]
+					},
+					{
+						name:				"rtByline",
+						classes:			"byline"
+					}
+				]
 			}
 		]
 	}
@@ -58,18 +103,47 @@ create: function()
 {
 	this.inherited(arguments);
 
+	var item = this.item;
+
 	if (!this.twitter) {
 		this.twitter = new TwitterAPI(this.user);
 	}
 
-	var user = this.item.user || this.item.sender;
+	this.$.screenname.setContent('@' + item.user.screen_name);
+	this.$.username.setContent(item.user.name);
 
-	this.$.screenname.setContent('@' + user.screen_name);
-	this.$.username.setContent(user.name);
+	this.$.avatar.applyStyle('background-image', 'url(' + item.user.profile_image_url + ')');
 
-	this.$.avatar.applyStyle('background-image', 'url(' + user.profile_image_url + ')');
+	this.$.text.setContent(item.text);
 
-	this.$.text.setContent(this.item.text);
+	if (item.source) {
+		this.$.via.setClasses('via');
+		this.$.via.setContent('via: ' + item.source);
+	} else {
+		this.$.via.setClasses('hide');
+	}
+
+	/* Calculate the relative and absolute time */
+	this.$.relativeTime.setContent(item.created.toRelativeTime(1500));
+	this.$.absoluteTime.setContent(item.createdStr);
+
+	if (item.real) {
+		/* This was a RT, show the avatar and name of the person who RT'ed it */
+		this.$.tweet.addClass('rt');
+		this.$.rt.addClass('rt');
+
+		this.$.rtAvatar.setClasses('avatar');
+		this.$.rtByline.setClasses('byline');
+
+		this.$.rtAvatar.applyStyle('background-image', 'url(' + item.real.user.profile_image_url + ')');
+		this.$.rtByline.setContent('Retweeted by @' + item.real.user.screen_name);
+	} else {
+		this.$.tweet.removeClass('rt');
+		this.$.rt.removeClass('rt');
+
+		this.$.rtAvatar.setClasses('hide');
+		this.$.rtByline.setClasses('hide');
+	}
 }
 
 });

@@ -99,6 +99,10 @@
 	font-size:				12px;
 
 	padding:				3px 0px 0px 5px;
+
+	text-overflow:			ellipsis;
+	overflow:				hidden;
+	white-space:			nowrap;
 }
 
 .tweet .screenname {
@@ -144,6 +148,15 @@
 .showScreenName		.tweet .screenname,
 .showVia			.tweet .via {
 	display:				inline-block;
+}
+
+/* When showing both relative and absolute times wrap the absolute in parens */
+.showTimeRelative.showTimeAbsolute .tweet .time.absolute:before {
+	content:				" (";
+}
+
+.showTimeRelative.showTimeAbsolute .tweet .time.absolute:after {
+	content:				")";
 }
 
 

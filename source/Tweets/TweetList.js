@@ -32,12 +32,7 @@ create: function()
 {
 	this.inherited(arguments);
 
-	this.twitter	= new TwitterAPI(this.user);
-	this.dateFormat	= new enyo.g11n.DateFmt({
-		date:		'short',
-		time:		'short'
-	});
-
+	this.twitter = new TwitterAPI(this.user);
     this.createComponent({
 		name:									"list",
 		kind:									enyo.PulldownList,
@@ -133,6 +128,8 @@ rendered: function()
 
 	/* Load cached tweets */
 	var results = prefs.get('cachedtweets:' + this.user.user_id + ':' + this.resource) || [];
+
+	this.twitter.cleanupTweets(results);
 
 	// Testing... Remove the most recent entries from the cached results so that
 	// we can immediately load them again as if they where new.
@@ -322,19 +319,15 @@ itemTap: function(sender, event)
 setupItem: function(sender, event)
 {
 	var item	= this.results[event.index];
-	var real	= null;
-	var user	= null;
 	var d;
+
+	if (!item) {
+		return;
+	}
 
 	// TODO	Highlight entities
 	// TODO	Open links in a new window
 	// TODO	Render the details of real...
-	if (item.retweeted_status) {
-		real = item;
-		item = real.retweeted_status;
-	}
-
-	user = item.user || item.sender;
 
 	if (item.id_str && this.$.tweet.id_str === item.id_str) {
 		/* Already setup */
@@ -373,10 +366,10 @@ setupItem: function(sender, event)
 		this.$.tweet.addClass('favorite');
 	}
 
-	this.$.screenname.setContent('@' + user.screen_name);
-	this.$.username.setContent(user.name);
+	this.$.screenname.setContent('@' + item.user.screen_name);
+	this.$.username.setContent(item.user.name);
 
-	this.$.avatar.applyStyle('background-image', 'url(' + user.profile_image_url + ')');
+	this.$.avatar.applyStyle('background-image', 'url(' + item.user.profile_image_url + ')');
 
 	this.$.text.setContent(item.text);
 
@@ -388,14 +381,10 @@ setupItem: function(sender, event)
 	}
 
 	/* Calculate the relative and absolute time */
-	d = new Date(item.created_at);
+	this.$.relativeTime.setContent(item.created.toRelativeTime(1500));
+	this.$.absoluteTime.setContent(item.createdStr);
 
-	this.$.relativeTime.setContent(d.toRelativeTime(1500));
-	this.$.absoluteTime.setContent(this.dateFormat.format(d));
-
-	if (real) {
-		user = real.user || real.sender;
-
+	if (item.real) {
 		/* This was a RT, show the avatar and name of the person who RT'ed it */
 		this.$.tweet.addClass('rt');
 		this.$.rt.addClass('rt');
@@ -403,8 +392,8 @@ setupItem: function(sender, event)
 		this.$.rtAvatar.setClasses('avatar');
 		this.$.rtByline.setClasses('byline');
 
-		this.$.rtAvatar.applyStyle('background-image', 'url(' + user.profile_image_url + ')');
-		this.$.rtByline.setContent('Retweeted by @' + user.screen_name);
+		this.$.rtAvatar.applyStyle('background-image', 'url(' + item.real.user.profile_image_url + ')');
+		this.$.rtByline.setContent('Retweeted by @' + item.real.user.screen_name);
 	} else {
 		this.$.tweet.removeClass('rt');
 		this.$.rt.removeClass('rt');

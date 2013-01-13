@@ -15,6 +15,11 @@ var TwitterAPI = function(user) {
 	if (this.user) {
 		this.oauth.setAccessToken([ user.oauth_token, user.oauth_token_secret ]);
 	}
+
+	this.dateFormat	= new enyo.g11n.DateFmt({
+		date:		'short',
+		time:		'short'
+	});
 };
 
 TwitterAPI.prototype = {
@@ -99,12 +104,69 @@ TwitterAPI.prototype = {
 
 		this.oauth.get(this.buildURL(url, params),
 			function(response) {
-				cb(true, enyo.json.parse(response.text));
-			},
+				var results = enyo.json.parse(response.text);
+
+				this.cleanupTweets(results);
+				cb(true, results);
+			}.bind(this),
 			function(response) {
 				cb(false);
 			}
 		);
+	},
+
+	/* Cleanup the provided tweets */
+	cleanupTweets: function(tweets)
+	{
+		for (var i = 0, tweet; tweet = tweets[i]; i++) {
+			tweets[i] = this.cleanupTweet(tweet);
+		}
+	},
+
+	/* Cleanup the provided tweet */
+	cleanupTweet: function(tweet)
+	{
+		/*
+			If this is a RT then we want to act on the RT, not the actual tweet
+			in most cases.
+		*/
+		if (tweet.retweeted_status) {
+			var	real = tweet;
+
+			tweet = real.retweeted_status;
+			delete real.retweeted_status;
+			tweet.real = real;
+		}
+
+		/*
+			A DM has a sender, but all other tweets have a user. This is an
+			annoying inconsistency.
+		*/
+		if (tweet.sender) {
+			tweet.user = tweet.sender;
+			delete tweet.sender;
+		}
+
+		/* Store a date object, and a properly formated date string */
+		switch (typeof(tweet.created)) {
+			case "string":
+				tweet.created = new Date(tweet.created);
+				break;
+			case "object":
+				break;
+			default:
+				tweet.created = new Date(tweet.created_at);
+				delete tweet.created_at;
+				break;
+		}
+
+		if (tweet.created && !tweet.createdStr) {
+			tweet.createdStr = this.dateFormat.format(tweet.created);
+		}
+
+		// TODO	Go through entities and update the text based on what we find
+
+		return(tweet);
 	},
 
 	/*
