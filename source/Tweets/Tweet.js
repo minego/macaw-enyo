@@ -118,10 +118,6 @@ setupTweet: function(item)
 		return;
 	}
 
-	// TODO	Highlight entities
-	// TODO	Open links in a new window
-	// TODO	Render the details of real...
-
 	if (item.favorited) {
 		this.addClass('favorite');
 	}

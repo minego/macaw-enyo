@@ -34,8 +34,41 @@ create: function()
 
 handleTap: function(sender, event)
 {
-	// TODO	Handle tapping on various parts of the tweet...
-	this.log(sender);
+	// TODO	Implement a preview toaster instead of opening all links in a new
+	//		window
+
+	this.log(sender, event);
+
+	/*
+		An ID is set on links, mentions and hashtags to allow them to be
+		identified when tapped on.
+	*/
+	if (event.target) {
+		switch (event.target.id) {
+			case "link":
+				window.open(event.target.innerHTML, "_blank");
+				return;
+
+			case "user":
+				// TODO	Open a profile page for the user
+				this.log('TODO open profile for: ' + event.target.innerHTML);
+				return;
+
+			case "hashtag":
+				// TODO	Open a search for the hashtag
+				this.log('TODO search for hashtag: ' + event.target.innerHTML);
+				return;
+		}
+	}
+
+	/* A thumbnail node will have a link set with the original URL */
+	try {
+		window.open(event.originator.link, "_blank");
+		return;
+	} catch (e) {
+	}
+
+	// TODO	Handle taps on user names, screen names and avatars to open a profile
 }
 
 });
