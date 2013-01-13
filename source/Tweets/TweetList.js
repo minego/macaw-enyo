@@ -74,6 +74,15 @@ create: function()
 					name:				"text",
                     classes:            "text",
 					allowHtml:			true
+				},
+				{
+					name:				"time",
+					classes:			"time"
+				},
+				{
+					name:				"via",
+					classes:			"via",
+					allowHtml:			true
 				}
 			]
 		}, {
@@ -265,6 +274,7 @@ gotTweets: function(success, results)
 
 	prefs.set('cachedtweets:' + this.user.user_id + ':' + this.resource, cache);
 	this.loading = false;
+this.log(this.results);
 },
 
 itemTap: function(sender, event)
@@ -317,6 +327,10 @@ setupItem: function(sender, event)
 
 	this.$.tweet.setClasses('tweet');
 
+	if (item.favorited) {
+		this.$.tweet.addClass('favorite');
+	}
+
 	var user = item.user || item.sender;
 
 	this.$.screenname.setContent('@' + user.screen_name);
@@ -325,6 +339,7 @@ setupItem: function(sender, event)
 	this.$.avatar.applyStyle('background-image', 'url(' + user.profile_image_url + ')');
 
 	this.$.text.setContent(item.text);
+	this.$.via.setContent('via: ' + item.source);
 },
 
 smartscroll: function()

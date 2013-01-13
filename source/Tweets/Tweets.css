@@ -24,9 +24,16 @@
 	clear:					both;
 }
 
-.showAvatar .tweet {
-	/* Leave a space on the side for the avatar */
-	margin-left:			55px;
+.tweet *:link {
+	text-decoration:		none;
+	font-weight:			bold;
+	color:					#777;
+
+	max-width:				200px;
+	text-overflow:			ellipsis;
+	overflow:				hidden;
+	white-space:			nowrap;
+	display:				inline-block;
 }
 
 .fontSizeTiny .tweet {
@@ -44,6 +51,11 @@
 
 .tweet .avatar {
 	display:				none;
+}
+
+.showAvatar .tweet {
+	/* Leave a space on the side for the avatar */
+	margin-left:			55px;
 }
 
 .showAvatar .tweet .avatar {
@@ -67,18 +79,10 @@
 	display:				none;
 }
 
-.showScreenName .tweet .screenname {
-	display:				inline-block;
-}
-
 .tweet .username {
 	float:					right;
 	color:					#777;
 	display:				none;
-}
-
-.showUserName .tweet .username {
-	display:				inline-block;
 }
 
 .tweet .text {
@@ -89,6 +93,15 @@
 }
 
 .tweet .via {
+	float:					right;
+	color:					#777;
+	display:				none;
+}
+
+.showUserName	.tweet .username,
+.showScreenName	.tweet .screenname,
+.showVia		.tweet .via {
+	display:				inline-block;
 }
 
 

@@ -96,7 +96,7 @@ var prefs =
 			enyo.setCookie(name, enyo.json.stringify(value));
 		}
 
-		if (this.defaults[name]) {
+		if ('undefined' != typeof(this.defaults[name])) {
 			this.updateClasses();
 		}
 	},
