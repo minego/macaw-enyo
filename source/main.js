@@ -443,7 +443,7 @@ createAccount: function()
 	this.$.toasters.push({
 		kind:		"authorize",
 
-		onCancel:	"closeAllToasters",
+		onCancel:	"closeToaster",
 		onSuccess:	"accountCreated"
 	}, {
 		owner:		this,
@@ -460,7 +460,7 @@ deleteAllAccount: function()
 
 accountCreated: function(sender, event)
 {
-	this.closeAllToasters();
+	this.closeToaster();
 
 	this.users.push(event.account);
 	prefs.set('accounts', this.users);
@@ -468,7 +468,12 @@ accountCreated: function(sender, event)
 	this.createTabs();
 },
 
-closeAllToasters: function(sender, event)
+closeToaster: function()
+{
+	this.$.toasters.pop(1);
+},
+
+closeAllToasters: function()
 {
 	this.$.toasters.pop(this.$.toasters.getLength());
 },
@@ -502,13 +507,14 @@ handleButton: function(sender, event)
 		case "preferences":
 // TODO	Add an event to notify the main kind when an option changes
 			this.$.toasters.push({
-				kind:		"options",
+				kind:				"options",
 
-				onClose:	"closeAllToasters",
-				onChange:	"optionsChanged"
+				onClose:			"closeAllToasters",
+				onChange:			"optionsChanged",
+				onCreateAccount:	"createAccount"
 			}, {
-				owner:		this,
-				noscrim:	true
+				owner:				this,
+				noscrim:			true
 			});
 
 			break;

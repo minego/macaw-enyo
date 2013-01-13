@@ -43,8 +43,8 @@ var prefs =
 		showAvatar:			true,
 		showUserName:		true,
 		showScreenName:		true,
-		showTime:			true,
 		showVia:			false,
+		showTime:			"relative",
 
 		fontSize:			"tiny"
 	},

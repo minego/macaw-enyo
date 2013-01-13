@@ -19,7 +19,9 @@ name:												"options",
 classes:											"options",
 
 events: {
-	onChange:										""
+	onChange:										"",
+	onCreateAccount:								"",
+	onAccountsChanged:								""
 },
 
 components: [
@@ -36,14 +38,6 @@ components: [
 
 
 		components: [
-			{
-				components: [
-					{
-						content:					$L("Accounts"),
-						classes:					"title"
-					}
-				]
-			},
 			{
 				components: [
 					{
@@ -98,24 +92,42 @@ components: [
 
 					items: [
 						{
-							label:					"Show Avatar",
-							key:					"showAvatar"
+							label:					"Avatar",
+							key:					"showAvatar",
+
+							onContent:				"Show",
+							offContent:				"Hide"
 						},
 						{
-							label:					"Show Name",
-							key:					"showUserName"
+							label:					"Name",
+							key:					"showUserName",
+
+							onContent:				"Show",
+							offContent:				"Hide"
 						},
 						{
-							label:					"Show Handle",
-							key:					"showScreenName"
+							label:					"Handle",
+							key:					"showScreenName",
+
+							onContent:				"Show",
+							offContent:				"Hide"
 						},
 						{
-							label:					"Show Time",
-							key:					"showTime"
+							label:					"Time",
+							key:					"showTime",
+
+							options: [
+								{ label: "Relative",value: "relative"	},
+								{ label: "Absolute",value: "absolute"	},
+								{ label: "Hidden",	value: "hidden"		}
+							]
 						},
 						{
-							label:					"Show Client Name",
-							key:					"showVia"
+							label:					"Client Name",
+							key:					"showVia",
+
+							onContent:				"Show",
+							offContent:				"Hide"
 						}
 					]
 				}
@@ -138,6 +150,40 @@ components: [
 					}
 				]
 			},
+			{
+				components: [
+					{
+						content:					"Accounts",
+						classes:					"title"
+					},
+
+					{
+						content:					"New Account",
+						kind:						onyx.Button,
+						style:						"width: 100%;",
+						ontap:						"createAccount"
+					},
+
+					{
+						name:						"accounts"
+					},
+
+					{
+						kind:						onyx.MenuDecorator,
+
+						components: [
+							{
+								name:				"accountMenu",
+								onSelect:			"accountAction",
+								kind:				onyx.Menu,
+								components: [
+									{ content:		"Delete Account" }
+								]
+							}
+						]
+					}
+				]
+			},
 
 			{
 				components: [
@@ -155,6 +201,27 @@ create: function()
 {
 	this.inherited(arguments);
 
+	/*
+		Display the account list
+	*/
+	var accounts = prefs.get('accounts');
+
+	for (var i = 0, a; a = accounts[i]; i++) {
+		this.log(a);
+
+		this.$.accounts.createComponent({
+			content:			'@' + a.screen_name,
+			account:			a,
+			classes:			"account",
+
+			ontap:				"accountOptions"
+		}, { owner: this });
+	}
+
+	/*
+		Setup each panel that has a data object. This object is a meant as a
+		simple way to setup preferences.
+	*/
 	for (var p = 0, panel; panel = this.$.panels.controls[p]; p++) {
 		if (!panel.data) {
 			continue;
@@ -211,7 +278,10 @@ create: function()
 					kind:			onyx.ToggleButton,
 					value:			prefs.get(item.key),
 
-					onChange:		"toggleChanged"
+					onChange:		"toggleChanged",
+
+					onContent:		item.onContent  || "On",
+					offContent:		item.offContent || "Off"
 				});
 			}
 
@@ -221,6 +291,20 @@ create: function()
 			}, { owner: this });
 		}
 	}
+},
+
+accountOptions: function(sender, event)
+{
+	this.$.accountMenu.account = sender.account;
+
+	this.$.accountMenu.applyPosition(sender.getBounds);
+	this.$.accountMenu.show();
+},
+
+accountAction: function(sender, event)
+{
+	// TODO	Write me!
+	this.log('Delete account: ', sender, event, sender.account);
 },
 
 itemSelected: function(sender, event)
@@ -272,6 +356,12 @@ itemSelected: function(sender, event)
 toggleChanged: function(sender, event)
 {
 	prefs.set(sender.key, sender.getValue());
+},
+
+createAccount: function(sender, event)
+{
+	/* The main kind knows how to do this, so just send an event */
+	this.doCreateAccount({});
 }
 
 });
