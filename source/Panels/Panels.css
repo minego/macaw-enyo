@@ -1,0 +1,19 @@
+.enyo-panels {
+}
+
+.enyo-panels-fit-narrow {
+}
+
+@media all and (max-width: 640px) {
+	.SkinnyPanels.enyo-panels-fit-narrow > * {
+		min-width: 100%;
+		max-width: 100%;
+	}
+}
+
+@media all and (min-width: 641px) {
+	.SkinnyPanels.enyo-panels-fit-narrow > * {
+		min-width: auto !important;
+		max-width: auto !important;
+	}
+}

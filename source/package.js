@@ -5,6 +5,7 @@ enyo.depends(
     "$lib/webos-ext",
 
 	"webos",
+	"Panels",
 	"BackGesture.js",
 	"twitter.js",
 

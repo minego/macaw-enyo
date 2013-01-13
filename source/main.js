@@ -26,7 +26,7 @@ components: [
 		onbackbutton:						"back"
 	},
 	{
-		kind:								enyo.Panels,
+		kind:								SkinnyPanels,
 		name:								"panels",
 		classes:							"panels",
 		arrangerKind:						"CarouselArranger",
