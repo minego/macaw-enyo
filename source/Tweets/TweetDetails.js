@@ -16,32 +16,53 @@
 
 enyo.kind({
 
-name:										"TweetDetails",
-kind:										"Tweet",
+name:								"TweetDetails",
+classes:							"tweetdetails",
 
-classes:									"tweet tweetdetails",
-
-handlers: {
-	ontap:									"handleTap"
+published: {
+	item:							null,
+	user:							null,
+	twitter:						null
 },
+
+
+components: [
+	{
+		name:						"tweet",
+		kind:						"Tweet",
+
+		onTapUser:					"openProfile",
+		onTapHashTag:				"openHashTag",
+		onTapLink:					"openLink"
+	}
+],
 
 create: function()
 {
 	this.inherited(arguments);
 
+	this.$.tweet.setUser(this.user);
+	this.$.tweet.setTwitter(this.twitter);
+	this.$.tweet.setItem(this.item);
+
 	// TODO	Create the buttons and other needed bits
 },
 
-openProfile: function(user)
+openLink: function(sender, event)
 {
-	var name;
 
-	if (typeof(user) === "string") {
-		name = user;
-		user = null;
+	// TODO	Implement a preview toaster instead of opening all links in a new
+	//		window
 
-		// TODO	Load the user profile
-	} else {
+	window.open(event.url, "_blank");
+},
+
+openProfile: function(sender, event)
+{
+	var user	= event.user;
+	var name	= event.screenname;
+
+	if (user && !name) {
 		name = user.screen_name;
 	}
 
@@ -54,66 +75,15 @@ openProfile: function(user)
 	this.log('Show the profile of @' + name, user);
 },
 
-openHashTag: function(tag)
+openHashTag: function(sender, event)
 {
 	if ('#' == tag.charAt(0)) {
 		tag = tag.substr(1);
 	}
 
 	this.log('Show tweets with the #' + tag + ' hashtag');
-},
-
-handleTap: function(sender, event)
-{
-	var classes;
-
-	// TODO	Implement a preview toaster instead of opening all links in a new
-	//		window
-
-	/*
-		An ID is set on links, mentions and hashtags to allow them to be
-		identified when tapped on.
-	*/
-	if (event.target) {
-		switch (event.target.id) {
-			case "link":
-				window.open(event.target.innerHTML, "_blank");
-				return;
-
-			case "user":
-				this.openProfile(event.target.innerHTML);
-				return;
-
-			case "hashtag":
-				this.openHashTag(event.target.innerHTML);
-				return;
-		}
-	}
-
-	/* A thumbnail node will have a link set with the original URL */
-
-	try {
-		if (event.originator.link) {
-			window.open(event.originator.link, "_blank");
-			return;
-		}
-
-		classes = event.originator.classes.split(' ');
-	} catch (e) {
-		classes = [];
-	}
-
-	if (-1 != classes.indexOf("rtavatar") ||
-		-1 != classes.indexOf("byline")
-	) {
-		this.openProfile(this.item.real.user);
-	} else if (	-1 != classes.indexOf("avatar") ||
-				-1 != classes.indexOf("screenname") ||
-				-1 != classes.indexOf("username")
-	) {
-		this.openProfile(this.item.user);
-	}
 }
+
 
 });
 
