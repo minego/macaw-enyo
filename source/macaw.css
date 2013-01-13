@@ -10,6 +10,13 @@ body.Pre3 {
 	zoom:					150%;
 }
 
+/* Correct the behavior of the onyx scrim when used with our toasters */
+.onyx-scrim.onyx-scrim-translucent {
+	opacity:				0.5;
+	filter:					alpha(opacity=50);
+	z-index:				auto;
+}
+
 .hide {
 	display:				none;
 }
