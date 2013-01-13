@@ -1,0 +1,6 @@
+.panel {
+	background:				url(../assets/vertical-border.png) left bottom repeat-y,
+							black;
+
+	color:					white;
+}

@@ -52,6 +52,16 @@ components: [
 
 					items: [
 						{
+							label:					"Theme",
+							key:					"theme",
+
+							options: [
+								{ label: "Light",	value: "light"	},
+								{ label: "Dark",	value: "dark"	}
+							]
+						},
+
+						{
 							label:					"Font Size",
 							key:					"fontSize",
 

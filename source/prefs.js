@@ -28,6 +28,8 @@ var prefs =
 			{ "type": "search"		}
 		],
 
+		theme: "light",
+
 		/*
 			The order that toolbars should display. Either toolbar can be turned
 			off by replacing it's name with "-".
@@ -136,6 +138,22 @@ var prefs =
 		}
 
 		component.setClasses(classes.join(' '));
-console.log(component.getClasses());
+		console.log('User option classes: ' + component.getClasses());
+
+		/* Ensure that the correct theme stylesheet is loaded */
+		if (this.get('theme')) {
+			var e = document.createElement("link");
+
+			e.setAttribute("rel",	"stylesheet");
+			e.setAttribute("type",	"text/css");
+			e.setAttribute("href",	"assets/" + this.get('theme') + ".css");
+
+			if (this.themeElement) {
+				document.getElementsByTagName("head")[0].replaceChild(e, this.themeElement);
+			} else {
+				document.getElementsByTagName("head")[0].appendChild(e);
+			}
+			this.themeElement = e;
+		}
 	}
 };
