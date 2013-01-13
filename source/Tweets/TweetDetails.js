@@ -32,12 +32,43 @@ create: function()
 	// TODO	Create the buttons and other needed bits
 },
 
+openProfile: function(user)
+{
+	var name;
+
+	if (typeof(user) === "string") {
+		name = user;
+		user = null;
+
+		// TODO	Load the user profile
+	} else {
+		name = user.screen_name;
+	}
+
+	if (0 == name.indexOf(".@")) {
+		name = name.substr(2);
+	} else if ('@' == name.charAt(0)) {
+		name = name.substr(1);
+	}
+
+	this.log('Show the profile of @' + name, user);
+},
+
+openHashTag: function(tag)
+{
+	if ('#' == tag.charAt(0)) {
+		tag = tag.substr(1);
+	}
+
+	this.log('Show tweets with the #' + tag + ' hashtag');
+},
+
 handleTap: function(sender, event)
 {
+	var classes;
+
 	// TODO	Implement a preview toaster instead of opening all links in a new
 	//		window
-
-	this.log(sender, event);
 
 	/*
 		An ID is set on links, mentions and hashtags to allow them to be
@@ -50,25 +81,38 @@ handleTap: function(sender, event)
 				return;
 
 			case "user":
-				// TODO	Open a profile page for the user
-				this.log('TODO open profile for: ' + event.target.innerHTML);
+				this.openProfile(event.target.innerHTML);
 				return;
 
 			case "hashtag":
-				// TODO	Open a search for the hashtag
-				this.log('TODO search for hashtag: ' + event.target.innerHTML);
+				this.openHashTag(event.target.innerHTML);
 				return;
 		}
 	}
 
 	/* A thumbnail node will have a link set with the original URL */
+
 	try {
-		window.open(event.originator.link, "_blank");
-		return;
+		if (event.originator.link) {
+			window.open(event.originator.link, "_blank");
+			return;
+		}
+
+		classes = event.originator.classes.split(' ');
 	} catch (e) {
+		classes = [];
 	}
 
-	// TODO	Handle taps on user names, screen names and avatars to open a profile
+	if (-1 != classes.indexOf("rtavatar") ||
+		-1 != classes.indexOf("byline")
+	) {
+		this.openProfile(this.item.real.user);
+	} else if (	-1 != classes.indexOf("avatar") ||
+				-1 != classes.indexOf("screenname") ||
+				-1 != classes.indexOf("username")
+	) {
+		this.openProfile(this.item.user);
+	}
 }
 
 });

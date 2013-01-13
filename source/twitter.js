@@ -153,11 +153,6 @@ cleanupTweet: function(tweet)
 		tweet.source = tweet.source.replace('href="', 'href="#');
 	}
 
-	/* Generate a url that can be used to access this tweet directly */
-	if (!tweet.link) {
-		tweet.link = 'https://twitter.com/#!' + tweet.user.screen_name + '/status/' + tweet.id_str;
-	}
-
 	/*
 		A DM has a sender, but all other tweets have a user. This is an
 		annoying inconsistency.
@@ -165,6 +160,11 @@ cleanupTweet: function(tweet)
 	if (tweet.sender) {
 		tweet.user = tweet.sender;
 		delete tweet.sender;
+	}
+
+	/* Generate a url that can be used to access this tweet directly */
+	if (!tweet.link && tweet.user) {
+		tweet.link = 'https://twitter.com/#!' + tweet.user.screen_name + '/status/' + tweet.id_str;
 	}
 
 	/* Store a date object, and a properly formated date string */
@@ -187,9 +187,9 @@ cleanupTweet: function(tweet)
 	if (!tweet.stripped) {
 		tweet.stripped = tweet.text;
 
-		tweet.text = tweet.text.replace(/(^|\s)@(\w+)/g, "$1<span id='user' name='$2' class='link'>@$2</span>");
+		tweet.text = tweet.text.replace(/(^|\s)(@|\.@)(\w+)/g, "$1<span id='user' name='$2' class='link'>$2$3</span>");
 		tweet.text = tweet.text.replace(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g, "<span id='link' class='link'>$&</span>");
-		tweet.text = tweet.text.replace(/(^|\s)(#|.#)(\w+)/g, "$1<span id='hashtag' class='link'>#$2</span>");
+		tweet.text = tweet.text.replace(/(^|\s)#(\w+)/g, "$1<span id='hashtag' class='link'>#$2</span>");
 	}
 
 	/*

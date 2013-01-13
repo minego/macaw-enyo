@@ -145,7 +145,7 @@ setupTweet: function(item)
 		this.addClass('rt');
 		this.$.rt.addClass('rt');
 
-		this.$.rtAvatar.setClasses('avatar');
+		this.$.rtAvatar.setClasses('avatar rtavatar');
 		this.$.rtByline.setClasses('byline');
 
 		this.$.rtAvatar.applyStyle('background-image', 'url(' + item.real.user.profile_image_url + ')');

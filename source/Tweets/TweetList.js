@@ -34,30 +34,30 @@ create: function()
 
 	this.twitter = new TwitterAPI(this.user);
     this.createComponent({
-		name:									"list",
-		kind:									enyo.PulldownList,
-		classes:								"enyo-fit",
+		name:							"list",
+		kind:							enyo.PulldownList,
+		classes:						"enyo-fit",
 
-		ontap:									"itemTap",
-		onSetupItem:							"setupItem",
-		onPullRelease:							"pullRelease",
-		onPullComplete:							"pullComplete",
+		ontap:							"itemTap",
+		onSetupItem:					"setupItem",
+		onPullRelease:					"pullRelease",
+		onPullComplete:					"pullComplete",
 
-		horizontal:								"hidden",
-		vertical:								"scroll",
+		horizontal:						"hidden",
+		vertical:						"scroll",
 
-		thumb:									true,
-		enableSwipe:							false,
-		noSelect:								true,
+		thumb:							true,
+		enableSwipe:					false,
+		noSelect:						true,
 
-        rowsPerPage:							this.rowsPerPage,
+        rowsPerPage:					this.rowsPerPage,
 
 		components: [{
-			name:								"tweet",
-			kind:								"Tweet"
+			name:						"tweet",
+			kind:						"Tweet"
 		}, {
-			name:								"msg",
-			classes:							"hide"
+			name:						"msg",
+			classes:					"hide"
 		}]
 	}, { owner: this });
 },
