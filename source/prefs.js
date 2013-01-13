@@ -42,7 +42,7 @@ var prefs =
 		// layout: [ "tabs", "-" ],
 		// layout: [ "-", "-" ],
 
-		showAvatar:			true,
+		hideAvatar:			false,
 		showUserName:		true,
 		showScreenName:		true,
 		showVia:			false,

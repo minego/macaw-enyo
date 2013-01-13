@@ -17,133 +17,25 @@
 enyo.kind({
 
 name:										"TweetDetails",
+kind:										"Tweet",
 
-classes: [
-	"tweetdetails",
+classes:									"tweet tweetdetails",
 
-	/* Show all portions of the tweet in the details view */
-	"showAvatar",
-	"showTimeRelative",
-	"showTimeAbsolute",
-	"showUserName",
-	"showScreenName",
-	"showVia"
-].join(' '),
-
-
-published: {
-	user:									null,
-	item:									null,
-	twitter:								null
+handlers: {
+	ontap:									"handleTap"
 },
-
-components: [
-	{
-		name:								"tweet",
-		classes:							"tweet",
-		components: [
-			{
-				name:						"avatar",
-				classes:					"avatar"
-			},
-			{
-				name:						"screenname",
-				classes:					"screenname"
-			},
-			{
-				name:						"username",
-				classes:					"username"
-			},
-			{
-				tag:						"br"
-			},
-			{
-				name:						"text",
-				classes:					"text",
-				allowHtml:					true
-			},
-
-			{
-				name:						"rt",
-
-				components: [
-					{
-						name:				"rtAvatar",
-						classes:			"avatar"
-					},
-					{
-						classes:			"details",
-						components: [
-							{
-								name:		"relativeTime",
-								classes:	"time relative"
-							},
-							{
-								name:		"absoluteTime",
-								classes:	"time absolute"
-							},
-							{
-								name:		"via",
-								classes:	"via",
-								allowHtml:	true
-							}
-						]
-					},
-					{
-						name:				"rtByline",
-						classes:			"byline"
-					}
-				]
-			}
-		]
-	}
-],
 
 create: function()
 {
 	this.inherited(arguments);
 
-	var item = this.item;
+	// TODO	Create the buttons and other needed bits
+},
 
-	if (!this.twitter) {
-		this.twitter = new TwitterAPI(this.user);
-	}
-
-	this.$.screenname.setContent('@' + item.user.screen_name);
-	this.$.username.setContent(item.user.name);
-
-	this.$.avatar.applyStyle('background-image', 'url(' + item.user.profile_image_url + ')');
-
-	this.$.text.setContent(item.text);
-
-	if (item.source) {
-		this.$.via.setClasses('via');
-		this.$.via.setContent('via: ' + item.source);
-	} else {
-		this.$.via.setClasses('hide');
-	}
-
-	/* Calculate the relative and absolute time */
-	this.$.relativeTime.setContent(item.created.toRelativeTime(1500));
-	this.$.absoluteTime.setContent(item.createdStr);
-
-	if (item.real) {
-		/* This was a RT, show the avatar and name of the person who RT'ed it */
-		this.$.tweet.addClass('rt');
-		this.$.rt.addClass('rt');
-
-		this.$.rtAvatar.setClasses('avatar');
-		this.$.rtByline.setClasses('byline');
-
-		this.$.rtAvatar.applyStyle('background-image', 'url(' + item.real.user.profile_image_url + ')');
-		this.$.rtByline.setContent('Retweeted by @' + item.real.user.screen_name);
-	} else {
-		this.$.tweet.removeClass('rt');
-		this.$.rt.removeClass('rt');
-
-		this.$.rtAvatar.setClasses('hide');
-		this.$.rtByline.setClasses('hide');
-	}
+handleTap: function(sender, event)
+{
+	// TODO	Handle tapping on various parts of the tweet...
+	this.log(sender);
 }
 
 });

@@ -103,10 +103,11 @@ components: [
 					items: [
 						{
 							label:					"Avatar",
-							key:					"showAvatar",
+							key:					"hideAvatar",
 
 							onContent:				"Show",
-							offContent:				"Hide"
+							offContent:				"Hide",
+							negate:					true
 						},
 						{
 							label:					"Name",
@@ -282,11 +283,11 @@ create: function()
 			} else {
 				components.push({
 					name:			item.key,
-					key:			item.key,
+					item:			item,
 
 					classes:		"value",
 					kind:			onyx.ToggleButton,
-					value:			prefs.get(item.key),
+					value:			item.negate ? !prefs.get(item.key) : prefs.get(item.key),
 
 					onChange:		"toggleChanged",
 
@@ -365,7 +366,7 @@ itemSelected: function(sender, event)
 
 toggleChanged: function(sender, event)
 {
-	prefs.set(sender.key, sender.getValue());
+	prefs.set(sender.item.key, sender.item.negate ? !sender.getValue() : sender.getValue());
 },
 
 createAccount: function(sender, event)
