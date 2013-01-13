@@ -31,7 +31,12 @@ components: [
 create: function()
 {
 	this.inherited(arguments);
-	this.twitter = new TwitterAPI(this.user);
+
+	this.twitter	= new TwitterAPI(this.user);
+	this.dateFormat	= new enyo.g11n.DateFmt({
+		date:		'short',
+		time:		'short'
+	});
 
     this.createComponent({
 		name:									"list",
@@ -88,8 +93,12 @@ create: function()
 							classes:			"details",
 							components: [
 								{
-									name:		"time",
-									classes:	"time"
+									name:		"relativeTime",
+									classes:	"time relative"
+								},
+								{
+									name:		"absoluteTime",
+									classes:	"time absolute"
 								},
 								{
 									name:		"via",
@@ -315,7 +324,7 @@ setupItem: function(sender, event)
 	var item	= this.results[event.index];
 	var real	= null;
 	var user	= null;
-
+	var d;
 
 	// TODO	Highlight entities
 	// TODO	Open links in a new window
@@ -369,9 +378,20 @@ setupItem: function(sender, event)
 
 	this.$.avatar.applyStyle('background-image', 'url(' + user.profile_image_url + ')');
 
-	// TODO	Style the tweet...
 	this.$.text.setContent(item.text);
-	this.$.via.setContent('via: ' + item.source);
+
+	if (item.source) {
+		this.$.via.setClasses('via');
+		this.$.via.setContent('via: ' + item.source);
+	} else {
+		this.$.via.setClasses('hide');
+	}
+
+	/* Calculate the relative and absolute time */
+	d = new Date(item.created_at);
+
+	this.$.relativeTime.setContent(d.toRelativeTime(1500));
+	this.$.absoluteTime.setContent(this.dateFormat.format(d));
 
 	if (real) {
 		user = real.user || real.sender;

@@ -42,10 +42,6 @@
 	font-size:				18px;
 }
 
-.tweet .avatar {
-	display:				none;
-}
-
 .showAvatar .tweet {
 	/* Leave a space on the side for the avatar */
 	margin-left:			55px;
@@ -61,8 +57,6 @@
 }
 
 .showAvatar .tweet .avatar {
-	display:				block;
-
 	-webkit-border-radius:	5px;
 	border-radius:			5px;
 
@@ -110,13 +104,11 @@
 .tweet .screenname {
 	float:					left;
 	color:					#777;
-	display:				none;
 }
 
 .tweet .username {
 	float:					right;
 	color:					#777;
-	display:				none;
 }
 
 .tweet .rt,
@@ -125,16 +117,32 @@
 }
 
 .tweet .time {
+	padding-right:			5px;
 }
 
 .tweet .via {
 	color:					#777;
+}
+
+/*
+	Each of these items can be toggled using a user option. If the option is
+	enabled then the relevant class will be set on the main kind.
+*/
+.tweet .avatar,
+.tweet .time.relative,
+.tweet .time.absolute,
+.tweet .username,
+.tweet .screenname,
+.tweet .via {
 	display:				none;
 }
 
-.showUserName	.tweet .username,
-.showScreenName	.tweet .screenname,
-.showVia		.tweet .via {
+.showAvatar			.tweet .avatar,
+.showTimeRelative	.tweet .time.relative,
+.showTimeAbsolute	.tweet .time.absolute,
+.showUserName		.tweet .username,
+.showScreenName		.tweet .screenname,
+.showVia			.tweet .via {
 	display:				inline-block;
 }
 

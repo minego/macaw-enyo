@@ -1,6 +1,7 @@
 enyo.depends(
 	"$lib/layout",
 	"$lib/onyx",
+	"$lib/g11n",
 	"$lib/jsOAuth",
     "$lib/webos-ext",
 
@@ -8,6 +9,7 @@ enyo.depends(
 	"Panels",
 	"BackGesture.js",
 	"twitter.js",
+	"Date.js",
 
 	"toasters",
 	"compose",
