@@ -1,0 +1,49 @@
+.options {
+	height:				230px;
+
+	font-size:			14px;
+}
+
+.options .section {
+	width:				250px;
+	padding:			10px;
+	background:			url(../../assets/vertical-border.png) left bottom repeat-y;
+}
+
+.options .option {
+	margin:				6px 5px 6px 5px;
+}
+
+.options .title {
+	font-size:			18px;
+	font-weight:		bold;
+	text-transform:		uppercase;
+
+	height:				25px;
+}
+
+.options .label {
+	display:			inline-block;
+
+	height:				32px;
+	line-height:		32px;
+
+	clear:				both;
+}
+
+.options .value {
+	display:			inline-block;
+	float:				right;
+
+	height:				32px;
+	line-height:		32px;
+}
+
+.options .button {
+	height:				32px;
+	line-height:		32px;
+	padding:			0px;
+
+	width:				76px;
+}
+

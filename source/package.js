@@ -11,6 +11,7 @@ enyo.depends(
 	"toasters",
 	"compose",
 	"authorize",
+	"options",
 	"Tweets",
 
 	"macaw.css",

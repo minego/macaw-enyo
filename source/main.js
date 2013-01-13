@@ -41,13 +41,15 @@ components: [
 		layoutKind:							"FittableColumnsLayout",
 		components: [
 			{
-					classes:				"options button",
-					ontap:					"options",
-					name:					"options"
+				classes:					"options button",
+				name:						"options",
+				cmd:						"options",
+				ontap:						"handleButton"
 			},
 			{
-					classes:				"refresh button",
-					ontap:					"refresh"
+				classes:					"refresh button",
+				cmd:						"refresh",
+				ontap:						"handleButton"
 			},
 			{
 				content:					'',
@@ -56,8 +58,9 @@ components: [
 				fit:						true
 			},
 			{
+				cmd:						"compose",
 				classes:					"compose button",
-				ontap:						"composeHandler"
+				ontap:						"handleButton"
 			}
 		]
 	},
@@ -84,19 +87,28 @@ components: [
 		components: [
 			{
 				content:					$L("Refresh"),
+				cmd:						"refresh",
 				ontap:						"refresh"
 			},
 			{
 				content:					$L("Compose"),
-				ontap:						"composeHandler"
+				cmd:						"compose",
+				ontap:						"handleButton"
 			},
 			{
 				content:					$L("Create Account"),
-				ontap:						"createAccount"
+				cmd:						"createAccount",
+				ontap:						"handleButton"
 			},
 			{
 				content:					$L("Delete all account"),
-				ontap:						"deleteAllAccount"
+				cmd:						"deleteAllAccounts",
+				ontap:						"handleButton"
+			},
+			{
+				content:					$L("Preferences"),
+				cmd:						"preferences",
+				ontap:						"handleButton"
 			}
 		]
 	},
@@ -124,6 +136,16 @@ devType: "", /* Blank for just about everything, or webOSPhone for a webOS phone
 create: function()
 {
 	this.inherited(arguments);
+
+	/*
+		Set classes on the main kind based on the user's preferences. A class
+		will automatically be set for any true boolean, and for each string
+		value.
+
+		The preferences toaster will update these classes when an option changes
+		which is enough to handle many options.
+	*/
+	prefs.updateClasses(this);
 
 	this.users		= prefs.get('accounts');
 	this.tabs		= [];
@@ -222,12 +244,22 @@ create: function()
 			s = null;
 		}
 
+		if (s == '~') {
+			this.$.appmenu.toggle();
+			return;
+		}
+
 		// TODO	Possibly allow binding of actions to keystrokes?
 		if (s) {
 			/* Open the compose toaster with this string */
 			this.compose({ text: s });
 		}
 	}.bind(this), false);
+},
+
+rendered: function()
+{
+	this.inherited(arguments);
 },
 
 clearError: function()
@@ -241,8 +273,7 @@ clearError: function()
 // TODO	When called remove any tabs that already exist
 createTabs: function()
 {
-	this.barlayout	= prefs.get('layout');
-	this.tabs		= prefs.get('tabs');
+	this.tabs		= prefs.get('panels');
 	this.tabWidth	= 100 / this.tabs.length;
 
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
@@ -325,12 +356,19 @@ createTabs: function()
 	/* Set a title */
 	this.$.title.setContent('@' + user.screen_name);
 
-	this.barLayoutChanged();
+	this.toolbarsChanged();
 },
 
-barLayoutChanged: function()
+optionsChanged: function(sender, event)
 {
-	var classes = [ 'topbar', 'bottombar' ];
+	this.toolbarsChanged();
+},
+
+toolbarsChanged: function()
+{
+	var classes		= [ 'topbar', 'bottombar' ];
+	var toolbar		= prefs.get('toolbar');
+	var tabs		= prefs.get('tabs');
 
 	/* Reset */
 	for (var i = 0, c; c = classes[i]; i++) {
@@ -338,33 +376,21 @@ barLayoutChanged: function()
 		this.$.toolbar.removeClass(c);
 	}
 
-	/*
-		Set a class of "top", "bottom", or "hide" on the tabbar, toolbar and
-		indicator based on the layout.
-	*/
-	for (var i = 0, c; this.barlayout[i] && (c = classes[i]); i++) {
-		switch (this.barlayout[i]) {
-			case "tabs":
-				this.$.tabbar.addClass(c);
-				break;
-
-			case "toolbar":
-				this.$.toolbar.addClass(c);
-				break;
-		}
-	}
+	/* Set a class of "topbar" or "bottombar"  based on the layout.  */
+	this.$.tabbar.addClass(tabs + "bar");
+	this.$.toolbar.addClass(toolbar + "bar");
 
 	/*
 		Setting the proper padding on the main panels to adjust for the height
 		of the bars on top and/or bottom.
 	*/
-	if ("-" === this.barlayout[0]) {
+	if (toolbar != "top" && tabs != "top") {
 		this.$.panels.removeClass("padtop");
 	} else {
 		this.$.panels.addClass("padtop");
 	}
 
-	if ("-" === this.barlayout[1]) {
+	if (toolbar != "bottom" && tabs != "bottom") {
 		this.$.panels.removeClass("padbottom");
 	} else {
 		this.$.panels.addClass("padbottom");
@@ -372,29 +398,8 @@ barLayoutChanged: function()
 
 	/* Force the panels to notice the resize */
 	this.$.panels.resized();
-},
-
-// TODO	Remove this, just for testing
-nextLayout: function()
-{
-	var layouts = [
-		[ "toolbar", "tabs" ],
-		[ "tabs", "toolbar" ],
-		[ "-", "toolbar" ],
-		[ "toolbar", "-" ],
-		[ "-", "tabs" ],
-		[ "tabs", "-" ],
-		[ "-", "-" ]
-	];
-
-	if (isNaN(this.layoutindex)) {
-		this.layoutindex = 0;
-	}
-	this.layoutindex++;
-
-	this.barlayout = layouts[this.layoutindex % layouts.length];
-	this.barLayoutChanged();
-	ex("Try this layout: " + this.barlayout);
+	this.$.toolbar.resized();
+	this.$.tabbar.resized();
 },
 
 selectpanel: function(sender, event)
@@ -409,11 +414,6 @@ selectpanel: function(sender, event)
 smartscroll: function(sender, event)
 {
 	this.$['panel' + sender.index].smartscroll();
-},
-
-composeHandler: function(sender, event)
-{
-	this.compose();
 },
 
 compose: function(options)
@@ -447,7 +447,8 @@ createAccount: function()
 		onSuccess:	"accountCreated"
 	}, {
 		owner:		this,
-		nobg:		true
+		nobg:		true,
+		noscrim:	true
 	});
 },
 
@@ -472,22 +473,50 @@ closeAllToasters: function(sender, event)
 	this.$.toasters.pop(this.$.toasters.getLength());
 },
 
-options: function(sender, event)
+handleButton: function(sender, event)
 {
-	this.$.appmenu.toggle();
-},
+	switch (sender.cmd) {
+		case "options":
+			this.$.appmenu.toggle();
+			break;
 
-refresh: function(sender, event)
-{
-	for (var t = 0, tab; tab = this.tabs[t]; t++) {
-		this.$['panel' + t].refresh();
+		case "refresh":
+			for (var t = 0, tab; tab = this.tabs[t]; t++) {
+				this.$['panel' + t].refresh();
+			}
+			break;
+
+		case "compose":
+			this.compose();
+			break;
+
+		case "createAccount":
+			this.createAccount();
+			break;
+
+		case "deleteAllAccounts":
+			this.users = [];
+			prefs.set('accounts', []);
+			break;
+
+		case "preferences":
+// TODO	Add an event to notify the main kind when an option changes
+			this.$.toasters.push({
+				kind:		"options",
+
+				onClose:	"closeAllToasters",
+				onChange:	"optionsChanged"
+			}, {
+				owner:		this,
+				noscrim:	true
+			});
+
+			break;
 	}
 },
 
 back: function(sender, event)
 {
-	// TODO	This is just debug
-	this.nextLayout();
 },
 
 moveIndicator: function(sender, event)

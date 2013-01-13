@@ -16,9 +16,6 @@
 	*/
 	position:				relative;
 
-	/* Leave a space on the side for the avatar */
-	margin-left:			55px;
-
 	padding:				5px;
 	min-height:				55px;
 	background-position:	5px 5px;
@@ -27,7 +24,31 @@
 	clear:					both;
 }
 
+.showAvatar .tweet {
+	/* Leave a space on the side for the avatar */
+	margin-left:			55px;
+}
+
+.fontSizeTiny .tweet {
+	font-size:				12px;
+}
+.fontSizeSmall .tweet {
+	font-size:				14px;
+}
+.fontSizeMedium .tweet {
+	font-size:				16px;
+}
+.fontSizeLarge .tweet {
+	font-size:				18px;
+}
+
 .tweet .avatar {
+	display:				none;
+}
+
+.showAvatar .tweet .avatar {
+	display:				block;
+
 	-webkit-border-radius:	5px;
 	border-radius:			5px;
 
@@ -43,12 +64,20 @@
 .tweet .screenname {
 	float:					left;
 	color:					#777;
+	display:				none;
+}
+
+.showScreenName .tweet .screenname {
 	display:				inline-block;
 }
 
 .tweet .username {
 	float:					right;
 	color:					#777;
+	display:				none;
+}
+
+.showUserName .tweet .username {
 	display:				inline-block;
 }
 

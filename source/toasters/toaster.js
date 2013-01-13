@@ -178,21 +178,19 @@ pop: function(count)
 	if (this.items.length) {
 		this.showTopToaster();
 	} else {
-		/* The toaster's ZIndex is 300 */
-		this.$.scrim.hideAtZIndex(299);
+		this.$.scrim.hide();
 	}
 },
 
 showTopToaster: function()
 {
-	/* The toaster's ZIndex is 300 */
-	this.$.scrim.hideAtZIndex(299);
+	this.$.scrim.hide();
 
 	if (this.items.length) {
 		var		toaster	= this.items[this.items.length - 1];
 
 		if (toaster.options.noscrim) {
-			this.$.scrim.hideAtZIndex(299);
+			this.$.scrim.hide();
 		} else {
 			if (toaster.options.transparent) {
 				this.$.scrim.setClasses("onyx-scrim-transparent");
@@ -200,7 +198,7 @@ showTopToaster: function()
 				this.$.scrim.setClasses("onyx-scrim-translucent");
 			}
 
-			this.$.scrim.showAtZIndex(299);
+			this.$.scrim.show();
 		}
 
 		toaster.addClass('show');

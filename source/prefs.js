@@ -19,7 +19,7 @@ var prefs =
 	defaults: {
 		accounts: [],
 
-		tabs: [
+		panels: [
 			{ "type": "timeline"	},
 			{ "type": "mentions"	},
 			{ "type": "messages"	},
@@ -32,13 +32,21 @@ var prefs =
 			The order that toolbars should display. Either toolbar can be turned
 			off by replacing it's name with "-".
 		*/
-		layout: [ "toolbar", "tabs" ]
-		// layout: [ "tabs", "toolbar" ]
-		// layout: [ "-", "toolbar" ]
-		// layout: [ "toolbar", "-" ]
-		// layout: [ "-", "tabs" ]
-		// layout: [ "tabs", "-" ]
-		// layout: [ "-", "-" ]
+		layout: [ "toolbar", "tabs" ],
+		// layout: [ "tabs", "toolbar" ],
+		// layout: [ "-", "toolbar" ],
+		// layout: [ "toolbar", "-" ],
+		// layout: [ "-", "tabs" ],
+		// layout: [ "tabs", "-" ],
+		// layout: [ "-", "-" ],
+
+		showAvatar:			true,
+		showUserName:		true,
+		showScreenName:		true,
+		showTime:			true,
+		showVia:			false,
+
+		fontSize:			"tiny"
 	},
 
 	get: function get(name, account)
@@ -68,7 +76,7 @@ var prefs =
 			result = null;
 		}
 
-		if (!result) {
+		if (result == null) {
 			result = this.defaults[key];
 		}
 
@@ -87,5 +95,47 @@ var prefs =
 		} else {
 			enyo.setCookie(name, enyo.json.stringify(value));
 		}
+
+		if (this.defaults[name]) {
+			this.updateClasses();
+		}
+	},
+
+	/* Add a class based on the name of each boolean option if enabled */
+	updateClasses: function(component)
+	{
+		var value;
+		var classes	= [];
+
+		if (component) {
+			/* Remember the component for future calls */
+			this.component = component;
+		} else {
+			/* Use the remembered component */
+			component = this.component;
+		}
+
+		if (!component) {
+			return;
+		}
+
+		for (var key in this.defaults) {
+			switch (typeof(this.defaults[key])) {
+				case "boolean":
+					if (this.get(key)) {
+						classes.push(key);
+					}
+					break;
+
+				case "string":
+					if ((value = this.get(key))) {
+						classes.push(key + enyo.cap(value));
+					}
+					break;
+			}
+		}
+
+		component.setClasses(classes.join(' '));
+console.log(component.getClasses());
 	}
 };
