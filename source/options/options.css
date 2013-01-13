@@ -41,6 +41,8 @@
 
 	height:				32px;
 	line-height:		32px;
+
+	width:				100px;
 }
 
 .options .button {
@@ -48,6 +50,6 @@
 	line-height:		32px;
 	padding:			0px;
 
-	width:				76px;
+	width:				100px;
 }
 
