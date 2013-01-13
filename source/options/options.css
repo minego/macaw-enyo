@@ -6,7 +6,7 @@
 
 .options .section {
 	width:				250px;
-	padding:			10px;
+	padding:			5px 10px 0px 10px;
 	background:			url(../../assets/vertical-border.png) left bottom repeat-y;
 }
 

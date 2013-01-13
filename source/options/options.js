@@ -26,12 +26,14 @@ components: [
 	{
 		kind:										enyo.Panels,
 		name:										"panels",
-		classes:									"enyo-fit options",
 		arrangerKind:								"CarouselArranger",
 		narrowFit:									false,
 		wrap:										false,
 
-		controlClasses:								"section",
+		classes:									"enyo-fit options",
+		controlClasses:								"enyo-fit section",
+		defaultKind:								enyo.Scroller,
+
 
 		components: [
 			{
@@ -92,8 +94,7 @@ components: [
 
 			{
 				data: {
-					// Appearance 2, hide the title bar...
-					// title:						"Appearance",
+					title:							"Timeline",
 
 					items: [
 						{
