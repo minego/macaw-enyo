@@ -16,6 +16,12 @@
 	padding:				0;
 }
 
+.compose .messageto {
+	margin:					3px 0px 3px 7px;
+	font-size:				14px;
+	font-weight:			bold;
+}
+
 /*
 	Prevent showing an annoying border when the field is selected. Of course it
 	is selected... It is the only field.

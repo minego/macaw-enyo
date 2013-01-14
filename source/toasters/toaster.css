@@ -63,3 +63,9 @@
 	display:				block !important;
 }
 
+.toaster .controls {
+	height:					34px;
+	width:					100%;
+	background:				url('../../assets/toaster-controls.png') left top repeat-x;
+	padding:				15px 0px;
+}

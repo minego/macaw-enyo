@@ -136,6 +136,10 @@ cleanupTweets: function(tweets)
 */
 cleanupTweet: function(tweet)
 {
+	if (tweet.sender_id) {
+		tweet.dm = true;
+	}
+
 	/*
 		If this is a RT then we want to act on the RT, not the actual tweet
 		in most cases.
@@ -330,6 +334,7 @@ sendTweet: function(resource, cb, params)
 
 		case 'message':
 			url += 'direct_messages/new';
+			break;
 
 		default:
 			console.log('sendTweet does not yet support: ' + resource);
@@ -342,7 +347,7 @@ sendTweet: function(resource, cb, params)
 			cb(true, enyo.json.parse(response.text));
 		},
 		function(response) {
-			cb(false);
+			cb(false, enyo.json.parse(response.text));
 		}
 	);
 },

@@ -20,6 +20,11 @@ enyo.kind({
 
 name:										"net.minego.macaw.main",
 
+handlers: {
+	onCloseToaster:							"closeToaster",
+	onReply:								"compose"
+},
+
 components: [
 	{
 		kind:								enyo.Signals,
@@ -98,11 +103,6 @@ components: [
 			{
 				content:					$L("Create Account"),
 				cmd:						"createAccount",
-				ontap:						"handleButton"
-			},
-			{
-				content:					$L("Delete all account"),
-				cmd:						"deleteAllAccounts",
 				ontap:						"handleButton"
 			},
 			{
@@ -252,7 +252,7 @@ create: function()
 		// TODO	Possibly allow binding of actions to keystrokes?
 		if (s) {
 			/* Open the compose toaster with this string */
-			this.compose({ text: s });
+			this.compose(this, { text: s });
 		}
 	}.bind(this), false);
 },
@@ -416,20 +416,17 @@ smartscroll: function(sender, event)
 	this.$['panel' + sender.index].smartscroll();
 },
 
-compose: function(options)
+compose: function(sender, options)
 {
 	options = options || {};
 
 	options.kind		= "compose";
 	options.user		= this.users[0];
-	options.onCancel	= "closeAllToasters";
-	options.onSent		= "closeAllToasters";
 
 	if (!this.users || !this.users.length) {
 		return;
 	}
 
-	this.$.toasters.pop(this.$.toasters.getLength());
 	this.$.toasters.push(options, {
 		owner:		this,
 		noscrim:	true,
@@ -450,12 +447,6 @@ createAccount: function()
 		nobg:		true,
 		noscrim:	true
 	});
-},
-
-deleteAllAccount: function()
-{
-	this.users = [];
-	prefs.set('accounts', []);
 },
 
 accountCreated: function(sender, event)
@@ -492,16 +483,11 @@ handleButton: function(sender, event)
 			break;
 
 		case "compose":
-			this.compose();
+			this.compose(this, {});
 			break;
 
 		case "createAccount":
 			this.createAccount();
-			break;
-
-		case "deleteAllAccounts":
-			this.users = [];
-			prefs.set('accounts', []);
 			break;
 
 		case "preferences":

@@ -1,6 +1,6 @@
 enyo.depends(
-	"Tweet.js",
-	"TweetList.js",
-	"TweetDetails.js",
-	"Tweets.css"
+	"tweet.js",
+	"list.js",
+	"details.js",
+	"tweets.css"
 );

@@ -19,15 +19,22 @@ name:							"compose",
 classes:						"compose",
 
 events: {
-	onCancel:					"",
-	onSent:						""
+	onCloseToaster:				""
 },
 
 published: {
-	text:						""
+	text:						"",
+	replyto:					null,
+	user:						null,
+	twitter:					null
 },
 
+// TODO	Add a button/menu/whatever to select the account to send from
 components: [
+	{
+		name:					"messageto",
+		classes:				"messageto"
+	},
 	{
 		name:					"txt",
 		classes:				"txt",
@@ -72,21 +79,70 @@ components: [
 create: function()
 {
 	this.inherited(arguments);
-	this.twitter = new TwitterAPI(this.user);
 
-	this.$.txt.setContent('');
+	if (this.user && !this.twitter) {
+		this.twitter = new TwitterAPI(this.user);
+	}
+
+	this.$.txt.setValue('');
+	this.$.txt.moveCursorToEnd();
 },
 
 textChanged: function()
 {
-	this.$.txt.setContent(this.text);
+	this.$.txt.setValue(this.text);
+	this.$.txt.moveCursorToEnd();
 },
 
 rendered: function(sender, event)
 {
-	this.change();
-
 	this.inherited(arguments);
+
+	if (this.replyto) {
+		if (!this.replyto.dm) {
+			var offset		= 0;
+			var mentions	= [];
+			var sel;
+			var range;
+			var node;
+
+			if (this.replyto.user) {
+				if (!this.user || this.replyto.user.screen_name !== this.user.screen_name) {
+					mentions.push('@' + this.replyto.user.screen_name);
+				}
+				offset = mentions[0].length + 1;
+			}
+
+			if (this.replyto.entities) {
+				for (var i = 0, m; m = this.replyto.entities.user_mentions[i]; i++) {
+					if (!this.user || m.screen_name !== this.user.screen_name) {
+						mentions.push('@' + m.screen_name);
+					}
+				}
+			}
+
+			this.$.txt.setValue(mentions.join(' ') + ' ');
+			this.$.txt.moveCursorToEnd();
+
+			/* Highlight all mentions except the person being replied to */
+			if (mentions.length > 1 &&
+				(node = this.$.txt.hasNode()) &&
+				(sel = this.$.txt.getSelection())
+			) {
+				range = document.createRange();
+
+				range.setStart(node.firstChild, offset);
+				range.setEndAfter(node.lastChild);
+
+				sel.removeAllRanges();
+				sel.addRange(range);
+			}
+		} else {
+			this.$.messageto.setContent('Message to: @' + this.replyto.user.screen_name);
+		}
+	}
+
+	this.change();
 },
 
 change: function(sender, event)
@@ -104,28 +160,48 @@ change: function(sender, event)
 
 cancel: function(sender, event)
 {
-	this.doCancel({});
+	this.doCloseToaster();
 },
 
 send: function(sender, event)
 {
+	var resource	= 'update';
+	var params		= {};
 	var node;
-	var value;
 
 	if ((node = this.$.txt.hasNode())) {
-		value = node.innerText.trim();
+		params.status	= node.innerText.trim();
 	} else {
-		value = '';
+		params.status	= '';
 	}
 
-	// TODO	Add support for DMs, replies, etc
+	if (this.replyto) {
+		if (this.replyto.dm) {
+			resource		= 'message';
+
+			/* Don't send a DM to yourself... */
+			if (this.replyto.user.id_str !== this.user.id) {
+				params.user_id = this.replyto.user.id_str;
+			} else {
+				params.user_id = this.replyto.recipient.id_str;
+			}
+			params.text		= params.status;
+
+			delete params.status;
+		} else {
+			params.in_reply_to_status_id = this.replyto.id_str;
+		}
+	}
 
 	/* Actually send it */
-	this.twitter.sendTweet('update', function() {
-		this.doSent({ text: value });
-	}.bind(this), {
-		status:		value
-	});
+	this.twitter.sendTweet(resource, function(success, response) {
+		if (success) {
+			this.doCloseToaster();
+		} else {
+			// TODO	Show more detail here
+			ex('Failed to send');
+		}
+	}.bind(this), params);
 }
 
 });

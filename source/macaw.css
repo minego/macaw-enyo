@@ -18,7 +18,12 @@ body.Pre3 {
 }
 
 .hide {
-	display:				none;
+	display:				none !important;
+}
+
+.center {
+	margin-left:			auto;
+	margin-right:			auto;
 }
 
 .error {
@@ -178,19 +183,40 @@ body.Pre3 {
 	color:					white;
 }
 
-.toolbar .compose {
+.compose.button {
 	background:				url(../assets/icons/compose.png)	center center no-repeat;
 }
-.toolbar .options {
+.options.button {
 	background:				url(../assets/icons/opts.png)		center center no-repeat;
 }
-.toolbar .refresh {
+.refresh.button {
 	background:				url(../assets/icons/refresh.png)	center center no-repeat;
 }
+.back.button {
+	background:				url(../assets/icons/back.png)		center center no-repeat;
+}
+.reply.button {
+	background:				url(../assets/icons/reply.png)		center center no-repeat;
+}
+.retweet.button {
+	background:				url(../assets/icons/retweet.png)	center center no-repeat;
+}
+.favorite.button {
+	background:				url(../assets/icons/favorite.png)	center center no-repeat;
+}
+.favorite.button.active {
+	background:				url(../assets/icons/favorite-active.png)
+																center center no-repeat;
+}
+.convo.button {
+	background:				url(../assets/icons/convo.png)		center center no-repeat;
+}
 
-.toolbar .button {
+.button {
 	width:					48px;
 	height:					100%;
 	background-position:	center center;
+
+	display:				inline-block;
 }
 

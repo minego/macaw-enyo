@@ -217,7 +217,6 @@ handleTap: function(sender, event)
 	}
 
 	/* A thumbnail node will have a link set with the original URL */
-
 	try {
 		if (event.originator.link) {
 			this.doTapLink({ url: event.originator.link });
@@ -229,15 +228,17 @@ handleTap: function(sender, event)
 		classes = [];
 	}
 
-	if (-1 != classes.indexOf("rtavatar") ||
-		-1 != classes.indexOf("byline")
-	) {
-		this.doTapUser({ user: this.item.real.user });
-	} else if (	-1 != classes.indexOf("avatar") ||
-				-1 != classes.indexOf("screenname") ||
-				-1 != classes.indexOf("username")
-	) {
-		this.doTapUser({ user: this.item.user });
+	if (this.item) {
+		if (-1 != classes.indexOf("rtavatar") ||
+			-1 != classes.indexOf("byline")
+		) {
+			this.doTapUser({ user: this.item.real.user });
+		} else if (	-1 != classes.indexOf("avatar") ||
+					-1 != classes.indexOf("screenname") ||
+					-1 != classes.indexOf("username")
+		) {
+			this.doTapUser({ user: this.item.user });
+		}
 	}
 }
 
