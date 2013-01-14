@@ -27,6 +27,8 @@ deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
 
 all: ${DEPLOY}
 
+full: clean release install
+
 init:
 	@git submodule init
 	@git submodule update
