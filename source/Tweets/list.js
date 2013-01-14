@@ -25,6 +25,11 @@ published: {
     rowsPerPage:                        50 /* This is supposed to be overridden by webOSPhoneTweetList below... */
 },
 
+events: {
+	onRefreshStart:						"",
+	onRefreshStop:						""
+},
+
 components: [
 ],
 
@@ -82,6 +87,9 @@ rendered: function()
 	// results.splice(0, 5);
 
 	if (results && results.length) {
+		this.loading = true;
+		this.doRefreshStart();
+
 		this.log('Loaded ' + results.length + ' tweets from the cache', this.resource);
 		this.gotTweets(true, results);
 	} else {
@@ -113,8 +121,8 @@ refresh: function()
 		return;
 	}
 
-	// TODO	Add a visual indicator that this panel is refreshing..
 	this.loading = true;
+	this.doRefreshStart();
 
 	var params = {
 		include_entities:		true
@@ -166,6 +174,7 @@ gotTweets: function(success, results)
 
 		ex("Refresh failed");
 		this.loading = false;
+		this.doRefreshStop();
 		return;
 	}
 
@@ -246,7 +255,7 @@ gotTweets: function(success, results)
 
 	prefs.set('cachedtweets:' + this.user.user_id + ':' + this.resource, cache);
 	this.loading = false;
-this.log(this.results);
+	this.doRefreshStop();
 },
 
 itemTap: function(sender, event)

@@ -155,6 +155,20 @@ body.Pre3 {
 	transition:				left .25s;
 }
 
+@-webkit-keyframes Spin {
+	from {
+		-webkit-transform:	rotate(0deg);
+	}
+
+	to {
+		-webkit-transform:	rotate(360deg);
+	}
+}
+
+.spin {
+	-webkit-animation:		Spin 1s linear infinite;
+}
+
 .tab-timeline {
 	background:				url(../assets/icons/tweets.png)		center center no-repeat;
 }

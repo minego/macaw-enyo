@@ -318,19 +318,24 @@ createTabs: function()
 		}
 
 		this.$.panels.createComponent({
-			layoutKind:				"FittableRowsLayout",
+			layoutKind:						"FittableRowsLayout",
 			components: [{
-				classes:			"panel",
-				fit:				true,
+				classes:					"panel",
+				fit:						true,
 
 				components: [
 					{
-						name:		"panel" + t,
-						kind:		this.devType + "TweetList",
-						classes:	"tweetlist",
+						name:				"panel" + t,
+						index:				t,
 
-						user:		user,
-						resource:	tab.type
+						kind:				this.devType + "TweetList",
+						classes:			"tweetlist",
+
+						user:				user,
+						resource:			tab.type,
+
+						onRefreshStart:		"panelRefreshStart",
+						onRefreshStop:		"panelRefreshStop"
 					}
 				]
 			}]
@@ -343,6 +348,7 @@ createTabs: function()
 		var icon;
 
 		tabs.push({
+			name:			"tab" + t,
 			classes:		"tab tab-" + tab.type.toLowerCase(),
 			style:			"width: " + this.tabWidth + "%;",
 
@@ -357,6 +363,18 @@ createTabs: function()
 	this.$.title.setContent('@' + user.screen_name);
 
 	this.toolbarsChanged();
+},
+
+panelRefreshStart: function(sender, event)
+{
+	this.$["tab" + sender.index].addClass("spin");
+	this.log("Spinning : tab" + sender.index);
+},
+
+panelRefreshStop: function(sender, event)
+{
+	this.$["tab" + sender.index].removeClass("spin");
+	this.log("Unspinning : tab" + sender.index);
 },
 
 optionsChanged: function(sender, event)

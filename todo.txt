@@ -42,7 +42,8 @@
 	- Set notification options for each tab
 
 - Finish styling and implement some nice themes
-- Show a visual indication of a refresh
+- Show a visual indication of a refresh when the tab bar is hidden. Currently
+  the icons on the tab bar spin while refreshing.
 - Tweet auto-splitter
 
 + Missing panels
