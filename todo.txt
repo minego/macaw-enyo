@@ -1,15 +1,53 @@
-- Fix alignment of buttons on tweet details toaster
-- Allow selecting an account to send from on the compose toaster
-- Implement remaining buttons on details toaster (retweet, delete, favorite, convo)
++ Tweet Details
+	- Center the icons
+	+ Implement retweet
+		- RT
+		- Edit
+	- Implement delete
+	- Implement favorite
+	- Implement convo
+	+ Implement the options menu
+		- Reply
+		- Send DM
+		+ Share
+			- Copy Text
+			- Copy URL (show list)
+			- Other share options (likely platform specific)
+		- Block
+		- Report Spam
+		- Hide
+
++ Compose
+	- Allow choosing an account with a menu/button/whatever (and default
+	  correctly when replying).
+	+ Implement missing buttons
+		- Attach image
+		- Location
+		- Link...
+		- Emoji
+		- Compose in new card/window?
+
 - Implement a profile toaster
+- Create a preview toaster instead of always opening images in a new window
 - Include sent DMs in the DM panel
-- Implement filters
-- Allow customizing tabs (most of the framework is there)
++ Implement filters
+	- Display list of filters in options panel
+	- Hide tweets that match a filter. Can be applied in either the list kind or
+	  in the twitter helper.
+
++ Custom Tabs
+	- Display list of tabs in options panel
+	- Allow adding/deleting
+	- Set account for each tab
+	- Set refresh options for each tab
+	- Set notification options for each tab
+
 - Finish styling and implement some nice themes
-- Notifications
-- Auto refresh (should be configurable per tab)
 - Show a visual indication of a refresh
 - Tweet auto-splitter
-- Search panel
-- List panel
+
++ Missing panels
+	- Search
+	- List
+	- User tweets
 
