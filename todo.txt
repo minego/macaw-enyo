@@ -1,5 +1,4 @@
 + Tweet Details
-	- Center the icons
 	+ Implement retweet
 		- RT
 		- Edit
