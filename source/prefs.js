@@ -23,9 +23,7 @@ var prefs =
 			{ "type": "timeline"	},
 			{ "type": "mentions"	},
 			{ "type": "messages"	},
-			{ "type": "favorites"	},
-			{ "type": "lists"		},
-			{ "type": "search"		}
+			{ "type": "favorites"	}
 		],
 
 		theme: "light",
