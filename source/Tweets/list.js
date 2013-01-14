@@ -229,6 +229,20 @@ gotTweets: function(success, results)
 	}
 
 	this.results = results.concat(this.results);
+
+	/*
+		Flush any old results to keep the total number of loaded tweets sane.
+
+		Twitter will never return more than 200 results, so keep a few extra for
+		context.
+	*/
+	// TODO	We need to implement loading gaps, and allow loading tweets below
+	//		the loaded timeline. In those cases this is obviously not the
+	//		correct check to do.
+	if (this.results.length > 205) {
+		this.results.splice(0, 205);
+	}
+
 	this.$.list.setCount(this.results.length);
 
 	this.$.list.refresh();

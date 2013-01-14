@@ -1,3 +1,7 @@
++ Timelines
+	- Load gaps
+	- Load older tweets below timeline
+
 + Tweet Details
 	+ Implement retweet
 		- RT
