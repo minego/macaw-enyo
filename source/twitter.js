@@ -80,11 +80,18 @@ authorize: function(cb, params, pin)
 */
 getTweets: function(resource, cb, params)
 {
-	var url	= this.apibase + '/' + this.version + '/';
+	var url		= this.apibase + '/' + this.version + '/';
+	var plural	= true;
 
 	switch (resource) {
 		case 'timeline':
 			url += 'statuses/home_timeline';
+			break;
+
+		case 'show':
+			/* Show a single tweet, requires an "id" in params */
+			url += 'statuses/show';
+			plural = false;
 			break;
 
 		case 'mentions':
@@ -109,9 +116,14 @@ getTweets: function(resource, cb, params)
 		function(response) {
 			var results = enyo.json.parse(response.text);
 
-			this.cleanupTweets(results);
+			if (plural) {
+				this.cleanupTweets(results);
+			} else {
+				this.cleanupTweet(results);
+			}
 			cb(true, results);
 		}.bind(this),
+
 		function(response) {
 			cb(false);
 		}

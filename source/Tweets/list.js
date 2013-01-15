@@ -298,10 +298,6 @@ setupItem: function(sender, event)
 		return;
 	}
 
-	// TODO	Highlight entities
-	// TODO	Open links in a new window
-	// TODO	Render the details of real...
-
 	if (item.id_str && this.$.tweet.id_str === item.id_str) {
 		/* Already setup */
 		return;
@@ -337,6 +333,8 @@ setupItem: function(sender, event)
 
 	if (item.favorited) {
 		this.$.tweet.addClass('favorite');
+	} else {
+		this.$.tweet.removeClass('favorite');
 	}
 
 	this.$.tweet.setupTweet(item);

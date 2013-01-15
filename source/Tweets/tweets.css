@@ -46,6 +46,11 @@
 	font-size:				18px;
 }
 
+.tweetconvo {
+	min-height:				100px;
+	max-height:				80%;
+}
+
 /* Tweet details shows at least medium size, but may be large as well */
 .tweetdetails {
 	font-size:				16px;

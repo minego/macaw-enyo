@@ -31,7 +31,8 @@ handlers: {
 
 events: {
 	onCloseToaster:					"",
-	onReply:						""
+	onCompose:						"",
+	onConversation:					""
 },
 
 components: [
@@ -189,7 +190,7 @@ handleTap: function(sender, event)
 
 		case "reply":
 			/* Let the main kind open the compose toaster */
-			this.doReply({
+			this.doCompose({
 				replyto:	this.item,
 				user:		this.user,
 				twitter:	this.twitter
@@ -197,12 +198,23 @@ handleTap: function(sender, event)
 			break;
 
 		case "retweet":
+			// TODO	Make the proper twitter request, and then send an event
+			//		to the list so that it can update it's data for the item and
+			//		save the updated one in the cache if needed.
 			break;
 
 		case "favorite":
+			// TODO	Make the proper twitter request, and then send an event
+			//		to the list so that it can update it's data for the item and
+			//		save the updated one in the cache if needed.
 			break;
 
 		case "convo":
+			this.doConversation({
+				item:		this.item,
+				user:		this.user,
+				twitter:	this.twitter
+			});
 			break;
 
 		case "delete":

@@ -19,7 +19,8 @@ name:										"net.minego.macaw.main",
 
 handlers: {
 	onCloseToaster:							"closeToaster",
-	onReply:								"compose"
+	onCompose:								"compose",
+	onConversation:							"conversation"
 },
 
 components: [
@@ -437,9 +438,9 @@ compose: function(sender, options)
 	options = options || {};
 
 	options.kind		= "compose";
-	options.user		= this.users[0];
+	options.user		= options.user || this.users[0];
 
-	if (!this.users || !this.users.length) {
+	if (!options.user) {
 		return;
 	}
 
@@ -448,6 +449,22 @@ compose: function(sender, options)
 		noscrim:	true,
 		nobg:		true,
 		modal:		true
+	});
+},
+
+conversation: function(sender, options)
+{
+	options = options || {};
+
+	options.kind		= "TweetConvo";
+	options.user		= options.user || this.users[0];
+
+	if (!options.user) {
+		return;
+	}
+
+	this.$.toasters.push(options, {
+		owner:		this
 	});
 },
 
