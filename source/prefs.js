@@ -42,7 +42,7 @@ defaults: {
 
 ready: function(cb)
 {
-	if (chrome && chrome.storage) {
+	if (typeof(chrome) !== "undefined" && chrome.storage) {
 		/* Load all local and remote settings before continuing */
 		chrome.storage.local.get(null, function(items) {
 			this.local = items;
@@ -69,7 +69,7 @@ get: function get(name, account)
 		name += account.id;
 	}
 
-	if (chrome && chrome.storage) {
+	if (typeof(chrome) !== "undefined" && chrome.storage) {
 		/* Chrome storage is synced at load time */
 		if ('undefined' != typeof(this.local[key])) {
 			result = this.local[key];
@@ -107,7 +107,7 @@ set: function set(name, value, account)
 		name += account.id;
 	}
 
-	if (chrome && chrome.storage) {
+	if (typeof(chrome) !== "undefined" && chrome.storage) {
 		var data = {};
 
 		data[name] = value;

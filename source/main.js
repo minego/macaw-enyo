@@ -558,7 +558,7 @@ onload = function()
 		platforms that do not properly support setting an onload function
 		including webOS.
 	*/
-	if (chrome && chrome.storage) {
+	if (typeof(chrome) !== "undefined" && chrome.storage) {
 		try {
 			prefs.ready(function() {
 				new net.minego.macaw.main().renderInto(document.body);
