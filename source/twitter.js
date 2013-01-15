@@ -5,7 +5,7 @@ var TwitterAPI = function(user) {
 	this.version		= '1.1';
 	this.user			= user;
 
-	if (chrome) {
+	if (typeof(chrome) !== "undefined") {
 		/* Macaw for chrome */
 		this.options = {
 			consumerKey:	'hrdhei7FCruo8edNskXvmA',
