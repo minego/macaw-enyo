@@ -29,12 +29,5 @@
 		"notifications",
 		"clipboardRead",
 		"clipboardWrite"
-	],
-
-	"notsandbox": {
-		"pages": [
-			"index.html",
-			"debug.html"
-		]
-	}
+	]
 }
