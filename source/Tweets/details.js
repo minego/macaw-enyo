@@ -17,7 +17,17 @@
 enyo.kind({
 
 name:								"TweetDetails",
-classes:							"tweetdetails",
+
+/* Show all fields in the detail toaster */
+classes: [
+	"tweetDetails",
+
+	"showTimeRelative",
+	"showTimeAbsolute",
+	"showUserName",
+	"showScreenName",
+	"showVia"
+].join(' '),
 
 published: {
 	item:							null,
