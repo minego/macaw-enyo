@@ -13,9 +13,6 @@
 	OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-var ex;
-var global	= { };
-
 enyo.kind({
 
 name:										"net.minego.macaw.main",
@@ -98,11 +95,6 @@ components: [
 			{
 				content:					$L("Compose"),
 				cmd:						"compose",
-				ontap:						"handleButton"
-			},
-			{
-				content:					$L("Create Account"),
-				cmd:						"createAccount",
 				ontap:						"handleButton"
 			},
 			{
@@ -462,8 +454,7 @@ createAccount: function()
 		onSuccess:	"accountCreated"
 	}, {
 		owner:		this,
-		nobg:		true,
-		noscrim:	true
+		nobg:		true
 	});
 },
 
@@ -504,12 +495,7 @@ handleButton: function(sender, event)
 			this.compose(this, {});
 			break;
 
-		case "createAccount":
-			this.createAccount();
-			break;
-
 		case "preferences":
-// TODO	Add an event to notify the main kind when an option changes
 			this.$.toasters.push({
 				kind:				"options",
 
@@ -517,8 +503,7 @@ handleButton: function(sender, event)
 				onChange:			"optionsChanged",
 				onCreateAccount:	"createAccount"
 			}, {
-				owner:				this,
-				noscrim:			true
+				owner:				this
 			});
 
 			break;
@@ -536,3 +521,19 @@ moveIndicator: function(sender, event)
 }
 
 });
+
+
+var ex;
+var global	= { };
+onload = function()
+{
+	try {
+		prefs.ready(function() {
+			new net.minego.macaw.main().renderInto(document.body);
+		});
+	} catch (e) {
+		location = 'debug.html';
+	}
+};
+
+

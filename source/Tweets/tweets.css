@@ -20,8 +20,7 @@
 
 .tweet *:link,
 .tweet *:visited,
-.tweet *:active,
-.tweet *:hover {
+.tweet *:active {
 	text-decoration:		none;
 	font-weight:			bold;
 	color:					#777;

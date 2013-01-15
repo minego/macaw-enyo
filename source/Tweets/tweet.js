@@ -122,6 +122,50 @@ itemChanged: function()
 	}
 },
 
+getRelativeTime: function(date, now_threshold)
+{
+	var delta = new Date() - date;
+
+	now_threshold = parseInt(now_threshold, 10);
+
+	if (isNaN(now_threshold)) {
+		now_threshold = 0;
+	}
+
+	if (delta <= now_threshold) {
+		return 'Just now';
+	}
+
+	var units = null;
+	var conversions = {
+		ms:		1,		// ms    -> ms
+		sec:	1000,   // ms    -> sec
+		min:	60,     // sec   -> min
+		hr:		60,     // min   -> hour
+		day:	24,     // hour  -> day
+		mo:		30,     // day   -> month (roughly)
+		yr:		12      // month -> year
+	};
+
+	for (var key in conversions) {
+		if (delta < conversions[key]) {
+			break;
+		} else {
+			units = key; // keeps track of the selected key over the iteration
+			delta = delta / conversions[key];
+		}
+	}
+
+	// pluralize a unit when the difference is greater than 1.
+	delta = Math.floor(delta);
+
+	if (delta !== 1 && (units == "day" || units == "mo" || units == "hr" || units == "yr")) {
+		units += "s";
+	}
+
+	return [delta, units, "ago"].join(" ");
+},
+
 setupTweet: function(item)
 {
 	if (!item) {
@@ -147,7 +191,7 @@ setupTweet: function(item)
 	}
 
 	/* Calculate the relative and absolute time */
-	this.$.relativeTime.setContent(item.created.toRelativeTime(1500));
+	this.$.relativeTime.setContent(this.getRelativeTime(item.created, 1500));
 	this.$.absoluteTime.setContent(item.createdStr);
 
 	if (item.real) {

@@ -16,56 +16,73 @@
 
 var prefs =
 {
-	defaults: {
-		accounts: [],
 
-		panels: [
-			{ "type": "timeline"	},
-			{ "type": "mentions"	},
-			{ "type": "messages"	},
-			{ "type": "favorites"	}
-		],
+defaults: {
+	accounts: [],
 
-		theme: "light",
+	panels: [
+		{ "type": "timeline"	},
+		{ "type": "mentions"	},
+		{ "type": "messages"	},
+		{ "type": "favorites"	}
+	],
 
-		/*
-			The order that toolbars should display. Either toolbar can be turned
-			off by replacing it's name with "-".
-		*/
-		layout: [ "toolbar", "tabs" ],
-		// layout: [ "tabs", "toolbar" ],
-		// layout: [ "-", "toolbar" ],
-		// layout: [ "toolbar", "-" ],
-		// layout: [ "-", "tabs" ],
-		// layout: [ "tabs", "-" ],
-		// layout: [ "-", "-" ],
+	theme:				"light",
+	toolbar:			"top",
+	tabs:				"bottom",
 
-		hideAvatar:			false,
-		showUserName:		true,
-		showScreenName:		true,
-		showVia:			false,
-		showTime:			"relative",
+	hideAvatar:			false,
+	showUserName:		true,
+	showScreenName:		true,
+	showVia:			false,
+	showTime:			"relative",
 
-		fontSize:			"tiny"
-	},
+	fontSize:			"tiny"
+},
 
-	get: function get(name, account)
-	{
-		var key		= name;
-		var result	= null;
-		var json;
+ready: function(cb)
+{
+	if (chrome && chrome.storage) {
+		/* Load all local and remote settings before continuing */
+		chrome.storage.local.get(null, function(items) {
+			this.local = items;
 
-		if (account) {
-			name += account.id;
+			chrome.storage.sync.get(null, function(items) {
+				this.sync = items;
+
+				cb();
+			}.bind(this));
+		}.bind(this));
+	} else {
+		/* Other storage mechanisms are already ready */
+		cb();
+	}
+},
+
+get: function get(name, account)
+{
+	var key		= name;
+	var result	= null;
+	var json	= null;
+
+	if (account) {
+		name += account.id;
+	}
+
+	if (chrome && chrome.storage) {
+		/* Chrome storage is synced at load time */
+		if ('undefined' != typeof(this.local[key])) {
+			result = this.local[key];
+		} else if ('undefined' != typeof(this.sync[key])) {
+			result = this.sync[key];
 		}
+	} else if (window.localStorage) {
+		json = window.localStorage.getItem(name);
+	} else {
+		json = enyo.getCookie(name);
+	}
 
-		/* Load the recent domain list */
-		if (window.localStorage) {
-			json = window.localStorage.getItem(name);
-		} else {
-			json = enyo.getCookie(name);
-		}
-
+	if (!result) {
 		try {
 			if (json) {
 				result = enyo.json.parse(json);
@@ -75,83 +92,95 @@ var prefs =
 		} catch(e) {
 			result = null;
 		}
+	}
 
-		if (result == null) {
-			result = this.defaults[key];
-		}
+	if (result == null) {
+		result = this.defaults[key];
+	}
 
-		return(result);
-	},
+	return(result);
+},
 
-	set: function set(name, value, account)
-	{
-		if (account) {
-			name += account.id;
-		}
+set: function set(name, value, account)
+{
+	if (account) {
+		name += account.id;
+	}
 
-		if (window.localStorage) {
-			window.localStorage.setItem(name,
-				enyo.json.stringify(value));
-		} else {
-			enyo.setCookie(name, enyo.json.stringify(value));
-		}
+	if (chrome && chrome.storage) {
+		var data = {};
+
+		data[name] = value;
 
 		if ('undefined' != typeof(this.defaults[name])) {
-			this.updateClasses();
-		}
-	},
-
-	/* Add a class based on the name of each boolean option if enabled */
-	updateClasses: function(component)
-	{
-		var value;
-		var classes	= [];
-
-		if (component) {
-			/* Remember the component for future calls */
-			this.component = component;
+			chrome.storage.sync.set(data);
 		} else {
-			/* Use the remembered component */
-			component = this.component;
+			chrome.storage.local.set(data);
 		}
+	} else if (window.localStorage) {
+		window.localStorage.setItem(name,
+			enyo.json.stringify(value));
+	} else {
+		enyo.setCookie(name, enyo.json.stringify(value));
+	}
 
-		if (!component) {
-			return;
-		}
+	if ('undefined' != typeof(this.defaults[name])) {
+		this.updateClasses();
+	}
+},
 
-		for (var key in this.defaults) {
-			switch (typeof(this.defaults[key])) {
-				case "boolean":
-					if (this.get(key)) {
-						classes.push(key);
-					}
-					break;
+/* Add a class based on the name of each boolean option if enabled */
+updateClasses: function(component)
+{
+	var value;
+	var classes	= [];
 
-				case "string":
-					if ((value = this.get(key))) {
-						classes.push(key + enyo.cap(value));
-					}
-					break;
-			}
-		}
+	if (component) {
+		/* Remember the component for future calls */
+		this.component = component;
+	} else {
+		/* Use the remembered component */
+		component = this.component;
+	}
 
-		component.setClasses(classes.join(' '));
-		console.log('User option classes: ' + component.getClasses());
+	if (!component) {
+		return;
+	}
 
-		/* Ensure that the correct theme stylesheet is loaded */
-		if (this.get('theme')) {
-			var e = document.createElement("link");
+	for (var key in this.defaults) {
+		switch (typeof(this.defaults[key])) {
+			case "boolean":
+				if (this.get(key)) {
+					classes.push(key);
+				}
+				break;
 
-			e.setAttribute("rel",	"stylesheet");
-			e.setAttribute("type",	"text/css");
-			e.setAttribute("href",	"assets/" + this.get('theme') + ".css");
-
-			if (this.themeElement) {
-				document.getElementsByTagName("head")[0].replaceChild(e, this.themeElement);
-			} else {
-				document.getElementsByTagName("head")[0].appendChild(e);
-			}
-			this.themeElement = e;
+			case "string":
+				if ((value = this.get(key))) {
+					classes.push(key + enyo.cap(value));
+				}
+				break;
 		}
 	}
+
+	component.setClasses(classes.join(' '));
+	console.log('User option classes: ' + component.getClasses());
+
+	/* Ensure that the correct theme stylesheet is loaded */
+	if (this.get('theme')) {
+		var e = document.createElement("link");
+
+		e.setAttribute("rel",	"stylesheet");
+		e.setAttribute("type",	"text/css");
+		e.setAttribute("href",	"assets/" + this.get('theme') + ".css");
+
+		if (this.themeElement) {
+			document.getElementsByTagName("head")[0].replaceChild(e, this.themeElement);
+		} else {
+			document.getElementsByTagName("head")[0].appendChild(e);
+		}
+		this.themeElement = e;
+	}
+}
+
 };

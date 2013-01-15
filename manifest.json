@@ -1,0 +1,40 @@
+{
+	"name":				"Macaw",
+	"description":		"An open source twitter client",
+	"version":			"0.0.1",
+	"manifest_version":	2,
+
+	"icons": {
+		"512":			"icon512.png",
+		"256":			"icon256.png",
+		"128":			"icon128.png",
+		"64":			"icon64.png",
+		"32":			"icon32.png",
+		"48":			"icon48.png",
+		"24":			"icon24.png"
+	},
+
+	"app": {
+		"launch": {
+			"local_path": "debug.html"
+		}
+	},
+
+	"permissions": [
+		"https://twitter.com/",
+		"https://api.twitter.com/",
+
+		"geolocation",
+		"storage",
+		"notifications",
+		"clipboardRead",
+		"clipboardWrite"
+	],
+
+	"notsandbox": {
+		"pages": [
+			"index.html",
+			"debug.html"
+		]
+	}
+}

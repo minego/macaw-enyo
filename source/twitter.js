@@ -176,11 +176,8 @@ cleanupTweet: function(tweet)
 		case "string":
 			tweet.created = new Date(tweet.created);
 			break;
-		case "object":
-			break;
 		default:
 			tweet.created = new Date(tweet.created_at);
-			delete tweet.created_at;
 			break;
 	}
 
