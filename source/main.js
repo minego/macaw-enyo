@@ -367,13 +367,13 @@ createTabs: function()
 panelRefreshStart: function(sender, event)
 {
 	this.$["tab" + sender.index].addClass("spin");
-	this.log("Spinning : tab" + sender.index);
 },
 
 panelRefreshStop: function(sender, event)
 {
-	this.$["tab" + sender.index].removeClass("spin");
-	this.log("Unspinning : tab" + sender.index);
+	setTimeout(function() {
+		this.$["tab" + sender.index].removeClass("spin");
+	}.bind(this), 1000);
 },
 
 optionsChanged: function(sender, event)
