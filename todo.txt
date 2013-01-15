@@ -20,6 +20,9 @@
 		- Hide
 
 + Compose
+	- When replying to a RT add a (selected by default) mention for the person
+	  that RT'ed it.
+	- Auto complete user names
 	- Allow choosing an account with a menu/button/whatever (and default
 	  correctly when replying).
 	+ Implement missing buttons

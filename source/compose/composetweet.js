@@ -121,6 +121,24 @@ rendered: function(sender, event)
 				}
 			}
 
+			/* When replying to a RT include the person that RT'ed it. */
+			if (this.replyto.real) {
+				mentions.push('@' + this.replyto.real.user.screen_name);
+			}
+
+			/* Remove any duplicate mentions */
+			for (var i = mentions.length - 1, m; m = mentions[i]; i--) {
+				if (mentions.indexOf(m) < i) {
+					mentions.splice(i, 1);
+				}
+			}
+
+			/* Don't mention yourself */
+			var i;
+			while (-1 != (i = mentions.indexOf('@' + this.user.scren_name))) {
+				mentions.splice(i, 1);
+			}
+
 			this.$.txt.setValue(mentions.join(' ') + ' ');
 			this.$.txt.moveCursorToEnd();
 
