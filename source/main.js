@@ -545,17 +545,27 @@ moveIndicator: function(sender, event)
 
 });
 
-
 var ex;
 var global	= { };
+
 onload = function()
 {
-	try {
-		prefs.ready(function() {
-			new net.minego.macaw.main().renderInto(document.body);
-		});
-	} catch (e) {
-		location = 'debug.html';
+	/*
+		Packaged chrome apps can not run inline javascript in the html document
+		so we need to initialize here in that case.
+
+		We still require initialization in the html documents for other
+		platforms that do not properly support setting an onload function
+		including webOS.
+	*/
+	if (chrome && chrome.storage) {
+		try {
+			prefs.ready(function() {
+				new net.minego.macaw.main().renderInto(document.body);
+			});
+		} catch (e) {
+			location = 'debug.html';
+		}
 	}
 };
 
