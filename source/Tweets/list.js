@@ -189,6 +189,7 @@ gotTweets: function(success, results)
 		times will return older items than we asked for too. If the new results
 		have any items that match existing items then we have no gap.
 	*/
+	var match = true;
 	this.log(this.resource, 'Pre-gap  detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
 	if (this.results.length > 0 && results.length > 0) {
 		for (var n = 0, ni; ni = results[n]; n++) {
