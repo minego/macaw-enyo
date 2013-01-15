@@ -240,7 +240,7 @@ gotTweets: function(success, results)
 	//		the loaded timeline. In those cases this is obviously not the
 	//		correct check to do.
 	if (this.results.length > 205) {
-		this.results.splice(0, 205);
+		this.results.splice(205);
 	}
 
 	this.$.list.setCount(this.results.length);
