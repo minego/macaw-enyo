@@ -161,10 +161,14 @@ refresh: function()
 
 gotTweets: function(success, results)
 {
+	var		changed	= false;
+
 	/* Remove the previous newcount indicator */
 	if (this.newcount) {
 		this.results.splice(this.newcount, 1);
 		this.newcount = null;
+
+		changed = true;
 	}
 
 	if (!success) {
@@ -181,34 +185,31 @@ gotTweets: function(success, results)
 	/*
 		Gap detection
 
-		The results may include up to 5 overlapping tweets.
+		We asked for 5 overlapping items to try to detect gaps, but twitter at
+		times will return older items than we asked for too. If the new results
+		have any items that match existing items then we have no gap.
 	*/
+	this.log(this.resource, 'Pre-gap  detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
 	if (this.results.length > 0 && results.length > 0) {
-		var ot, nt;
-		var match = false;
-
-		for (var o = 0; o < 5; o++) {
-			var ot = this.results[o];
-
-			for (var n = 1; n <= 5; n++) {
-				var nt = results[results.length - n];
-
-				if (nt.id_str == ot.id_str) {
+		for (var n = 0, ni; ni = results[n]; n++) {
+			for (var o = 0, oi; oi = this.results[o]; o++) {
+				if (ni.id_str === oi.id_str) {
+					/* We found a matching item, anything older is a duplicate */
+					this.log(this.resource, 'Removing duplicates from: ' + ni.id_str);
 					match = true;
+					results.splice(n);
 					break;
 				}
-			}
-
-			if (match) {
-				break;
 			}
 		}
 
 		if (match) {
 			/* We found our match, there is no gap */
-			results.splice(results.length - n);
-this.log('No gap, we had an overlap', n);
+			this.log(this.resource, 'No gap, we had an overlap');
 		} else {
+			this.log(this.resource, 'Found a gap');
+			changed = true;
+
 			/* We have a gap! */
 			this.results.unshift({
 				gap: {
@@ -218,17 +219,20 @@ this.log('No gap, we had an overlap', n);
 			});
 		}
 	}
+	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
 
 	/* Insert a new newcount indicator */
 	if (results.length && this.results.length) {
 		this.newcount = results.length;
 
+		changed = true;
 		this.results.unshift({
 			newcount:	this.newcount
 		});
 	}
 
 	if (results.length) {
+		changed = true;
 		this.results = results.concat(this.results);
 
 		/*
@@ -244,17 +248,6 @@ this.log('No gap, we had an overlap', n);
 			this.results.splice(205);
 		}
 
-		this.$.list.setCount(this.results.length);
-
-		this.$.list.refresh();
-		setTimeout(enyo.bind(this, function() {
-			if (this.newcount && this.newcount > 1) {
-				this.$.list.scrollToRow(this.newcount - 1);
-			} else {
-				this.$.list.scrollToRow(0);
-			}
-		}), 500);
-
 		/*
 			Cache the 20 most recent items
 
@@ -268,7 +261,35 @@ this.log('No gap, we had an overlap', n);
 		}
 
 		prefs.set('cachedtweets:' + this.user.user_id + ':' + this.resource, cache);
+
+
+		/* Scroll to the oldest new tweet */
+		setTimeout(enyo.bind(this, function() {
+			if (this.newcount && this.newcount > 1) {
+				this.log(this.$.list.getScrollPosition());
+				this.$.list.scrollToRow(this.newcount - 1);
+
+				/*
+					Scroll down just a bit to show that there is another tweet
+					above this one.
+				*/
+				var pos = this.$.list.getScrollPosition();
+				this.log(this.$.list.getScrollPosition());
+
+				pos.top -= 15;
+				this.$.list.setScrollPosition(pos);
+				this.log(this.$.list.getScrollPosition());
+			} else {
+				this.$.list.scrollToRow(0);
+			}
+		}), 500);
 	}
+
+	if (changed) {
+		this.$.list.setCount(this.results.length);
+		this.$.list.refresh();
+	}
+
 	this.loading = false;
 	this.doRefreshStop();
 
