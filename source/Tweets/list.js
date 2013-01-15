@@ -266,19 +266,20 @@ gotTweets: function(success, results)
 		/* Scroll to the oldest new tweet */
 		setTimeout(enyo.bind(this, function() {
 			if (this.newcount && this.newcount > 1) {
-				this.log(this.$.list.getScrollPosition());
 				this.$.list.scrollToRow(this.newcount - 1);
 
 				/*
 					Scroll down just a bit to show that there is another tweet
 					above this one.
 				*/
-				var pos = this.$.list.getScrollPosition();
-				this.log(this.$.list.getScrollPosition());
-
-				pos.top -= 15;
-				this.$.list.setScrollPosition(pos);
-				this.log(this.$.list.getScrollPosition());
+				setTimeout(enyo.bind(this, function() {
+					var top = this.$.list.getScrollTop();
+					if (top > 35) {
+						this.$.list.setScrollTop(top - 35);
+					} else {
+						this.$.list.setScrollTop(0);
+					}
+				}), 30);
 			} else {
 				this.$.list.scrollToRow(0);
 			}
