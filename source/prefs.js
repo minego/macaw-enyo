@@ -114,8 +114,10 @@ set: function set(name, value, account)
 
 		if ('undefined' != typeof(this.defaults[name])) {
 			chrome.storage.sync.set(data);
+			this.sync[name] = value;
 		} else {
 			chrome.storage.local.set(data);
+			this.local[name] = value;
 		}
 	} else if (window.localStorage) {
 		window.localStorage.setItem(name,
