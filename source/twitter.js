@@ -5,10 +5,25 @@ var TwitterAPI = function(user) {
 	this.version		= '1.1';
 	this.user			= user;
 
-	this.options = {
-		consumerKey:	'g7laRt05o4FXAcqwvtgEeg',
-		consumerSecret:	'oVPuRO6fsA3LzVlJJCyGWlGBvqACpjcjh06TKlEgoMc'
-	};
+	if (chrome) {
+		/* Macaw for chrome */
+		this.options = {
+			consumerKey:	'hrdhei7FCruo8edNskXvmA',
+			consumerSecret:	'awUuBwyxQYez4uweFYQqi9XZXn6exQsMxO5ePqHig'
+		};
+	} else if (window.PalmSystem) {
+		/* Macaw for webOS */
+		this.options = {
+			consumerKey:	'Jefr6cdzEDDbD1rrOYkFtA',
+			consumerSecret:	'TqBNIw7TtF3Ge1K8Xq1gojajl0fInvPx0raNF3reIV8'
+		};
+	} else {
+		/* Macaw for all the things */
+		this.options = {
+			consumerKey:	'J5f7Mh3f3KhgypwV3b5kw',
+			consumerSecret:	'tAzmjlKeBFP8RmyAPRIaaYtdeRRAOWuqVWbiWD6g'
+		};
+	}
 
 	this.oauth = OAuth(this.options);
 
