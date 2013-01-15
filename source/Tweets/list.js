@@ -206,7 +206,8 @@ gotTweets: function(success, results)
 
 		if (match) {
 			/* We found our match, there is no gap */
-			results.splice(results.length - n, n);
+			results.splice(results.length - n);
+this.log('No gap, we had an overlap', n);
 		} else {
 			/* We have a gap! */
 			this.results.unshift({
@@ -218,7 +219,6 @@ gotTweets: function(success, results)
 		}
 	}
 
-
 	/* Insert a new newcount indicator */
 	if (results.length && this.results.length) {
 		this.newcount = results.length;
@@ -228,48 +228,53 @@ gotTweets: function(success, results)
 		});
 	}
 
-	this.results = results.concat(this.results);
+	if (results.length) {
+		this.results = results.concat(this.results);
 
-	/*
-		Flush any old results to keep the total number of loaded tweets sane.
+		/*
+			Flush any old results to keep the total number of loaded tweets sane
 
-		Twitter will never return more than 200 results, so keep a few extra for
-		context.
-	*/
-	// TODO	We need to implement loading gaps, and allow loading tweets below
-	//		the loaded timeline. In those cases this is obviously not the
-	//		correct check to do.
-	if (this.results.length > 205) {
-		this.results.splice(205);
-	}
-
-	this.$.list.setCount(this.results.length);
-
-	this.$.list.refresh();
-	this.$.list.completePull();
-
-	setTimeout(enyo.bind(this, function() {
-		if (this.newcount && this.newcount > 1) {
-			this.$.list.scrollToRow(this.newcount - 1);
-		} else {
-			this.$.list.scrollToRow(0);
+			Twitter will never return more than 200 results, so keep a few extra
+			for context.
+		*/
+		// TODO	We need to implement loading gaps, and allow loading tweets
+		//		below the loaded timeline. In those cases this is obviously not
+		//		the correct check to do.
+		if (this.results.length > 205) {
+			this.results.splice(205);
 		}
-	}), 500);
 
-	/*
-		Cache the 20 most recent items
+		this.$.list.setCount(this.results.length);
 
-		Do not include the new count indicator. Gap indicators are okay though.
-	*/
-	var cache = this.results.slice(0, 20);
+		this.$.list.refresh();
+		setTimeout(enyo.bind(this, function() {
+			if (this.newcount && this.newcount > 1) {
+				this.$.list.scrollToRow(this.newcount - 1);
+			} else {
+				this.$.list.scrollToRow(0);
+			}
+		}), 500);
 
-	if (this.newcount) {
-		cache.splice(this.newcount, 1);
+		/*
+			Cache the 20 most recent items
+
+			Do not include the new count indicator. Gap indicators are okay
+			though.
+		*/
+		var cache = this.results.slice(0, 20);
+
+		if (this.newcount) {
+			cache.splice(this.newcount, 1);
+		}
+
+		prefs.set('cachedtweets:' + this.user.user_id + ':' + this.resource, cache);
 	}
-
-	prefs.set('cachedtweets:' + this.user.user_id + ':' + this.resource, cache);
 	this.loading = false;
 	this.doRefreshStop();
+
+	if (this.pulled) {
+		this.$.list.completePull();
+	}
 },
 
 itemTap: function(sender, event)
