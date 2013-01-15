@@ -218,11 +218,7 @@ create: function()
 		Listen for keyboard events for the sake of keyboard shortcuts and/or
 		starting compose by typing.
 	*/
-	document.addEventListener('keypress', function(e) {
-		if (e.altKey || e.ctrlKey || e.metaKey) {
-			return;
-		}
-
+	document.addEventListener('keypress', function(event) {
 		if (this.$.toasters.getLength() > 0) {
 			/* Ignore key presses when a toaster is visible */
 			return;
@@ -231,9 +227,14 @@ create: function()
 		var s;
 
 		try {
-			s = String.fromCharCode(event.which);
+			s = String.fromCharCode(event.which).trim();
 		} catch (e) {
 			s = null;
+		}
+
+		if (s !== "" && (event.altKey || event.ctrlKey || event.metaKey)) {
+			/* Ignore keypresses with a modifier, except enter */
+			return;
 		}
 
 		if (s == '~') {
@@ -242,9 +243,14 @@ create: function()
 		}
 
 		// TODO	Possibly allow binding of actions to keystrokes?
-		if (s) {
+		if (typeof(s) === "string") {
 			/* Open the compose toaster with this string */
-			this.compose(this, { text: s });
+			this.compose(this, { });
+
+			if (s.length == 0) {
+				/* Don't let the event for the enter key continue */
+				event.preventDefault();
+			}
 		}
 	}.bind(this), false);
 },

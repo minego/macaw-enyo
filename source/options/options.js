@@ -39,12 +39,16 @@ components: [
 
 		components: [
 			{
-				components: [
-					{
-						content:					$L("General Settings"),
-						classes:					"title"
-					}
-				]
+				data: {
+					title:							"General Settings",
+
+					items: [
+						{
+							label:					"Enter to Submit",
+							key:					"submitOnEnter"
+						}
+					]
+				}
 			},
 			{
 				data: {

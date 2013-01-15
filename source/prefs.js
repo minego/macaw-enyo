@@ -27,6 +27,7 @@ defaults: {
 		{ "type": "favorites"	}
 	],
 
+	fontSize:			"tiny",
 	theme:				"light",
 	toolbar:			"top",
 	tabs:				"bottom",
@@ -36,8 +37,7 @@ defaults: {
 	showScreenName:		true,
 	showVia:			false,
 	showTime:			"relative",
-
-	fontSize:			"tiny"
+	submitOnEnter:		false
 },
 
 ready: function(cb)

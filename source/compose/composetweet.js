@@ -148,6 +148,13 @@ rendered: function(sender, event)
 change: function(sender, event)
 {
 	var node;
+	var s;
+
+	try {
+		s = String.fromCharCode(event.which).trim();
+	} catch (e) {
+		s = null;
+	}
 
 	if ((node = this.$.txt.hasNode())) {
 		this.text = node.innerText.trim();
@@ -156,6 +163,13 @@ change: function(sender, event)
 	}
 
 	this.$.counter.setContent(140 - this.text.length);
+
+	/* Did the user press enter? */
+	if (s === "" && this.text.length > 0) {
+		if (event.ctrlKey || prefs.get('submitOnEnter')) {
+			this.send(sender, event);
+		}
+	}
 },
 
 cancel: function(sender, event)
