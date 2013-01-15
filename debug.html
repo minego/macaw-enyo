@@ -15,11 +15,9 @@
 	</head>
 	<body class="enyo-unselectable onyx">
 		<script>
-			if (!chrome || !chrome.storage) {
-				prefs.ready(function() {
-					new net.minego.macaw.main().renderInto(document.body);
-				});
-			}
+			prefs.ready(function() {
+				new net.minego.macaw.main().renderInto(document.body);
+			});
 		</script>
 	</body>
 </html>

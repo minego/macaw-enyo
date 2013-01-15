@@ -18,14 +18,12 @@
 	</head>
 	<body class="enyo-unselectable onyx">
 		<script>
-			if (!chrome || !chrome.storage) {
-				try {
-					prefs.ready(function() {
-						new net.minego.macaw.main().renderInto(document.body);
-					});
-				} catch (e) {
-					location = 'debug.html';
-				}
+			try {
+				prefs.ready(function() {
+					new net.minego.macaw.main().renderInto(document.body);
+				});
+			} catch (e) {
+				location = 'debug.html';
 			}
 		</script>
 	</body>
