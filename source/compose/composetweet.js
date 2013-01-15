@@ -109,8 +109,8 @@ rendered: function(sender, event)
 			if (this.replyto.user) {
 				if (!this.user || this.replyto.user.screen_name !== this.user.screen_name) {
 					mentions.push('@' + this.replyto.user.screen_name);
+					offset = mentions[0].length + 1;
 				}
-				offset = mentions[0].length + 1;
 			}
 
 			if (this.replyto.entities) {
