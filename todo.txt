@@ -8,7 +8,6 @@
 		- Edit
 	- Implement delete
 	- Implement favorite
-	- Implement convo
 	+ Implement the options menu
 		- Reply
 		- Send DM
