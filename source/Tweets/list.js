@@ -101,10 +101,8 @@ rendered: function()
 		this.loading = true;
 		this.doRefreshStart();
 
-		this.log('Loaded ' + results.length + ' tweets from the cache', this.resource);
 		this.gotTweets(true, results);
 	} else {
-		this.log('Refreshing', this.resource);
 		this.refresh();
 	}
 },
@@ -245,13 +243,13 @@ gotTweets: function(success, results, keepnew)
 		have any items that match existing items then we have no gap.
 	*/
 	var match = true;
-	this.log(this.resource, 'Pre-gap  detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
+	// this.log(this.resource, 'Pre-gap  detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
 	if (this.results.length > 0 && results.length > 0) {
 		for (var n = 0, ni; ni = results[n]; n++) {
 			for (var o = 0, oi; oi = this.results[o]; o++) {
 				if (ni.id_str === oi.id_str) {
 					/* We found a matching item, anything older is a duplicate */
-					this.log(this.resource, 'Removing duplicates from: ' + ni.id_str);
+					// this.log(this.resource, 'Removing duplicates from: ' + ni.id_str);
 					match = true;
 					results.splice(n);
 					break;
@@ -261,9 +259,9 @@ gotTweets: function(success, results, keepnew)
 
 		if (match) {
 			/* We found our match, there is no gap */
-			this.log(this.resource, 'No gap, we had an overlap');
+			// this.log(this.resource, 'No gap, we had an overlap');
 		} else {
-			this.log(this.resource, 'Found a gap');
+			// this.log(this.resource, 'Found a gap');
 			changed = true;
 
 			/* We have a gap! */
@@ -299,7 +297,7 @@ gotTweets: function(success, results, keepnew)
 		this.results = results.concat(this.results);
 
 		if (!isNaN(newCountIndex)) {
-			newCountIndex += this.results.length;
+			newCountIndex += results.length;
 		}
 
 		/*
@@ -336,6 +334,7 @@ gotTweets: function(success, results, keepnew)
 		if (!keepnew) {
 			setTimeout(enyo.bind(this, function() {
 				if (!isNaN(newCountIndex) && newCountIndex > 1) {
+					this.log(this.resource, 'Scrolling to: ' + (newCountIndex - 1));
 					this.$.list.scrollToRow(newCountIndex - 1);
 
 					/*
@@ -402,7 +401,6 @@ itemTap: function(sender, event)
 		return;
 	}
 
-	this.log('Open a toaster with details for:', item.id_str);
 	global.toasters.push({
 		kind:			"TweetDetails",
 		item:			item,
