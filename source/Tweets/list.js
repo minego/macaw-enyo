@@ -125,7 +125,7 @@ pullComplete: function()
 	this.pulled = false;
 },
 
-refresh: function(keepnew)
+refresh: function(autorefresh)
 {
 	this.setTimer();
 
@@ -133,7 +133,7 @@ refresh: function(keepnew)
 		return;
 	}
 
-	if (keepnew && this.loaded) {
+	if (autorefresh && this.loaded) {
 		var now		= new Date();
 		var elapsed	= now - this.loaded;
 
@@ -180,11 +180,11 @@ refresh: function(keepnew)
 	}
 
 	this.twitter.getTweets(this.resource, enyo.bind(this, function(success, results) {
-		this.gotTweets(success, results, keepnew);
+		this.gotTweets(success, results, autorefresh);
 	}), params);
 },
 
-gotTweets: function(success, results, keepnew)
+gotTweets: function(success, results, autorefresh)
 {
 	var		changed			= false;
 	var		newCountIndex	= NaN;
@@ -209,7 +209,7 @@ gotTweets: function(success, results, keepnew)
 	}
 
 	/* Remove the previous newcount indicator */
-	if (!isNaN(newCountIndex) && !keepnew) {
+	if (!isNaN(newCountIndex)) {
 		this.results.splice(newCountIndex, 1);
 		newCountIndex = NaN;
 
@@ -276,14 +276,7 @@ gotTweets: function(success, results, keepnew)
 	}
 	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
 
-	if (keepnew && !isNaN(newCountIndex)) {
-		/* Update the existing newcount indicator */
-		if (results.length) {
-			this.results[newCountIndex].newcount += results.length;
-
-			changed = true;
-		}
-	} else if (results.length && this.results.length) {
+	if (results.length && this.results.length) {
 		/* Insert a new newcount indicator */
 		changed = true;
 		this.results.unshift({
@@ -337,7 +330,7 @@ gotTweets: function(success, results, keepnew)
 
 			if (results.length && results.length != this.results.length) {
 				this.log(this.resource, 'Scrolling to: ' + results.length);
-				this.$.list.scrollToRow(results.length - (keepnew ? 0 : 1));
+				this.$.list.scrollToRow(results.length - (autorefresh ? 0 : 1));
 
 				/*
 					Scroll down just a bit to show that there is another tweet
@@ -346,12 +339,12 @@ gotTweets: function(success, results, keepnew)
 				setTimeout(enyo.bind(this, function() {
 					var top = this.$.list.getScrollTop();
 
-					if (keepnew) {
+					if (autorefresh) {
 						/* Preserve the original scroll position */
 						top += oldtop;
 					}
 
-					if (!keepnew || oldtop <= 35) {
+					if (!autorefresh || oldtop <= 35) {
 						if (top > 35) {
 							top -= 35;
 						} else {
