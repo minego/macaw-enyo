@@ -131,7 +131,7 @@ refresh: function()
 	if (this.results.length) {
 		/* Request a bit of an overlap in order to try to detect gaps */
 		for (var i = 4; i >= 0; i--) {
-			if (this.results[i].id_str) {
+			if (this.results[i] && this.results[i].id_str) {
 				params.since_id = this.results[i].id_str;
 				this.sinceIndex = i;
 				break;
