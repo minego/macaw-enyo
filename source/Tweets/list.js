@@ -171,6 +171,13 @@ gotTweets: function(success, results)
 		changed = true;
 	}
 
+	/* Remove the "no tweets" indicator */
+	if (this.results.length > 0 && this.results[0].empty) {
+		this.results.splice(0, 1);
+
+		changed = true;
+	}
+
 	if (!success) {
 		/* Failed */
 		this.$.list.refresh();
@@ -287,6 +294,14 @@ gotTweets: function(success, results)
 		}), 500);
 	}
 
+	if (this.results.length == 0) {
+		changed = true;
+
+		this.results.unshift({
+			empty:		true
+		});
+	}
+
 	if (changed) {
 		this.$.list.setCount(this.results.length);
 		this.$.list.refresh();
@@ -348,6 +363,14 @@ setupItem: function(sender, event)
 	if (item.gap) {
 		// TODO	When tapped load the gap
 		this.$.msg.setContent('Tap to load missing tweets');
+
+		this.$.tweet.setClasses('hide');
+		this.$.msg.setClasses('gap');
+		return;
+	}
+
+	if (item.empty) {
+		this.$.msg.setContent('No tweets');
 
 		this.$.tweet.setClasses('hide');
 		this.$.msg.setClasses('gap');
