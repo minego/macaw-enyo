@@ -344,6 +344,7 @@ gotTweets: function(success, results, keepnew)
 					*/
 					setTimeout(enyo.bind(this, function() {
 						var top = this.$.list.getScrollTop();
+
 						if (top > 35) {
 							this.$.list.setScrollTop(top - 35);
 						} else {
@@ -354,6 +355,26 @@ gotTweets: function(success, results, keepnew)
 					this.$.list.scrollToRow(0);
 				}
 			}), 500);
+		} else if (results.length) {
+			/*
+				Attempt to preserve the scroll position even though items where
+				inserted at the top of the list.
+			*/
+			var beforetop = this.$.list.getScrollTop();
+
+			this.$.list.scrollToRow(results.length);
+
+			/* Now scroll back... */
+			setTimeout(enyo.bind(this, function() {
+				var aftertop	= this.$.list.getScrollTop();
+				var top			= beforetop + aftertop;
+
+				if (beforetop <= 35 && top > 35) {
+					top -= 35;
+				}
+
+				this.$.list.setScrollTop(top);
+			}), 30);
 		}
 	}
 
