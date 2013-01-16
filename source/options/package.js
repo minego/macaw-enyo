@@ -1,4 +1,6 @@
 enyo.depends(
 	"options.js",
-	"options.css"
+	"options.css",
+
+	"tabdetails.js"
 );

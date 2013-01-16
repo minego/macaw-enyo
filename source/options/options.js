@@ -21,7 +21,10 @@ classes:											"options",
 events: {
 	onChange:										"",
 	onCreateAccount:								"",
-	onTabsChanged:									""
+	onTabsChanged:									"",
+
+	oncloseToaster:									"",
+	onOpenToaster:									""
 },
 
 components: [
@@ -147,21 +150,54 @@ components: [
 					]
 				}
 			},
-
 			{
 				components: [
 					{
-						content:					$L("Notifications"),
+						content:					"Tabs",
 						classes:					"title"
-					}
-				]
-			},
+					},
 
-			{
-				components: [
 					{
-						content:					$L("Manage Tabs"),
-						classes:					"title"
+						content:					"Add Tab",
+						kind:						onyx.Button,
+						style:						"width: 100%;",
+						ontap:						"createTab"
+					},
+
+					{
+						name:						"tablist"
+					},
+
+					{
+						kind:						onyx.MenuDecorator,
+
+						components: [
+							{
+								name:				"tabMenu",
+								onSelect:			"tabAction",
+								kind:				onyx.Menu,
+								components: [
+									{
+										content:	"Edit",
+										cmd:		"edit"
+									},
+									{
+										content:	"Move up",
+										cmd:		"left",
+										name:		"tableft"
+									},
+									{
+										content:	"Move down",
+										cmd:		"right",
+										name:		"tabright"
+									},
+									{
+										content:	"Delete",
+										cmd:		"delete"
+									}
+								]
+							}
+						]
 					}
 				]
 			},
@@ -192,7 +228,10 @@ components: [
 								onSelect:			"accountAction",
 								kind:				onyx.Menu,
 								components: [
-									{ content:		"Delete Account" }
+									{
+										content:	"Delete",
+										cmd:		"delete"
+									}
 								]
 							}
 						]
@@ -207,22 +246,11 @@ create: function()
 {
 	this.inherited(arguments);
 
-	/*
-		Display the account list
-	*/
-	var accounts = prefs.get('accounts');
+	/* Display the account list */
+	this.createAccountList();
 
-	for (var i = 0, a; a = accounts[i]; i++) {
-		this.log(a);
-
-		this.$.accounts.createComponent({
-			content:			'@' + a.screen_name,
-			account:			a,
-			classes:			"account",
-
-			ontap:				"accountOptions"
-		}, { owner: this });
-	}
+	/* Display the tab list */
+	this.createTabList();
 
 	/*
 		Setup each panel that has a data object. This object is a meant as a
@@ -299,6 +327,30 @@ create: function()
 	}
 },
 
+createAccountList: function()
+{
+	var accounts = prefs.get('accounts');
+
+	this.$.accounts.destroyClientControls();
+	for (var i = 0, a; a = accounts[i]; i++) {
+		this.$.accounts.createComponent({
+			content:			'@' + a.screen_name,
+			account:			a,
+			classes:			"account",
+
+			ontap:				"accountOptions"
+		}, { owner: this });
+	}
+
+	this.$.accounts.render();
+},
+
+createAccount: function(sender, event)
+{
+	/* The main kind knows how to do this, so just send an event */
+	this.doCreateAccount({});
+},
+
 accountOptions: function(sender, event)
 {
 	this.$.accountMenu.account = sender.account;
@@ -313,28 +365,154 @@ accountAction: function(sender, event)
 	var accounts	= prefs.get('accounts');
 	var tabs		= prefs.get('panels');
 
-	// TODO	Handle any other account actions here... Currently delete is the
-	//		only item in the action menu though
+	switch (event.selected.cmd) {
+		case "delete":
+			/* Remove any tabs that are linked to this account */
+			for (var i = tabs.length - 1, t; t = tabs[i]; i--) {
+				if ("undefined" == typeof(t.user_id) || t.user_id === account.user_id) {
+					tabs.splice(i, 1);
+				}
+			}
 
-	/* Remove any tabs that are linked to this account */
-	for (var i = tabs.length - 1, t; t = tabs[i]; i--) {
-		if ("undefined" == typeof(t.user_id) || t.user_id === account.user_id) {
-			tabs.splice(i, 1);
-		}
-	}
+			/* Remove the account */
+			for (var i = 0, a; a = accounts[i]; i++) {
+				if (a.user_id === account.user_id) {
+					accounts.splice(i, 1);
+					break;
+				}
+			}
 
-	/* Remove the account */
-	for (var i = 0, a; a = accounts[i]; i++) {
-		if (a.user_id === account.user_id) {
-			accounts.splice(i, 1);
+			prefs.set('panels', tabs);
+			prefs.set('accounts', accounts);
+
+			/* Let the main kind know it needs to re-render */
+			this.tabsChanged();
 			break;
-		}
+	}
+},
+
+createTabList: function()
+{
+	var tabs = prefs.get('panels');
+
+	this.$.tablist.destroyClientControls();
+	for (var i = 0, t; t = tabs[i]; i++) {
+		this.$.tablist.createComponent({
+			content:			t.label || t.type,
+			tabIndex:			i,
+			classes:			"tab",
+
+			ontap:				"tabOptions"
+		}, { owner: this });
 	}
 
-	prefs.set('accounts', accounts);
+	this.$.tablist.render();
+},
 
-	/* Let the main kind know it needs to re-render */
-	this.doTabsChanged();
+createTab: function(sender, event)
+{
+	this.doOpenToaster({
+		component: {
+			kind:			"TabDetails"
+		},
+
+		options: {
+			owner:	this
+		}
+	});
+},
+
+tabOptions: function(sender, event)
+{
+	var tabs		= prefs.get('panels');
+
+	this.$.tabMenu.tabIndex = sender.tabIndex;
+
+	if (sender.tabIndex >= 1) {
+		this.$.tableft.removeClass('hide');
+	} else {
+		this.$.tableft.addClass('hide');
+	}
+
+	if (sender.tabIndex < (tabs.length - 1)) {
+		this.$.tabright.removeClass('hide');
+	} else {
+		this.$.tabright.addClass('hide');
+	}
+
+	this.$.tabMenu.applyPosition(sender.getBounds);
+	this.$.tabMenu.show();
+},
+
+tabAction: function(sender, event)
+{
+	var tabIndex	= sender.tabIndex;
+	var tabs		= prefs.get('panels');
+	var tmp;
+
+	switch (event.selected.cmd) {
+		case "edit":
+			// TODO	Show a toaster/popup for this tab to let the user edit the
+			//		following fields:
+			//			- label
+			//			- account (allow selecting from any configured account)
+			//			- type
+			//			- type specific data (search string, list name, etc)
+			//			- auto refresh time (or disabled)
+			//			- notification options
+			//
+			//		There is also the option of getting rid of the menu here
+			//		and moving the delete button to the tab details panel.
+
+			this.doOpenToaster({
+				component: {
+					kind:			"TabDetails",
+					tabs:			tabs,
+					tabIndex:		tabIndex
+				},
+
+				options: {
+					owner:	this
+				}
+			});
+			break;
+
+		// TODO	Allow the tabs to be dragged instead of using the menu?
+		case "left":
+			if (tabIndex > 0) {
+				tmp = tabs[tabIndex - 1];
+				tabs[tabIndex - 1] = tabs[tabIndex];
+				tabs[tabIndex] = tmp;
+
+				this.createTabList();
+
+				/* Let the main kind know it needs to re-render */
+				this.doTabsChanged();
+			}
+			break;
+
+		case "right":
+			if (tabIndex < (tabs.length - 1)) {
+				tmp = tabs[tabIndex + 1];
+				tabs[tabIndex + 1] = tabs[tabIndex];
+				tabs[tabIndex] = tmp;
+
+				this.createTabList();
+
+				/* Let the main kind know it needs to re-render */
+				this.doTabsChanged();
+			}
+			break;
+
+		case "delete":
+			/* Remove any tabs that are linked to this account */
+			tabs.splice(tabIndex, 1);
+			prefs.set('panels', tabs);
+
+			/* Let the main kind know it needs to re-render */
+			this.tabsChanged();
+			break;
+	}
 },
 
 itemSelected: function(sender, event)
@@ -388,10 +566,21 @@ toggleChanged: function(sender, event)
 	prefs.set(sender.item.key, sender.item.negate ? !sender.getValue() : sender.getValue());
 },
 
-createAccount: function(sender, event)
+tabsChanged: function(sender, event)
 {
-	/* The main kind knows how to do this, so just send an event */
-	this.doCreateAccount({});
+	this.createAccountList();
+	this.createTabList();
+
+	/* Let the main kind know it needs to re-render */
+	this.doTabsChanged();
+},
+
+show: function()
+{
+	this.inherited(arguments);
+
+	this.createAccountList();
+	this.createTabList();
 }
 
 });

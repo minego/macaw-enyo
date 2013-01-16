@@ -118,6 +118,7 @@ push: function(component, options)
 
 	if (this.items.length) {
 		this.items[this.items.length - 1].removeClass('show');
+		this.items[this.items.length - 1].hide();
 	}
 
 	toaster = this.createComponent({
@@ -165,6 +166,7 @@ pop: function(count)
 					anyway.
 				*/
 				toaster.removeClass('show');
+				toaster.hide();
 
 				setTimeout(enyo.bind(this, function() {
 					toaster.destroy();
@@ -202,6 +204,7 @@ showTopToaster: function()
 		}
 
 		toaster.addClass('show');
+		toaster.show();
 
 		if (!toaster.options.nobg) {
 			toaster.addClass('bg');
@@ -233,7 +236,7 @@ handleBack: function()
 	options = options || {};
 
 	if (!options.ignoreback) {
-		this.pop(this.items.length);
+		this.pop(1);
 	}
 }
 
@@ -242,7 +245,33 @@ handleBack: function()
 enyo.kind({
 
 name:							"toaster",
-classes:						"toaster"
+classes:						"toaster",
+
+/*
+	Pass show and hide on to the client controls so that they have a way to know
+	when the toaster is shown or hidden.
+*/
+show: function()
+{
+	this.inherited(arguments);
+
+	var	clients = this.getClientControls();
+
+	for (var i = 0, c; c = clients[i]; i++) {
+		c.show();
+	}
+},
+
+hide: function()
+{
+	this.inherited(arguments);
+
+	var	clients = this.getClientControls();
+
+	for (var i = 0, c; c = clients[i]; i++) {
+		c.hide();
+	}
+}
 
 });
 

@@ -4,14 +4,22 @@
 	font-size:			14px;
 }
 
-.options .account {
+.options .account,
+.options .tab {
 	margin:				10px;
+	font-weight:		bold;
 }
 
 .options .section {
 	width:				250px;
 	padding:			5px 10px 0px 10px;
 	background:			url(../../assets/vertical-border.png) left bottom repeat-y;
+}
+
+.tabdetails .section {
+	width:				320px;
+	margin-left:		auto;
+	margin-right:		auto;
 }
 
 .options .option {
@@ -26,7 +34,8 @@
 	height:				25px;
 }
 
-.options .label {
+.options .label,
+.tabdetails .label {
 	display:			inline-block;
 
 	height:				32px;
@@ -35,7 +44,8 @@
 	clear:				both;
 }
 
-.options .value {
+.options .value,
+.tabdetails .value {
 	display:			inline-block;
 	float:				right;
 
@@ -45,11 +55,37 @@
 	width:				100px;
 }
 
-.options .button {
+.tabdetails .value,
+.tabdetails .label
+ {
+	margin:				10px 0px 10px 0px;
+}
+
+.options .button,
+.tabdetails .button {
 	height:				32px;
 	line-height:		32px;
 	padding:			0px;
 
 	width:				100px;
+}
+
+.tabdetails .picker,
+.tabdetails .picker .button {
+	width:				150px;
+}
+
+.save,
+.cancel {
+	width:				150px !important;
+	margin:				15px 0px 15px 0px;
+}
+
+.save {
+	float:				right;
+}
+
+.cancel {
+	float:				left;
 }
 

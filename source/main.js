@@ -19,6 +19,8 @@ name:										"net.minego.macaw.main",
 
 handlers: {
 	onCloseToaster:							"closeToaster",
+	onOpenToaster:							"openToaster",
+
 	onCompose:								"compose",
 	onConversation:							"conversation",
 	onTabsChanged:							"createTabs"
@@ -302,33 +304,6 @@ createTabs: function()
 			continue;
 		}
 
-		switch (tab.type.toLowerCase()) {
-			case "timeline":
-				if (!tab.label) tab.label = "home";
-				break;
-			case "mentions":
-				if (!tab.label) tab.label = "mentions";
-				break;
-			case "messages":
-				if (!tab.label) tab.label = "messages";
-				break;
-			case "favorites":
-				if (!tab.label) tab.label = "favorites";
-				break;
-			case "lists":
-				if (!tab.label) tab.label = "lists";
-				break;
-			case "list":
-				if (!tab.label) tab.label = "list";
-				break;
-			case "search":
-				if (!tab.label) tab.label = "search";
-				break;
-			case "searchresults":
-				if (!tab.label) tab.label = "results";
-				break;
-		}
-
 		components.push({
 			layoutKind:						"FittableRowsLayout",
 			components: [{
@@ -520,15 +495,18 @@ accountCreated: function(sender, event)
 
 	/* Create default tabs for the new user */
 	this.tabs.push({
-		type:		"timeline",
+		type:		'timeline',
+		label:		'@' + account.screen_name + ' home',
 		user_id:	account.user_id
 	});
 	this.tabs.push({
-		type:		"mentions",
+		type:		'mentions',
+		label:		'@' + account.screen_name + ' mentions',
 		user_id:	account.user_id
 	});
 	this.tabs.push({
-		type:		"messages",
+		type:		'messages',
+		label:		'@' + account.screen_name + ' DMs',
 		user_id:	account.user_id
 	});
 	prefs.set('panels', this.tabs);
@@ -539,6 +517,11 @@ accountCreated: function(sender, event)
 closeToaster: function()
 {
 	this.$.toasters.pop(1);
+},
+
+openToaster: function(sender, event)
+{
+	this.$.toasters.push(event.component, event.options);
 },
 
 closeAllToasters: function()
