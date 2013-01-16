@@ -69,8 +69,7 @@ published: {
 	toasters:					[],
 
 	/* May be top, right, bottom or left */
-	flyInFrom:					"bottom",
-	ignoreBack:					false
+	flyInFrom:					"bottom"
 },
 
 components: [
@@ -82,10 +81,6 @@ components: [
 		// classes:				"onyx-scrim-transparent",
 
 		ontap:					"handleScrim"
-	},
-	{
-		kind:					enyo.Signals,
-		onbackbutton:			"handleBack"
 	}
 ],
 
@@ -146,7 +141,7 @@ push: function(component, options)
 	}, 300);
 },
 
-pop: function(count)
+pop: function(count, backevent)
 {
 	var toaster;
 
@@ -154,13 +149,18 @@ pop: function(count)
 	if (isNaN(count)) {
 		count = 1;
 	}
-this.log('Popping the toast: ' + count);
 
 	if (count < 1) {
 		return;
 	}
 
 	for (var i = 0; i < count; i++) {
+		if (backevent && (toaster = this.toasters[this.toasters.length - 1])) {
+			if (toaster.options.ignoreback) {
+				break;
+			}
+		}
+
 		if ((toaster = this.toasters.pop())) {
 			if (i == 0) {
 				/*
@@ -233,24 +233,6 @@ handleScrim: function()
 
 	if (!options.modal) {
 		this.pop(this.toasters.length);
-	}
-},
-
-handleBack: function(sender)
-{
-	var	options;
-
-	if (this.ignoreBack) {
-		return;
-	}
-
-	if (this.toasters.length) {
-		options = this.toasters[this.toasters.length - 1].options;
-	}
-	options = options || {};
-
-	if (!options.ignoreback) {
-		this.pop(1);
 	}
 }
 

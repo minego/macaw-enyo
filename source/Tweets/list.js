@@ -134,6 +134,17 @@ refresh: function(keepnew)
 		return;
 	}
 
+	if (keepnew && this.loaded) {
+		var now		= new Date();
+		var elapsed	= now - this.loaded;
+
+		if ((elapsed / 1000) < this.refreshTime) {
+			this.log('Auto refresh tried to run too soon...', elapsed, now, this.loaded);
+
+			return;
+		}
+	}
+
 	this.loading = true;
 	this.doRefreshStart();
 
@@ -176,7 +187,8 @@ refresh: function(keepnew)
 
 gotTweets: function(success, results, keepnew)
 {
-	var		changed	= false;
+	var		changed			= false;
+	var		newCountIndex	= NaN;
 
 	if (this.destroyed) {
 		/*
@@ -186,10 +198,21 @@ gotTweets: function(success, results, keepnew)
 		return;
 	}
 
+	/* Keep track of when we last loaded */
+	this.loaded = new Date();
+
+	/* Find the newcount indicator */
+	for (var i = 0, t; t = this.results[i]; i++) {
+		if (t.newcount) {
+			newCountIndex = i;
+			break;
+		}
+	}
+
 	/* Remove the previous newcount indicator */
-	if (this.newcount && !keepnew) {
-		this.results.splice(this.newcount, 1);
-		this.newcount = null;
+	if (!isNaN(newCountIndex) && !keepnew) {
+		this.results.splice(newCountIndex, 1);
+		newCountIndex = NaN;
 
 		changed = true;
 	}
@@ -254,27 +277,30 @@ gotTweets: function(success, results, keepnew)
 	}
 	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
 
-	if (keepnew && this.newcount) {
+	if (keepnew && !isNaN(newCountIndex)) {
 		/* Update the existing newcount indicator */
 		if (results.length) {
-			this.results[this.newcount].newcount = this.newcount += results.length;
-			this.newcount += results.length;
+			this.results[newCountIndex].newcount += results.length;
 
 			changed = true;
 		}
 	} else if (results.length && this.results.length) {
 		/* Insert a new newcount indicator */
-		this.newcount = results.length;
-
 		changed = true;
 		this.results.unshift({
-			newcount:	this.newcount
+			newcount:	results.length
 		});
+
+		newCountIndex = 0;
 	}
 
 	if (results.length) {
 		changed = true;
 		this.results = results.concat(this.results);
+
+		if (!isNaN(newCountIndex)) {
+			newCountIndex += this.results.length;
+		}
 
 		/*
 			Flush any old results to keep the total number of loaded tweets sane
@@ -309,8 +335,8 @@ gotTweets: function(success, results, keepnew)
 		/* Scroll to the oldest new tweet */
 		if (!keepnew) {
 			setTimeout(enyo.bind(this, function() {
-				if (this.newcount && this.newcount > 1) {
-					this.$.list.scrollToRow(this.newcount - 1);
+				if (!isNaN(newCountIndex) && newCountIndex > 1) {
+					this.$.list.scrollToRow(newCountIndex - 1);
 
 					/*
 						Scroll down just a bit to show that there is another tweet
@@ -361,7 +387,9 @@ setTimer: function()
 		return;
 	}
 
+	this.log(this.resource, 'Setting timer to refresh ' + this.refreshTime + ' from now');
 	setTimeout(function() {
+		this.log(this.resource, 'Refreshing...');
 		this.refresh(true);
 	}.bind(this), this.refreshTime * 1000);
 },

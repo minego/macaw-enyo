@@ -519,7 +519,7 @@ accountCreated: function(sender, event)
 
 closeToaster: function()
 {
-	this.$.toasters.pop(1);
+	this.$.toasters.pop(1, true);
 },
 
 openToaster: function(sender, event)
@@ -576,6 +576,7 @@ handleButton: function(sender, event)
 
 back: function(sender, event)
 {
+	this.closeToaster(true);
 },
 
 moveIndicator: function(sender, event)
