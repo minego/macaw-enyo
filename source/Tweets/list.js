@@ -332,50 +332,39 @@ gotTweets: function(success, results, keepnew)
 
 
 		/* Scroll to the oldest new tweet */
-		if (!keepnew) {
-			setTimeout(enyo.bind(this, function() {
-				if (!isNaN(newCountIndex) && newCountIndex > 1) {
-					this.log(this.resource, 'Scrolling to: ' + (newCountIndex - 1));
-					this.$.list.scrollToRow(newCountIndex - 1);
+		setTimeout(enyo.bind(this, function() {
+			var oldtop = this.$.list.getScrollTop();
 
-					/*
-						Scroll down just a bit to show that there is another tweet
-						above this one.
-					*/
-					setTimeout(enyo.bind(this, function() {
-						var top = this.$.list.getScrollTop();
+			if (!isNaN(newCountIndex) && newCountIndex > 1) {
+				this.log(this.resource, 'Scrolling to: ' + (newCountIndex - 1));
+				this.$.list.scrollToRow(newCountIndex - 1);
 
+				/*
+					Scroll down just a bit to show that there is another tweet
+					above this one.
+				*/
+				setTimeout(enyo.bind(this, function() {
+					var top = this.$.list.getScrollTop();
+
+					if (keepnew) {
+						/* Preserve the original scroll position */
+						top += oldtop;
+					}
+
+					if (!keepnew || oldtop <= 35) {
 						if (top > 35) {
-							this.$.list.setScrollTop(top - 35);
+							top -= 35;
 						} else {
-							this.$.list.setScrollTop(0);
+							top = 0;
 						}
-					}), 30);
-				} else {
-					this.$.list.scrollToRow(0);
-				}
-			}), 500);
-		} else if (results.length) {
-			/*
-				Attempt to preserve the scroll position even though items where
-				inserted at the top of the list.
-			*/
-			var beforetop = this.$.list.getScrollTop();
+					}
 
-			this.$.list.scrollToRow(results.length);
-
-			/* Now scroll back... */
-			setTimeout(enyo.bind(this, function() {
-				var aftertop	= this.$.list.getScrollTop();
-				var top			= beforetop + aftertop;
-
-				if (beforetop <= 35 && top > 35) {
-					top -= 35;
-				}
-
-				this.$.list.setScrollTop(top);
-			}), 30);
-		}
+					this.$.list.setScrollTop(top);
+				}), 30);
+			} else {
+				this.$.list.scrollToRow(0);
+			}
+		}), 500);
 	}
 
 	if (this.results.length == 0) {

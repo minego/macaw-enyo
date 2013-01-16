@@ -183,7 +183,7 @@ change: function(sender, event)
 	this.$.counter.setContent(140 - this.text.length);
 
 	/* Did the user press enter? */
-	if (s === "" && this.text.length > 0) {
+	if (event && event.which == 13) {
 		if (event.ctrlKey || prefs.get('submitOnEnter')) {
 			this.send(sender, event);
 		}
