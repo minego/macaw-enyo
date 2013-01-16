@@ -523,6 +523,11 @@ closeToaster: function()
 
 openToaster: function(sender, event)
 {
+    if (event === undefined)
+        event = {};
+    if (event.options === undefined)
+        event.options = {};
+    
 	event.options.owner = this;
 
 	this.$.toasters.push(event.component, event.options);
