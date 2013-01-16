@@ -18,14 +18,9 @@ var prefs =
 {
 
 defaults: {
-	accounts: [],
-
-	panels: [
-		{ "type": "timeline"	},
-		{ "type": "mentions"	},
-		{ "type": "messages"	},
-		{ "type": "favorites"	}
-	],
+	/* The default set of tabs (panels) is created after creating an account */
+	panels:				[],
+	accounts:			[],
 
 	fontSize:			"tiny",
 	theme:				"light",

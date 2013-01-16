@@ -20,7 +20,8 @@ name:										"net.minego.macaw.main",
 handlers: {
 	onCloseToaster:							"closeToaster",
 	onCompose:								"compose",
-	onConversation:							"conversation"
+	onConversation:							"conversation",
+	onTabsChanged:							"createTabs"
 },
 
 components: [
@@ -29,14 +30,8 @@ components: [
 		onbackbutton:						"back"
 	},
 	{
-		kind:								SkinnyPanels,
-		name:								"panels",
-		classes:							"panels",
-		arrangerKind:						"CarouselArranger",
-
-		onTransitionStart:					"moveIndicator"
+		name:								"panelcontainer"
 	},
-
 	{
 		name:								"toolbar",
 		classes:							"toolbar",
@@ -91,7 +86,12 @@ components: [
 			{
 				content:					$L("Refresh"),
 				cmd:						"refresh",
-				ontap:						"refresh"
+				ontap:						"handleButton"
+			},
+			{
+				content:					$L("Redraw"),
+				cmd:						"redraw",
+				ontap:						"createTabs"
 			},
 			{
 				content:					$L("Compose"),
@@ -144,11 +144,7 @@ create: function()
 	this.tabs		= [];
 	this.tabWidth	= 0;
 
-	if (this.users.length) {
-		this.createTabs();
-	} else {
-		this.createAccount();
-	}
+	this.createTabs();
 
 	this.addClass('font-tiny');
 
@@ -266,18 +262,31 @@ clearError: function()
 	this.$.notifications.pop(this.$.notifications.length);
 },
 
-// TODO	Split most of this off into a function to create a single tab so that it
-//		can be called when a new tab is added.
-
-// TODO	When called remove any tabs that already exist
 createTabs: function()
 {
+	/* Remove all existing tabs first so we can recreate them */
+	this.$.tabcontainer.destroyClientControls();
+	this.$.panelcontainer.destroyClientControls();
+
+	this.users		= prefs.get('accounts');
 	this.tabs		= prefs.get('panels');
 	this.tabWidth	= 100 / this.tabs.length;
 
+	if (!this.users.length || !this.tabs.length) {
+		/* Cleanup just in case */
+		prefs.set('accounts',	[]);
+		prefs.set('panels',		[]);
+
+		setTimeout(function() {
+			this.createAccount();
+		}.bind(this), 1000);
+		return;
+	}
+	var components = [];
+
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
 		var kind	= "panel";
-		var user	= this.users[0];
+		var user	= null;
 
 		/* Find the correct account for this tab */
 		if (tab.user_id) {
@@ -287,6 +296,10 @@ createTabs: function()
 					break;
 				}
 			}
+		}
+
+		if (!user) {
+			continue;
 		}
 
 		switch (tab.type.toLowerCase()) {
@@ -316,7 +329,7 @@ createTabs: function()
 				break;
 		}
 
-		this.$.panels.createComponent({
+		components.push({
 			layoutKind:						"FittableRowsLayout",
 			components: [{
 				classes:					"panel",
@@ -338,8 +351,19 @@ createTabs: function()
 					}
 				]
 			}]
-		}, { owner: this });
+		});
 	}
+
+	this.$.panelcontainer.createComponent({
+		kind:								SkinnyPanels,
+		name:								"panels",
+		classes:							"panels",
+		arrangerKind:						"CarouselArranger",
+
+		onTransitionStart:					"moveIndicator",
+
+		components:							components
+	}, { owner: this });
 
 	/* Recreate the tabs */
 	var tabs = [];
@@ -355,13 +379,16 @@ createTabs: function()
 			ontap:			"selectpanel"
 		});
 	}
-	this.$.tabcontainer.destroyComponents();
 	this.$.tabcontainer.createComponents(tabs, { owner: this });
 
 	/* Set a title */
-	this.$.title.setContent('@' + user.screen_name);
+	// TODO	The title really should show the current panel's title... How do we
+	//		decide which to show in a wide view though?
+	// this.$.title.setContent('@' + user.screen_name);
 
 	this.toolbarsChanged();
+	this.$.panelcontainer.render();
+	this.$.tabcontainer.render();
 },
 
 panelRefreshStart: function(sender, event)
@@ -483,10 +510,28 @@ createAccount: function()
 
 accountCreated: function(sender, event)
 {
-	this.closeToaster();
+	var account = event.account;
 
-	this.users.push(event.account);
+	this.closeAllToasters();
+
+	/* Store the list of accounts with the new account included */
+	this.users.push(account);
 	prefs.set('accounts', this.users);
+
+	/* Create default tabs for the new user */
+	this.tabs.push({
+		type:		"timeline",
+		user_id:	account.user_id
+	});
+	this.tabs.push({
+		type:		"mentions",
+		user_id:	account.user_id
+	});
+	this.tabs.push({
+		type:		"messages",
+		user_id:	account.user_id
+	});
+	prefs.set('panels', this.tabs);
 
 	this.createTabs();
 },

@@ -21,7 +21,7 @@ classes:											"options",
 events: {
 	onChange:										"",
 	onCreateAccount:								"",
-	onAccountsChanged:								""
+	onTabsChanged:									""
 },
 
 components: [
@@ -309,8 +309,32 @@ accountOptions: function(sender, event)
 
 accountAction: function(sender, event)
 {
-	// TODO	Write me!
-	this.log('Delete account: ', sender, event, sender.account);
+	var account		= sender.account;
+	var accounts	= prefs.get('accounts');
+	var tabs		= prefs.get('panels');
+
+	// TODO	Handle any other account actions here... Currently delete is the
+	//		only item in the action menu though
+
+	/* Remove any tabs that are linked to this account */
+	for (var i = tabs.length - 1, t; t = tabs[i]; i--) {
+		if ("undefined" == typeof(t.user_id) || t.user_id === account.user_id) {
+			tabs.splice(i, 1);
+		}
+	}
+
+	/* Remove the account */
+	for (var i = 0, a; a = accounts[i]; i++) {
+		if (a.user_id === account.user_id) {
+			accounts.splice(i, 1);
+			break;
+		}
+	}
+
+	prefs.set('accounts', accounts);
+
+	/* Let the main kind know it needs to re-render */
+	this.doTabsChanged();
 },
 
 itemSelected: function(sender, event)
