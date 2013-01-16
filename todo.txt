@@ -40,12 +40,8 @@
 	- Hide tweets that match a filter. Can be applied in either the list kind or
 	  in the twitter helper.
 
-+ Custom Tabs
-	- Display list of tabs in options panel
-	- Allow adding/deleting
-	- Set account for each tab
-	- Set refresh options for each tab
-	- Set notification options for each tab
+- Implement auto refresh. A "refresh" value (in seconds) is now set on each tab
+- Implement notifications. A "notify" boolean is set on each tab
 
 - Finish styling and implement some nice themes
 - Show a visual indication of a refresh when the tab bar is hidden. Currently
