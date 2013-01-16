@@ -1,6 +1,8 @@
 .options {
-	height:				230px;
+	/* Ensure the child is fit properly */
+	position:			relative;
 
+	height:				230px;
 	font-size:			14px;
 }
 

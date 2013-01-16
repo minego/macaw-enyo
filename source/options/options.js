@@ -414,6 +414,9 @@ createTab: function(sender, event)
 	this.doOpenToaster({
 		component: {
 			kind:			"TabDetails"
+		},
+		options: {
+			notitle:		true
 		}
 	});
 },

@@ -47,6 +47,9 @@
 }
 
 .tweetconvo {
+	/* Ensure the child is fit properly */
+	position:				relative;
+
 	min-height:				100px;
 	max-height:				80%;
 }

@@ -25,6 +25,10 @@ published: {
 	twitter:							null
 },
 
+events: {
+	onOpenToaster:						""
+},
+
 components: [
 	{
 		name:							"list",
@@ -114,13 +118,18 @@ itemTap: function(sender, event)
 		return;
 	}
 
-	this.log('Open a toaster with details for:', item.id_str);
-	global.toasters.push({
-		kind:			"TweetDetails",
-		item:			item,
-		user:			this.user,
-		twitter:		this.twitter
-	}, { });
+	this.doOpenToaster({
+		component: {
+			kind:			"TweetDetails",
+			item:			item,
+			user:			this.user,
+			twitter:		this.twitter
+		},
+
+		options:{
+			notitle: true
+		}
+	});
 },
 
 setupItem: function(sender, event)

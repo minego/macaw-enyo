@@ -69,3 +69,18 @@
 	background:				url('../../assets/toaster-controls.png') left top repeat-x;
 	padding:				15px 0px;
 }
+
+.toaster .toastertitle {
+	height:					32px;
+	font-size:				16px;
+	color:					#d2d2d2;
+	text-align:				center;
+
+	background:				url('../../assets/title-bg.png') left 28px repeat-x;
+}
+
+.toaster .toastertitle .button {
+	height:					32px;
+	width:					32px;
+	float:					right;
+}

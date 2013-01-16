@@ -31,7 +31,8 @@ published: {
 
 events: {
 	onRefreshStart:						"",
-	onRefreshStop:						""
+	onRefreshStop:						"",
+	onOpenToaster:						""
 },
 
 components: [
@@ -401,12 +402,18 @@ itemTap: function(sender, event)
 		return;
 	}
 
-	global.toasters.push({
-		kind:			"TweetDetails",
-		item:			item,
-		user:			this.user,
-		twitter:		this.twitter
-	}, { });
+	this.doOpenToaster({
+		component: {
+			kind:			"TweetDetails",
+			item:			item,
+			user:			this.user,
+			twitter:		this.twitter
+		},
+
+		options:{
+			notitle: true
+		}
+	});
 },
 
 setupItem: function(sender, event)

@@ -57,6 +57,11 @@
 
 		nobg:			If true then the default toaster background will not be
 						used.
+
+		notitle:		If true then the title bar and close button will be
+						hidden.
+
+		title:			If set then the title bar will contain the provided text
 */
 
 enyo.kind({
@@ -120,6 +125,8 @@ push: function(component, options)
 	toaster = this.createComponent({
 		kind:					"toaster",
 
+		title:					options.title,
+		notitle:				options.notitle,
 		components:				[ component ]
 	}, { owner: options.owner || this });
 
@@ -242,6 +249,45 @@ enyo.kind({
 
 name:							"toaster",
 classes:						"toaster",
+
+events: {
+	onCloseToaster:				""
+},
+
+published: {
+	title:						null,
+	notitle:					false
+},
+
+components: [
+	{
+		name:					"title",
+		classes:				"title toastertitle",
+
+		components: [{
+			classes:			"back button",
+			ontap:				"back"
+		}]
+	}
+],
+
+create: function()
+{
+	this.inherited(arguments);
+
+	if (this.title) {
+		this.$.title.setContent(this.title);
+	}
+
+	if (this.notitle) {
+		this.$.title.addClass('hide');
+	}
+},
+
+back: function(sender, event)
+{
+	this.doCloseToaster();
+},
 
 /*
 	Pass show and hide on to the client controls so that they have a way to know

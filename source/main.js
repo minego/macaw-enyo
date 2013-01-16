@@ -170,12 +170,6 @@ create: function()
     }
 
 	/*
-		Store a global handle to the toasters so other kinds can easily push
-		items.
-	*/
-	global.toasters = this.$.toasters;
-
-	/*
 		Create a global error notification function
 
 		Calling ex("oh noes, something happened); from anywhere in the app will
@@ -453,7 +447,8 @@ compose: function(sender, options)
 		owner:		this,
 		noscrim:	true,
 		nobg:		true,
-		modal:		true
+		modal:		true,
+		notitle:	true
 	});
 },
 
@@ -482,7 +477,8 @@ createAccount: function()
 		onSuccess:	"accountCreated"
 	}, {
 		owner:		this,
-		nobg:		true
+		nobg:		true,
+		notitle:	true
 	});
 },
 
@@ -588,7 +584,6 @@ moveIndicator: function(sender, event)
 });
 
 var ex;
-var global	= { };
 
 onload = function()
 {

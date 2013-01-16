@@ -113,6 +113,8 @@ create: function()
 	this.$.tweet.setUser(this.user);
 	this.$.tweet.setTwitter(this.twitter);
 	this.$.tweet.setItem(this.item);
+
+	this.log(this.item);
 	this.itemChanged();
 },
 
