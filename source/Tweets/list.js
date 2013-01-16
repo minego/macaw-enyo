@@ -335,9 +335,9 @@ gotTweets: function(success, results, keepnew)
 		setTimeout(enyo.bind(this, function() {
 			var oldtop = this.$.list.getScrollTop();
 
-			if (!isNaN(newCountIndex) && newCountIndex > 1) {
-				this.log(this.resource, 'Scrolling to: ' + (newCountIndex - 1));
-				this.$.list.scrollToRow(newCountIndex - 1);
+			if (results.length && results.length != this.results.length) {
+				this.log(this.resource, 'Scrolling to: ' + results.length);
+				this.$.list.scrollToRow(results.length - (keepnew ? 0 : 1));
 
 				/*
 					Scroll down just a bit to show that there is another tweet
@@ -398,7 +398,7 @@ setTimer: function()
 	}
 
 	this.log(this.resource, 'Setting timer to refresh ' + this.refreshTime + ' from now');
-	setTimeout(function() {
+	this.timeout = setTimeout(function() {
 		this.log(this.resource, 'Refreshing...');
 		this.refresh(true);
 	}.bind(this), this.refreshTime * 1000);
@@ -408,7 +408,7 @@ itemTap: function(sender, event)
 {
 	var item	= this.results[event.index];
 
-	if (!item) {
+	if (!item || !item.id_str) {
 		return;
 	}
 
