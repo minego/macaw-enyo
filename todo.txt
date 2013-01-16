@@ -40,7 +40,6 @@
 	- Hide tweets that match a filter. Can be applied in either the list kind or
 	  in the twitter helper.
 
-- Implement auto refresh. A "refresh" value (in seconds) is now set on each tab
 - Implement notifications. A "notify" boolean is set on each tab
 
 - Finish styling and implement some nice themes

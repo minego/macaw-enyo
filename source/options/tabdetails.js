@@ -191,6 +191,7 @@ create: function()
 	}
 
 	var times = [
+		{ content: "1 minute",		value: 60	},
 		{ content: "5 minutes",		value: 300	},
 		{ content: "15 minutes",	value: 900	},
 		{ content: "30 minutes",	value: 1800 },

@@ -320,6 +320,8 @@ createTabs: function()
 
 						user:				user,
 						resource:			tab.type,
+						refreshTime:		tab.refresh,
+						notify:				tab.notify,
 
 						onRefreshStart:		"panelRefreshStart",
 						onRefreshStop:		"panelRefreshStop"

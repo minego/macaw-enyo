@@ -22,6 +22,10 @@ classes:								"tweetlist enyo-fit",
 published: {
 	user:								null,
 	resource:							"home",
+
+	refreshTime:						-1,
+	notify:								false,
+
     rowsPerPage:                        50 /* This is supposed to be overridden by webOSPhoneTweetList below... */
 },
 
@@ -117,6 +121,8 @@ pullComplete: function()
 
 refresh: function()
 {
+	this.setTimer();
+
 	if (this.loading) {
 		return;
 	}
@@ -186,6 +192,8 @@ gotTweets: function(success, results)
 		ex("Refresh failed");
 		this.loading = false;
 		this.doRefreshStop();
+
+		this.setTimer();
 		return;
 	}
 
@@ -313,6 +321,20 @@ gotTweets: function(success, results)
 	if (this.pulled) {
 		this.$.list.completePull();
 	}
+	this.setTimer();
+},
+
+setTimer: function()
+{
+	clearTimeout(this.timeout);
+
+	if (isNaN(this.refreshTime) || this.refreshTime < 1) {
+		return;
+	}
+
+	setTimeout(function() {
+		this.refresh();
+	}.bind(this), this.refreshTime * 1000);
 },
 
 itemTap: function(sender, event)
