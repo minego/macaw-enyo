@@ -117,7 +117,8 @@ components: [
 		name:								"notifications",
 		kind:								"toaster-chain",
 
-		flyInFrom:							"top"
+		flyInFrom:							"top",
+		ignoreBack:							true
 	},
 
 	{
@@ -523,11 +524,14 @@ closeToaster: function()
 
 openToaster: function(sender, event)
 {
-    if (event === undefined)
+    if (event === undefined) {
         event = {};
-    if (event.options === undefined)
+	}
+
+    if (event.options === undefined) {
         event.options = {};
-    
+	}
+
 	event.options.owner = this;
 
 	this.$.toasters.push(event.component, event.options);

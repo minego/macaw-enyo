@@ -66,12 +66,13 @@ classes:						"toaster-chain",
 
 published: {
 	length:						0,
+	toasters:					[],
 
 	/* May be top, right, bottom or left */
-	flyInFrom:					"bottom"
+	flyInFrom:					"bottom",
+	ignoreBack:					false
 },
 
-items:							[],
 components: [
 	{
 		kind:					onyx.Scrim,
@@ -107,7 +108,7 @@ slideInFromChanged: function()
 
 getLength: function()
 {
-	return(this.items.length);
+	return(this.toasters.length);
 },
 
 push: function(component, options)
@@ -116,9 +117,9 @@ push: function(component, options)
 
 	options = options || {};
 
-	if (this.items.length) {
-		this.items[this.items.length - 1].removeClass('show');
-		this.items[this.items.length - 1].hide();
+	if (this.toasters.length) {
+		this.toasters[this.toasters.length - 1].removeClass('show');
+		this.toasters[this.toasters.length - 1].hide();
 	}
 
 	toaster = this.createComponent({
@@ -130,7 +131,7 @@ push: function(component, options)
 	toaster.options = options;
 	toaster.render();
 
-	this.items.push(toaster);
+	this.toasters.push(toaster);
 
 	setTimeout(enyo.bind(this, function() {
 		this.showTopToaster();
@@ -149,16 +150,18 @@ pop: function(count)
 {
 	var toaster;
 
+	this.$.scrim.hide();
 	if (isNaN(count)) {
 		count = 1;
 	}
+this.log('Popping the toast: ' + count);
 
 	if (count < 1) {
 		return;
 	}
 
 	for (var i = 0; i < count; i++) {
-		if ((toaster = this.items.pop())) {
+		if ((toaster = this.toasters.pop())) {
 			if (i == 0) {
 				/*
 					Let the first one animate being closed first, and simply
@@ -166,9 +169,9 @@ pop: function(count)
 					anyway.
 				*/
 				toaster.removeClass('show');
-				toaster.hide();
 
 				setTimeout(enyo.bind(this, function() {
+					toaster.hide();
 					toaster.destroy();
 				}), 500);
 			} else {
@@ -177,7 +180,7 @@ pop: function(count)
 		}
 	}
 
-	if (this.items.length) {
+	if (this.toasters.length) {
 		this.showTopToaster();
 	} else {
 		this.$.scrim.hide();
@@ -188,23 +191,30 @@ showTopToaster: function()
 {
 	this.$.scrim.hide();
 
-	if (this.items.length) {
-		var		toaster	= this.items[this.items.length - 1];
+	if (this.toasters.length) {
+		var		toaster	= this.toasters[this.toasters.length - 1];
+		var		z		= this.toasters.length;
 
-		if (toaster.options.noscrim) {
-			this.$.scrim.hide();
-		} else {
+		if (!toaster.options.noscrim) {
+			this.$.scrim.show();
+
+			var sz = parseInt(this.$.scrim.getComputedStyleValue('z-index', z));
+
+			if (sz > z) {
+				z = sz;
+			}
+
 			if (toaster.options.transparent) {
 				this.$.scrim.setClasses("onyx-scrim-transparent");
 			} else {
 				this.$.scrim.setClasses("onyx-scrim-translucent");
 			}
-
-			this.$.scrim.show();
 		}
 
-		toaster.addClass('show');
 		toaster.show();
+		toaster.addClass('show');
+
+		toaster.applyStyle('z-index', z + 1);
 
 		if (!toaster.options.nobg) {
 			toaster.addClass('bg');
@@ -216,22 +226,26 @@ handleScrim: function()
 {
 	var	options;
 
-	if (this.items.length) {
-		options = this.items[this.items.length - 1].options;
+	if (this.toasters.length) {
+		options = this.toasters[this.toasters.length - 1].options;
 	}
 	options = options || {};
 
 	if (!options.modal) {
-		this.pop(this.items.length);
+		this.pop(this.toasters.length);
 	}
 },
 
-handleBack: function()
+handleBack: function(sender)
 {
 	var	options;
 
-	if (this.items.length) {
-		options = this.items[this.items.length - 1].options;
+	if (this.ignoreBack) {
+		return;
+	}
+
+	if (this.toasters.length) {
+		options = this.toasters[this.toasters.length - 1].options;
 	}
 	options = options || {};
 

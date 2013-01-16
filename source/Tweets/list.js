@@ -126,7 +126,7 @@ pullComplete: function()
 	this.pulled = false;
 },
 
-refresh: function()
+refresh: function(keepnew)
 {
 	this.setTimer();
 
@@ -169,15 +169,25 @@ refresh: function()
 		params.count = 50;
 	}
 
-	this.twitter.getTweets(this.resource, enyo.bind(this, this.gotTweets), params);
+	this.twitter.getTweets(this.resource, enyo.bind(this, function(success, results) {
+		this.gotTweets(success, results, keepnew);
+	}), params);
 },
 
-gotTweets: function(success, results)
+gotTweets: function(success, results, keepnew)
 {
 	var		changed	= false;
 
+	if (this.destroyed) {
+		/*
+			This can happen if the tabs are rebuilt while a refresh is in
+			progress.
+		*/
+		return;
+	}
+
 	/* Remove the previous newcount indicator */
-	if (this.newcount) {
+	if (this.newcount && !keepnew) {
 		this.results.splice(this.newcount, 1);
 		this.newcount = null;
 
@@ -244,8 +254,16 @@ gotTweets: function(success, results)
 	}
 	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
 
-	/* Insert a new newcount indicator */
-	if (results.length && this.results.length) {
+	if (keepnew && this.newcount) {
+		/* Update the existing newcount indicator */
+		if (results.length) {
+			this.results[this.newcount].newcount = this.newcount += results.length;
+			this.newcount += results.length;
+
+			changed = true;
+		}
+	} else if (results.length && this.results.length) {
+		/* Insert a new newcount indicator */
 		this.newcount = results.length;
 
 		changed = true;
@@ -279,34 +297,38 @@ gotTweets: function(success, results)
 		*/
 		var cache = this.results.slice(0, 20);
 
-		if (this.newcount) {
-			cache.splice(this.newcount, 1);
+		for (var i = cache.length - 1, c; c = cache[i]; i--) {
+			if (!c.id_str && !c.gap) {
+				cache.splice(i, 1);
+			}
 		}
 
 		prefs.set('cachedtweets:' + this.user.user_id + ':' + this.resource, cache);
 
 
 		/* Scroll to the oldest new tweet */
-		setTimeout(enyo.bind(this, function() {
-			if (this.newcount && this.newcount > 1) {
-				this.$.list.scrollToRow(this.newcount - 1);
+		if (!keepnew) {
+			setTimeout(enyo.bind(this, function() {
+				if (this.newcount && this.newcount > 1) {
+					this.$.list.scrollToRow(this.newcount - 1);
 
-				/*
-					Scroll down just a bit to show that there is another tweet
-					above this one.
-				*/
-				setTimeout(enyo.bind(this, function() {
-					var top = this.$.list.getScrollTop();
-					if (top > 35) {
-						this.$.list.setScrollTop(top - 35);
-					} else {
-						this.$.list.setScrollTop(0);
-					}
-				}), 30);
-			} else {
-				this.$.list.scrollToRow(0);
-			}
-		}), 500);
+					/*
+						Scroll down just a bit to show that there is another tweet
+						above this one.
+					*/
+					setTimeout(enyo.bind(this, function() {
+						var top = this.$.list.getScrollTop();
+						if (top > 35) {
+							this.$.list.setScrollTop(top - 35);
+						} else {
+							this.$.list.setScrollTop(0);
+						}
+					}), 30);
+				} else {
+					this.$.list.scrollToRow(0);
+				}
+			}), 500);
+		}
 	}
 
 	if (this.results.length == 0) {
@@ -340,7 +362,7 @@ setTimer: function()
 	}
 
 	setTimeout(function() {
-		this.refresh();
+		this.refresh(true);
 	}.bind(this), this.refreshTime * 1000);
 },
 
