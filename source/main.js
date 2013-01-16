@@ -521,6 +521,8 @@ closeToaster: function()
 
 openToaster: function(sender, event)
 {
+	event.options.owner = this;
+
 	this.$.toasters.push(event.component, event.options);
 },
 
