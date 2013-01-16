@@ -71,6 +71,13 @@ create: function()
 	}, { owner: this });
 },
 
+destroy: function()
+{
+	clearTimeout(this.timeout);
+
+	this.inherited(arguments);
+},
+
 importProps: function(inProps) {
     this.inherited(arguments);
 },
