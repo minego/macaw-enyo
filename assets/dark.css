@@ -1,6 +1,9 @@
+#main {
+	background:				black;
+}
+
 .panel {
-	background:				url(../assets/vertical-border.png) left bottom repeat-y,
-							black;
+	background:				url(../assets/vertical-border.png) left bottom repeat-y;
 
 	color:					white;
 }
