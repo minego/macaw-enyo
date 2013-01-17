@@ -207,6 +207,9 @@ send: function(sender, event)
 		params.status	= '';
 	}
 
+	/* Replace any non-breaking spaces with regular spaces */
+	params.status = params.status.replace(/\u00A0/g, " ");
+
 	if (this.replyto) {
 		if (this.replyto.dm) {
 			resource		= 'message';
