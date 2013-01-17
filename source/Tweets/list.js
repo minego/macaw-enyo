@@ -56,6 +56,9 @@ create: function()
 		horizontal:						"hidden",
 		vertical:						"scroll",
 
+		// TODO	Detect the platform... This is the correct one for android.
+		strategyKind:					"TranslateScrollStrategy",
+
 		thumb:							true,
 		enableSwipe:					false,
 		noSelect:						true,
@@ -230,7 +233,10 @@ gotTweets: function(success, results, autorefresh)
 
 		ex("Refresh failed");
 		this.loading = false;
-		this.doRefreshStop();
+		this.doRefreshStop({
+			count:		0,
+			failed:		true
+		});
 
 		this.setTimer();
 		return;
@@ -374,7 +380,9 @@ gotTweets: function(success, results, autorefresh)
 	}
 
 	this.loading = false;
-	this.doRefreshStop();
+	this.doRefreshStop({
+		count:		!isNaN(newCountIndex) ? newCountIndex : 0
+	});
 
 	if (this.pulled) {
 		this.$.list.completePull();

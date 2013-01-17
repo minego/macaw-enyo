@@ -344,11 +344,19 @@ createTabs: function()
 
 		tabs.push({
 			name:			"tab" + t,
-			classes:		"tab tab-" + tab.type.toLowerCase(),
+			classes:		"tab",
 			style:			"width: " + this.tabWidth + "%;",
 
 			index:			t,
-			ontap:			"selectpanel"
+			ontap:			"selectpanel",
+
+			components: [{
+				name:		"tabicon" + t,
+				classes:	"icon tab-" + tab.type.toLowerCase()
+			}, {
+				name:		"tabcount" + t,
+				classes:	"count"
+			}]
 		});
 	}
 	this.$.tabcontainer.createComponents(tabs, { owner: this });
@@ -365,13 +373,37 @@ createTabs: function()
 
 panelRefreshStart: function(sender, event)
 {
-	this.$["tab" + sender.index].addClass("spin");
+	var icon	= this.$['tabicon'	+ sender.index];
+	var count	= this.$['tabcount'	+ sender.index];
+
+	count.setContent('');
+
+	icon.removeClass("endspin");
+	icon.addClass("spin");
 },
 
 panelRefreshStop: function(sender, event)
 {
+	var icon	= this.$['tabicon'	+ sender.index];
+	var count	= this.$['tabcount'	+ sender.index];
+
+	if (!isNaN(event.count) && event.count > 0) {
+		count.setContent(event.count);
+	} else {
+		count.setContent('');
+	}
+
+	/*
+		This is WAY too complicated, but android tends to keep running the
+		animation forever even if the class is removed. Setting an animation
+		that it can finish is the only way I've found to ensure that it actually
+		stops.
+	*/
 	setTimeout(function() {
-		this.$["tab" + sender.index].removeClass("spin");
+		icon.removeClass("spin");
+		setTimeout(function() {
+			icon.addClass("endspin");
+		}.bind(this), 50);
 	}.bind(this), 1000);
 },
 

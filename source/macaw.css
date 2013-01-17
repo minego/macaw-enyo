@@ -90,8 +90,6 @@ body.Pre3 {
 
 	margin:					0px;
 	padding:				0px;
-	background:				url(../assets/vertical-border.png) left bottom no-repeat,
-							url(../assets/vertical-border.png) right bottom no-repeat;
 }
 
 .toolbar.topbar {
@@ -124,6 +122,8 @@ body.Pre3 {
 }
 
 .tabbar .tab {
+	position:				relative;
+
 	display:				inline-block;
 	height:					100%;
 	width:					24px;
@@ -131,6 +131,25 @@ body.Pre3 {
 	pointer-events:			auto;
 
 	margin:					auto 0 auto 0;
+	background:				url(../assets/vertical-border.png) left top no-repeat
+}
+
+.tabbar .tab .icon {
+	position:				absolute;
+	width:					100%;
+}
+
+.tabbar .tab .count {
+	position:				absolute;
+	left:					20px;
+	top:					10px;
+	width:					100%;
+
+	color:					white;
+	text-align:				center;
+	font-size:				12px;
+
+	background:				none;
 }
 
 .bottombar .indicator {
@@ -161,12 +180,25 @@ body.Pre3 {
 	}
 
 	to {
-		-webkit-transform:	rotate(360deg);
+		-webkit-transform:	rotate(359deg);
+	}
+}
+
+@-webkit-keyframes NoSpin {
+	from {
+		-webkit-transform:	rotate(0deg);
+	}
+
+	to {
+		-webkit-transform:	rotate(0deg);
 	}
 }
 
 .spin {
 	-webkit-animation:		Spin 1s linear infinite;
+}
+.endspin {
+	-webkit-animation:		NoSpin 0.1s linear;
 }
 
 .tab-timeline {
@@ -197,6 +229,8 @@ body.Pre3 {
 	text-align:				center;
 
 	color:					white;
+	background:				url(../assets/vertical-border.png)	left top no-repeat,
+							url(../assets/vertical-border.png)	right top no-repeat;
 }
 
 .compose.button {
