@@ -314,12 +314,12 @@ gotTweets: function(success, results, autorefresh)
 		}
 
 		/*
-			Cache the 20 most recent items
+			Cache the most recent items
 
 			Do not include the new count indicator. Gap indicators are okay
 			though.
 		*/
-		var cache = this.results.slice(0, 20);
+		var cache = this.results.slice(0, 100);
 
 		for (var i = cache.length - 1, c; c = cache[i]; i--) {
 			if (!c.id_str && !c.gap) {
