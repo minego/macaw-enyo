@@ -4,9 +4,10 @@ APPID		:= $(VENDOR).$(APP)
 PKG			:= Macaw
 VERSION		:= 2.2.$(shell git log --pretty=format:'' | wc -l | sed 's/ *//')
 DEPLOY		:= deploy/macaw
+APK			:= Macaw-debug.apk
 
 clean:
-	rm -rf *.ipk deploy build 2>/dev/null || true
+	rm -rf *.ipk deploy build .tmp 2>/dev/null || true
 
 ${DEPLOY}:
 	rm -rf deploy build
@@ -40,24 +41,50 @@ update:
 	@git fetch upstream
 	@git merge upstream/master
 
+ipk: webos
+
 webos: deploy/${APPID}_${VERSION}_all.ipk
 
 openwebos: webos
 	@scp -r deploy/macaw root@192.168.7.2:/usr/palm/applications/${APPID}
 
-install: webos
-	@palm-install *.ipk
+install:
+	@(ls *.ipk 2>/dev/null && palm-install *.ipk) || (ls *.apk 2>/dev/null && adb install -r *.apk)
 
 launch: install
 	@palm-launch -i ${APPID}
 
 log:
-	-palm-log -f ${APPID} | sed -u										\
-		-e 's/\[[0-9]*-[0-9]*:[0-9]*:[0-9]*\.[0-9]*\] [a-zA-Z]*: //'	\
-		-e 's/indicated new content, but not active./\n\n\n/'
+	@(																		\
+		ls *.ipk 2>/dev/null &&												\
+		-palm-log -f ${APPID} | sed -u										\
+			-e 's/\[[0-9]*-[0-9]*:[0-9]*:[0-9]*\.[0-9]*\] [a-zA-Z]*: //'	\
+			-e 's/indicated new content, but not active./\n\n\n/'			\
+	) || (																	\
+		ls *.apk 2>/dev/null &&												\
+		adb logcat | grep "I\/Web Console"									\
+	)
 
 test: launch log
 	@true
 
-.PHONY: clean webos install launch log test release
+
+# Android build
+
+${DEPLOY}/project.properties: ${DEPLOY}
+
+android: ${APK}
+
+apk: ${APK}
+
+${APK}: ${DEPLOY}/project.properties ${DEPLOY}/appinfo.json
+	@rm -rf .tmp 2>/dev/null || true
+	@cp -r android .tmp
+	@cp -r ${DEPLOY}/* .tmp/assets/www/
+	@cp android/*.js android/*.html .tmp/assets/www/
+	@cp icon128.png .tmp/res/drawable/icon.png
+	@(cd .tmp && ant debug)
+	@mv .tmp/bin/$(APK) .
+
+.PHONY: clean webos install launch log test release apk ipk android
 
