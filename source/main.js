@@ -127,8 +127,6 @@ components: [
 	}
 ],
 
-devType: "", /* Blank for just about everything, or webOSPhone for a webOS phone. */
-
 create: function()
 {
 	this.inherited(arguments);
@@ -151,23 +149,14 @@ create: function()
 
 	this.addClass('font-tiny');
 
-    try {
-        var info	= enyo.webOS.deviceInfo();
-        var name    = info.modelNameAscii;
-
-        if (name.indexOf("pre")  !== -1 ||
-            name.indexOf("veer") !== -1 ||
-            name.indexOf("pixi") !== -1)
-		{
-            this.devType = "webOSPhone";
-		}
+	if (window.PalmSystem) {
 		/*
 			Hide the options button on webOS devices since they have the app
 			menu.
 		*/
 		this.$.options.hide();
-    } catch (e) {
-    }
+	}
+
 
 	/*
 		Create a global error notification function
@@ -310,7 +299,7 @@ createTabs: function()
 						name:				"panel" + t,
 						index:				t,
 
-						kind:				this.devType + "TweetList",
+						kind:				"TweetList",
 						classes:			"tweetlist",
 
 						user:				user,

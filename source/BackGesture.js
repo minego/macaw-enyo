@@ -7,6 +7,10 @@
 */
 
 (function() {
+	document.addEventListener('backbutton', function(e) {
+		enyo.Signals && enyo.Signals.send && enyo.Signals.send('onbackbutton');
+	}, false);
+
 	document.addEventListener('keyup', function(e) {
 		switch (e.keyIdentifier) {
 			case "U+1200001":

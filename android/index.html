@@ -19,6 +19,8 @@
 	</head>
 	<body class="enyo-unselectable onyx">
 		<script>
+			window.android = true;
+
 			try {
 				prefs.ready(function() {
 					new net.minego.macaw.main().renderInto(document.body);

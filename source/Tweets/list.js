@@ -24,9 +24,7 @@ published: {
 	resource:							"home",
 
 	refreshTime:						-1,
-	notify:								false,
-
-    rowsPerPage:                        50 /* This is supposed to be overridden by webOSPhoneTweetList below... */
+	notify:								false
 },
 
 events: {
@@ -36,14 +34,7 @@ events: {
 },
 
 components: [
-],
-
-create: function()
-{
-	this.inherited(arguments);
-
-	this.twitter = new TwitterAPI(this.user);
-    this.createComponent({
+	{
 		name:							"list",
 		kind:							enyo.PulldownList,
 		classes:						"enyo-fit",
@@ -56,14 +47,9 @@ create: function()
 		horizontal:						"hidden",
 		vertical:						"scroll",
 
-		// TODO	Detect the platform... This is the correct one for android.
-		strategyKind:					"TranslateScrollStrategy",
-
 		thumb:							true,
 		enableSwipe:					false,
 		noSelect:						true,
-
-        rowsPerPage:					this.rowsPerPage,
 
 		components: [{
 			name:						"tweet",
@@ -72,7 +58,33 @@ create: function()
 			name:						"msg",
 			classes:					"hide"
 		}]
-	}, { owner: this });
+	}
+],
+
+create: function()
+{
+	this.inherited(arguments);
+
+	this.twitter = new TwitterAPI(this.user);
+
+    try {
+        var info	= enyo.webOS.deviceInfo();
+        var name    = info.modelNameAscii;
+
+        if (name.indexOf("pre")  !== -1 ||
+            name.indexOf("veer") !== -1 ||
+            name.indexOf("pixi") !== -1)
+		{
+			/* Attempt to improve scrolling on webOS phones */
+			this.$.list.setRowsPerPage(2);
+		}
+    } catch (e) {
+    }
+
+	if (window.android) {
+		this.$.list.setStrategyKind("TranslateScrollStrategy");
+		this.$.list.setRowsPerPage(20);
+	}
 },
 
 destroy: function()
@@ -383,7 +395,7 @@ writeCache: function()
 		Do not include the new count indicator. Gap indicators are okay
 		though.
 	*/
-	var cache = this.results.slice(0, 100);
+	var cache = this.results.slice(0, 50);
 
 	for (var i = cache.length - 1, c; c = cache[i]; i--) {
 		if (!c.id_str && !c.gap) {
@@ -543,18 +555,5 @@ smartscroll: function()
 	}
 }
 
-});
-
-/*
-    Right now we are just generalizing. This should probably be tweaked based on
-	screen size.  Then we can use the device name + TweetList
-
-	(i.e. Pre3TweetList, VeerTweetList, PreTweetList.
- */
-enyo.kind({
-    name:                               "webOSPhoneTweetList",
-    kind:                               "TweetList",
-
-    rowsPerPage:                        2
 });
 
