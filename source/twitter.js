@@ -171,7 +171,16 @@ getTweets: function(resource, cb, params)
 		}.bind(this),
 
 		function(response) {
-			cb(false);
+			var results = enyo.json.parse(response.text);
+
+			if (results.errors) {
+				for (var i = 0, e; e = results.errors[i]; i++) {
+					if (e.message) {
+						ex(e.message);
+					}
+				}
+			}
+			cb(false, results);
 		}
 	);
 },
@@ -462,7 +471,16 @@ sendTweet: function(resource, cb, params)
 			cb(true, enyo.json.parse(response.text));
 		},
 		function(response) {
-			cb(false, enyo.json.parse(response.text));
+			var results = enyo.json.parse(response.text);
+
+			if (results.errors) {
+				for (var i = 0, e; e = results.errors[i]; i++) {
+					if (e.message) {
+						ex(e.message);
+					}
+				}
+			}
+			cb(false, results);
 		}
 	);
 },

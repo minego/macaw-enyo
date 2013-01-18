@@ -57,7 +57,7 @@ launch: install
 log:
 	@(																		\
 		ls *.ipk 2>/dev/null &&												\
-		-palm-log -f ${APPID} | sed -u										\
+		palm-log -f ${APPID} | sed -u										\
 			-e 's/\[[0-9]*-[0-9]*:[0-9]*:[0-9]*\.[0-9]*\] [a-zA-Z]*: //'	\
 			-e 's/indicated new content, but not active./\n\n\n/'			\
 	) || (																	\

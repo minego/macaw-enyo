@@ -77,7 +77,6 @@ gotTweet: function(success, result)
 {
 	if (!success) {
 		/* Failed */
-		ex("Failed to load tweet");
 		return;
 	}
 

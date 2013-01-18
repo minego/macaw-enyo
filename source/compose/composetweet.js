@@ -231,9 +231,6 @@ send: function(sender, event)
 	this.twitter.sendTweet(resource, function(success, response) {
 		if (success) {
 			this.doCloseToaster();
-		} else {
-			// TODO	Show more detail here
-			ex('Failed to send');
 		}
 	}.bind(this), params);
 }

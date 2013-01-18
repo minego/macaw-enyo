@@ -292,7 +292,6 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 		this.$.list.refresh();
 		this.$.list.completePull();
 
-		ex("Refresh failed");
 		this.loading = false;
 		this.doRefreshStop({
 			count:		0,

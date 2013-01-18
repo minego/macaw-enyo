@@ -187,7 +187,8 @@ create: function()
 
 			noscrim:		true,
 			modal:			true,
-			ignoreback:		true
+			ignoreback:		true,
+			notitle:		true
 		});
 
 		clearTimeout(this.$.notifications.timeout);
