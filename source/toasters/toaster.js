@@ -269,7 +269,7 @@ components: [
 		classes:				"title toastertitle",
 
 		components: [{
-			classes:			"back button",
+			classes:			"back icon",
 			ontap:				"back"
 		}]
 	}

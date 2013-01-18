@@ -28,7 +28,7 @@ var TwitterAPI = function(user) {
 		};
 	}
 
-	if (this.options && !this.user.options) {
+	if (this.options && this.user && !this.user.options) {
 		/*
 			Save the key on the user. This will ensure that if the supported set
 			of keys changes at some point in the future that the currently

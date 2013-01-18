@@ -84,8 +84,7 @@ create: function()
 		this.twitter = new TwitterAPI(this.user);
 	}
 
-	this.$.txt.setValue('');
-	this.$.txt.moveCursorToEnd();
+	this.textChanged();
 },
 
 textChanged: function()

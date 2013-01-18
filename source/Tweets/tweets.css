@@ -211,3 +211,8 @@
 	background-size:		auto 128px;
 }
 
+.tweetRT .title {
+	padding:				5px;
+	text-align:				center;
+}
+

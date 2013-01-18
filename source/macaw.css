@@ -233,43 +233,57 @@ body.Pre3 {
 							url(../assets/vertical-border.png)	right top no-repeat;
 }
 
-.compose.button {
+.compose.icon {
 	background:				url(../assets/icons/compose.png)	center center no-repeat;
 }
-.options.button {
+.options.icon {
 	background:				url(../assets/icons/opts.png)		center center no-repeat;
 }
-.refresh.button {
+.refresh.icon {
 	background:				url(../assets/icons/refresh.png)	center center no-repeat;
 }
-.back.button {
+.back.icon {
 	background:				url(../assets/icons/back.png)		center center no-repeat;
 }
-.delete.button {
+.delete.icon {
 	background:				url(../assets/icons/delete.png)		center center no-repeat;
 }
-.reply.button {
+.reply.icon {
 	background:				url(../assets/icons/reply.png)		center center no-repeat;
 }
-.retweet.button {
+.retweet.icon {
 	background:				url(../assets/icons/retweet.png)	center center no-repeat;
 }
-.favorite.button {
+.favorite.icon {
 	background:				url(../assets/icons/favorite.png)	center center no-repeat;
 }
-.favorite.button.active {
+.favorite.icon.active {
 	background:				url(../assets/icons/favorite-active.png)
 																center center no-repeat;
 }
-.convo.button {
+.convo.icon {
 	background:				url(../assets/icons/convo.png)		center center no-repeat;
 }
+.edit.icon {
+	background:				url(../assets/icons/edit.png)		center center no-repeat;
+}
+.confirm.icon {
+	background:				url(../assets/icons/confirm.png)	center center no-repeat;
+}
+.cancel.icon {
+	background:				url(../assets/icons/cancel.png)		center center no-repeat;
+}
 
-.button {
+.icon {
 	width:					48px;
 	height:					100%;
 	background-position:	center center;
 
 	display:				inline-block;
+}
+
+.confirm .title {
+	padding:				5px;
+	text-align:				center;
 }
 

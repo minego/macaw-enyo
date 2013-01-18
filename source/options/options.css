@@ -77,17 +77,17 @@
 	width:				150px;
 }
 
-.save,
-.cancel {
+.tabdetails .save,
+.tabdetails .cancel {
 	width:				150px !important;
 	margin:				15px 0px 15px 0px;
 }
 
-.save {
+.tabdetails .save {
 	float:				right;
 }
 
-.cancel {
+.tabdetails .cancel {
 	float:				left;
 }
 

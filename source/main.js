@@ -41,13 +41,13 @@ components: [
 		layoutKind:							"FittableColumnsLayout",
 		components: [
 			{
-				classes:					"options button",
+				classes:					"options icon",
 				name:						"options",
 				cmd:						"options",
 				ontap:						"handleButton"
 			},
 			{
-				classes:					"refresh button",
+				classes:					"refresh icon",
 				cmd:						"refresh",
 				ontap:						"handleButton"
 			},
@@ -59,7 +59,7 @@ components: [
 			},
 			{
 				cmd:						"compose",
-				classes:					"compose button",
+				classes:					"compose icon",
 				ontap:						"handleButton"
 			}
 		]

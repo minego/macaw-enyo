@@ -20,5 +20,6 @@ enyo.depends(
 	"macaw.css",
 	"main.js",
 
-	"prefs.js"
+	"prefs.js",
+	"confirm.js"
 );

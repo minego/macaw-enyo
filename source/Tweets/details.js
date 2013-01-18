@@ -40,6 +40,7 @@ handlers: {
 },
 
 events: {
+	onOpenToaster:					"",
 	onCloseToaster:					"",
 	onCompose:						"",
 	onConversation:					"",
@@ -63,7 +64,7 @@ components: [
 
 		components: [
 			{
-				classes:			"options button",
+				classes:			"options icon",
 				command:			"options"
 			},
 
@@ -73,27 +74,27 @@ components: [
 
 				components: [
 					{
-						classes:	"reply button",
+						classes:	"reply icon",
 						name:		"reply",
 						command:	"reply"
 					},
 					{
-						classes:	"retweet button",
+						classes:	"retweet icon",
 						name:		"retweet",
 						command:	"retweet"
 					},
 					{
-						classes:	"favorite button",
+						classes:	"favorite icon",
 						name:		"favorite",
 						command:	"favorite"
 					},
 					{
-						classes:	"convo button",
+						classes:	"convo icon",
 						name:		"convo",
 						command:	"convo"
 					},
 					{
-						classes:	"delete button",
+						classes:	"delete icon",
 						name:		"delete",
 						command:	"delete"
 					}
@@ -101,7 +102,7 @@ components: [
 			},
 
 			{
-				classes:			"back button",
+				classes:			"back icon",
 				command:			"back"
 			}
 		]
@@ -134,21 +135,18 @@ itemChanged: function()
 		this.$['retweet'	].addClass("hide");
 		this.$['favorite'	].addClass("hide");
 		this.$['convo'		].addClass("hide");
-	}
-
-	if (!this.item.in_reply_to_status_id) {
-		this.$['convo'		].addClass("hide");
-	}
-
-	if (this.item.dm) {
-		/* We can delete any DM to or from this user */
-		;
 	} else {
 		if (!this.user || !this.item.user ||
 			this.user.user_id !== this.item.user.id_str
 		) {
 			this.$['delete'		].addClass("hide");
+		} else {
+			this.$['retweet'	].addClass("hide");
 		}
+	}
+
+	if (!this.item.in_reply_to_status_id) {
+		this.$['convo'		].addClass("hide");
 	}
 
 	if (this.item.favorited) {
@@ -198,9 +196,11 @@ openHashTag: function(sender, event)
 handleTap: function(sender, event)
 {
 	/* Find the real sender */
-	sender = event.dispatchTarget;
+	if (event.dispatchTarget) {
+		sender = event.dispatchTarget;
+	}
 
-	switch (sender.command) {
+	switch (sender.command || event.command) {
 		case "back":
 			this.doCloseToaster();
 			break;
@@ -219,17 +219,59 @@ handleTap: function(sender, event)
 			break;
 
 		case "retweet":
-			// TODO	Prompt the user for RT, edit or cancel...
+			this.doOpenToaster({
+				component: {
+					kind:				"Confirm",
+					title:				"Retweet @" + this.item.user.screen_name + "'s status?",
+					onChoose:			"handleTap",
+					options: [
+						{
+							classes:	"confirm",
+							command:	"retweet-confirmed"
+						},
+						{
+							classes:	"edit",
+							command:	"edit"
+						},
+						{
+							classes:	"cancel",
+							command:	"ignore"
+						}
+					]
+				},
+
+				options:{
+					notitle:		true,
+					owner:			this
+				}
+			});
+			break;
+
+		case "retweet-confirmed":
 			this.twitter.changeTweet('rt', function(success) {
 				if (success) {
+					this.doCloseToaster();
+
 					this.item.retweeted = !this.item.retweeted;
 
 					this.doTweetAction({
 						action:		'rt',
 						item:		this.item
 					});
+				} else {
+					ex('Could not RT');
 				}
 			}.bind(this), this.item.id_str);
+			break;
+
+		case "edit":
+			this.doCompose({
+				user:		this.user,
+				twitter:	this.twitter,
+				text:		'RT @' +
+								this.item.user.screen_name +
+								': ' + this.item.stripped
+			});
 			break;
 
 		case "favorite":
@@ -260,6 +302,31 @@ handleTap: function(sender, event)
 			break;
 
 		case "delete":
+			this.doOpenToaster({
+				component: {
+					kind:				"Confirm",
+					title:				"Are you sure you want to delete this tweet?",
+					onChoose:			"handleTap",
+					options: [
+						{
+							classes:	"confirm",
+							command:	"delete-confirmed"
+						},
+						{
+							classes:	"cancel",
+							command:	"ignore"
+						}
+					]
+				},
+
+				options:{
+					notitle:		true,
+					owner:			this
+				}
+			});
+			break;
+
+		case "delete-confirmed":
 			this.twitter.changeTweet(this.item.dm ? 'deldm' : 'del', function(success) {
 				if (success) {
 					this.doTweetAction({
@@ -273,7 +340,6 @@ handleTap: function(sender, event)
 			}.bind(this), this.item.id_str);
 			break;
 
-
 		case "convo":
 			this.doConversation({
 				item:		this.item,
@@ -282,8 +348,9 @@ handleTap: function(sender, event)
 			});
 			break;
 	}
-}
 
+	return(true);
+}
 
 });
 
