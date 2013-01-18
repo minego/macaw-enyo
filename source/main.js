@@ -609,7 +609,7 @@ handleButton: function(sender, event)
 				kind:				"options",
 
 				onClose:			"closeAllToasters",
-				onChange:			"optionsChanged",
+				onOptionsChanged:	"optionsChanged",
 				onCreateAccount:	"createAccount"
 			}, {
 				owner:				this

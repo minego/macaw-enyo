@@ -19,7 +19,7 @@ name:												"options",
 classes:											"options",
 
 events: {
-	onChange:										"",
+	onOptionsChanged:								"",
 	onCreateAccount:								"",
 	onTabsChanged:									"",
 
@@ -557,12 +557,14 @@ itemSelected: function(sender, event)
 			break;
 	}
 
-	this.doChange({ keys: keys });
+	this.doOptionsChanged({ keys: keys });
+	return(true);
 },
 
 toggleChanged: function(sender, event)
 {
 	prefs.set(sender.item.key, sender.item.negate ? !sender.getValue() : sender.getValue());
+	return(true);
 },
 
 tabsChanged: function(sender, event)
