@@ -8,6 +8,12 @@ var TwitterAPI = function(user) {
 	if (this.user && this.user.options) {
 		/* Use whatever key the user's account was created with */
 		this.options = this.user.options;
+	} else if (window.android) {
+		/* Macaw for android */
+		this.options = {
+			consumerKey:	'oNj2QiFQrek6e9tlgvCLnA',
+			consumerSecret:	'rVqMxyXykB5vMNaKoFcp7PGgr4tdupzdmcNCF7CTAY'
+		};
 	} else if (typeof(chrome) !== "undefined") {
 		/* Macaw for chrome */
 		this.options = {
