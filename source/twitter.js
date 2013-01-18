@@ -5,7 +5,10 @@ var TwitterAPI = function(user) {
 	this.version		= '1.1';
 	this.user			= user;
 
-	if (typeof(chrome) !== "undefined") {
+	if (this.user && this.user.options) {
+		/* Use whatever key the user's account was created with */
+		this.options = this.user.options;
+	} else if (typeof(chrome) !== "undefined") {
 		/* Macaw for chrome */
 		this.options = {
 			consumerKey:	'hrdhei7FCruo8edNskXvmA',
@@ -23,6 +26,23 @@ var TwitterAPI = function(user) {
 			consumerKey:	'J5f7Mh3f3KhgypwV3b5kw',
 			consumerSecret:	'tAzmjlKeBFP8RmyAPRIaaYtdeRRAOWuqVWbiWD6g'
 		};
+	}
+
+	if (this.options && !this.user.options) {
+		/*
+			Save the key on the user. This will ensure that if the supported set
+			of keys changes at some point in the future that the currently
+			setup user accounts won't be broken by the change.
+		*/
+		var users = prefs.get('accounts');
+
+		for (var i = 0, u; u = users[i]; i++) {
+			if (u.user_id == this.user.user_id) {
+				u.options = this.options;
+				prefs.set('accounts', users);
+				break;
+			}
+		}
 	}
 
 	this.oauth = OAuth(this.options);
