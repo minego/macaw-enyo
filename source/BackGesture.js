@@ -7,8 +7,12 @@
 */
 
 (function() {
-	document.addEventListener('backbutton', function(e) {
-		enyo.Signals && enyo.Signals.send && enyo.Signals.send('onbackbutton');
+	document.addEventListener('deviceready', function(e) {
+		document.addEventListener('backbutton', function(e) {
+			enyo.Signals && enyo.Signals.send && enyo.Signals.send('onbackbutton');
+
+			e.preventDefault();
+		}, false);
 	}, false);
 
 	document.addEventListener('keyup', function(e) {
