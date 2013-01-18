@@ -156,7 +156,12 @@ getTweets: function(resource, cb, params)
 			} else {
 				this.cleanupTweet(results);
 			}
-			cb(true, results);
+
+			if (results) {
+				cb(true, results);
+			} else {
+				cb(false);
+			}
 		}.bind(this),
 
 		function(response) {
@@ -226,8 +231,10 @@ changeTweet: function(action, cb, id)
 /* Cleanup the provided tweets */
 cleanupTweets: function(tweets)
 {
-	for (var i = 0, tweet; tweet = tweets[i]; i++) {
-		tweets[i] = this.cleanupTweet(tweet);
+	if (tweets) {
+		for (var i = 0, tweet; tweet = tweets[i]; i++) {
+			tweets[i] = this.cleanupTweet(tweet);
+		}
 	}
 },
 
