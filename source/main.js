@@ -212,6 +212,10 @@ create: function()
 				this.handleButton({ cmd: "refresh" });
 				break;
 
+			case 188: /* comma (,) */
+				this.handleButton({ cmd: "preferences" });
+				break;
+
 			default:
 				return(true);
 		}

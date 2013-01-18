@@ -140,7 +140,13 @@ pullComplete: function()
 	this.pulled = false;
 },
 
-refresh: function(autorefresh)
+/*
+	autorefresh should be true if the refresh was initiated by a timer and not
+	a human interaction.
+
+	index is the offset where the new tweets should be inserted.
+*/
+refresh: function(autorefresh, index)
 {
 	this.setTimer();
 
@@ -166,7 +172,13 @@ refresh: function(autorefresh)
 		include_entities:		true
 	};
 
-	if (this.results.length) {
+	if (!this.results.length) {
+		/* Load a reasonable amount */
+		params.count = 50;
+
+		/* It doesn't matter where we insert... */
+		index = NaN;
+	} else if (isNaN(index)) {
 		/* Request a bit of an overlap in order to try to detect gaps */
 		for (var i = 4; i >= 0; i--) {
 			if (this.results[i] && this.results[i].id_str) {
@@ -190,19 +202,34 @@ refresh: function(autorefresh)
 		/* Load as many as possible to avoid gaps, max allowed is 200 */
 		params.count = 200;
 	} else {
-		/* Load a reasonable amount */
-		params.count = 50;
+		/*
+			We're either trying to load tweets at the end of the list, or trying
+			to fill a gap.
+		*/
+		var prev	= this.results[index - 1];
+		var next	= this.results[index + 1];
+
+		if (prev && prev.id_str) {
+			params.max_id = prev.id_str;
+		}
+
+		if (next && next.id_str) {
+			params.since_id = prev.id_str;
+		} else {
+			params.count = 50;
+		}
 	}
 
 	this.twitter.getTweets(this.resource, enyo.bind(this, function(success, results) {
-		this.gotTweets(success, results, autorefresh);
+		this.gotTweets(success, results, autorefresh, index);
 	}), params);
 },
 
-gotTweets: function(success, results, autorefresh)
+gotTweets: function(success, results, autorefresh, insertIndex)
 {
 	var		changed			= false;
 	var		newCountIndex	= NaN;
+	var		reverseScroll	= false;
 
 	if (this.destroyed) {
 		/*
@@ -215,6 +242,21 @@ gotTweets: function(success, results, autorefresh)
 	/* Keep track of when we last loaded */
 	this.loaded = new Date();
 
+	if (this.results[insertIndex]) {
+		if (!this.results[insertIndex].id_str) {
+			this.results.splice(insertIndex, 1);
+
+			changed = true;
+		}
+
+		if (insertIndex >= this.results.length) {
+			/* Scroll to the first new item, not the last */
+			reverseScroll = true;
+		}
+	} else {
+		insertIndex = NaN;
+	}
+
 	/* Find the newcount indicator */
 	for (var i = 0, t; t = this.results[i]; i++) {
 		if (t.newcount) {
@@ -225,6 +267,10 @@ gotTweets: function(success, results, autorefresh)
 
 	/* Remove the previous newcount indicator */
 	if (!isNaN(newCountIndex)) {
+		if (newCountIndex < insertIndex) {
+			insertIndex--;
+		}
+
 		this.results.splice(newCountIndex, 1);
 		newCountIndex = NaN;
 
@@ -233,7 +279,9 @@ gotTweets: function(success, results, autorefresh)
 
 	/* Remove the "no tweets" indicator */
 	if (this.results.length > 0 && this.results[0].empty) {
-		this.results.splice(0, 1);
+		this.results = [];
+		newCountIndex	= NaN;
+		insertIndex		= NaN;
 
 		changed = true;
 	}
@@ -270,8 +318,13 @@ gotTweets: function(success, results, autorefresh)
 					/* We found a matching item, anything older is a duplicate */
 					// this.log(this.resource, 'Removing duplicates from: ' + ni.id_str);
 					match = true;
-					results.splice(n);
-					break;
+
+					if (isNaN(insertIndex)) {
+						results.splice(n);
+						break;
+					} else {
+						results.splice(n, 1);
+					}
 				}
 			}
 		}
@@ -294,7 +347,7 @@ gotTweets: function(success, results, autorefresh)
 	}
 	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
 
-	if (results.length && this.results.length) {
+	if (results.length && this.results.length && isNaN(insertIndex)) {
 		/* Insert a new newcount indicator */
 		changed = true;
 		this.results.unshift({
@@ -306,7 +359,13 @@ gotTweets: function(success, results, autorefresh)
 
 	if (results.length) {
 		changed = true;
-		this.results = results.concat(this.results);
+		if (isNaN(insertIndex)) {
+			this.results = results.concat(this.results);
+		} else {
+			for (var i = 0, r; r = results[i]; i++) {
+				this.results.splice(insertIndex, 0, r);
+			}
+		}
 
 		if (!isNaN(newCountIndex)) {
 			newCountIndex += results.length;
@@ -318,10 +377,7 @@ gotTweets: function(success, results, autorefresh)
 			Twitter will never return more than 200 results, so keep a few extra
 			for context.
 		*/
-		// TODO	We need to implement loading gaps, and allow loading tweets
-		//		below the loaded timeline. In those cases this is obviously not
-		//		the correct check to do.
-		if (this.results.length > 205) {
+		if (isNaN(insertIndex) && this.results.length > 205) {
 			this.results.splice(205);
 		}
 
@@ -332,8 +388,18 @@ gotTweets: function(success, results, autorefresh)
 			var oldtop = this.$.list.getScrollTop();
 
 			if (results.length && results.length != this.results.length) {
-				this.log(this.resource, 'Scrolling to: ' + results.length);
-				this.$.list.scrollToRow(results.length - (autorefresh ? 0 : 1));
+				var dest = results.length;
+
+				if (reverseScroll) {
+					/* Scroll to the first new, not the last */
+					dest = this.results.length - results.length;
+					dest--;
+				} else if (!isNaN(insertIndex)) {
+					dest += insertIndex;
+				}
+
+				this.log(this.resource, 'Scrolling to: ' + dest);
+				this.$.list.scrollToRow(dest - (autorefresh ? 0 : 1));
 
 				/*
 					Scroll down just a bit to show that there is another tweet
@@ -369,6 +435,14 @@ gotTweets: function(success, results, autorefresh)
 		this.results.unshift({
 			empty:		true
 		});
+	} else {
+		var last = this.results[this.results.length - 1];
+
+		if (last && !last.loadmore) {
+			this.results.push({
+				loadmore:	true
+			});
+		}
 	}
 
 	if (changed) {
@@ -395,7 +469,7 @@ writeCache: function()
 		Do not include the new count indicator. Gap indicators are okay
 		though.
 	*/
-	var cache = this.results.slice(0, 50);
+	var cache = this.results.slice(0, 35);
 
 	for (var i = cache.length - 1, c; c = cache[i]; i--) {
 		if (!c.id_str && !c.gap) {
@@ -425,25 +499,31 @@ itemTap: function(sender, event)
 {
 	var item	= this.results[event.index];
 
-	if (!item || !item.id_str) {
+	if (!item) {
 		return;
 	}
 
-	this.doOpenToaster({
-		component: {
-			kind:			"TweetDetails",
-			item:			item,
-			user:			this.user,
-			twitter:		this.twitter,
+	if (item.id_str) {
+		this.doOpenToaster({
+			component: {
+				kind:			"TweetDetails",
+				item:			item,
+				user:			this.user,
+				twitter:		this.twitter,
 
-			onTweetAction:	"itemAction"
-		},
+				onTweetAction:	"itemAction"
+			},
 
-		options:{
-			notitle:		true,
-			owner:			this
-		}
-	});
+			options:{
+				notitle:		true,
+				owner:			this
+			}
+		});
+	} else if (item.gap) {
+		this.refresh(false, event.index);
+	} else if (item.loadmore) {
+		this.refresh(false, event.index);
+	}
 },
 
 itemAction: function(sender, event)
@@ -501,36 +581,32 @@ setupItem: function(sender, event)
 		return;
 	}
 
-	this.$.tweet.id_str = item.id_str;
+	if (!item.id_str) {
+		this.$.tweet.setClasses('hide');
+		this.$.msg.setClasses('tweetmsg');
 
-	if (item.newcount) {
-		if (item.newcount > 1) {
-			this.$.msg.setContent(item.newcount + ' new tweets');
-		} else {
-			this.$.msg.setContent(item.newcount + ' new tweet');
+		if (item.newcount) {
+			if (item.newcount > 1) {
+				this.$.msg.setContent(item.newcount + ' new tweets');
+			} else {
+				this.$.msg.setContent(item.newcount + ' new tweet');
+			}
+
+			this.$.msg.addClass('newcount');
+		} else if (item.gap) {
+			this.$.msg.setContent('Tap to load missing tweets');
+			this.$.msg.addClass('gap');
+		} else if (item.empty) {
+			this.$.msg.setContent('No tweets');
+			this.$.msg.addClass('notweets');
+		} else if (item.loadmore) {
+			this.$.msg.setContent('Tap to load more tweets');
+			this.$.msg.addClass('loadmore');
 		}
 
-		this.$.tweet.setClasses('hide');
-		this.$.msg.setClasses('newcount');
 		return;
 	}
-
-	if (item.gap) {
-		// TODO	When tapped load the gap
-		this.$.msg.setContent('Tap to load missing tweets');
-
-		this.$.tweet.setClasses('hide');
-		this.$.msg.setClasses('gap');
-		return;
-	}
-
-	if (item.empty) {
-		this.$.msg.setContent('No tweets');
-
-		this.$.tweet.setClasses('hide');
-		this.$.msg.setClasses('gap');
-		return;
-	}
+	this.$.tweet.id_str = item.id_str;
 
 	this.$.msg.setClasses('hide');
 	this.$.msg.setContent('');
