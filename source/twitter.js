@@ -165,6 +165,64 @@ getTweets: function(resource, cb, params)
 	);
 },
 
+/*
+	Perform an action on a tweet
+
+	action may be:
+		rt, favorite, destroy, destroydm
+
+	The provided callback will be called when the request is complete. The
+	first argument is a boolean indicating success.
+*/
+changeTweet: function(action, cb, id)
+{
+	var url		= this.apibase + '/' + this.version + '/';
+	var params	= {
+		id: id
+	};
+
+	switch (action) {
+		case 'retweet':
+		case 'rt':
+			url += 'statuses/retweet/' + id;
+			break;
+
+		case 'del':
+		case 'destroy':
+			url += 'statuses/destroy/' + id;
+			break;
+
+		case 'deldm':
+		case 'destroydm':
+			url += 'direct_messages/destroy';
+			break;
+
+		case 'fav':
+		case 'favorite':
+			url += 'favorites/create';
+			break;
+
+		case 'unfav':
+		case 'unfavorite':
+			url += 'favorites/destroy';
+			break;
+
+		default:
+			console.log('changeTweet does not support this action:' + action);
+			return;
+	}
+	url += '.json';
+
+	this.oauth.post(this.buildURL(url, params), '',
+		function(response) {
+			cb(true, enyo.json.parse(response.text));
+		},
+		function(response) {
+			cb(false, enyo.json.parse(response.text));
+		}
+	);
+},
+
 /* Cleanup the provided tweets */
 cleanupTweets: function(tweets)
 {

@@ -245,6 +245,9 @@ body.Pre3 {
 .back.button {
 	background:				url(../assets/icons/back.png)		center center no-repeat;
 }
+.delete.button {
+	background:				url(../assets/icons/delete.png)		center center no-repeat;
+}
 .reply.button {
 	background:				url(../assets/icons/reply.png)		center center no-repeat;
 }

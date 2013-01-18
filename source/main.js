@@ -560,7 +560,9 @@ openToaster: function(sender, event)
         event.options = {};
 	}
 
-	event.options.owner = this;
+	if (!event.options.owner) {
+		event.options.owner = this;
+	}
 
 	this.$.toasters.push(event.component, event.options);
 },

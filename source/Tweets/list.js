@@ -313,22 +313,7 @@ gotTweets: function(success, results, autorefresh)
 			this.results.splice(205);
 		}
 
-		/*
-			Cache the most recent items
-
-			Do not include the new count indicator. Gap indicators are okay
-			though.
-		*/
-		var cache = this.results.slice(0, 100);
-
-		for (var i = cache.length - 1, c; c = cache[i]; i--) {
-			if (!c.id_str && !c.gap) {
-				cache.splice(i, 1);
-			}
-		}
-
-		prefs.set('cachedtweets:' + this.user.user_id + ':' + this.resource, cache);
-
+		this.writeCache();
 
 		/* Scroll to the oldest new tweet */
 		setTimeout(enyo.bind(this, function() {
@@ -390,6 +375,25 @@ gotTweets: function(success, results, autorefresh)
 	this.setTimer();
 },
 
+writeCache: function()
+{
+	/*
+		Cache the most recent items
+
+		Do not include the new count indicator. Gap indicators are okay
+		though.
+	*/
+	var cache = this.results.slice(0, 100);
+
+	for (var i = cache.length - 1, c; c = cache[i]; i--) {
+		if (!c.id_str && !c.gap) {
+			cache.splice(i, 1);
+		}
+	}
+
+	prefs.set('cachedtweets:' + this.user.user_id + ':' + this.resource, cache);
+},
+
 setTimer: function()
 {
 	clearTimeout(this.timeout);
@@ -418,13 +422,57 @@ itemTap: function(sender, event)
 			kind:			"TweetDetails",
 			item:			item,
 			user:			this.user,
-			twitter:		this.twitter
+			twitter:		this.twitter,
+
+			onTweetAction:	"itemAction"
 		},
 
 		options:{
-			notitle: true
+			notitle:		true,
+			owner:			this
 		}
 	});
+},
+
+itemAction: function(sender, event)
+{
+	var item;
+
+	for (var i = 0; item = this.results[i]; i++) {
+		if (item.id_str === event.item.id_str) {
+			break;
+		}
+	}
+
+	if (!item) {
+		return;
+	}
+
+	switch (event.action) {
+		case "favorite":
+			item.favorited = true;
+			this.writeCache();
+			break;
+
+		case "unfavorite":
+			item.favorited = false;
+			if (this.resource !== "favorite") {
+				this.writeCache();
+				break;
+			}
+
+			/* Treat this like a delete, fallthrough */
+
+		case "delete":
+			this.results.splice(i, 1);
+
+			this.$.list.setCount(this.results.length);
+			this.$.list.refresh();
+
+			this.writeCache();
+			break;
+
+	}
 },
 
 setupItem: function(sender, event)

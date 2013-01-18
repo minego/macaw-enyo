@@ -42,7 +42,9 @@ handlers: {
 events: {
 	onCloseToaster:					"",
 	onCompose:						"",
-	onConversation:					""
+	onConversation:					"",
+
+	onTweetAction:					""
 },
 
 components: [
@@ -138,10 +140,15 @@ itemChanged: function()
 		this.$['convo'		].addClass("hide");
 	}
 
-	if (!this.user || !this.item.user ||
-		this.user.id_str !== this.item.user.id_str
-	) {
-		this.$['delete'		].addClass("hide");
+	if (this.item.dm) {
+		/* We can delete any DM to or from this user */
+		;
+	} else {
+		if (!this.user || !this.item.user ||
+			this.user.user_id !== this.item.user.id_str
+		) {
+			this.$['delete'		].addClass("hide");
+		}
 	}
 
 	if (this.item.favorited) {
@@ -153,9 +160,10 @@ itemChanged: function()
 
 openLink: function(sender, event)
 {
-
 	// TODO	Implement a preview toaster instead of opening all links in a new
 	//		window
+
+	// TODO	Actually open in a browser on android...
 
 	window.open(event.url, "_blank");
 },
@@ -211,16 +219,60 @@ handleTap: function(sender, event)
 			break;
 
 		case "retweet":
-			// TODO	Make the proper twitter request, and then send an event
-			//		to the list so that it can update it's data for the item and
-			//		save the updated one in the cache if needed.
+			// TODO	Prompt the user for RT, edit or cancel...
+			this.twitter.changeTweet('rt', function(success) {
+				if (success) {
+					this.item.retweeted = !this.item.retweeted;
+
+					this.doTweetAction({
+						action:		'rt',
+						item:		this.item
+					});
+				}
+			}.bind(this), this.item.id_str);
 			break;
 
 		case "favorite":
-			// TODO	Make the proper twitter request, and then send an event
-			//		to the list so that it can update it's data for the item and
-			//		save the updated one in the cache if needed.
+			var action;
+
+			if (!this.item.favorited) {
+				action = 'favorite';
+			} else {
+				action = 'unfavorite';
+			}
+
+			this.twitter.changeTweet(action, function(success) {
+				if (success) {
+					this.item.favorited = !this.item.favorited;
+
+					if (this.item.favorited) {
+						this.$['favorite'].addClass("active");
+					} else {
+						this.$['favorite'].removeClass("active");
+					}
+
+					this.doTweetAction({
+						action:		action,
+						item:		this.item
+					});
+				}
+			}.bind(this), this.item.id_str);
 			break;
+
+		case "delete":
+			this.twitter.changeTweet(this.item.dm ? 'deldm' : 'del', function(success) {
+				if (success) {
+					this.doTweetAction({
+						action:		'delete',
+						item:		this.item
+					});
+
+					// TODO	Display a message... "no one will ever know"
+					this.doCloseToaster({});
+				}
+			}.bind(this), this.item.id_str);
+			break;
+
 
 		case "convo":
 			this.doConversation({
@@ -228,9 +280,6 @@ handleTap: function(sender, event)
 				user:		this.user,
 				twitter:	this.twitter
 			});
-			break;
-
-		case "delete":
 			break;
 	}
 }

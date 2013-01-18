@@ -122,13 +122,17 @@ push: function(component, options)
 		this.toasters[this.toasters.length - 1].hide();
 	}
 
+	if (!options.owner) {
+		options.owner = this;
+	}
+
 	toaster = this.createComponent({
 		kind:					"toaster",
 
 		title:					options.title,
 		notitle:				options.notitle,
 		components:				[ component ]
-	}, { owner: options.owner || this });
+	}, { owner: options.owner });
 
 	toaster.options = options;
 	toaster.render();
@@ -313,6 +317,15 @@ hide: function()
 	for (var i = 0, c; c = clients[i]; i++) {
 		c.hide();
 	}
+},
+
+/*
+	The toasters aren't actually children of the kinds that create them, but
+	they need to get events.
+*/
+getBubbleTarget: function()
+{
+	return this.owner || this.parent;
 }
 
 });
