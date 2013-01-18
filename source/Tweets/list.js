@@ -214,7 +214,7 @@ refresh: function(autorefresh, index)
 		}
 
 		if (next && next.id_str) {
-			params.since_id = prev.id_str;
+			params.since_id = next.id_str;
 		} else {
 			params.count = 50;
 		}
@@ -230,6 +230,7 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 	var		changed			= false;
 	var		newCountIndex	= NaN;
 	var		reverseScroll	= false;
+	var		oldLength		= this.results.length;
 
 	if (this.destroyed) {
 		/*
@@ -242,14 +243,14 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 	/* Keep track of when we last loaded */
 	this.loaded = new Date();
 
-	if (this.results[insertIndex]) {
+	if (!isNaN(insertIndex) && this.results[insertIndex]) {
 		if (!this.results[insertIndex].id_str) {
 			this.results.splice(insertIndex, 1);
 
 			changed = true;
 		}
 
-		if (insertIndex >= this.results.length) {
+		if (insertIndex == this.results.length) {
 			/* Scroll to the first new item, not the last */
 			reverseScroll = true;
 		}
@@ -363,7 +364,7 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 			this.results = results.concat(this.results);
 		} else {
 			for (var i = 0, r; r = results[i]; i++) {
-				this.results.splice(insertIndex, 0, r);
+				this.results.splice(insertIndex + i, 0, r);
 			}
 		}
 
@@ -387,7 +388,7 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 		setTimeout(enyo.bind(this, function() {
 			var oldtop = this.$.list.getScrollTop();
 
-			if (results.length && results.length != this.results.length) {
+			if (results.length && oldLength > 0) {
 				var dest = results.length;
 
 				if (reverseScroll) {
