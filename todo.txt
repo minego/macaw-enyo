@@ -1,13 +1,4 @@
-+ Timelines
-	- Load gaps
-	- Load older tweets below timeline
-
 + Tweet Details
-	+ Implement retweet
-		- RT
-		- Edit
-	- Implement delete
-	- Implement favorite
 	+ Implement the options menu
 		- Reply
 		- Send DM
@@ -20,8 +11,8 @@
 		- Hide
 
 + Compose
-	- When replying to a RT add a (selected by default) mention for the person
-	  that RT'ed it.
+	- Disable the send and cancel buttons while sending
+	- Auto split long tweets
 	- Auto complete user names
 	- Allow choosing an account with a menu/button/whatever (and default
 	  correctly when replying).
@@ -41,11 +32,10 @@
 	  in the twitter helper.
 
 - Implement notifications. A "notify" boolean is set on each tab
-
 - Finish styling and implement some nice themes
 - Show a visual indication of a refresh when the tab bar is hidden. Currently
   the icons on the tab bar spin while refreshing.
-- Tweet auto-splitter
+- Show an indicator when a request is in progress
 
 + Missing panels
 	- Search
