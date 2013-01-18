@@ -269,6 +269,7 @@ body.Pre3 {
 }
 .confirm.icon {
 	background:				url(../assets/icons/confirm.png)	center center no-repeat;
+	background-size:		32px;
 }
 .cancel.icon {
 	background:				url(../assets/icons/cancel.png)		center center no-repeat;
