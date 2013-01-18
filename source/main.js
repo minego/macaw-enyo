@@ -197,6 +197,29 @@ create: function()
 		}.bind(this), 3000);
 	}.bind(this);
 
+	document.addEventListener('keydown', function(event) {
+		if (this.$.toasters.getLength() > 0) {
+			/* Ignore key presses when a toaster is visible */
+			return(true);
+		}
+
+		if (!event.ctrlKey) {
+			return(true);
+		}
+
+		switch (event.keyCode) {
+			case 82: /* r */
+				this.handleButton({ cmd: "refresh" });
+				break;
+
+			default:
+				return(true);
+		}
+
+		event.preventDefault();
+		return(false);
+	}.bind(this), false);
+
 	/*
 		Listen for keyboard events for the sake of keyboard shortcuts and/or
 		starting compose by typing.
@@ -225,7 +248,6 @@ create: function()
 			return;
 		}
 
-		// TODO	Possibly allow binding of actions to keystrokes?
 		if (typeof(s) === "string") {
 			/* Open the compose toaster with this string */
 			this.compose(this, { });
