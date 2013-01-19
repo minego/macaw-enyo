@@ -75,7 +75,7 @@ rendered: function()
 
 gotTweet: function(success, result)
 {
-	if (!success) {
+	if (!success || this.destroyed) {
 		/* Failed */
 		return;
 	}
