@@ -82,7 +82,7 @@ create: function()
     }
 
 	if (window.android) {
-		this.$.list.setStrategyKind("TranslateScrollStrategy");
+		// this.$.list.setStrategyKind("TranslateScrollStrategy");
 		this.$.list.setRowsPerPage(20);
 	}
 },

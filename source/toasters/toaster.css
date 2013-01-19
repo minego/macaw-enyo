@@ -84,3 +84,41 @@
 	width:					32px;
 	float:					right;
 }
+
+.scrim.opacity {
+	background:				black;
+
+	pointer-events:			none;
+	opacity:				0.0;
+	-webkit-transition:		opacity .25s;
+	transition:				opacity .25s;
+}
+
+.scrim.opacity.translucent {
+	pointer-events:			auto;
+	opacity:				0.5;
+	filter:					alpha(opacity=50);
+	z-index:				auto;
+}
+
+.scrim.opacity.transparent {
+	pointer-events:			auto;
+	opacity:				0.0;
+	filter:					alpha(opacity=0);
+	z-index:				auto;
+}
+
+.scrim.image {
+	opacity:				1.0;
+	display:				none;
+}
+
+.scrim.image.translucent {
+	background:				url(../../assets/trans-dark.png);
+	display:				block;
+}
+
+.scrim.image.transparent {
+	display:				block;
+}
+

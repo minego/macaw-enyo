@@ -79,12 +79,9 @@ published: {
 
 components: [
 	{
-		kind:					onyx.Scrim,
 		name:					"scrim",
 
-		classes:				"onyx-scrim-translucent",
-		// classes:				"onyx-scrim-transparent",
-
+		classes:				"scrim enyo-fit",
 		ontap:					"handleScrim"
 	}
 ],
@@ -94,6 +91,17 @@ create: function()
 	this.inherited(arguments);
 
 	this.slideInFromChanged();
+
+	if (window.android) {
+		/*
+			The standard scrim method uses opacity, but on android with hardware
+			acceleration enabled this often causes a large black block to be
+			displayed.
+		*/
+		this.$.scrim.addClass('image');
+	} else {
+		this.$.scrim.addClass('opacity');
+	}
 },
 
 slideInFromChanged: function()
@@ -109,6 +117,22 @@ slideInFromChanged: function()
 getLength: function()
 {
 	return(this.toasters.length);
+},
+
+showScrim: function(visible)
+{
+	this.hideScrim();
+	if (visible) {
+		this.$.scrim.addClass('translucent');
+	} else {
+		this.$.scrim.addClass('transparent');
+	}
+},
+
+hideScrim: function()
+{
+	this.$.scrim.removeClass('translucent');
+	this.$.scrim.removeClass('transparent');
 },
 
 push: function(component, options)
@@ -156,7 +180,7 @@ pop: function(count, backevent)
 {
 	var toaster;
 
-	this.$.scrim.hide();
+	this.hideScrim();
 	if (isNaN(count)) {
 		count = 1;
 	}
@@ -194,32 +218,26 @@ pop: function(count, backevent)
 	if (this.toasters.length) {
 		this.showTopToaster();
 	} else {
-		this.$.scrim.hide();
+		this.hideScrim();
 	}
 },
 
 showTopToaster: function()
 {
-	this.$.scrim.hide();
+	this.hideScrim();
 
 	if (this.toasters.length) {
 		var		toaster	= this.toasters[this.toasters.length - 1];
 		var		z		= this.toasters.length;
 
 		if (!toaster.options.noscrim) {
-			this.$.scrim.show();
-
 			var sz = parseInt(this.$.scrim.getComputedStyleValue('z-index', z));
 
 			if (sz > z) {
 				z = sz;
 			}
 
-			if (toaster.options.transparent) {
-				this.$.scrim.setClasses("onyx-scrim-transparent");
-			} else {
-				this.$.scrim.setClasses("onyx-scrim-translucent");
-			}
+			this.showScrim(!toaster.options.transparent);
 		}
 
 		toaster.show();
