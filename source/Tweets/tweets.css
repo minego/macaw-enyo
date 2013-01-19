@@ -1,3 +1,16 @@
+.tweetitem {
+	position:				relative;
+}
+
+.cover {
+	z-index:				2;
+	opacity:				0;
+/*
+	background:				green;
+	border:					1px solid pink;
+*/
+}
+
 .tweetmsg {
 	text-align:				center;
 	font-size:				15px;

@@ -52,11 +52,18 @@ components: [
 		noSelect:						true,
 
 		components: [{
-			name:						"tweet",
-			kind:						"Tweet"
-		}, {
-			name:						"msg",
-			classes:					"hide"
+			classes:					"tweetitem",
+
+			components: [{
+				name:					"cover",
+				classes:				"cover enyo-fit"
+			}, {
+				name:					"msg",
+				classes:				"hide"
+			}, {
+				name:					"tweet",
+				kind:					"Tweet"
+			}]
 		}]
 	}
 ],
