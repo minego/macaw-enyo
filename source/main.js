@@ -47,6 +47,7 @@ components: [
 				ontap:						"handleButton"
 			},
 			{
+				name:						"refreshbtn",
 				classes:					"refresh icon",
 				cmd:						"refresh",
 				ontap:						"handleButton"
@@ -391,17 +392,30 @@ panelRefreshStart: function(sender, event)
 {
 	var icon	= this.$['tabicon'	+ sender.index];
 	var count	= this.$['tabcount'	+ sender.index];
+	var refresh	= this.$.refreshbtn;
 
 	count.setContent('');
 
 	icon.removeClass("endspin");
 	icon.addClass("spin");
+
+	/* Spin the refresh icon as well */
+	if (isNaN(refresh.spincount)) {
+		refresh.spincount = 0;
+	}
+
+	if (refresh.spincount == 0) {
+		refresh.removeClass("endspin");
+		refresh.addClass("spin");
+	}
+	refresh.spincount++;
 },
 
 panelRefreshStop: function(sender, event)
 {
 	var icon	= this.$['tabicon'	+ sender.index];
 	var count	= this.$['tabcount'	+ sender.index];
+	var refresh	= this.$.refreshbtn;
 
 	if (!isNaN(event.count) && event.count > 0) {
 		count.setContent(event.count);
@@ -420,6 +434,14 @@ panelRefreshStop: function(sender, event)
 		setTimeout(function() {
 			icon.addClass("endspin");
 		}.bind(this), 50);
+
+		refresh.spincount--;
+		if (refresh.spincount == 0) {
+			refresh.removeClass("spin");
+			setTimeout(function() {
+				refresh.addClass("endspin");
+			}.bind(this), 50);
+		}
 	}.bind(this), 1000);
 },
 
