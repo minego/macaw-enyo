@@ -79,6 +79,9 @@ authorize: function(cb, params, pin)
 			},
 
 			function(response) {
+				if (response.text) {
+					ex(response.text);
+				}
 				cb();
 			}
 		);
