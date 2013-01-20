@@ -22,8 +22,12 @@ scratch".
 Building
 ================================================================================
 
-This application can simply be run in a browser, but may also be minified and
-packaged for webOS. Packaging for other platforms may be included in the future.
+This application relies on a number of git sub modules. After checking out you
+must run:
+	git submodule update --init
+
+This application can currently be packaged for chrome, webOS and android.
+Packaging for other platforms may be included in the future.
 
 Building requires gnu make. Minifying requires nodejs.
 
@@ -45,6 +49,10 @@ Install package on a webOS or android device:
 View logs on a webOS or android device
 	make log
 
+Running as a chrome application:
+	1) Navigate to "chrome:extensions"
+	2) Click "Load unpacked extension"
+	3) Select the directory where you checked out the macaw-enyo source
 
 Macaw License
 ================================================================================
