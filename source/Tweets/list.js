@@ -89,8 +89,20 @@ create: function()
     }
 
 	if (window.android) {
-		// this.$.list.setStrategyKind("TranslateScrollStrategy");
+		var strategy;
+
 		this.$.list.setRowsPerPage(20);
+		this.$.list.setStrategyKind("TranslateScrollStrategy");
+
+		if ((strategy = this.$.list.getStrategy())) {
+			/* This doesn't seem to help...  */
+			// strategy.setScrim(true);
+
+			/* This isn't published... */
+			strategy.translateOptimized = true;
+
+			strategy.setDragDuringGesture(false);
+		}
 	}
 },
 
