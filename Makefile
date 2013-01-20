@@ -10,7 +10,6 @@ clean:
 	rm -rf *.ipk deploy build .tmp 2>/dev/null || true
 
 ${DEPLOY}:
-	rm -rf deploy build
 	mkdir -p deploy/macaw
 	cp -r assets enyo lib source package.js *.png framework_config.json deploy/macaw/
 	cp debug.html deploy/macaw/index.html
@@ -28,7 +27,9 @@ deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
 
 all: ${DEPLOY}
 
-full: clean release install
+full-webos: clean release webos install
+
+full-android: clean release android install
 
 init:
 	@git submodule init
