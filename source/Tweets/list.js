@@ -44,6 +44,9 @@ components: [
 		onPullRelease:					"pullRelease",
 		onPullComplete:					"pullComplete",
 
+		onDragStart:					"dragstart",
+		onMouseDown:					"mousedown",
+
 		horizontal:						"hidden",
 		vertical:						"scroll",
 
@@ -100,8 +103,6 @@ create: function()
 
 			/* This isn't published... */
 			strategy.translateOptimized = true;
-
-			strategy.setDragDuringGesture(false);
 		}
 	}
 },
@@ -111,10 +112,6 @@ destroy: function()
 	clearTimeout(this.timeout);
 
 	this.inherited(arguments);
-},
-
-importProps: function(inProps) {
-    this.inherited(arguments);
 },
 
 rendered: function()
@@ -140,6 +137,25 @@ rendered: function()
 	} else {
 		this.refresh();
 	}
+},
+
+dragstart: function(sender, event)
+{
+	if (event.horizontal) {
+		event.preventDefault();
+		return(true);
+	}
+
+	return(false);
+},
+
+mousedown: function(sender, event)
+{
+	event.target		= null;
+	event.cancelBubble	= true;
+	event.bubbles		= false;
+
+	event.preventDefault();
 },
 
 pullRelease: function()

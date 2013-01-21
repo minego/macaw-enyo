@@ -81,6 +81,7 @@ apk: ${APK}
 ${APK}: ${DEPLOY}/project.properties ${DEPLOY}/appinfo.json
 	@rm -rf .tmp 2>/dev/null || true
 	@cp -r android .tmp
+	@mkdir -p .tmp/assets/www/
 	@cp -r ${DEPLOY}/* .tmp/assets/www/
 	@cp android/*.js android/*.html .tmp/assets/www/
 	@cp icon128.png .tmp/res/drawable/icon.png
