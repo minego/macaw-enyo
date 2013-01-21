@@ -24,7 +24,7 @@ Building
 
 This application relies on a number of git sub modules. After checking out you
 must run:
-	git submodule update --init
+	`git submodule update --init`
 
 This application can currently be packaged for chrome, webOS and android.
 Packaging for other platforms may be included in the future.
@@ -32,27 +32,27 @@ Packaging for other platforms may be included in the future.
 Building requires gnu make. Minifying requires nodejs.
 
 Deploy as debug:
-	make clean all
+	`make clean all`
 
 Deploy release (minified):
-	make clean release all
+	`make clean release all`
 
 Package for webOS:
-	make webos
+	`make webos`
 
 Package for android
-	make android
+	`make android`
 
 Install package on a webOS or android device:
-	make install
+	`make install`
 
 View logs on a webOS or android device
-	make log
+	1make log`
 
 Running as a chrome application:
-	1) Navigate to "chrome:extensions"
-	2) Click "Load unpacked extension"
-	3) Select the directory where you checked out the macaw-enyo source
+	* Navigate to "chrome:extensions"
+	* Click "Load unpacked extension"
+	* Select the directory where you checked out the macaw-enyo source
 
 Macaw License
 ================================================================================
