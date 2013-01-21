@@ -29,7 +29,9 @@ handlers: {
 components: [
 	{
 		kind:								enyo.Signals,
-		onbackbutton:						"back"
+		onbackbutton:						"back",
+		onkeydown:							"keydown",
+		onkeypress:							"keypress"
 	},
 	{
 		name:								"panelcontainer"
@@ -198,72 +200,6 @@ create: function()
 			this.$.notifications.pop(1);
 		}.bind(this), 3000);
 	}.bind(this);
-
-	document.addEventListener('keydown', function(event) {
-		if (this.$.toasters.getLength() > 0) {
-			/* Ignore key presses when a toaster is visible */
-			return(true);
-		}
-
-		if (!event.ctrlKey) {
-			return(true);
-		}
-
-		switch (event.keyCode) {
-			case 82: /* r */
-				this.handleButton({ cmd: "refresh" });
-				break;
-
-			case 188: /* comma (,) */
-				this.handleButton({ cmd: "preferences" });
-				break;
-
-			default:
-				return(true);
-		}
-
-		event.preventDefault();
-		return(false);
-	}.bind(this), false);
-
-	/*
-		Listen for keyboard events for the sake of keyboard shortcuts and/or
-		starting compose by typing.
-	*/
-	document.addEventListener('keypress', function(event) {
-		if (this.$.toasters.getLength() > 0) {
-			/* Ignore key presses when a toaster is visible */
-			return;
-		}
-
-		var s;
-
-		try {
-			s = String.fromCharCode(event.which).trim();
-		} catch (e) {
-			s = null;
-		}
-
-		if (s !== "" && (event.altKey || event.ctrlKey || event.metaKey)) {
-			/* Ignore keypresses with a modifier, except enter */
-			return;
-		}
-
-		if (s == '~') {
-			this.$.appmenu.toggle();
-			return;
-		}
-
-		if (typeof(s) === "string") {
-			/* Open the compose toaster with this string */
-			this.compose(this, { });
-
-			if (s.length == 0) {
-				/* Don't let the event for the enter key continue */
-				event.preventDefault();
-			}
-		}
-	}.bind(this), false);
 },
 
 rendered: function()
@@ -645,6 +581,97 @@ handleButton: function(sender, event)
 back: function(sender, event)
 {
 	this.closeToaster(true);
+},
+
+keydown: function(sender, event)
+{
+	if (this.$.toasters.getLength() > 0) {
+		/* Ignore key presses when a toaster is visible */
+		return(true);
+	}
+this.log(event);
+
+	switch (event.keyCode) {
+		case 82: /* r */
+			if (event.ctrlKey) {
+				if (!event.shiftKey) {
+					/* Refresh all panels */
+					this.handleButton({ cmd: "refresh" });
+				} else {
+					/* Refresh the current panel */
+					var panel;
+
+					if ((panel = this.$['panel' + this.$.panels.getIndex()])) {
+						panel.refresh();
+					}
+				}
+			}
+			break;
+
+		case 188: /* comma (,) */
+			if (event.ctrlKey) {
+				this.handleButton({ cmd: "preferences" });
+			}
+			break;
+
+		case 37: /* left */
+			this.$.panels.setIndex(this.$.panels.getIndex() - 1);
+			break;
+
+		case 39: /* right */
+			this.$.panels.setIndex(this.$.panels.getIndex() + 1);
+			break;
+
+		case 38: /* up */
+			// TODO	Scroll the current panel up
+			break;
+
+		case 40: /* down */
+			// TODO	Scroll the current panel down
+			break;
+
+		default:
+			return(true);
+	}
+
+	event.preventDefault();
+	return(false);
+},
+
+keypress: function(sender, event)
+{
+	if (this.$.toasters.getLength() > 0) {
+		/* Ignore key presses when a toaster is visible */
+		return;
+	}
+
+	var s;
+
+	try {
+		s = String.fromCharCode(event.which).trim();
+	} catch (e) {
+		s = null;
+	}
+
+	if (s !== "" && (event.altKey || event.ctrlKey || event.metaKey)) {
+		/* Ignore keypresses with a modifier, except enter */
+		return;
+	}
+
+	if (s == '~') {
+		this.$.appmenu.toggle();
+		return;
+	}
+
+	if (typeof(s) === "string") {
+		/* Open the compose toaster with this string */
+		this.compose(this, { });
+
+		if (s.length == 0) {
+			/* Don't let the event for the enter key continue */
+			event.preventDefault();
+		}
+	}
 },
 
 moveIndicator: function(sender, event)
