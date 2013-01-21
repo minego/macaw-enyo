@@ -469,7 +469,7 @@ sendTweet: function(resource, cb, params)
 	}
 	url += '.json';
 
-	this.oauth.post(this.buildURL(url, params), '',
+	this.oauth.post(url, params,
 		function(response) {
 			cb(true, enyo.json.parse(response.text));
 		},
