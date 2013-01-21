@@ -49,7 +49,7 @@ Building requires gnu make. Minifying requires nodejs.
 	`make install`
 
 ### View logs on a webOS or android device
-	1make log`
+	`make log`
 
 ### Running as a chrome application:
 	* Navigate to "chrome:extensions"
