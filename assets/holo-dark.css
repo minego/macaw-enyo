@@ -1,0 +1,79 @@
+/*
+ * Android Light theme
+ */
+
+/* macaw.css */
+
+body {
+	background:				#000 !important;
+}
+
+.toolbar.topbar {
+	background:				#030303;
+	padding-bottom:			0px;
+	border-bottom:			2px solid #227594;
+}
+
+.toolbar.bottombar {
+	background:				#030303;
+	padding-top:			0px;
+	border-top:				2px solid #227594;
+}
+
+.tabbar .tab .count {
+	color:					#227594;
+	font-weight:			bold;
+}
+
+.bottombar .indicator {
+	bottom:					49px;
+	background:				url(../assets/indicator-up-holodark.png)		no-repeat;
+}
+
+.topbar .indicator {
+	top:					49px;
+	background:				url(../assets/indicator-down-holodark.png)		no-repeat;
+}
+
+/* tweets.css */
+
+.tweetmsg {
+	color:					#000;
+	background:				#227594;
+}
+
+.tweet .text .link {
+	font-weight:			normal;
+}
+
+.tweet .rt,
+.tweet .text {
+	color:					#bbb;
+}
+
+.link {
+	color:					#227594;
+}
+
+/* toaster.css */
+
+.toaster.bg {
+	background:				#222222;
+}
+
+.toaster .controls {
+	background:				#030303;
+	border-top:				2px solid #227594;
+}
+
+/* composetweet.css */
+
+.compose {
+	background:				#222;
+	padding-top:			10px;
+}
+
+
+.compose .counter {
+	color:					#227594;
+}

@@ -64,7 +64,8 @@ components: [
 
 							options: [
 								{ label: "Light",	value: "light"	},
-								{ label: "Dark",	value: "dark"	}
+								{ label: "Dark",	value: "dark"	},
+								{ label: "Holo Dark",	value: "holo-dark"	}
 							]
 						},
 
