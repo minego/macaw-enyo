@@ -247,15 +247,15 @@ handleTap: function(sender, event)
 	if (event.target) {
 		switch (event.target.id) {
 			case "link":
-				this.doTapLink({ url: event.target.innerHTML });
+				this.doTapLink({ url: event.target.innerText });
 				return;
 
 			case "user":
-				this.doTapUser({ screenname: event.target.innerHTML });
+				this.doTapUser({ screenname: event.target.innerText });
 				return;
 
 			case "hashtag":
-				this.doTapHashTag({ tag: event.target.innerHTML });
+				this.doTapHashTag({ tag: event.target.innerText });
 				return;
 		}
 	}
