@@ -164,19 +164,31 @@ updateClasses: function(component)
 	console.log('User option classes: ' + component.getClasses());
 
 	/* Ensure that the correct theme stylesheet is loaded */
-	if (this.get('theme')) {
-		var e = document.createElement("link");
+	if ((value = this.get('theme'))) {
+		var head	= document.getElementsByTagName("head")[0];
 
-		e.setAttribute("rel",	"stylesheet");
-		e.setAttribute("type",	"text/css");
-		e.setAttribute("href",	"assets/" + this.get('theme') + ".css");
+		value = value.split(',');
 
-		if (this.themeElement) {
-			document.getElementsByTagName("head")[0].replaceChild(e, this.themeElement);
-		} else {
-			document.getElementsByTagName("head")[0].appendChild(e);
+		if (this.themeElements) {
+			var e;
+
+			while ((e = this.themeElements.pop())) {
+				head.removeChild(e);
+				delete e;
+			}
 		}
-		this.themeElement = e;
+		this.themeElements = [];
+
+		for (var i = 0, theme; theme = value[i]; i++) {
+			var e = document.createElement("link");
+
+			e.setAttribute("rel",	"stylesheet");
+			e.setAttribute("type",	"text/css");
+			e.setAttribute("href",	"assets/" + theme + ".css");
+
+			head.appendChild(e);
+			this.themeElements.push(e);
+		}
 	}
 }
 

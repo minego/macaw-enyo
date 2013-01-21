@@ -1,22 +1,13 @@
 /*
- * Android Light theme
+ * Android Red theme
  */
 
 /* macaw.css */
-
-body {
-	background:				#000 !important;
-}
-
 .toolbar.topbar {
-	background:				#030303;
-	padding-bottom:			0px;
 	border-bottom:			2px solid #cc0000;
 }
 
 .toolbar.bottombar {
-	background:				#030303;
-	padding-top:			0px;
 	border-top:				2px solid #cc0000;
 }
 
@@ -36,19 +27,8 @@ body {
 }
 
 /* tweets.css */
-
 .tweetmsg {
-	color:					#000;
 	background:				#cc0000;
-}
-
-.tweet .text .link {
-	font-weight:			normal;
-}
-
-.tweet .rt,
-.tweet .text {
-	color:					#bbb;
 }
 
 .link {
@@ -56,24 +36,11 @@ body {
 }
 
 /* toaster.css */
-
-.toaster.bg {
-	background:				#222222;
-}
-
 .toaster .controls {
-	background:				#030303;
 	border-top:				2px solid #cc0000;
 }
 
 /* composetweet.css */
-
-.compose {
-	background:				#222;
-	padding-top:			10px;
-}
-
-
 .compose .counter {
 	color:					#cc0000;
 }
