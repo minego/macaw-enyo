@@ -32,27 +32,35 @@ Packaging for other platforms may be included in the future.
 Building requires gnu make. Minifying requires nodejs.
 
 Deploy as debug:
+--------------------------------------------------------------------------------
 	`make clean all`
 
 Deploy release (minified):
+--------------------------------------------------------------------------------
 	`make clean release all`
 
 Package for webOS:
+--------------------------------------------------------------------------------
 	`make webos`
 
 Package for android
+--------------------------------------------------------------------------------
 	`make android`
 
 Install package on a webOS or android device:
+--------------------------------------------------------------------------------
 	`make install`
 
 View logs on a webOS or android device
+--------------------------------------------------------------------------------
 	1make log`
 
 Running as a chrome application:
+--------------------------------------------------------------------------------
 	* Navigate to "chrome:extensions"
 	* Click "Load unpacked extension"
 	* Select the directory where you checked out the macaw-enyo source
+
 
 Macaw License
 ================================================================================
