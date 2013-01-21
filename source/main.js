@@ -589,7 +589,6 @@ keydown: function(sender, event)
 		/* Ignore key presses when a toaster is visible */
 		return(true);
 	}
-this.log(event);
 
 	switch (event.keyCode) {
 		case 82: /* r */
