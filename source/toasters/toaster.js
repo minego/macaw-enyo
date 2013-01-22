@@ -228,22 +228,13 @@ showTopToaster: function()
 
 	if (this.toasters.length) {
 		var		toaster	= this.toasters[this.toasters.length - 1];
-		var		z		= this.toasters.length;
 
 		if (!toaster.options.noscrim) {
-			var sz = parseInt(this.$.scrim.getComputedStyleValue('z-index', z));
-
-			if (sz > z) {
-				z = sz;
-			}
-
 			this.showScrim(!toaster.options.transparent);
 		}
 
 		toaster.show();
 		toaster.addClass('show');
-
-		toaster.applyStyle('z-index', z + 1);
 
 		if (!toaster.options.nobg) {
 			toaster.addClass('bg');
