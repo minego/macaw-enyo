@@ -91,22 +91,22 @@ components: [
 			{
 				content:					$L("Refresh"),
 				cmd:						"refresh",
-				ontap:						"handleButton"
+				onSelect:					"handleButton"
 			},
 			{
 				content:					$L("Redraw"),
 				cmd:						"redraw",
-				ontap:						"createTabs"
+				onSelect:					"createTabs"
 			},
 			{
 				content:					$L("Compose"),
 				cmd:						"compose",
-				ontap:						"handleButton"
+				onSelect:					"handleButton"
 			},
 			{
 				content:					$L("Preferences"),
 				cmd:						"preferences",
-				ontap:						"handleButton"
+				onSelect:					"handleButton"
 			}
 		]
 	},
@@ -548,6 +548,10 @@ closeAllToasters: function()
 
 handleButton: function(sender, event)
 {
+	while (sender && !sender.cmd) {
+		sender = sender.parent;
+	}
+
 	switch (sender.cmd) {
 		case "options":
 			this.$.appmenu.toggle();
