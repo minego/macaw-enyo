@@ -44,9 +44,6 @@ components: [
 		onPullRelease:					"pullRelease",
 		onPullComplete:					"pullComplete",
 
-		onDragStart:					"dragstart",
-		onMouseDown:					"mousedown",
-
 		horizontal:						"hidden",
 		vertical:						"scroll",
 
@@ -58,14 +55,14 @@ components: [
 			classes:					"tweetitem",
 
 			components: [{
-				name:					"cover",
-				classes:				"cover enyo-fit"
-			}, {
 				name:					"msg",
 				classes:				"hide"
 			}, {
 				name:					"tweet",
 				kind:					"Tweet"
+			}, {
+				name:					"cover",
+				classes:				"cover enyo-fit"
 			}]
 		}]
 	}
@@ -137,25 +134,6 @@ rendered: function()
 	} else {
 		this.refresh();
 	}
-},
-
-dragstart: function(sender, event)
-{
-	if (event.horizontal) {
-		event.preventDefault();
-		return(true);
-	}
-
-	return(false);
-},
-
-mousedown: function(sender, event)
-{
-	event.target		= null;
-	event.cancelBubble	= true;
-	event.bubbles		= false;
-
-	event.preventDefault();
 },
 
 pullRelease: function()
