@@ -18,6 +18,14 @@
 		<script>
 			window.android = true;
 
+			/*
+				Disable drag on android, because it freaks out and sends the
+				dragPulse event over and over long after you've stopped holding
+				something.
+			*/
+			enyo.gesture.drag.beginHold = function(e) {};
+
+
 			prefs.ready(function() {
 				new net.minego.macaw.main().renderInto(document.body);
 			});
