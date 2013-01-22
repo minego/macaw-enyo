@@ -23,7 +23,7 @@ defaults: {
 	accounts:			[],
 
 	fontSize:			"tiny",
-	theme:				"light",
+	theme:				!window.android ? "light" : "holo-dark",
 	toolbar:			"top",
 	tabs:				"bottom",
 
