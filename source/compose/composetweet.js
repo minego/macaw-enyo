@@ -184,24 +184,51 @@ rendered: function(sender, event)
 	this.change();
 },
 
+countChars: function(text)
+{
+	var count	= text.length;
+	var parts	= text.split(/\s/);
+	var linklen;
+
+	try {
+		linklen = {
+			'http:':	this.twitter.config.short_url_length,
+			'https:':	this.twitter.config.short_url_length_https
+		};
+	} catch (e) {
+		linklen = {
+			'http:':	21,
+			'https:':	22
+		};
+	}
+
+	for (var i = 0, word; word = parts[i]; i++) {
+		for (var key in linklen) {
+			if (0 == word.indexOf(key)) {
+				if (word.length > linklen[key]) {
+					count -= word.length;
+					count += linklen[key];
+				}
+
+				break;
+			}
+		}
+	}
+
+	return(count);
+},
+
 change: function(sender, event)
 {
 	var node;
-	var s;
-
-	try {
-		s = String.fromCharCode(event.which).trim();
-	} catch (e) {
-		s = null;
-	}
 
 	if ((node = this.$.text.hasNode())) {
-		this.text = node.innerText.trim();
+		this.text = node.innerText;
 	} else {
 		this.text = '';
 	}
 
-	this.$.counter.setContent(140 - this.text.length);
+	this.$.counter.setContent(140 - this.countChars(this.text));
 
 	/* Did the user press enter? */
 	if (event && event.which == 13) {

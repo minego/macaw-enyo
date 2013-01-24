@@ -1,5 +1,3 @@
-var TwitterActiveRequestCount	= 0;
-
 var TwitterAPI = function(user) {
 	this.apibase		= 'https://api.twitter.com';
 	this.version		= '1.1';
@@ -75,6 +73,21 @@ var TwitterAPI = function(user) {
 			}
 		}.bind(this));
 	}
+
+	/*
+		Load twitter configuration so that we know how many characters will be
+		used for URL shortening.
+	*/
+	this.config = {};
+
+	this.oauth.get(this.apibase + '/' + this.version + '/help/configuration.json',
+		function(response) {
+			this.config = enyo.json.parse(response.text);
+		}.bind(this),
+
+		function(response) {
+		}
+	);
 };
 
 TwitterAPI.prototype = {
@@ -463,7 +476,6 @@ cleanupTweet: function(tweet)
 		user_id					The user ID of the recipient when sending a DM
 		screen_name				The screen name of the recipient when sending a DM
 */
-// TODO	https://dev.twitter.com/docs/tco-link-wrapper/faq
 sendTweet: function(resource, cb, params)
 {
 	var url	= this.apibase + '/' + this.version + '/';
