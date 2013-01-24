@@ -62,6 +62,8 @@ components: [
 		layoutKind:				"FittableColumnsLayout",
 		components: [
 			{
+				name:			"cancel",
+
 				kind:			onyx.Button,
 				classes:		"button onyx-negative",
 				content:		"Cancel",
@@ -72,6 +74,8 @@ components: [
 				fit:			true
 			},
 			{
+				name:			"send",
+
 				kind:			onyx.Button,
 				classes:		"button onyx-affirmative",
 				content:		"Post Tweet",
@@ -270,7 +274,13 @@ send: function(sender, event)
 	}
 
 	/* Actually send it */
+	this.$.send.setDisabled(true);
+	this.$.cancel.setDisabled(true);
+
 	this.twitter.sendTweet(resource, function(success, response) {
+		this.$.send.setDisabled(false);
+		this.$.cancel.setDisabled(false);
+
 		if (success) {
 			this.doCloseToaster();
 		}
