@@ -19,10 +19,13 @@ name:							"compose",
 classes:						"compose",
 
 events: {
+	onOpenToaster:				"",
 	onCloseToaster:				""
 },
 
 published: {
+	maxLength:					140,
+
 	text:						"",
 	replyto:					null,
 	twitter:					null,
@@ -184,10 +187,8 @@ rendered: function(sender, event)
 	this.change();
 },
 
-countChars: function(text)
+wordLen: function(word)
 {
-	var count	= text.length;
-	var parts	= text.split(/\s/);
 	var linklen;
 
 	try {
@@ -202,17 +203,28 @@ countChars: function(text)
 		};
 	}
 
-	for (var i = 0, word; word = parts[i]; i++) {
-		for (var key in linklen) {
-			if (0 == word.indexOf(key)) {
-				if (word.length > linklen[key]) {
-					count -= word.length;
-					count += linklen[key];
-				}
-
-				break;
+	for (var key in linklen) {
+		if (0 == word.indexOf(key)) {
+			if (word.length > linklen[key]) {
+				return(linklen[key]);
 			}
+
+			break;
 		}
+	}
+
+	return(word.length);
+},
+
+countChars: function(text)
+{
+	var count	= text.length;
+	var words	= text.split(/\s/);
+	var len;
+
+	for (var i = 0, word; word = words[i]; i++) {
+		count -= word.length;
+		count += this.wordLen(word);
 	}
 
 	return(count);
@@ -221,6 +233,8 @@ countChars: function(text)
 change: function(sender, event)
 {
 	var node;
+	var count;
+	var parts;
 
 	if ((node = this.$.text.hasNode())) {
 		this.text = node.innerText;
@@ -228,7 +242,16 @@ change: function(sender, event)
 		this.text = '';
 	}
 
-	this.$.counter.setContent(140 - this.countChars(this.text));
+	count = this.countChars(this.text);
+
+	if (count <= this.maxLength) {
+		this.$.counter.setContent(this.maxLength - count);
+	} else {
+		parts = this.split();
+
+		count = this.countChars(parts[parts.length - 1]);
+		this.$.counter.setContent((this.maxLength - count) + 'x' + parts.length);
+	}
 
 	/* Did the user press enter? */
 	if (event && event.which == 13) {
@@ -266,13 +289,28 @@ cancel: function(sender, event)
 	this.doCloseToaster();
 },
 
+handleConfirm: function(sender, event)
+{
+	switch (event.command) {
+		case "split":
+			this.todo = this.split();
+			this.send();
+			break;
+
+		case "ignore":
+			break;
+	}
+},
+
 send: function(sender, event)
 {
-	var resource	= 'update';
-	var params		= {};
+	var resource		= 'update';
+	var params			= {};
 	var node;
 
-	if ((node = this.$.text.hasNode())) {
+	if (this.todo && this.todo.length > 0) {
+		params.status	= this.todo.shift();
+	} else if ((node = this.$.text.hasNode())) {
 		params.status	= node.innerText.trim();
 	} else {
 		params.status	= '';
@@ -280,6 +318,33 @@ send: function(sender, event)
 
 	/* Replace any non-breaking spaces with regular spaces */
 	params.status = params.status.replace(/\u00A0/g, " ");
+
+	if (this.countChars(params.status) > this.maxLength) {
+		this.doOpenToaster({
+			component: {
+				kind:				"Confirm",
+				title:				"Your tweet is too long. Would you like to split it into multiple tweets?",
+				onChoose:			"handleConfirm",
+				options: [
+					{
+						classes:	"confirm",
+						command:	"split"
+					},
+					{
+						classes:	"cancel",
+						command:	"ignore"
+					}
+				]
+			},
+
+			options:{
+				notitle:		true,
+				owner:			this
+			}
+		});
+
+		return;
+	}
 
 	if (this.replyto) {
 		if (this.replyto.dm) {
@@ -304,13 +369,175 @@ send: function(sender, event)
 	this.$.cancel.setDisabled(true);
 
 	this.twitter.sendTweet(resource, function(success, response) {
-		this.$.send.setDisabled(false);
-		this.$.cancel.setDisabled(false);
-
 		if (success) {
-			this.doCloseToaster();
+			if (this.todo && this.todo.length > 0) {
+				this.send();
+			} else {
+				this.doCloseToaster();
+			}
+		} else {
+			this.$.send.setDisabled(false);
+			this.$.cancel.setDisabled(false);
 		}
 	}.bind(this), params);
+},
+
+split: function()
+{
+	var node;
+	var text;
+	var words;
+	var todone		= false;
+	var to			= [];
+	var mentions	= [];
+	var length		= 0;
+	var padding		= 0;
+	var parts		= [];
+
+	if ((node = this.$.text.hasNode())) {
+		text		= node.innerText.trim();
+	} else {
+		text		= '';
+	}
+
+	words = text.split(/\s/);
+
+	/*
+		Find all mentions in the message.
+
+		Each part should include all mentions to ensure that each intended
+		recipient sees all parts.
+	*/
+	if (!this.replyto || !this.replyto.dm) {
+		for (var i = 0, word; word = words[i]; i++) {
+			if (0 != word.indexOf('@')) {
+				todone = true;
+
+				if (0 == word.indexOf('.@')) {
+					word = word.slice(1);
+				}
+			}
+
+			if (0 != word.indexOf('@')) {
+				if (length) {
+					length++;
+				}
+
+				/*
+					Use this.wordLen() to take into account the length of a
+					short URL.
+				*/
+				length += this.wordLen(word);
+				continue;
+			}
+
+			/*
+				We have to pad for the mention even if it is already in the list
+				so that it can be included in the right order.
+			*/
+			padding += word.length + 1;
+
+			if (-1 != mentions.indexOf(word) || -1 != to.indexOf(word)) {
+				/* No point in including the same recipient twice */
+				continue;
+			}
+
+			if (!todone) {
+				/*
+					The message is address directly to these users, so they need
+					to be included at the start of each part.
+				*/
+				to.push(word);
+
+				/*
+					Since these recipients will be inserted before each part
+					they do not need to be in the message itself.
+				*/
+				words.shift();
+				i--;
+			} else {
+				/* The message mentioned this user, but it isn't to this user */
+				mentions.push(word);
+			}
+		}
+	}
+
+	/* Include padding for the "x of y" and " //" text that must be added */
+	if (mentions.length) {
+		padding += 13;
+	} else {
+		padding += 10;
+	}
+
+	while (words.length) {
+		/*
+			Include 1 extra character when counting the length since the check
+			below will assume a space.
+		*/
+		var left	= this.maxLength - padding + 1;
+		var msg		= [];
+
+		while (words.length && left > 0) {
+			if (0 == words[0].indexOf('@') ||
+				0 == words[0].indexOf('.@')
+			) {
+				msg.push(words.shift());
+			} else if (words[0].length < left) {
+				left -= (words[0].length + 1);
+				msg.push(words.shift());
+			} else {
+				break;
+			}
+		}
+
+		/* Add any recipients that haven't already been added */
+		var add = [];
+		for (var i = 0, word; word = mentions[i]; i++) {
+			if (-1 == msg.indexOf(word) &&
+				-1 == msg.indexOf('.' + word)
+			) {
+				add.push(word);
+			}
+		}
+
+		if (add.length) {
+			msg.push('// ' + add.join(' '));
+		}
+
+		parts.push(msg.join(' '));
+	}
+
+	/* Add a prefix to each message: "xx of yy: " */
+	var totext = '';
+
+	if (to.length) {
+		totext = to.join(' ') + ' ';
+	}
+
+	for (var i = 0; parts[i]; i++) {
+		parts[i] = totext + (i + 1) + ' of ' + parts.length + ': ' + parts[i];
+	}
+
+	/*
+		The part needs to use all the padding so the counter code will be right
+		so, pad...
+
+		This is only needed on the last part, and will be stripped before
+		being sent anyway since it is trailing whitespace.
+	*/
+	if (parts.length < 10) {
+		parts[parts.length - 1] += '  ';
+	}
+	if (!add.length) {
+		parts[parts.length - 1] += '   ';
+	}
+
+	/*
+	for (var i = 0, p; p = parts[i]; i++) {
+		this.log(i, p.length, p);
+	}
+	*/
+	return(parts);
 }
 
 });

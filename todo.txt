@@ -11,11 +11,7 @@
 		- Hide
 
 + Compose
-	- Disable the send and cancel buttons while sending
-	- Auto split long tweets
 	- Auto complete user names
-	- Allow choosing an account with a menu/button/whatever (and default
-	  correctly when replying).
 	+ Implement missing buttons
 		- Attach image
 		- Location
