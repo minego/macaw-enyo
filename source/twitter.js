@@ -70,7 +70,8 @@ var TwitterAPI = function(user) {
 		this.getUser(this.user.screen_name, function(success, profile) {
 			if (success) {
 				this.user.profile = profile;
-console.log(this.user.profile);
+
+				console.log(this.user);
 			}
 		}.bind(this));
 	}

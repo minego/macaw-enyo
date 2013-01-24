@@ -25,19 +25,25 @@ events: {
 published: {
 	text:						"",
 	replyto:					null,
+	twitter:					null,
 	user:						null,
-	twitter:					null
+	users:						[]
 },
 
-// TODO	Add a button/menu/whatever to select the account to send from
 components: [
 	{
 		name:					"messageto",
 		classes:				"messageto"
 	},
 	{
-		name:					"txt",
-		classes:				"txt",
+		name:					"avatar",
+		classes:				"avatar",
+
+		ontap:					"nextaccount"
+	},
+	{
+		name:					"text",
+		classes:				"text",
 
 		kind:					enyo.RichText,
 
@@ -80,21 +86,30 @@ create: function()
 {
 	this.inherited(arguments);
 
+	this.userChanged();
+	this.textChanged();
+},
+
+userChanged: function()
+{
 	if (!this.twitter && this.user) {
-		if (this.user.twitter) {
-			this.twitter = this.user.twitter;
-		} else {
-			this.twitter = new TwitterAPI(this.user);
+		if (!this.user.twitter) {
+			this.user.twitter = new TwitterAPI(this.user);
 		}
+
+		this.twitter = this.user.twitter;
 	}
 
-	this.textChanged();
+	if (this.user && this.user.profile) {
+		this.$.text.addClass('haveavatar');
+		this.$.avatar.applyStyle('background-image', 'url(' + this.user.profile.profile_image_url + ')');
+	}
 },
 
 textChanged: function()
 {
-	this.$.txt.setValue(this.text);
-	this.$.txt.moveCursorToEnd();
+	this.$.text.setValue(this.text);
+	this.$.text.moveCursorToEnd();
 },
 
 rendered: function(sender, event)
@@ -142,13 +157,13 @@ rendered: function(sender, event)
 				mentions.splice(i, 1);
 			}
 
-			this.$.txt.setValue(mentions.join(' ') + ' ');
-			this.$.txt.moveCursorToEnd();
+			this.$.text.setValue(mentions.join(' ') + ' ');
+			this.$.text.moveCursorToEnd();
 
 			/* Highlight all mentions except the person being replied to */
 			if (mentions.length > 1 &&
-				(node = this.$.txt.hasNode()) &&
-				(sel = this.$.txt.getSelection())
+				(node = this.$.text.hasNode()) &&
+				(sel = this.$.text.getSelection())
 			) {
 				range = document.createRange();
 
@@ -177,7 +192,7 @@ change: function(sender, event)
 		s = null;
 	}
 
-	if ((node = this.$.txt.hasNode())) {
+	if ((node = this.$.text.hasNode())) {
 		this.text = node.innerText.trim();
 	} else {
 		this.text = '';
@@ -193,6 +208,29 @@ change: function(sender, event)
 	}
 },
 
+nextaccount: function(sender, event)
+{
+	if (this.users.length <= 1) {
+		/* There isn't an account to switch to */
+		return;
+	}
+
+	/* Find the current index */
+	for (var i = 0, u; u = this.users[i]; i++) {
+		if (u.user_id == this.user.user_id) {
+			/*
+				Reset this.twitter so that this.userChanged() will set it based
+				on the user that we just selected.
+			*/
+			this.twitter = null;
+
+			this.user = this.users[++i % this.users.length];
+			this.userChanged();
+			return;
+		}
+	}
+},
+
 cancel: function(sender, event)
 {
 	this.doCloseToaster();
@@ -204,7 +242,7 @@ send: function(sender, event)
 	var params		= {};
 	var node;
 
-	if ((node = this.$.txt.hasNode())) {
+	if ((node = this.$.text.hasNode())) {
 		params.status	= node.innerText.trim();
 	} else {
 		params.status	= '';

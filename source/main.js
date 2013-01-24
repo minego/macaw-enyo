@@ -449,6 +449,7 @@ compose: function(sender, options)
 
 	options.kind		= "compose";
 	options.user		= options.user || this.users[0];
+	options.users		= this.users;
 
 	if (!options.user) {
 		return;
