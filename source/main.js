@@ -148,6 +148,10 @@ create: function()
 	this.tabs		= [];
 	this.tabWidth	= 0;
 
+	for (var i = 0, u; u = this.users[i]; i++) {
+		u.twitter = new TwitterAPI(u);
+	}
+
 	this.createTabs();
 
 	this.addClass('font-tiny');
@@ -267,6 +271,7 @@ createTabs: function()
 						classes:			"tweetlist",
 
 						user:				user,
+						twitter:			user.twitter,
 						resource:			tab.type,
 						refreshTime:		tab.refresh,
 						notify:				tab.notify,

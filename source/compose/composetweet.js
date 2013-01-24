@@ -80,8 +80,12 @@ create: function()
 {
 	this.inherited(arguments);
 
-	if (this.user && !this.twitter) {
-		this.twitter = new TwitterAPI(this.user);
+	if (!this.twitter && this.user) {
+		if (this.user.twitter) {
+			this.twitter = this.user.twitter;
+		} else {
+			this.twitter = new TwitterAPI(this.user);
+		}
 	}
 
 	this.textChanged();

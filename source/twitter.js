@@ -61,6 +61,19 @@ var TwitterAPI = function(user) {
 		date:		'short',
 		time:		'short'
 	});
+
+	/*
+		Load this user's profile information, working under the assumption that
+		a consumer will usually want access to this.
+	*/
+	if (this.user) {
+		this.getUser(this.user.screen_name, function(success, profile) {
+			if (success) {
+				this.user.profile = profile;
+console.log(this.user.profile);
+			}
+		}.bind(this));
+	}
 };
 
 TwitterAPI.prototype = {
@@ -484,6 +497,39 @@ sendTweet: function(resource, cb, params)
 				}
 			}
 			cb(false, results);
+		}
+	);
+},
+
+getUser: function(screen_name, cb)
+{
+	var url		= this.apibase + '/' + this.version + '/users/show.json';
+	var params	= {
+		screen_name:	screen_name
+	};
+
+	this.oauth.get(this.buildURL(url, params),
+		function(response) {
+			var result = enyo.json.parse(response.text);
+
+			if (result) {
+				cb(true, result);
+			} else {
+				cb(false);
+			}
+		}.bind(this),
+
+		function(response) {
+			var result = enyo.json.parse(response.text);
+
+			if (result.errors) {
+				for (var i = 0, e; e = result.errors[i]; i++) {
+					if (e.message) {
+						ex(e.message);
+					}
+				}
+			}
+			cb(false, result);
 		}
 	);
 },

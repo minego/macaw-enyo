@@ -113,6 +113,14 @@ create: function()
 {
 	this.inherited(arguments);
 
+	if (!this.twitter && this.user) {
+		if (this.user.twitter) {
+			this.twitter = this.user.twitter;
+		} else {
+			this.twitter = new TwitterAPI(this.user);
+		}
+	}
+
 	this.$.tweet.setUser(this.user);
 	this.$.tweet.setTwitter(this.twitter);
 	this.$.tweet.setItem(this.item);

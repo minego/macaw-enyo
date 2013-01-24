@@ -21,6 +21,7 @@ classes:								"tweetlist enyo-fit",
 
 published: {
 	user:								null,
+	twitter:							null,
 	resource:							"home",
 
 	refreshTime:						-1,
@@ -72,7 +73,13 @@ create: function()
 {
 	this.inherited(arguments);
 
-	this.twitter = new TwitterAPI(this.user);
+	if (!this.twitter && this.user) {
+		if (this.user.twitter) {
+			this.twitter = this.user.twitter;
+		} else {
+			this.twitter = new TwitterAPI(this.user);
+		}
+	}
 
     try {
         var info	= enyo.webOS.deviceInfo();
