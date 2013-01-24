@@ -245,6 +245,13 @@ refresh: function(autorefresh, index)
 	}), params);
 },
 
+scroll: function(offset)
+{
+	var top = this.$.list.getScrollTop();
+
+	this.$.list.setScrollTop(top + offset);
+},
+
 gotTweets: function(success, results, autorefresh, insertIndex)
 {
 	var		changed			= false;

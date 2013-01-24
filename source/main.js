@@ -632,11 +632,11 @@ keydown: function(sender, event)
 			break;
 
 		case 38: /* up */
-			// TODO	Scroll the current panel up
+			this.$['panel' + this.$.panels.getIndex()].scroll(-25);
 			break;
 
 		case 40: /* down */
-			// TODO	Scroll the current panel down
+			this.$['panel' + this.$.panels.getIndex()].scroll(25);
 			break;
 
 		default:
