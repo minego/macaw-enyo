@@ -9,11 +9,12 @@
 
 .compose .avatar {
 	position:				absolute;
+	right:					0px;
 
 	-webkit-border-radius:	5px;
 	border-radius:			5px;
 
-	margin:					32px 0px 0px 5px;
+	margin:					15px 15px 0px 0px;
 
 	height:					48px;
 	width:					48px;
@@ -29,10 +30,8 @@
 
 	margin:					5px;
 	padding:				0;
-}
 
-.compose .text.haveavatar {
-	margin-left:			58px;
+	padding:				0 58px 0 0;
 }
 
 .compose .messageto {

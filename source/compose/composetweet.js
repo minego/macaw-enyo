@@ -105,7 +105,6 @@ userChanged: function()
 	}
 
 	if (this.user && this.user.profile) {
-		this.$.text.addClass('haveavatar');
 		this.$.avatar.applyStyle('background-image', 'url(' + this.user.profile.profile_image_url + ')');
 	}
 },
