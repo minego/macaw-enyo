@@ -40,6 +40,10 @@
 	font-weight:			bold;
 }
 
+.compose .autocomplete button {
+	margin:					0px 3px 3px 6px;
+}
+
 /*
 	Prevent showing an annoying border when the field is selected. Of course it
 	is selected... It is the only field.

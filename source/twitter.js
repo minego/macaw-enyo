@@ -88,6 +88,23 @@ var TwitterAPI = function(user) {
 		function(response) {
 		}
 	);
+
+	/*
+		Load a list of friends to be used for things like username auto
+		completion.
+	*/
+	if (this.user) {
+		this.user.friends = prefs.get('friends', this.user) || [];
+
+		this.updateUsers('friends', this.user.screen_name, this.user.friends,
+			function(success, results) {
+				if (success) {
+					this.user.friends = results;
+					prefs.set('friends', this.user.friends, this.user);
+				}
+			}.bind(this)
+		);
+	}
 };
 
 TwitterAPI.prototype = {
@@ -545,6 +562,203 @@ getUser: function(screen_name, cb)
 			cb(false, result);
 		}
 	);
+},
+
+getUsers: function(relationship, cb, params, quiet)
+{
+	var url		= this.apibase + '/' + this.version;
+
+	if (!params) {
+		params = {};
+	}
+
+	switch (relationship) {
+		case 'friends':
+			url += '/friends/list';
+			break;
+
+		case 'followers':
+			url += '/followers/list';
+			break;
+
+		default:
+			console.log('getUsers does not yet support: ' + relationship);
+			return;
+	}
+	url += '.json';
+
+	this.oauth.get(this.buildURL(url, params),
+		function(response) {
+			var result = enyo.json.parse(response.text);
+
+			if (result) {
+				cb(true, result);
+			} else {
+				cb(false);
+			}
+		}.bind(this),
+
+		function(response) {
+			var result = enyo.json.parse(response.text);
+
+			if (result.errors) {
+				for (var i = 0, e; e = result.errors[i]; i++) {
+					if (e.message && !quiet) {
+						ex(e.message);
+					}
+				}
+			}
+			cb(false, result);
+		}
+	);
+},
+
+/*
+	Update the provided list of users to include all users that currently match
+	the specified relationship for the specified user.
+
+	Each element in the users list will contain the screen_name and user_id.
+*/
+updateUsers: function(relationship, screen_name, users, cb)
+{
+	var url		= this.apibase + '/' + this.version;
+	var results	= [];
+	var params	= {
+		screen_name:		screen_name,
+		stringify_ids:		true
+	};
+
+	switch (relationship) {
+		case 'friends':
+			url += '/friends/ids';
+			break;
+
+		case 'followers':
+			url += '/followers/ids';
+			break;
+
+		default:
+			console.log('updateUsers does not yet support: ' + relationship);
+			return;
+	}
+	url += '.json';
+
+	var resultsfunc = function(response) {
+		if (response) {
+			var result = enyo.json.parse(response.text);
+
+			params.cursor = result.next_cursor_str;
+
+			for (var i = 0, id; id = result.ids[i]; i++) {
+				var u = null;
+
+				for (var x = 0; u = users[x]; x++) {
+					if (u.id == id) {
+						break;
+					}
+				}
+
+				if (u) {
+					results.push(u);
+				} else {
+					results.push({
+						id:	id
+					});
+				}
+			}
+
+			if (result.next_cursor == 0) {
+				/*
+					The results array now contains an entry for each user, with
+					an id and possibly a screen_name. We must now make another
+					request to obtain the screen_name for any missing users.
+
+					This must be done in chunks of up to 100.
+				*/
+				this.getScreenNames(results, cb);
+				return;
+			}
+		}
+
+		this.oauth.get(this.buildURL(url, params),
+			resultsfunc,
+
+			function(response) {
+				var result = enyo.json.parse(response.text);
+
+				if (result.errors) {
+					for (var i = 0, e; e = result.errors[i]; i++) {
+						if (e.message && !quiet) {
+							ex(e.message);
+						}
+					}
+				}
+				cb(false, result);
+			}
+		);
+	}.bind(this);
+	resultsfunc();
+},
+
+getScreenNames: function(users, cb)
+{
+	var url		= this.apibase + '/' + this.version + '/users/lookup.json';
+	var todo	= [];
+	var params	= {
+		include_entities:	false
+	};
+
+	for (var i = 0, u; u = users[i]; i++) {
+		if (!u.screen_name) {
+			todo.push(u.id);
+		}
+	}
+
+	var resultsfunc = function(response) {
+		if (response) {
+			var result = enyo.json.parse(response.text);
+
+			for (var i = 0, r; r = result[i]; i++) {
+				for (var x = 0, u; u = users[x]; x++) {
+					if (r.id_str == u.id) {
+						/* We only care about a few fields */
+						u.screen_name		= r.screen_name;
+						u.name				= r.name;
+						u.profile_image_url	= r.profile_image_url;
+						break;
+					}
+				}
+			}
+
+			if (!todo.length) {
+				cb(true, users);
+				return;
+			}
+		}
+
+		params.user_id = [];
+		while (params.user_id.length < 100 && todo.length) {
+			params.user_id.push(todo.pop());
+		}
+
+		this.oauth.post(url, params,
+			resultsfunc,
+
+			function(response) {
+				var result = enyo.json.parse(response.text);
+
+				if (result.errors) {
+					for (var i = 0, e; e = result.errors[i]; i++) {
+						if (e.message && !quiet) {
+							ex(e.message);
+						}
+					}
+				}
+				cb(false, result);
+			}
+		);
+	}.bind(this);
+	resultsfunc();
 },
 
 // TODO	Fill out remaining bits of the API as needed

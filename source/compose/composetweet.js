@@ -39,6 +39,13 @@ components: [
 		classes:				"messageto"
 	},
 	{
+		name:					"autocomplete",
+		classes:				"autocomplete",
+
+		ontap:					"autocompletetap",
+		defaultKind:			onyx.Button
+	},
+	{
 		name:					"avatar",
 		classes:				"avatar",
 
@@ -230,6 +237,131 @@ countChars: function(text)
 	return(count);
 },
 
+autocomplete: function(value)
+{
+	// TODO	Get the cursor position. For now we will assume the cursor is at the
+	//		end of the text, but this is not always valid.
+	var end		= value.length;
+	var start;
+	var word;
+	var node;
+	var c;
+
+	if ((node = this.$.text.hasNode())) {
+		this.text = node.innerText;
+	} else {
+		this.text = '';
+	}
+
+	this.$.autocomplete.destroyClientControls();
+
+	for (start = end - 1; c = value.charAt(start); start--) {
+		if (/\s/.test(c)) {
+			/* We found a space, we went too far */
+			start++;
+			break;
+		}
+
+		if (start == 0) {
+			/* Well we can't go any further */
+			break;
+		}
+	}
+
+	if (start < 0 || start == end) {
+		/* Either we are in whitespace, or there are no words */
+		if (node) {
+			node.setAttribute("autocorrect", "on");
+		}
+		return;
+	}
+
+	word = value.slice(start, end);
+
+	if (0 == word.indexOf('@')) {
+		word = word.slice(1);
+	} else if (0 == word.indexOf('.@')) {
+		word = word.slice(2);
+	} else {
+		if (node) {
+			node.setAttribute("autocorrect", "on");
+		}
+		word = null;
+	}
+
+	if (node) {
+		node.setAttribute("autocorrect", "off");
+	}
+
+	if (!word || word.length < 2 || !this.user || !this.user.friends) {
+		/* nothing to see here */
+		return;
+	}
+	word = word.toLowerCase();
+
+	var matches = [];
+
+	for (var i = 0, u; u = this.user.friends[i]; i++) {
+		if (-1 != u.screen_name.toLowerCase().indexOf(word)) {
+			if (matches.length <= 10) {
+				matches.push({
+					content: '@' + u.screen_name
+				});
+			} else {
+				matches.push({
+					content: "..."
+				});
+				break;
+			}
+		}
+	}
+
+	this.currentword = {
+		start:	start,
+		end:	end
+	};
+
+	if (matches.length > 0) {
+		this.$.autocomplete.createComponents(matches, { owner: this });
+		this.$.autocomplete.render();
+	}
+},
+
+autocompletetap: function(sender, event)
+{
+	var word	= event.originator.getContent();
+	var node;
+	var value;
+	var end;
+	var start;
+
+	if ((node = this.$.text.hasNode())) {
+		this.text = node.innerText;
+	} else {
+		this.text = '';
+	}
+
+	// TODO	Get the cursor position. For now we will assume the cursor is at the
+	//		end of the text, but this is not always valid.
+	value = this.text;
+	end = value.length;
+
+	for (start = end - 1; c = value.charAt(start); start--) {
+		if (/\s/.test(c)) {
+			/* We found a space, we went too far */
+			start++;
+			break;
+		}
+
+		if (start == 0) {
+			/* Well we can't go any further */
+			break;
+		}
+	}
+
+	this.setText(value.slice(0, start) + word + ' ');
+},
+
 change: function(sender, event)
 {
 	var node;
@@ -259,6 +391,8 @@ change: function(sender, event)
 			this.send(sender, event);
 		}
 	}
+
+	this.autocomplete(this.text);
 },
 
 nextaccount: function(sender, event)
