@@ -2,4 +2,5 @@ build
 deploy
 *.ipk
 *.apk
+*.bar
 .tmp

@@ -5,10 +5,11 @@ PKG			:= Macaw
 VERSION		:= 2.2.$(shell git log --pretty=format:'' | wc -l | sed 's/ *//')
 DEPLOY		:= deploy/macaw
 APK			:= Macaw-debug.apk
-BAR			:= macaw.bar
+BAR			:= macaw-device.bar
+ZIP			:= macaw.zip
 
 clean:
-	rm -rf *.ipk *.apk *.bar *.zip deploy build .tmp 2>/dev/null || true
+	rm -rf *.ipk *.apk *.bar *.zip deploy build device simulator .tmp 2>/dev/null || true
 
 ${DEPLOY}:
 	mkdir -p deploy/macaw
@@ -92,14 +93,20 @@ ${APK}: ${DEPLOY}/project.properties ${DEPLOY}/appinfo.json
 	@(cd .tmp && ant debug)
 	@mv .tmp/bin/$(APK) .
 
-bar: ${BAR}
+bar: ${DEPLOY}/config.xml
+	@cp bb10/*.html ${DEPLOY}
+	@(cd ${DEPLOY} && zip ../../${ZIP} *)
+	# TODO Allow signing with a real key
+	@bbwp -d ${ZIP}
+	@rm ${ZIP}
+	@mv simulator/macaw.bar macaw-simulator.bar
+	@mv device/macaw.bar macaw-device.bar
+	@rmdir simulator
+	@rmdir device
 
-${BAR}.zip: ${DEPLOY}/config.xml
-	cp bb10/*.html ${DEPLOY}
-	zip ${BAR}.zip ${DEPLOY}
+macaw-simulator.bar: bar
 
-${BAR}: ${BAR}.zip
-	echo "Support for signing has not yet been implemented"
+macaw-device.bar: bar
 
 .PHONY: clean webos install launch log test release apk ipk android bar
 
