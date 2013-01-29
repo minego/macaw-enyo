@@ -5,13 +5,14 @@ PKG			:= Macaw
 VERSION		:= 2.2.$(shell git log --pretty=format:'' | wc -l | sed 's/ *//')
 DEPLOY		:= deploy/macaw
 APK			:= Macaw-debug.apk
+BAR			:= macaw.bar
 
 clean:
-	rm -rf *.ipk deploy build .tmp 2>/dev/null || true
+	rm -rf *.ipk *.apk *.bar *.zip deploy build .tmp 2>/dev/null || true
 
 ${DEPLOY}:
 	mkdir -p deploy/macaw
-	cp -r assets enyo lib source package.js *.png framework_config.json config.xml deploy/macaw/
+	cp -r assets enyo lib source package.js *.png framework_config.json deploy/macaw/
 	cp debug.html deploy/macaw/index.html
 
 release:
@@ -19,8 +20,11 @@ release:
 	mkdir build
 	./tools/deploy.sh
 
-${DEPLOY}/appinfo.json: ${DEPLOY}
+${DEPLOY}/appinfo.json: ${DEPLOY} appinfo.json
 	cat appinfo.json | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/appinfo.json
+
+${DEPLOY}/config.xml: ${DEPLOY} bb10/config.xml
+	cat bb10/config.xml | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/config.xml
 
 deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
 	palm-package --exclude=assets/old-images ${DEPLOY}
@@ -88,5 +92,14 @@ ${APK}: ${DEPLOY}/project.properties ${DEPLOY}/appinfo.json
 	@(cd .tmp && ant debug)
 	@mv .tmp/bin/$(APK) .
 
-.PHONY: clean webos install launch log test release apk ipk android
+bar: ${BAR}
+
+${BAR}.zip: ${DEPLOY}/config.xml
+	cp bb10/*.html ${DEPLOY}
+	zip ${BAR}.zip ${DEPLOY}
+
+${BAR}: ${BAR}.zip
+	echo "Support for signing has not yet been implemented"
+
+.PHONY: clean webos install launch log test release apk ipk android bar
 
