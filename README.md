@@ -59,13 +59,6 @@ Building requires gnu make. Minifying requires nodejs.
 	* Click "Load unpacked extension"
 	* Select the directory where you checked out the macaw-enyo source
 
-### Packaging for BB10
-	* `make clean all`
-	* `cd ./deploy/macaw`
-	* `zip -r macaw.zip *`
-	* package `macaw.zip` with BB10 Webworks SDK (bbwp)
-
-
 Macaw License
 ================================================================================
 
