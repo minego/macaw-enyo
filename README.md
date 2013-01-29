@@ -45,6 +45,9 @@ Building requires gnu make. Minifying requires nodejs.
 ### Package for android
 	`make android`
 
+### Package for BB10 (Requires the bbwp tool from the BB10 Webworks SDK)
+	`make bar`
+
 ### Install package on a webOS or android device:
 	`make install`
 
@@ -57,7 +60,7 @@ Building requires gnu make. Minifying requires nodejs.
 	* Select the directory where you checked out the macaw-enyo source
 
 ### Packaging for BB10
-	* `make clean all` 
+	* `make clean all`
 	* `cd ./deploy/macaw`
 	* `zip -r macaw.zip *`
 	* package `macaw.zip` with BB10 Webworks SDK (bbwp)

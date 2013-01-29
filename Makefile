@@ -108,5 +108,7 @@ macaw-simulator.bar: bar
 
 macaw-device.bar: bar
 
+bb10: bar
+
 .PHONY: clean webos install launch log test release apk ipk android bar
 
