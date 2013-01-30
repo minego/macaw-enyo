@@ -61,6 +61,7 @@ Building requires gnu make. Minifying requires nodejs.
 	export BB10SDK=/path/to/bb10/sdk
 	export BB10DEVICE="ip of bb10 device"
 	export BB10TYPE="simulator or device"
+	export BB10DEVICEPASS="devices developer mode password"
 	make install
 
 ### View logs on a webOS or android device
