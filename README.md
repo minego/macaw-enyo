@@ -51,6 +51,14 @@ Building requires gnu make. Minifying requires nodejs.
 ### Install package on a webOS or android device:
 	`make install`
 
+### Install package on a BB10 devices
+	```
+	export BB10SDK=/path/to/bb10/sdk
+	export BB10DEVICE="ip of bb10 device"
+	export BB10TYPE="simulator or device"
+	make install
+	```
+
 ### View logs on a webOS or android device
 	`make log`
 

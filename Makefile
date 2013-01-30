@@ -55,10 +55,13 @@ openwebos: webos
 	@scp -r deploy/macaw root@192.168.7.2:/usr/palm/applications/${APPID}
 
 install:
-	@(ls *.ipk 2>/dev/null && palm-install *.ipk) || (ls *.apk 2>/dev/null && adb install -r *.apk)
+	@(ls *.ipk 2>/dev/null && palm-install *.ipk)		|| \
+	(ls *.apk 2>/dev/null && adb install -r *.apk)		|| \
+	(ls *.bar 2>/dev/null && ${BB10SDK}/dependencies/tools/bin/blackberry-deploy -installApp ${BB10DEVICE} macaw-${BB10TYPE}.bar)
 
 launch: install
-	@palm-launch -i ${APPID}
+	@(ls *.ipk 2>/dev/null && palm-launch -i ${APPID})		|| \
+	(ls *.bar 2>/dev/null && ${BB10SDK}/dependencies/tools/bin/blackberry-deploy -launchApp ${BB10DEVICE} macaw-${BB10TYPE}.bar)
 
 log:
 	@(																		\
@@ -95,9 +98,9 @@ ${APK}: ${DEPLOY}/project.properties ${DEPLOY}/appinfo.json
 
 bar: ${DEPLOY}/config.xml
 	@cp bb10/*.html ${DEPLOY}
-	@(cd ${DEPLOY} && zip ../../${ZIP} *)
+	@(cd ${DEPLOY} && zip -r ../../${ZIP} *)
 	# TODO Allow signing with a real key
-	@bbwp -d ${ZIP}
+	@${BB10SDK}/bbwp -d ${ZIP}
 	@rm ${ZIP}
 	@mv simulator/macaw.bar macaw-simulator.bar
 	@mv device/macaw.bar macaw-device.bar
