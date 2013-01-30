@@ -107,6 +107,16 @@ bar: ${DEPLOY}/config.xml
 	@rmdir simulator
 	@rmdir device
 
+barsigned: ${DEPLOY}/config.xml
+	@cp bb10/*.html ${DEPLOY}
+	@(cd ${DEPLOY} && zip -r ../../${ZIP} *)
+	@${BB10SDK}/bbwp -g ${BB10SIGNPASS} ${ZIP}
+	@rm ${ZIP}
+	@mv simulator/macaw.bar macaw-simulator.bar
+	@mv device/macaw.bar macaw-device.bar
+	@rmdir simulator
+	@rmdir device
+
 macaw-simulator.bar: bar
 
 macaw-device.bar: bar
