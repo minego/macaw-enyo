@@ -57,11 +57,11 @@ openwebos: webos
 install:
 	@(ls *.ipk 2>/dev/null && palm-install *.ipk)		|| \
 	(ls *.apk 2>/dev/null && adb install -r *.apk)		|| \
-	(ls *.bar 2>/dev/null && ${BB10SDK}/dependencies/tools/bin/blackberry-deploy -installApp ${BB10DEVICE} macaw-${BB10TYPE}.bar)
+	(ls *.bar 2>/dev/null && ${BB10SDK}/dependencies/tools/bin/blackberry-deploy -installApp ${BB10DEVICE} macaw-${BB10TYPE}.bar -password ${BB10DEVICEPASS})
 
 launch: install
 	@(ls *.ipk 2>/dev/null && palm-launch -i ${APPID})		|| \
-	(ls *.bar 2>/dev/null && ${BB10SDK}/dependencies/tools/bin/blackberry-deploy -launchApp ${BB10DEVICE} macaw-${BB10TYPE}.bar -password ${BB10DEVICEPASS)
+	(ls *.bar 2>/dev/null && ${BB10SDK}/dependencies/tools/bin/blackberry-deploy -launchApp ${BB10DEVICE} macaw-${BB10TYPE}.bar)
 
 log:
 	@(																		\
