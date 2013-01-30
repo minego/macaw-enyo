@@ -25,7 +25,7 @@ Building
 This application relies on a number of git sub modules. After checking out you
 must run:
 
-	`git submodule update --init`
+	git submodule update --init
 
 
 This application can currently be packaged for chrome, webOS and android.
@@ -34,33 +34,32 @@ Packaging for other platforms may be included in the future.
 Building requires gnu make. Minifying requires nodejs.
 
 ### Deploy as debug:
-	`make clean all`
+	make clean all
 
 ### Deploy release (minified):
-	`make clean release all`
+	make clean release all
 
 ### Package for webOS:
-	`make webos`
+	make webos
 
 ### Package for android
-	`make android`
+	make android
 
 ### Package for BB10 (Requires the bbwp tool from the BB10 Webworks SDK)
-	`make bar`
+	export BB10SDK=/path/to/bb10/sdk
+	make bar
 
 ### Install package on a webOS or android device:
-	`make install`
+	make install
 
 ### Install package on a BB10 devices
-	```
 	export BB10SDK=/path/to/bb10/sdk
 	export BB10DEVICE="ip of bb10 device"
 	export BB10TYPE="simulator or device"
 	make install
-	```
 
 ### View logs on a webOS or android device
-	`make log`
+	make log
 
 ### Running as a chrome application:
 	* Navigate to "chrome:extensions"
