@@ -24,6 +24,12 @@ var TwitterAPI = function(user) {
 			consumerKey:	'Jefr6cdzEDDbD1rrOYkFtA',
 			consumerSecret:	'TqBNIw7TtF3Ge1K8Xq1gojajl0fInvPx0raNF3reIV8'
 		};
+	} else if (-1 != navigator.userAgent.toLowerCase().indexOf("bb10")) {
+		/* Macaw for BB10 */
+		this.options = {
+			consumerKey:	'W8A4QdKtIf8vBt4TldWyA',
+			consumerSecret:	'y0l39C41x4LMI1Y8LKT1y0Qro6HijTYztuS7o4NWjEs'
+		};
 	} else {
 		/* Macaw for all the things */
 		this.options = {
