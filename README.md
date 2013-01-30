@@ -49,6 +49,11 @@ Building requires gnu make. Minifying requires nodejs.
 	export BB10SDK=/path/to/bb10/sdk
 	make bar
 
+### Package signed for BB10 (Requires the bbwp tool from the BB10 Webworks SDK)
+	export BB10SDK=/path/to/bb10/sdk
+	export BB10SIGNPASS=Keypassword
+	make barsigned
+
 ### Install package on a webOS or android device:
 	make install
 
