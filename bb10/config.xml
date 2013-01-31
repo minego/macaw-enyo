@@ -62,6 +62,7 @@
 	<access subdomains="true" uri="http://phnxapp.com" />
 	<access subdomains="true" uri="http://twitpic.com" />
 	<access subdomains="true" uri="http://instagr.am" />
+	<access subdomains="true" uri="http://instagram.com" />
 	<access subdomains="true" uri="http://youtube.com" />
 	<access subdomains="true" uri="http://cloudfront.net" />
 	<access subdomains="true" uri="http://yfrog.com" />
