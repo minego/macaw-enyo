@@ -65,6 +65,7 @@
 	<access subdomains="true" uri="http://youtube.com" />
 	<access subdomains="true" uri="http://cloudfront.net" />
 	<access subdomains="true" uri="http://yfrog.com" />
+	<access subdomains="true" uri="http://instagram.com" />
 	<access subdomains="true" uri="http://*" />
 
 	<icon rim:hover="false" src="icon128.png" />
