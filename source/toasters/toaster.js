@@ -104,6 +104,26 @@ create: function()
 	}
 },
 
+rendered: function()
+{
+	this.inherited(arguments);
+
+	/*
+		Inserting a toaster can in some cases cause the main body of the app to
+		scroll to show part of the toaster before it has scrolled into view.
+
+		This generally happens when there is an input on that toaster that has
+		focus. The browser is just trying to keep a focused input visible. This
+		is very annoying though, so let's try to prevent it.
+	*/
+	var main = document.getElementById("main");
+
+	main.addEventListener('scroll', function(e) {
+		main.scrollTop	= 0;
+		main.scrollLeft	= 0;
+	}, false);
+},
+
 slideInFromChanged: function()
 {
 	this.removeClass('top');
@@ -166,14 +186,6 @@ push: function(component, options)
 	setTimeout(enyo.bind(this, function() {
 		this.showTopToaster();
 	}), 10);
-
-	setTimeout(function() {
-		/*
-			I have no idea why, but sometimes opening a toaster makes the main
-			control scroll slightly... I don't approve.
-		*/
-		document.getElementById("main").scrollTop = 0;
-	}, 300);
 },
 
 pop: function(count, backevent)
