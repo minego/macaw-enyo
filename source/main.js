@@ -722,10 +722,8 @@ keydown: function(sender, event)
 			this.$['panel' + this.index].scroll(bounds.height - 25);
 			break;
 
-
-
 		default:
-			this.log(event.keyCode);
+			// this.log(event.keyCode);
 			return(true);
 	}
 
