@@ -429,10 +429,58 @@ toolbarsChanged: function()
 	this.$.tabbar.resized();
 },
 
+/*
+	Return 0 if visible, and either -1 or 1 if not to indicate which direction
+	to scroll to make it visible.
+*/
+isPanelVisible: function(index, selected)
+{
+	var panels		= this.$.panels;
+
+	if (isNaN(selected)) {
+		selected	= panels.getIndex();
+	}
+
+	/* Is the panel visible?  */
+	var bounds		= panels.getBounds();
+	var pbounds		= panels.getPanels()[0].getBounds();
+
+	/* Figure out the left and right position based on the selected panel */
+	bounds.left		= pbounds.width * selected;
+	bounds.right	= bounds.left + bounds.width;
+
+	/* Figure out the left and right position of the panel */
+	pbounds.left	= pbounds.width * index;
+	pbounds.right	= pbounds.left + pbounds.width;
+
+	if (bounds.left > pbounds.left) {
+		return(-1);
+	}
+
+	if (bounds.right < pbounds.right) {
+		return(1);
+	}
+
+	return(0);
+},
+
 selectpanel: function(sender, event)
 {
-	if (sender.index != this.$.panels.getIndex()) {
-		this.$.panels.setIndex(sender.index);
+	var index		= sender.index;
+	var selected	= this.$.panels.getIndex();
+	var offset;
+
+	while (0 != (offset = this.isPanelVisible(index, selected))) {
+		selected += offset;
+
+		if (selected > this.tabs.length || selected < 0) {
+			this.log('oops, something went wrong');
+			break;
+		}
+	}
+
+	if (selected != this.$.panels.getIndex()) {
+		this.$.panels.setIndex(selected);
 	} else {
 		this.smartscroll(sender, event);
 	}
