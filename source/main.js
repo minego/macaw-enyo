@@ -145,6 +145,7 @@ create: function()
 	prefs.updateClasses(this);
 
 	this.users		= prefs.get('accounts');
+	this.index		= 0;
 	this.tabs		= [];
 	this.tabWidth	= 0;
 
@@ -658,7 +659,7 @@ keydown: function(sender, event)
 					/* Refresh the current panel */
 					var panel;
 
-					if ((panel = this.$['panel' + this.$.panels.getIndex()])) {
+					if ((panel = this.$['panel' + this.index])) {
 						panel.refresh();
 					}
 				}
@@ -672,22 +673,59 @@ keydown: function(sender, event)
 			break;
 
 		case 37: /* left */
-			this.$.panels.setIndex(this.$.panels.getIndex() - 1);
+			this.addClass('manualIndex');
+
+			if (this.index > 0) {
+				this.index--;
+
+				this.ignoreMove = true;
+				if (0 != this.isPanelVisible(this.index)) {
+					this.$.panels.setIndex(this.$.panels.getIndex() - 1);
+				} else {
+					this.moveIndicator();
+				}
+			}
 			break;
 
 		case 39: /* right */
-			this.$.panels.setIndex(this.$.panels.getIndex() + 1);
+			this.addClass('manualIndex');
+
+			if (this.index < (this.tabs.length - 1)) {
+				this.index++;
+
+				this.ignoreMove = true;
+				if (0 != this.isPanelVisible(this.index)) {
+					this.$.panels.setIndex(this.$.panels.getIndex() + 1);
+				} else {
+					this.moveIndicator();
+				}
+			}
 			break;
 
 		case 38: /* up */
-			this.$['panel' + this.$.panels.getIndex()].scroll(-25);
+			this.$['panel' + this.index].scroll(-25);
 			break;
 
 		case 40: /* down */
-			this.$['panel' + this.$.panels.getIndex()].scroll(25);
+			this.$['panel' + this.index].scroll(25);
 			break;
 
+		case 33: /* page up */
+			var bounds = this.$.panels.getPanels()[0].getBounds();
+
+			this.$['panel' + this.index].scroll(-(bounds.height - 25));
+			break;
+
+		case 34: /* page down */
+			var bounds = this.$.panels.getPanels()[0].getBounds();
+
+			this.$['panel' + this.index].scroll(bounds.height - 25);
+			break;
+
+
+
 		default:
+			this.log(event.keyCode);
 			return(true);
 	}
 
@@ -733,8 +771,21 @@ keypress: function(sender, event)
 
 moveIndicator: function(sender, event)
 {
+	if (!this.ignoreMove) {
+		if (event) {
+			this.index += event.toIndex - event.fromIndex;
+			this.log(event, this.index, event.toIndex, event.fromIndex);
+
+			if (0 != this.isPanelVisible(this.index)) {
+				this.index = event.toIndex;
+			}
+		}
+	} else {
+		this.ignoreMove = false;
+	}
+
 	this.$.indicator.applyStyle('width', this.tabWidth + '%');
-	this.$.indicator.applyStyle('left', (event.toIndex * this.tabWidth) + '%');
+	this.$.indicator.applyStyle('left', (this.index * this.tabWidth) + '%');
 }
 
 });

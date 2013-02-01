@@ -112,6 +112,10 @@ body.Pre3 {
 	.indicator {
 		display:			none;
 	}
+
+	.manualIndex .indicator {
+		display:			block;
+	}
 }
 
 .tabbar .tab {
