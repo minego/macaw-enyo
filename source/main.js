@@ -645,7 +645,18 @@ back: function(sender, event)
 keydown: function(sender, event)
 {
 	if (this.$.toasters.getLength() > 0) {
-		/* Ignore key presses when a toaster is visible */
+		/*
+			Ignore key presses when a toaster is visible
+
+			If it happens to be ctrl+r though, then we still want to prevent the
+			default behavior so that the user doesn't reload the browser window
+			without meaning to.
+		*/
+		if (event.keyCode == 82 && event.ctrlKey) {
+			event.preventDefault();
+			return(false);
+		}
+
 		return(true);
 	}
 
