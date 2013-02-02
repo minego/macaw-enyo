@@ -1,3 +1,15 @@
+.profile {
+	font-size:				16px;
+}
+
+.profile .info > * > * > * {
+	display:				inline-block;
+}
+
+.profile .info > * > * :last-child {
+	float:					right;
+}
+
 .profile .banner {
 	height:					160px;
 	width:					100%;

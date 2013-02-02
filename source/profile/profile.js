@@ -66,57 +66,21 @@ components: [
 		name:							"panels",
 
 		onTransitionStart:				"moveHighlight",
+		defaultKind:					enyo.Scroller,
 
-		components: [
-			{
-				name:					"info",
-				classes:				"info",
-
-				components: [
-					{
-						classes:		"groupbox",
-
-						components: [
-							{
-								name:	"verified",
-								classes:"verified",
-
-								showing:false,
-								content:"Verified Account"
-							},
-							{
-								name:	"description",
-								classes:"description"
-							},
-							{
-								name:	"url",
-								classes:"url"
-							},
-							{
-								name:	"location",
-								classes:"location"
-							},
-							{
-								name:	"relationship",
-								classes:"relationship"
-							}
-						]
-					}
-				]
-			},
-			{
-				name:					"history",
-				classes:				"history"
-			},
-			{
-				name:					"mentions",
-				classes:				"mentions"
-			},
-			{
-				name:					"favorite",
-				classes:				"favorite"
-			}
-		]
+		components: [{
+			name:						"info",
+			classes:					"info"
+		}, {
+			name:						"history",
+			classes:					"history"
+		}, {
+			name:						"mentions",
+			classes:					"mentions"
+		}, {
+			name:						"favorite",
+			classes:					"favorite"
+		}]
 	},
 
 	{
@@ -217,33 +181,80 @@ profileChanged: function()
 
 	this.$.avatar.applyStyle('background-image', 'url(' + this.profile.profile_image_url + ')');
 
+	this.$.info.destroyClientControls();
+
 	var fields = [
-		'description', 'url', 'location', 'verified'
+		[
+			{ field:	'verified',			label:	'Verified Account'	},
+			{ field:	'description'									},
+			{ field:	'url'											},
+			{ field:	'location'										},
+			{ field:	'relationship',		name:	'relationship'		}
+		],
+
+		[
+			{ field:	'statuses_count',	label:	'Tweets'			},
+			{ field:	'friends_count',	label:	'Following'			},
+			{ field:	'followers_count',	label:	'Followers'			}
+		]
 	];
 
-	for (var i = 0, f; f = fields[i]; i++) {
-		this.$[f].show();
+	for (var g = 0, group; group = fields[g]; g++) {
+		var components = [];
 
-		switch (typeof this.profile[f]) {
-			case 'string':
-				if (this.profile[f].trim().length) {
-					this.$[f].setContent(this.profile[f]);
-				} else {
-					this.$[f].destroy();
-				}
-				break;
+		for (var i = 0, item; item = group[i]; i++) {
+			var value		= this.profile[item.field];
+			var component	= {
+				classes:	item.field
+			};
 
-			case 'boolean':
-				if (!this.profile[f]) {
-					this.$[f].destroy();
-				}
-				break;
+			if (item.name) {
+				component.name = item.name;
+			}
 
-			default:
-			case 'undefined':
-				this.$[f].destroy();
-				break;
+			switch (typeof value) {
+				case 'number':
+				case 'string':
+					if (item.label) {
+						component.components = [
+							{ content: item.label },
+							{ content: value }
+						];
+					} else {
+						component.content = value;
+					}
+					break;
+
+				case 'boolean':
+					if (!value || !item.label) {
+						continue;
+					}
+
+					component.content = item.label;
+					break;
+
+				default:
+				case 'undefined':
+					if (!item.name) {
+						continue;
+					}
+					break;
+			}
+
+			components.push(component);
 		}
+
+		this.log(components);
+		this.$.info.createComponent({
+			classes:		"groupbox",
+			components:		components
+		}, { owner: this });
+	}
+	this.$.info.render();
+
+	/* The relationship may have just been overwritten... */
+	if (this.relationship) {
+		this.relationshipChanged();
 	}
 },
 
@@ -252,6 +263,10 @@ relationshipChanged: function()
 	var		followed	= false;
 	var		following	= false;
 	var		name;
+
+	if (!this.$.relationship) {
+		return;
+	}
 
 	if (this.profile) {
 		name = this.profile.screen_name;
