@@ -16,100 +16,158 @@
 
 enyo.kind({
 
-name:								"Profile",
+name:									"Profile",
 
-classes:							"profile",
+classes:								"profile",
 
 published: {
-	name:							null,	/* The name of the user to load */
-	profile:						null,	/* The profile if already loaded */
+	screenname:							null,	/* The name of the user to load */
+	profile:							null,	/* The profile if already loaded */
+	relationship:						null,	/* A list of connections to this user */
 
-	user:							null,
-	twitter:						null
+	user:								null,
+	twitter:							null
 },
 
 handlers: {
-	ontap:							"handleTap"
+	ontap:								"handleTap",
+	onresize:							"handleResize"
 },
 
 events: {
-	onOpenToaster:					"",
-	onCloseToaster:					"",
-	onCompose:						""
+	onOpenToaster:						"",
+	onCloseToaster:						"",
+	onCompose:							""
 },
 
 components: [
 	{
-		name:						"banner",
-		classes:					"banner",
+		name:							"banner",
+		classes:						"banner",
 
 		components: [
 			{
-				name:				"avatar",
-				classes:			"avatar"
+				name:					"avatar",
+				classes:				"avatar"
 			},
 			{
-				name:				"username",
-				classes:			"username"
+				name:					"username",
+				classes:				"username"
 			},
 			{
-				name:				"screenname",
-				classes:			"screenname"
+				name:					"screenname",
+				classes:				"screenname"
 			}
 		]
 	},
 
 	{
-		kind:						enyo.Panels,
-		name:						"panels"
-// TODO	Show the info, history, mention and favorites panels here
-	},
+		kind:							enyo.Panels,
+		name:							"panels",
 
-	{
-		classes:					"controls",
-		layoutKind:					"FittableColumnsLayout",
+		onTransitionStart:				"moveHighlight",
 
 		components: [
 			{
-				classes:			"options icon",
-				command:			"options"
-			},
-
-			{
-				fit:				true,
-				classes:			"center",
+				name:					"info",
+				classes:				"info",
 
 				components: [
 					{
-						classes:	"info icon selected",
-						name:		"info",
-						command:	"info"
+						kind:			onyx.Groupbox,
+
+						components: [
+							{
+								name:	"verified",
+								classes:"verified",
+
+								showing:false,
+								content:"Verified Account"
+							},
+							{
+								name:	"description",
+								classes:"description"
+							},
+							{
+								name:	"url",
+								classes:"url"
+							},
+							{
+								name:	"location",
+								classes:"location"
+							},
+							{
+								name:	"relationship",
+								classes:"relationship"
+							}
+						]
+					}
+				]
+			},
+			{
+				name:					"history",
+				classes:				"history"
+			},
+			{
+				name:					"mentions",
+				classes:				"mentions"
+			},
+			{
+				name:					"favorite",
+				classes:				"favorite"
+			}
+		]
+	},
+
+	{
+		name:							"controls",
+		classes:						"controls",
+		layoutKind:						"FittableColumnsLayout",
+
+		components: [
+			{
+				classes:				"options icon",
+				command:				"options"
+			},
+
+			{
+				fit:					true,
+				classes:				"center",
+				name:					"icons",
+
+				components: [
+					{
+						classes:		"info icon selected",
+						command:		"info"
 					},
 					{
-						classes:	"history icon",
-						name:		"history",
-						command:	"history"
+						classes:		"history icon",
+						command:		"history"
 					},
 					{
-						classes:	"mentions icon",
-						name:		"mentions",
-						command:	"mentions"
+						classes:		"mentions icon",
+						command:		"mentions"
 					},
 					{
-						classes:	"favorite icon",
-						name:		"favorite",
-						command:	"favorite"
+						classes:		"favorite icon",
+						command:		"favorite"
 					}
 				]
 			},
 
 			{
-				classes:			"back icon",
-				command:			"back"
+				classes:				"back icon",
+				command:				"back"
 			}
 		]
 	}
 ],
+
+rendered: function()
+{
+	this.inherited(arguments);
+	this.handleResize();
+},
 
 create: function()
 {
@@ -136,14 +194,111 @@ create: function()
 			}
 		}.bind(this));
 	}
+
+	if (!this.relationships) {
+		this.following = undefined;
+
+		this.twitter.getUser(this.screenname, function(success, result) {
+			if (success) {
+				this.setRelationship(result[0].connections);
+			} else {
+				this.doCloseToaster();
+			}
+		}.bind(this), 'relationship');
+	}
 },
 
 profileChanged: function()
 {
+	this.handleResize();
+
 	this.$.screenname.setContent('@' + this.profile.screen_name);
 	this.$.username.setContent(this.profile.name);
 
 	this.$.avatar.applyStyle('background-image', 'url(' + this.profile.profile_image_url + ')');
+
+	var fields = [
+		'description', 'url', 'location', 'verified'
+	];
+
+	for (var i = 0, f; f = fields[i]; i++) {
+		switch (typeof this.profile[f]) {
+			case 'string':
+				this.$[f].show();
+				this.$[f].setContent(this.profile[f]);
+				break;
+
+			case 'boolean':
+				if (this.profile[f]) {
+					this.$[f].show();
+					break;
+				}
+
+				// fallthrough
+
+			case 'undefined':
+				this.$[f].destroy();
+				break;
+		}
+	}
+},
+
+relationshipChanged: function()
+{
+	var		followed	= false;
+	var		following	= false;
+	var		name;
+
+	if (this.profile) {
+		name = this.profile.screen_name;
+	} else {
+		name = this.screenname;
+	}
+
+	this.following = false;
+
+	for (var i = 0, c; c = this.relationship[i]; i++) {
+		switch (c.toLowerCase()) {
+			case 'following':
+				this.following = true;
+				break;
+
+			case 'following_requested':
+				break;
+
+			case 'followed_by':
+				this.$.relationship.setContent('@' + name + ' follows you');
+				return;
+
+			case 'none':
+				break;
+		}
+	}
+
+	this.$.relationship.setContent('@' + name + ' does not follow you');
+},
+
+handleResize: function()
+{
+	/* This is a fullscreen toaster */
+	var p = this;
+
+	while (p.parent) {
+		p = p.parent;
+	}
+
+	var pb = p.getBounds();
+
+	this.setBounds({
+		height:		pb.height
+	});
+
+	this.$.panels.setBounds({
+		height:		pb.height - (
+						this.$.controls.getBounds().height +
+						this.$.banner.getBounds().height
+					)
+	});
 },
 
 handleTap: function(sender, event)
@@ -182,10 +337,23 @@ handleTap: function(sender, event)
 	}
 
 	if (!isNaN(index)) {
-		// TODO	Select the appropriate panel
+		this.$.panels.setIndex(index);
 	}
 
 	return(true);
+},
+
+moveHighlight: function(sender, event)
+{
+	var icons	= this.$.icons.getClientControls();
+
+	for (var i = 0, icon; icon = icons[i]; i++) {
+		if (i == event.toIndex) {
+			icon.addClass('selected');
+		} else {
+			icon.removeClass('selected');
+		}
+	}
 }
 
 });

@@ -6,6 +6,7 @@
 	text-align:				center;
 
 	background-size:		320px;
+	padding-top:			10px;
 }
 
 .profile .avatar {
@@ -13,11 +14,21 @@
 	border-radius:			5px;
 	border:					2px solid white;
 
-	margin:					10px auto 10px auto;
+	margin:					0px auto 10px auto;
 
 	height:					60px;
 	width:					60px;
 	background-size:		60px;
+}
+
+.info > div,
+.info > div > div {
+	padding:				10px;
+}
+
+.profile .controls {
+	position:				absolute;
+	bottom:					0px;
 }
 
 .profile .username,
@@ -25,31 +36,37 @@
 	display:				block;
 }
 
+.profile .verified {
+	background:				url(../../assets/icons/verified.png)				5px center no-repeat;
+	padding-left:			26px;
+	font-weight:			bold;
+}
+
 .profile .controls .info {
-	background:		url(../../assets/icons/profile-info.png)			center center no-repeat;
+	background:				url(../../assets/icons/profile-info.png)			center center no-repeat;
 }
 .profile .controls .info.selected {
-	background:		url(../../assets/icons/profile-info-tapped.png)		center center no-repeat;
+	background:				url(../../assets/icons/profile-info-tapped.png)		center center no-repeat;
 }
 
 .profile .controls .history {
-	background:		url(../../assets/icons/profile-history.png)			center center no-repeat;
+	background:				url(../../assets/icons/profile-history.png)			center center no-repeat;
 }
 .profile .controls .history.selected {
-	background:		url(../../assets/icons/profile-history-tapped.png)	center center no-repeat;
+	background:				url(../../assets/icons/profile-history-tapped.png)	center center no-repeat;
 }
 
 .profile .controls .mentions {
-	background:		url(../../assets/icons/profile-mentions.png)		center center no-repeat;
+	background:				url(../../assets/icons/profile-mentions.png)		center center no-repeat;
 }
 .profile .controls .mentions.selected {
-	background:		url(../../assets/icons/profile-mentions-tapped.png)	center center no-repeat;
+	background:				url(../../assets/icons/profile-mentions-tapped.png)	center center no-repeat;
 }
 
 .profile .controls .favorite {
-	background:		url(../../assets/icons/profile-favorite.png)		center center no-repeat;
+	background:				url(../../assets/icons/profile-favorite.png)		center center no-repeat;
 }
 .profile .controls .favorite.selected {
-	background:		url(../../assets/icons/profile-favorite-tapped.png)	center center no-repeat;
+	background:				url(../../assets/icons/profile-favorite-tapped.png)	center center no-repeat;
 }
 

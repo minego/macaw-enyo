@@ -537,12 +537,29 @@ sendTweet: function(resource, cb, params)
 	);
 },
 
-getUser: function(screen_name, cb)
+getUser: function(screen_name, cb, resource)
 {
-	var url		= this.apibase + '/' + this.version + '/users/show.json';
+	var url		= this.apibase + '/' + this.version;
 	var params	= {
 		screen_name:	screen_name
 	};
+
+	resource = resource || 'profile';
+
+	switch (resource) {
+		case 'profile':
+			url += '/users/show';
+			break;
+
+		case 'relationship':
+			url += '/friendships/lookup';
+			break;
+
+		default:
+			console.log('getUser does not yet support: ' + resource);
+	}
+
+	url += '.json';
 
 	this.oauth.get(this.buildURL(url, params),
 		function(response) {
