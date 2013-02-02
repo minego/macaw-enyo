@@ -128,8 +128,13 @@ create: function()
 	} else if (this.name) {
 		this.$.screenname.setContent('@' + this.name);
 
-
-		// TODO	Get the profile...
+		this.twitter.getUser(this.name, function(success, profile) {
+			if (success) {
+				this.setProfile(profile);
+			} else {
+				this.doCloseToaster();
+			}
+		}.bind(this));
 	}
 },
 

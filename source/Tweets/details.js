@@ -194,7 +194,10 @@ openProfile: function(sender, event)
 		component: {
 			kind:			Profile,
 			name:			name,
-			profile:		profile
+			profile:		profile,
+
+			user:			this.user,
+			twitter:		this.twitter
 		},
 
 		options: {
