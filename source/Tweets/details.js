@@ -193,7 +193,7 @@ openProfile: function(sender, event)
 	this.doOpenToaster({
 		component: {
 			kind:			Profile,
-			name:			name,
+			screenname:		name,
 			profile:		profile,
 
 			user:			this.user,

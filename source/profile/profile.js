@@ -125,10 +125,10 @@ create: function()
 
 	if (this.profile) {
 		this.profileChanged();
-	} else if (this.name) {
-		this.$.screenname.setContent('@' + this.name);
+	} else if (this.screenname) {
+		this.$.screenname.setContent('@' + this.screenname);
 
-		this.twitter.getUser(this.name, function(success, profile) {
+		this.twitter.getUser(this.screenname, function(success, profile) {
 			if (success) {
 				this.setProfile(profile);
 			} else {
