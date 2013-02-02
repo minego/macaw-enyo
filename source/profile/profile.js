@@ -74,7 +74,7 @@ components: [
 
 				components: [
 					{
-						kind:			onyx.Groupbox,
+						classes:		"groupbox",
 
 						components: [
 							{

@@ -21,11 +21,6 @@
 	background-size:		60px;
 }
 
-.info > div,
-.info > div > div {
-	padding:				10px;
-}
-
 .profile .controls {
 	position:				absolute;
 	bottom:					0px;

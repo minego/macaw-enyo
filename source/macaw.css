@@ -285,3 +285,20 @@ body.Pre3 {
 	text-align:				center;
 }
 
+.groupbox {
+	border-width:			9px;
+	-webkit-border-image:	url(../assets/groupbox.png) 9 stretch;
+	border-image:			url(../assets/groupbox.png) 9 9 fill stretch;
+
+	margin:					10px;
+}
+
+.groupbox > div {
+	padding:				10px;
+	background:				url(../assets/horizontal-border.png) left bottom repeat-x;
+}
+
+.groupbox :last-child {
+	background:				none;
+}
+
