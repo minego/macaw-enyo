@@ -222,20 +222,24 @@ profileChanged: function()
 	];
 
 	for (var i = 0, f; f = fields[i]; i++) {
+		this.$[f].show();
+
 		switch (typeof this.profile[f]) {
 			case 'string':
-				this.$[f].show();
-				this.$[f].setContent(this.profile[f]);
+				if (this.profile[f].trim().length) {
+					this.$[f].setContent(this.profile[f]);
+				} else {
+					this.$[f].destroy();
+				}
 				break;
 
 			case 'boolean':
-				if (this.profile[f]) {
-					this.$[f].show();
-					break;
+				if (!this.profile[f]) {
+					this.$[f].destroy();
 				}
+				break;
 
-				// fallthrough
-
+			default:
 			case 'undefined':
 				this.$[f].destroy();
 				break;
