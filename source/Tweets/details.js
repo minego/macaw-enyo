@@ -176,11 +176,11 @@ openLink: function(sender, event)
 
 openProfile: function(sender, event)
 {
-	var user	= event.user;
+	var profile	= event.user;
 	var name	= event.screenname;
 
-	if (user && !name) {
-		name = user.screen_name;
+	if (profile && !name) {
+		name = profile.screen_name;
 	}
 
 	if (0 == name.indexOf(".@")) {
@@ -189,7 +189,18 @@ openProfile: function(sender, event)
 		name = name.substr(1);
 	}
 
-	this.log('Show the profile of @' + name, user);
+	this.log('Show the profile of @' + name, profile);
+	this.doOpenToaster({
+		component: {
+			kind:			Profile,
+			name:			name,
+			profile:		profile
+		},
+
+		options: {
+			notitle:		true
+		}
+	});
 },
 
 openHashTag: function(sender, event)
