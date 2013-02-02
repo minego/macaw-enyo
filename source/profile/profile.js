@@ -162,13 +162,17 @@ create: function()
 	if (!this.relationships) {
 		this.following = undefined;
 
-		this.twitter.getUser(this.screenname, function(success, result) {
-			if (success) {
-				this.setRelationship(result[0].connections);
-			} else {
-				this.doCloseToaster();
-			}
-		}.bind(this), 'relationship');
+		if (this.user.screen_name != this.screenname) {
+			this.twitter.getUser(this.screenname, function(success, result) {
+				if (success) {
+					this.setRelationship(result[0].connections);
+				} else {
+					this.doCloseToaster();
+				}
+			}.bind(this), 'relationship');
+		} else {
+			this.setRelationship([ 'you' ]);
+		}
 	}
 },
 
@@ -287,6 +291,10 @@ relationshipChanged: function()
 
 			case 'followed_by':
 				this.$.relationship.setContent('@' + name + ' follows you');
+				return;
+
+			case 'you':
+				this.$.relationship.setContent('@' + name + ' is you');
 				return;
 
 			case 'none':
