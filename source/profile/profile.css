@@ -2,6 +2,12 @@
 	font-size:				16px;
 }
 
+.profile .profilepanels {
+	max-width:				500px;
+	margin-left:			auto;
+	margin-right:			auto;
+}
+
 .profile .info > * > * > * {
 	display:				inline-block;
 }

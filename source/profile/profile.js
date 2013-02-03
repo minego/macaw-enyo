@@ -65,6 +65,7 @@ components: [
 	{
 		kind:							enyo.Panels,
 		name:							"panels",
+		classes:						"profilepanels",
 
 		onTransitionStart:				"moveHighlight",
 		defaultKind:					enyo.Scroller,
