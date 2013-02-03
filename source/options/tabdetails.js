@@ -28,15 +28,6 @@ published: {
 	tabIndex:										-1
 },
 
-// TODO	Show a toaster/popup to create a new tab. It should have the
-//		following fields.
-//			- label
-//			- account (allow selecting from any configured account)
-//			- type
-//			- type specific data (search string, list name, etc)
-//			- auto refresh time (or disabled)
-//			- notification options
-
 components: [
 	{
 		classes:									"section",
@@ -130,12 +121,14 @@ components: [
 
 			{
 				kind:								onyx.Button,
+				name:								"cancel",
 				content:							"Cancel",
 				ontap:								"cancel",
 				classes:							"button onyx-negative cancel"
 			},
 			{
 				kind:								onyx.Button,
+				name:								"save",
 				content:							"Save",
 				ontap:								"save",
 				classes:							"button onyx-affirmative save"
@@ -200,13 +193,17 @@ create: function()
 	];
 
 	for (var i = 0, t; t = times[i]; i++) {
-		if (tab) {
-			t.active = t.value == tab.refresh;
-		} else {
-			t.active = i == 0;
-		}
+		t.active = t.value == (tab ? tab.refresh : -1);
 
 		this.$.refresh.createComponent(t, { owner: this });
+	}
+
+	if (this.savelabel) {
+		this.$.save.setContent(this.savelabel);
+	}
+
+	if (this.hidecancel) {
+		this.$.cancel.hide();
 	}
 },
 

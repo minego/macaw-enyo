@@ -285,6 +285,15 @@ createTabs: function()
 		});
 	}
 
+	/* Show a special "add tab" panel */
+	components.push({
+		kind:		"TabDetails",
+		classes:	"panel",
+
+		savelabel:	"Add Tab",
+		hidecancel:	true
+	});
+
 	this.$.panelcontainer.createComponent({
 		kind:								SkinnyPanels,
 		name:								"panels",
