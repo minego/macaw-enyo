@@ -164,14 +164,70 @@ itemChanged: function()
 	}
 },
 
+showPreview: function(src, url)
+{
+	this.doOpenToaster({
+		component: {
+			kind:			Preview,
+			src:			src,
+			url:			url
+		},
+
+		options: {
+			notitle:		true
+		}
+	});
+},
+
+openYouTube: function(url)
+{
+	// TODO	Add platform specific support for launching the youtube app
+	window.open(url, "_blank");
+},
+
 openLink: function(sender, event)
 {
-	// TODO	Implement a preview toaster instead of opening all links in a new
-	//		window
+	var url = event.url.trim();
 
-	// TODO	Actually open in a browser on android...
+	// TODO	Actually open in a browser on android, bb10, etc...
 
-	window.open(event.url, "_blank");
+	if (0 == url.indexOf('http://yfrog.com')) {
+		this.showPreview(url + ':medium', url);
+	} else if (0 == url.indexOf('http://twitpic.com')) {
+		img = url.substr(url.indexOf('/', 8) + 1);
+		this.showPreview('http://twitpic.com/show/large/' + img, url);
+	} else if (url.indexOf('plixi') > -1 || url.indexOf('http://lockerz.com/s/') > -1) {
+		this.showPreview('http://api.plixi.com/api/tpapi.svc/imagefromurl?size=large&url=' + url, url);
+	} else if (url.indexOf('img.ly') > -1) {
+		img = 'http://img.ly/show/full/' + url.substr(url.indexOf('.ly/') + 4);
+		this.showPreview(img, url);
+	} else if (url.indexOf('http://instagr.am/p/') > -1 || url.indexOf('http://instagram.com/p/') > -1) {
+		this.showPreview(url + 'media/?size=l', url);
+	} else if (url.indexOf('http://mlkshk.com/p/') > -1) {
+		img = url.replace('/p/', '/r/');
+		this.showPreview(img, url);
+	} else if (url.indexOf('campl.us') > -1) {
+		this.showPreview('http://phnxapp.com/services/preview.php?u=' + url);
+	} else if (url.indexOf('http://phnx.ws/') > -1) {
+		this.showPreview(url + '/normal');
+	} else if (url.indexOf('youtube.com/watch') > -1) {
+		this.openYouTube(url);
+	} else if (url.indexOf('youtu.be') > 1) {
+		/*
+			YouTube app doesn't like the short URLs so let's convert it to a
+			full URL first.
+		*/
+		this.openYouTube('http://youtube.com/watch?v=' + url.substr(url.indexOf('.be/') + 4));
+	} else if (-1 != url.indexOf('://twitter.com/#!/' + this.twitterUsername + '/status/' + this.twitterId)) {
+		// TODO	Open a tweet details toaster for this url...
+
+	} else if (	-1 != url.indexOf('.jpg') || -1 != url.indexOf('.jpeg') ||
+				-1 != url.indexOf('.png') || -1 != url.indexOf('.gif')
+	) {
+		this.showPreview(url);
+	} else {
+		window.open(url, "_blank");
+	}
 },
 
 openProfile: function(sender, event)

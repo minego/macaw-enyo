@@ -48,7 +48,8 @@ components: [
 		components: [
 			{
 				name:					"avatar",
-				classes:				"avatar"
+				classes:				"avatar",
+				command:				"avatar"
 			},
 			{
 				name:					"username",
@@ -248,7 +249,6 @@ profileChanged: function()
 			components.push(component);
 		}
 
-		this.log(components);
 		this.$.info.createComponent({
 			classes:		"groupbox",
 			components:		components
@@ -313,7 +313,6 @@ handleResize: function()
 	while (p.parent) {
 		p = p.parent;
 	}
-
 	var pb = p.getBounds();
 
 	this.setBounds({
@@ -360,6 +359,22 @@ handleTap: function(sender, event)
 
 		case "favorite":
 			index = 3;
+			break;
+
+		case "avatar":
+			var url = this.profile.profile_image_url.replace(/_normal/, '');
+
+			this.doOpenToaster({
+				component: {
+					kind:			Preview,
+					src:			url,
+					url:			url
+				},
+
+				options: {
+					notitle:		true
+				}
+			});
 			break;
 	}
 

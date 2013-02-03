@@ -17,6 +17,7 @@ enyo.depends(
 	"options",
 	"Tweets",
 	"profile",
+	"preview",
 
 	"macaw.css",
 	"main.js",
