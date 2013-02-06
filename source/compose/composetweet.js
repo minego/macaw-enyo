@@ -26,8 +26,9 @@ events: {
 published: {
 	maxLength:					140,
 
-	text:						"",
-	replyto:					null,
+	text:						"",		/* Text of the tweet */
+	dm:							null,	/* User to send a DM to */
+	replyto:					null,	/* Tweet object to reply to */
 	twitter:					null,
 	user:						null,
 	users:						[]
@@ -129,65 +130,69 @@ rendered: function(sender, event)
 {
 	this.inherited(arguments);
 
-	if (this.replyto) {
-		if (!this.replyto.dm) {
-			var offset		= 0;
-			var mentions	= [];
-			var sel;
-			var range;
-			var node;
+	if (this.replyto && this.replyto.dm) {
+		this.dm = this.replyto.user;
+	}
 
-			if (this.replyto.user) {
-				if (!this.user || this.replyto.user.screen_name !== this.user.screen_name) {
-					mentions.push('@' + this.replyto.user.screen_name);
-					offset = mentions[0].length + 1;
+	if (this.dm) {
+		this.$.messageto.setContent('Message to: @' + this.dm.screen_name);
+	}
+
+	if (this.replyto && !this.replyto.dm) {
+		var offset		= 0;
+		var mentions	= [];
+		var sel;
+		var range;
+		var node;
+
+		if (this.replyto.user) {
+			if (!this.user || this.replyto.user.screen_name !== this.user.screen_name) {
+				mentions.push('@' + this.replyto.user.screen_name);
+				offset = mentions[0].length + 1;
+			}
+		}
+
+		if (this.replyto.entities) {
+			for (var i = 0, m; m = this.replyto.entities.user_mentions[i]; i++) {
+				if (!this.user || m.screen_name !== this.user.screen_name) {
+					mentions.push('@' + m.screen_name);
 				}
 			}
+		}
 
-			if (this.replyto.entities) {
-				for (var i = 0, m; m = this.replyto.entities.user_mentions[i]; i++) {
-					if (!this.user || m.screen_name !== this.user.screen_name) {
-						mentions.push('@' + m.screen_name);
-					}
-				}
-			}
+		/* When replying to a RT include the person that RT'ed it. */
+		if (this.replyto.real) {
+			mentions.push('@' + this.replyto.real.user.screen_name);
+		}
 
-			/* When replying to a RT include the person that RT'ed it. */
-			if (this.replyto.real) {
-				mentions.push('@' + this.replyto.real.user.screen_name);
-			}
-
-			/* Remove any duplicate mentions */
-			for (var i = mentions.length - 1, m; m = mentions[i]; i--) {
-				if (mentions.indexOf(m) < i) {
-					mentions.splice(i, 1);
-				}
-			}
-
-			/* Don't mention yourself */
-			var i;
-			while (-1 != (i = mentions.indexOf('@' + this.user.scren_name))) {
+		/* Remove any duplicate mentions */
+		for (var i = mentions.length - 1, m; m = mentions[i]; i--) {
+			if (mentions.indexOf(m) < i) {
 				mentions.splice(i, 1);
 			}
+		}
 
-			this.$.text.setValue(mentions.join(' ') + ' ');
-			this.$.text.moveCursorToEnd();
+		/* Don't mention yourself */
+		var i;
+		while (-1 != (i = mentions.indexOf('@' + this.user.scren_name))) {
+			mentions.splice(i, 1);
+		}
 
-			/* Highlight all mentions except the person being replied to */
-			if (mentions.length > 1 &&
-				(node = this.$.text.hasNode()) &&
-				(sel = this.$.text.getSelection())
-			) {
-				range = document.createRange();
+		this.$.text.setValue(mentions.join(' ') + ' ');
+		this.$.text.moveCursorToEnd();
 
-				range.setStart(node.firstChild, offset);
-				range.setEndAfter(node.lastChild);
+		/* Highlight all mentions except the person being replied to */
+		if (mentions.length > 1 &&
+			(node = this.$.text.hasNode()) &&
+			(sel = this.$.text.getSelection())
+		) {
+			range = document.createRange();
 
-				sel.removeAllRanges();
-				sel.addRange(range);
-			}
-		} else {
-			this.$.messageto.setContent('Message to: @' + this.replyto.user.screen_name);
+			range.setStart(node.firstChild, offset);
+			range.setEndAfter(node.lastChild);
+
+			sel.removeAllRanges();
+			sel.addRange(range);
 		}
 	}
 
@@ -480,22 +485,20 @@ send: function(sender, event)
 		return;
 	}
 
-	if (this.replyto) {
-		if (this.replyto.dm) {
-			resource		= 'message';
+	if (this.dm) {
+		resource		= 'message';
 
-			/* Don't send a DM to yourself... */
-			if (this.replyto.user.id_str !== this.user.id) {
-				params.user_id = this.replyto.user.id_str;
-			} else {
-				params.user_id = this.replyto.recipient.id_str;
-			}
-			params.text		= params.status;
-
-			delete params.status;
-		} else {
-			params.in_reply_to_status_id = this.replyto.id_str;
+		/* Don't send a DM to yourself... */
+		if (this.dm.id_str !== this.user.id) {
+			params.user_id = this.dm.id_str;
+		} else if (this.replyto) {
+			params.user_id = this.replyto.recipient.id_str;
 		}
+		params.text		= params.status;
+
+		delete params.status;
+	} else if (this.replyto && !this.replyto.dm) {
+		params.in_reply_to_status_id = this.replyto.id_str;
 	}
 
 	/* Actually send it */
@@ -542,7 +545,7 @@ split: function()
 		Each part should include all mentions to ensure that each intended
 		recipient sees all parts.
 	*/
-	if (!this.replyto || !this.replyto.dm) {
+	if (!this.dm) {
 		for (var i = 0, word; word = words[i]; i++) {
 			if (0 != word.indexOf('@')) {
 				todone = true;

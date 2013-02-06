@@ -36,7 +36,7 @@ published: {
 },
 
 handlers: {
-	ontap:							"handleTap"
+	ontap:							"handleCommand"
 },
 
 events: {
@@ -106,7 +106,44 @@ components: [
 				command:			"back"
 			}
 		]
+	},
+
+	{
+		kind:						onyx.MenuDecorator,
+
+		components: [
+			{
+				name:				"optionsMenu",
+				onSelect:			"handleCommand",
+				kind:				onyx.Menu,
+				components: [
+					{
+						content:	"Public Mention",
+						command:	"mention"
+					},
+					{
+						content:	"Send Direct Message",
+						command:	"dm"
+					},
+					{
+						content:	"Block",
+						command:	"block"
+					},
+					{
+						content:	"Report Spam",
+						command:	"spam"
+					},
+					{
+						content:	"Hide",
+						command:	"hide"
+					}
+
+					// Add share options
+				]
+			}
+		]
 	}
+
 ],
 
 create: function()
@@ -271,28 +308,61 @@ openHashTag: function(sender, event)
 	this.log('Show tweets with the #' + tag + ' hashtag');
 },
 
-handleTap: function(sender, event)
+handleCommand: function(sender, event)
 {
+	var cmd;
+
 	/* Find the real sender */
 	if (event.dispatchTarget) {
 		sender = event.dispatchTarget;
 	}
 
-	switch (sender.command || event.command) {
+	cmd = sender.command || event.command;
+
+	switch (cmd) {
 		case "back":
 			this.doCloseToaster();
 			break;
 
 		case "options":
-			// TODO	Write me!!!
+			this.$.optionsMenu.applyPosition(sender.getBounds);
+			this.$.optionsMenu.show();
 			break;
 
 		case "reply":
-			/* Let the main kind open the compose toaster */
 			this.doCompose({
 				replyto:	this.item,
 				user:		this.user,
 				twitter:	this.twitter
+			});
+			break;
+
+		case "mention":
+			this.doCompose({
+				user:		this.user,
+				twitter:	this.twitter,
+				text:		'@' + this.item.user.screen_name + ' '
+			});
+			break;
+
+		case "dm":
+			this.doCompose({
+				user:		this.user,
+				twitter:	this.twitter,
+				dm:			this.item.user
+			});
+			break;
+
+		case "block":
+			break;
+
+		case "spam":
+			break;
+
+		case "hide":
+			this.doTweetAction({
+				action:		'delete',
+				item:		this.item
 			});
 			break;
 
@@ -301,7 +371,7 @@ handleTap: function(sender, event)
 				component: {
 					kind:				"Confirm",
 					title:				"Retweet @" + this.item.user.screen_name + "'s status?",
-					onChoose:			"handleTap",
+					onChoose:			"handleCommand",
 					options: [
 						{
 							classes:	"confirm",
@@ -384,7 +454,7 @@ handleTap: function(sender, event)
 				component: {
 					kind:				"Confirm",
 					title:				"Are you sure you want to delete this tweet?",
-					onChoose:			"handleTap",
+					onChoose:			"handleCommand",
 					options: [
 						{
 							classes:	"confirm",
