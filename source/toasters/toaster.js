@@ -62,6 +62,9 @@
 						hidden.
 
 		title:			If set then the title bar will contain the provided text
+
+		alwaysshow:		If true then the toaster will not be hidden when another
+						toaster is added to the chain.
 */
 
 enyo.kind({
@@ -158,12 +161,17 @@ hideScrim: function()
 push: function(component, options)
 {
 	var toaster;
+	var last;
 
 	options = options || {};
 
 	if (this.toasters.length) {
-		this.toasters[this.toasters.length - 1].removeClass('show');
-		this.toasters[this.toasters.length - 1].hide();
+		last = this.toasters[this.toasters.length - 1];
+
+		if (!last.options.alwaysshow) {
+			last.removeClass('show');
+			last.hide();
+		}
 	}
 
 	if (!options.owner) {

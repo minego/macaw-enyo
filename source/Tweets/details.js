@@ -294,7 +294,8 @@ openProfile: function(sender, event)
 		},
 
 		options: {
-			notitle:		true
+			notitle:		true,
+			alwaysshow:		true
 		}
 	});
 },
