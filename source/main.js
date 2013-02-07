@@ -271,6 +271,7 @@ createTabs: function()
 						kind:				"TweetList",
 						classes:			"tweetlist",
 
+						cache:				true,
 						user:				user,
 						twitter:			user.twitter,
 						resource:			tab.type,

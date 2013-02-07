@@ -25,7 +25,8 @@ published: {
 	resource:							"home",
 
 	refreshTime:						-1,
-	notify:								false
+	notify:								false,
+	cache:								false
 },
 
 events: {
@@ -125,13 +126,15 @@ rendered: function()
 	this.results = [];
 
 	/* Load cached tweets */
-	var results = prefs.get('cachedtweets:' + this.user.user_id + ':' + this.resource) || [];
+	var results;
+
+	if (this.cache) {
+		results = prefs.get('cachedtweets:' + this.user.user_id + ':' + this.resource) || [];
+	} else {
+		results = [];
+	}
 
 	this.twitter.cleanupTweets(results);
-
-	// Testing... Remove the most recent entries from the cached results so that
-	// we can immediately load them again as if they where new.
-	// results.splice(0, 5);
 
 	if (results && results.length) {
 		this.loading = true;
@@ -191,6 +194,12 @@ refresh: function(autorefresh, index)
 	var params = {
 		include_entities:		true
 	};
+
+	if (this.params) {
+		for (var key in this.params) {
+			params[key] = this.params[key];
+		}
+	}
 
 	if (!this.results.length) {
 		/* Load a reasonable amount */
@@ -490,6 +499,10 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 
 writeCache: function()
 {
+	if (!this.cache) {
+		return;
+	}
+
 	/*
 		Cache the most recent items
 

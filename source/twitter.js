@@ -164,7 +164,7 @@ authorize: function(cb, params, pin)
 	Get a list of tweets
 
 	resource may be:
-		timeline, mentions, messages
+		timeline, mentions, messages, favorites, user, search
 
 	// TODO	Add lists, user timeline, etc. Those will require other args
 
@@ -180,6 +180,10 @@ getTweets: function(resource, cb, params)
 	switch (resource) {
 		case 'timeline':
 			url += 'statuses/home_timeline';
+			break;
+
+		case 'user':
+			url += 'statuses/user_timeline';
 			break;
 
 		case 'show':
@@ -200,6 +204,10 @@ getTweets: function(resource, cb, params)
 			url += 'favorites/list';
 			break;
 
+		case 'search':
+			url += 'search/tweets';
+			break;
+
 		default:
 			console.log('getTweets does not yet support: ' + resource);
 			return;
@@ -209,6 +217,10 @@ getTweets: function(resource, cb, params)
 	this.oauth.get(this.buildURL(url, params),
 		function(response) {
 			var results = enyo.json.parse(response.text);
+
+			if (resource == 'search') {
+				results = results.statuses;
+			}
 
 			if (plural) {
 				this.cleanupTweets(results);

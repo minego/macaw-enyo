@@ -48,7 +48,7 @@ components: [
 		components: [
 			{
 				name:					"avatar",
-				classes:				"avatar",
+				classes:				"avatar large",
 				command:				"avatar"
 			},
 			{
@@ -261,6 +261,50 @@ profileChanged: function()
 	if (this.relationship) {
 		this.relationshipChanged();
 	}
+
+	this.$.history.destroyClientControls();
+	this.$.history.createComponent({
+		kind:						"TweetList",
+
+		user:						this.user,
+		twitter:					this.twitter,
+
+		resource:					'user',
+		params: {
+			screen_name:			this.profile.screen_name
+		}
+	});
+	this.$.history.render();
+
+
+	this.$.mentions.destroyClientControls();
+	this.$.mentions.createComponent({
+		kind:						"TweetList",
+
+		user:						this.user,
+		twitter:					this.twitter,
+
+		resource:					'search',
+		params: {
+			q:						'@' + this.profile.screen_name
+		}
+	});
+	this.$.mentions.render();
+
+
+	this.$.favorite.destroyClientControls();
+	this.$.favorite.createComponent({
+		kind:						"TweetList",
+
+		user:						this.user,
+		twitter:					this.twitter,
+
+		resource:					'favorites',
+		params: {
+			screen_name:			this.profile.screen_name
+		}
+	});
+	this.$.favorite.render();
 },
 
 relationshipChanged: function()
