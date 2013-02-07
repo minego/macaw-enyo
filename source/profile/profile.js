@@ -262,49 +262,11 @@ profileChanged: function()
 		this.relationshipChanged();
 	}
 
-	this.$.history.destroyClientControls();
-	this.$.history.createComponent({
-		kind:						"TweetList",
-
-		user:						this.user,
-		twitter:					this.twitter,
-
-		resource:					'user',
-		params: {
-			screen_name:			this.profile.screen_name
-		}
-	});
-	this.$.history.render();
-
-
-	this.$.mentions.destroyClientControls();
-	this.$.mentions.createComponent({
-		kind:						"TweetList",
-
-		user:						this.user,
-		twitter:					this.twitter,
-
-		resource:					'search',
-		params: {
-			q:						'@' + this.profile.screen_name
-		}
-	});
-	this.$.mentions.render();
-
-
-	this.$.favorite.destroyClientControls();
-	this.$.favorite.createComponent({
-		kind:						"TweetList",
-
-		user:						this.user,
-		twitter:					this.twitter,
-
-		resource:					'favorites',
-		params: {
-			screen_name:			this.profile.screen_name
-		}
-	});
-	this.$.favorite.render();
+	switch (this.$.panels.getIndex()) {
+		case 1:	this.showList('history',	true);	break;
+		case 2:	this.showList('mentions',	true);	break;
+		case 3:	this.showList('favorite',	true);	break;
+	}
 },
 
 relationshipChanged: function()
@@ -430,6 +392,69 @@ handleTap: function(sender, event)
 	return(true);
 },
 
+showList: function(name, force)
+{
+	if (!this.loaded) {
+		this.loaded = {};
+	}
+
+	if (!force && this.loaded[name]) {
+		return;
+	}
+
+	switch (name) {
+		case 'history':
+			this.$.history.destroyClientControls();
+			this.$.history.createComponent({
+				kind:						"TweetList",
+
+				user:						this.user,
+				twitter:					this.twitter,
+
+				resource:					'user',
+				params: {
+					screen_name:			this.profile.screen_name
+				}
+			});
+			this.$.history.render();
+			break;
+
+		case 'mentions':
+			this.$.mentions.destroyClientControls();
+			this.$.mentions.createComponent({
+				kind:						"TweetList",
+
+				user:						this.user,
+				twitter:					this.twitter,
+
+				resource:					'search',
+				params: {
+					q:						'@' + this.profile.screen_name
+				}
+			});
+			this.$.mentions.render();
+			break;
+
+		case 'favorite':
+			this.$.favorite.destroyClientControls();
+			this.$.favorite.createComponent({
+				kind:						"TweetList",
+
+				user:						this.user,
+				twitter:					this.twitter,
+
+				resource:					'favorites',
+				params: {
+					screen_name:			this.profile.screen_name
+				}
+			});
+			this.$.favorite.render();
+			break;
+	}
+
+	this.loaded[name] = true;
+},
+
 moveHighlight: function(sender, event)
 {
 	var icons	= this.$.icons.getClientControls();
@@ -440,6 +465,12 @@ moveHighlight: function(sender, event)
 		} else {
 			icon.removeClass('selected');
 		}
+	}
+
+	switch (event.toIndex) {
+		case 1:	this.showList('history',	false);	break;
+		case 2:	this.showList('mentions',	false);	break;
+		case 3:	this.showList('favorite',	false);	break;
 	}
 }
 

@@ -599,6 +599,55 @@ getUser: function(screen_name, cb, resource)
 	);
 },
 
+/*
+	Perform an action on a user
+
+	action may be:
+		follow, unfollow, block, spam
+
+	The provided callback will be called when the request is complete. The first
+	argument is a boolean indicating success.
+
+	The provided params must include either user_id or screen_name.
+*/
+changeUser: function(action, cb, params)
+{
+	var url		= this.apibase + '/' + this.version + '/';
+
+	switch (action) {
+		case 'block':
+			url += 'blocks/create';
+			params.skip_status = true;
+			break;
+
+		case 'spam':
+			url += 'users/report_spam';
+			break;
+
+		case 'follow':
+			url += 'friendships/create';
+			break;
+
+		case 'unfollow':
+			url += 'friendships/destroy';
+			break;
+
+		default:
+			console.log('changeUser does not support this action:' + action);
+			return;
+	}
+	url += '.json';
+
+	this.oauth.post(url, params,
+		function(response) {
+			cb(true, enyo.json.parse(response.text));
+		},
+		function(response) {
+			cb(false, enyo.json.parse(response.text));
+		}
+	);
+},
+
 getUsers: function(relationship, cb, params, quiet)
 {
 	var url		= this.apibase + '/' + this.version;

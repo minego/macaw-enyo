@@ -354,9 +354,73 @@ handleCommand: function(sender, event)
 			break;
 
 		case "block":
+			this.doOpenToaster({
+				component: {
+					kind:				"Confirm",
+					title:				"Are you sure you want to block @" + this.item.user.screen_name + "?",
+					onChoose:			"handleCommand",
+					options: [
+						{
+							classes:	"confirm",
+							command:	"block-confirmed"
+						},
+						{
+							classes:	"cancel",
+							command:	"ignore"
+						}
+					]
+				},
+
+				options:{
+					notitle:		true,
+					owner:			this
+				}
+			});
 			break;
 
 		case "spam":
+			this.doOpenToaster({
+				component: {
+					kind:				"Confirm",
+					title:				"Are you sure you want to report @" + this.item.user.screen_name + " for spam?",
+					onChoose:			"handleCommand",
+					options: [
+						{
+							classes:	"confirm",
+							command:	"spam-confirmed"
+						},
+						{
+							classes:	"cancel",
+							command:	"ignore"
+						}
+					]
+				},
+
+				options:{
+					notitle:		true,
+					owner:			this
+				}
+			});
+			break;
+
+		case "block-confirmed":
+			this.twitter.changeUser('block', function(success) {
+				if (success) {
+					;
+				} else {
+					ex('Could not block user');
+				}
+			}.bind(this), { screen_name: this.item.user.screen_name });
+			break;
+
+		case "spam-confirmed":
+			this.twitter.changeUser('spam', function(success) {
+				if (success) {
+					;
+				} else {
+					ex('Could not block user');
+				}
+			}.bind(this), { screen_name: this.item.user.screen_name });
 			break;
 
 		case "hide":
@@ -398,8 +462,6 @@ handleCommand: function(sender, event)
 		case "retweet-confirmed":
 			this.twitter.changeTweet('rt', function(success) {
 				if (success) {
-					this.doCloseToaster();
-
 					this.item.retweeted = !this.item.retweeted;
 
 					this.doTweetAction({
