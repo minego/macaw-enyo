@@ -1,33 +1,32 @@
 + Tweet Details
-	+ Implement the options menu
-		- Reply
-		- Send DM
-		+ Share
-			- Copy Text
-			- Copy URL (show list)
-			- Other share options (likely platform specific)
-		- Block
-		- Report Spam
-		- Hide
+	+ Implement share options
+		- Copy Text
+		- Copy URL (show list)
+		- Other share options (platform specific)
 
 + Compose
-	- Auto complete user names
+	- Auto complete user names (implemented, but not complete)
 	+ Implement missing buttons
 		- Attach image
 		- Location
-		- Link...
+		- Link...?
 		- Emoji
 		- Compose in new card/window?
 
-- Implement a profile toaster
-- Create a preview toaster instead of always opening images in a new window
++ Profile
+	- Implement options menu
+
++ Preview
+	- Implement options menu
+
 - Include sent DMs in the DM panel
+
 + Implement filters
 	- Display list of filters in options panel
 	- Hide tweets that match a filter. Can be applied in either the list kind or
 	  in the twitter helper.
 
-- Implement notifications. A "notify" boolean is set on each tab
+- Implement notifications. (A "notify" boolean is set on each tab)
 - Finish styling and implement some nice themes
 - Show a visual indication of a refresh when the tab bar is hidden. Currently
   the icons on the tab bar spin while refreshing.
