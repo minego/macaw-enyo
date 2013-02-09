@@ -37,7 +37,8 @@ events: {
 },
 
 handlers: {
-	onScrollStart:						"handleActivity"
+	onScrollStart:						"handleActivity",
+	onScrollStop:						"handleActivity"
 },
 
 components: [
@@ -264,6 +265,7 @@ scroll: function(offset)
 	var top = this.$.list.getScrollTop();
 
 	this.$.list.setScrollTop(top + offset);
+	this.handleActivity();
 },
 
 gotTweets: function(success, results, autorefresh, insertIndex)
@@ -681,8 +683,11 @@ smartscroll: function()
 
 handleActivity: function(sender, event)
 {
-	if (!this.loading) {
+	var top = this.$.list.getScrollTop();
+
+	if (!this.loading && this.lastScrollTop != top) {
 		this.doActivity({});
+		this.lastScrollTop = top;
 	}
 }
 

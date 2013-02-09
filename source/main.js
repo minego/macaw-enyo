@@ -351,6 +351,7 @@ panelActivity: function(sender, event)
 		/* Wait until the refresh is done */
 		return;
 	}
+	// this.log(sender.index);
 
 	count.count = 0;
 	count.setContent('');
