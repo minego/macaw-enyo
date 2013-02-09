@@ -351,9 +351,11 @@ panelActivity: function(sender, event)
 		/* Wait until the refresh is done */
 		return;
 	}
-	// this.log(sender.index);
 
-	count.count = 0;
+	/* Let the list know that all messages have been noticed */
+	sender.setUnseen(0);
+
+	// this.log(sender.index);
 	count.setContent('');
 
 	if (this.index != sender.index) {
@@ -369,7 +371,6 @@ panelRefreshStart: function(sender, event)
 	var count	= this.$['tabcount'	+ sender.index];
 	var refresh	= this.$.refreshbtn;
 
-	count.setContent('');
 	count.busy = true;
 
 	icon.removeClass("endspin");
@@ -392,22 +393,12 @@ panelRefreshStop: function(sender, event)
 	var icon	= this.$['tabicon'	+ sender.index];
 	var count	= this.$['tabcount'	+ sender.index];
 	var refresh	= this.$.refreshbtn;
-	var value	= 0;
 
-	if (!isNaN(event.count)) {
-		value += event.count;
-	}
-
-	if (!isNaN(count.count)) {
-		value += count.count;
-	}
-
-	if (value > 0) {
-		count.setContent(value);
+	if (!isNaN(event.count) && event.count > 0) {
+		count.setContent(event.count);
 	} else {
 		count.setContent('');
 	}
-	count.count = value;
 
 	/*
 		This is WAY too complicated, but android tends to keep running the

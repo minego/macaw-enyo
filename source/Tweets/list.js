@@ -26,7 +26,9 @@ published: {
 
 	refreshTime:						-1,
 	notify:								false,
-	cache:								false
+	cache:								false,
+
+	unseen:								0
 },
 
 events: {
@@ -194,6 +196,10 @@ refresh: function(autorefresh, index)
 		}
 	}
 
+	if (!autorefresh) {
+		this.unseen = 0;
+	}
+
 	this.loading = true;
 	this.doRefreshStart();
 
@@ -260,6 +266,7 @@ refresh: function(autorefresh, index)
 	}), params);
 },
 
+/* Scroll the list by the specified offset */
 scroll: function(offset)
 {
 	var top = this.$.list.getScrollTop();
@@ -390,14 +397,32 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 	}
 	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
 
+	/*
+		Figure out where to put the new count indicator.
+
+		If the list was refreshed automatically and the user hasn't interacted
+		with it then the new count indicator should be left in the same spot and
+		updated with a new value.
+
+		If the user has interacted with the list or the user forced the refresh
+		then only the count from this refresh should be included.
+	*/
+	var newcount = this.unseen;
+
 	if (results.length && this.results.length && isNaN(insertIndex)) {
+		newcount += results.length;
+	}
+
+	if (newcount > 0) {
 		/* Insert a new newcount indicator */
 		changed = true;
-		this.results.unshift({
-			newcount:	results.length
+
+		this.results.splice(this.unseen, 0, {
+			newcount:	newcount
 		});
 
-		newCountIndex = 0;
+		newCountIndex = this.unseen;
+		this.unseen = newcount;
 	}
 
 	if (results.length) {
