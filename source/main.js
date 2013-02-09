@@ -278,6 +278,7 @@ createTabs: function()
 						refreshTime:		tab.refresh,
 						notify:				tab.notify,
 
+						onActivity:			"panelActivity",
 						onRefreshStart:		"panelRefreshStart",
 						onRefreshStop:		"panelRefreshStop"
 					}
@@ -340,6 +341,27 @@ createTabs: function()
 	this.$.tabcontainer.render();
 },
 
+panelActivity: function(sender, event)
+{
+	var icon	= this.$['tabicon'	+ sender.index];
+	var count	= this.$['tabcount'	+ sender.index];
+	var refresh	= this.$.refreshbtn;
+
+	if (count.busy) {
+		/* Wait until the refresh is done */
+		return;
+	}
+
+	count.count = 0;
+	count.setContent('');
+
+	if (this.index != sender.index) {
+		this.index =  sender.index;
+
+		this.moveIndicator();
+	}
+},
+
 panelRefreshStart: function(sender, event)
 {
 	var icon	= this.$['tabicon'	+ sender.index];
@@ -347,6 +369,7 @@ panelRefreshStart: function(sender, event)
 	var refresh	= this.$.refreshbtn;
 
 	count.setContent('');
+	count.busy = true;
 
 	icon.removeClass("endspin");
 	icon.addClass("spin");
@@ -368,12 +391,22 @@ panelRefreshStop: function(sender, event)
 	var icon	= this.$['tabicon'	+ sender.index];
 	var count	= this.$['tabcount'	+ sender.index];
 	var refresh	= this.$.refreshbtn;
+	var value	= 0;
 
-	if (!isNaN(event.count) && event.count > 0) {
-		count.setContent(event.count);
+	if (!isNaN(event.count)) {
+		value += event.count;
+	}
+
+	if (!isNaN(count.count)) {
+		value += count.count;
+	}
+
+	if (value > 0) {
+		count.setContent(value);
 	} else {
 		count.setContent('');
 	}
+	count.count = value;
 
 	/*
 		This is WAY too complicated, but android tends to keep running the
@@ -394,6 +427,8 @@ panelRefreshStop: function(sender, event)
 				refresh.addClass("endspin");
 			}.bind(this), 50);
 		}
+
+		count.busy = false;
 	}.bind(this), 1000);
 },
 
@@ -699,8 +734,8 @@ keydown: function(sender, event)
 			if (this.index > 0) {
 				this.index--;
 
-				this.ignoreMove = true;
 				if (0 != this.isPanelVisible(this.index)) {
+					this.ignoreMove = true;
 					this.$.panels.setIndex(this.$.panels.getIndex() - 1);
 				} else {
 					this.moveIndicator();
@@ -714,8 +749,8 @@ keydown: function(sender, event)
 			if (this.index < (this.tabs.length - 1)) {
 				this.index++;
 
-				this.ignoreMove = true;
 				if (0 != this.isPanelVisible(this.index)) {
+					this.ignoreMove = true;
 					this.$.panels.setIndex(this.$.panels.getIndex() + 1);
 				} else {
 					this.moveIndicator();
@@ -790,18 +825,16 @@ keypress: function(sender, event)
 
 moveIndicator: function(sender, event)
 {
-	if (!this.ignoreMove) {
-		if (event) {
-			this.index += event.toIndex - event.fromIndex;
-			this.log(event, this.index, event.toIndex, event.fromIndex);
+	if (event && !this.ignoreMove) {
+		this.index += event.toIndex - event.fromIndex;
+		this.log(event, this.index, event.toIndex, event.fromIndex);
 
-			if (0 != this.isPanelVisible(this.index)) {
-				this.index = event.toIndex;
-			}
+		if (0 != this.isPanelVisible(this.index)) {
+			this.index = event.toIndex;
 		}
-	} else {
-		this.ignoreMove = false;
 	}
+
+	this.ignoreMove = false;
 
 	this.$.indicator.applyStyle('width', this.tabWidth + '%');
 	this.$.indicator.applyStyle('left', (this.index * this.tabWidth) + '%');

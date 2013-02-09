@@ -32,7 +32,12 @@ published: {
 events: {
 	onRefreshStart:						"",
 	onRefreshStop:						"",
-	onOpenToaster:						""
+	onOpenToaster:						"",
+	onActivity:							""
+},
+
+handlers: {
+	onScrollStart:						"handleActivity"
 },
 
 components: [
@@ -486,14 +491,15 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 		this.$.list.refresh();
 	}
 
+	if (this.pulled) {
+		this.$.list.completePull();
+	}
+
 	this.loading = false;
 	this.doRefreshStop({
 		count:		!isNaN(newCountIndex) ? newCountIndex : 0
 	});
 
-	if (this.pulled) {
-		this.$.list.completePull();
-	}
 	this.setTimer();
 },
 
@@ -542,6 +548,8 @@ itemTap: function(sender, event)
 	if (!item) {
 		return;
 	}
+
+	this.doActivity({});
 
 	if (item.id_str) {
 		this.doOpenToaster({
@@ -668,6 +676,13 @@ smartscroll: function()
 		this.$.list.scrollToBottom();
 	} else {
 		this.$.list.scrollToTop();
+	}
+},
+
+handleActivity: function(sender, event)
+{
+	if (!this.loading) {
+		this.doActivity({});
 	}
 }
 
