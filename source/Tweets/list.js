@@ -704,6 +704,7 @@ smartscroll: function()
 	} else {
 		this.$.list.scrollToTop();
 	}
+	this.handleActivity();
 },
 
 handleActivity: function(sender, event)
