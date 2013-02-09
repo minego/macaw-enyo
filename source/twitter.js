@@ -472,6 +472,12 @@ cleanupTweet: function(tweet)
 						thumbnail:	link.expanded_url + "/thumb",
 						link:		link.expanded_url
 					});
+				} else if (-1 != url.indexOf('last.fm/')) {
+					tweet.media.push({
+						/* Sizes: 34s, 64s, 126 */
+						thumbnail:	link.expanded_url.replace(/300x300/, '64s'),
+						link:		link.expanded_url
+					});
 				}
 			}
 		}
