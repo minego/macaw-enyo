@@ -15,7 +15,7 @@
 */
 enyo.kind({
 
-name:							"compose",
+name:							"Compose",
 classes:						"compose",
 
 events: {
@@ -26,9 +26,9 @@ events: {
 published: {
 	maxLength:					140,
 
-	text:						"",		/* Text of the tweet */
+	text:						"",		/* Text of the message */
 	dm:							null,	/* User to send a DM to */
-	replyto:					null,	/* Tweet object to reply to */
+	replyto:					null,	/* Message object to reply to */
 	twitter:					null,
 	user:						null,
 	users:						[]
@@ -89,7 +89,7 @@ components: [
 
 				kind:			onyx.Button,
 				classes:		"button onyx-affirmative",
-				content:		"Post Tweet",
+				content:		"Post",
 
 				ontap:			"send"
 			}
@@ -462,7 +462,7 @@ send: function(sender, event)
 		this.doOpenToaster({
 			component: {
 				kind:				"Confirm",
-				title:				"Your tweet is too long. Would you like to split it into multiple tweets?",
+				title:				"Your message is too long. Would you like to split it into multiple messages?",
 				onChoose:			"handleConfirm",
 				options: [
 					{

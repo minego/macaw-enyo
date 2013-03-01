@@ -533,7 +533,7 @@ compose: function(sender, options)
 {
 	options = options || {};
 
-	options.kind		= "compose";
+	options.kind		= "Compose";
 	options.user		= options.user || this.users[0];
 	options.users		= this.users;
 

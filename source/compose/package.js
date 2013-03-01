@@ -1,4 +1,4 @@
 enyo.depends(
-	"composetweet.js",
-	"composetweet.css"
+	"Compose.js",
+	"Compose.css"
 );
