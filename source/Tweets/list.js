@@ -148,9 +148,9 @@ rendered: function()
 		this.loading = true;
 		this.doRefreshStart();
 
-		this.gotTweets(true, results, true);
+		this.gotTweets(true, results, false);
 	} else {
-		this.refresh(true);
+		this.refresh(false);
 	}
 },
 
@@ -397,7 +397,7 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 	}
 	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
 
-	if (this.notify && !autorefresh && results.length > 0) {
+	if (this.notify && autorefresh && results.length > 0) {
 		// TODO	Improve this notification..
 		if (results.length < 3) {
 			for (var i = 0, item; item = results[i]; i++) {
