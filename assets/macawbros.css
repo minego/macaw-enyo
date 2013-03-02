@@ -1,0 +1,213 @@
+/*
+ *		Macawcraft
+ */
+
+/* macaw.css */
+
+body {
+	background:				#5d93fd url('../assets/macawbros/hill2.png') bottom left no-repeat !important;
+	/*background-image:		url('../assets/macawbros/hill1.png') top left no-repeat;*/
+}
+
+.toolbar.topbar {
+	padding-bottom:			0px;
+	border-bottom:			none;
+	background:				url('../assets/macawbros/brick-light.png') repeat-x;
+}
+
+.toolbar.bottombar {
+	padding-top:			0px;
+	border-top:				none;
+	background:				url('../assets/macawbros/brick-light.png') repeat-x;
+}
+
+.tabbar .tab .count {
+	color:					#fff;
+}
+
+.indicator {
+	width:					32px;
+	height:					32px;
+}
+
+.bottombar .indicator {
+	bottom:					49px;
+	background:				url('../assets/macawbros/indicator-up-goomba.gif')		no-repeat;
+}
+
+.topbar .indicator {
+	top:					49px;
+	background:				url('../assets/indicator-down.png')		no-repeat;
+}
+
+.tabbar .tab {
+	background:				none;
+}
+
+.tab-timeline {
+	background:				url('../assets/macawbros/icon-tweets.png')		center center no-repeat;
+}
+.tab-mentions {
+	background:				url('../assets/macawbros/icon-mentions.png')	center center no-repeat;
+}
+.tab-messages {
+	background:				url('../assets/macawbros/icon-messages.png')	center center no-repeat;
+}
+.tab-favorites {
+	background:				url('../assets/macawbros/icon-favorite.png')	center center no-repeat;
+}
+.tab-list,
+.tab-lists {
+	background:				url('../assets/macawbros/icon-lists.png')		center center no-repeat;
+}
+.tab-search,
+.tab-searchresults {
+	background:				url('../assets/macawbros/icon-search.png')		center center no-repeat;
+}
+.compose.icon {
+	background:				url('../assets/macawbros/icon-compose.png')	center center no-repeat;
+}
+.options.icon {
+	background:				url('../assets/macawbros/icon-opts.png')		center center no-repeat;
+}
+.refresh.icon {
+	background:				url('../assets/macawbros/icon-refresh.png')	center center no-repeat;
+}
+
+.toolbar .title {
+	background:				none;
+}
+
+/* tweets.css */
+
+.tweetmsg {
+	font-size:				15px;
+	font-weight:			bold;
+	color:					#000;
+	padding:				18px 0px 0px 0px;
+	height: 				40px;
+	background:				url('../assets/macawbros/new-tweets-bg.png')	top center no-repeat;
+}
+
+.tweet .text .link {
+	font-weight:			normal;
+}
+
+.tweet .rt,
+.tweet .text {
+	color:					#fff;
+}
+
+.tweet .details,
+.tweet .rt .byline,
+.tweet .screenname,
+.tweet .username,
+.tweet .via {
+	color:					#ccc;
+}
+
+.link {
+	color:					#cacaca;
+}
+
+.tweetdetails {
+	font-size:				16px;
+	/*padding-top:				50px;*/
+}
+
+/* toaster.css */
+
+.toaster {
+	padding-top:			48px;
+}
+
+.toaster.bg {
+	background:				url('../assets/macawbros/brick-sub2.png')	left top repeat-x,
+							url('../assets/macawbros/brick-sub2-dark.png')	left top repeat;
+}
+
+.toaster .toastertitle {
+	height:					48px;
+	color:					#d2d2d2;
+	background:				none;
+	margin:					-48px 0 10px 0;
+}
+
+.toaster .toastertitle .icon {
+	height:					48px;
+	width:					48px;
+	float:					right;
+}
+
+.toaster .profile {
+	background:				#333333;
+}
+
+.toaster .options.icon {
+	background:				url('../assets/macawbros/icon-opts-sub.png')				center center no-repeat;
+}
+.toaster .reply.icon {
+	background:				url('../assets/macawbros/icon-reply-sub.png')				center center no-repeat;
+}
+.toaster .retweet.icon {
+	background:				url('../assets/macawbros/icon-retweet-sub.png')				center center no-repeat;
+}
+.toaster .favorite.icon {
+	background:				url('../assets/macawbros/icon-favorite-sub.png')			center center no-repeat;
+}
+.toaster .favorite.icon.active {
+	background:				url('../assets/macawbros/icon-favorite-active-sub.png')		center center no-repeat;
+}
+.toaster .convo.icon {
+	background:				url('../assets/macawbros/icon-convo-sub.png')				center center no-repeat;
+}
+.toaster .delete.icon {
+	background:				url('../assets/macawbros/icon-delete-sub.png')				center center no-repeat;
+}
+.toaster .back.icon {
+	background:				url('../assets/macawbros/icon-back-sub.png')				center center no-repeat;
+}
+.toaster .confirm.icon {
+	background:				url('../assets/macawbros/icon-confirm-sub.png')				center center no-repeat;
+	background-size:		48px;
+}
+.toaster .cancel.icon {
+	background:				url('../assets/macawbros/icon-cancel-sub.png')				center center no-repeat;
+}
+
+.toaster .controls {
+	background:				url('../assets/macawbros/brick-sub.png')					left top repeat-x;
+	height:					48px;
+	border-top:				none;
+	padding:				0px;
+}
+
+/* composetweet.css */
+
+.compose {
+	background:				url('../assets/macawbros/brick-sub2.png')	left top repeat-x,
+							url('../assets/macawbros/brick-sub2-dark.png')	left top repeat;
+	padding-top:			52px;
+}
+
+.compose.icon {
+	padding-top:			0px;
+}
+
+.compose .counter {
+	color:					#008088;
+}
+
+/* options.css */
+
+.tabdetails .label {
+	color: #fff;
+}
+
+/* auth.css */
+
+.authorize {
+	background:				url('../assets/macawbros/brick-sub2.png')	left top repeat-x,
+							url('../assets/macawbros/brick-sub2-dark.png')	left top repeat;
+	padding-top:			52px;
+}

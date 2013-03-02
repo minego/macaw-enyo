@@ -66,7 +66,8 @@ components: [
 								{ label: "Light",	value: "light"	},
 								{ label: "Dark",	value: "dark"	},
 								{ label: "Holo Dark",	value: "holo-dark"	},
-								{ label: "Holo Red",	value: "holo-dark,holo-red"	}
+								{ label: "Holo Red",	value: "holo-dark,holo-red"	},
+								{ label: "MacawBros",	value: "macawbros"}
 							]
 						},
 
