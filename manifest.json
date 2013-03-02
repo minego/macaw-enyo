@@ -29,5 +29,10 @@
 		"notifications",
 		"clipboardRead",
 		"clipboardWrite"
+	],
+
+	"web_accessible_resources": [
+		"assets/error.png",
+		"icon48.png"
 	]
 }

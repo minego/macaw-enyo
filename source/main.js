@@ -181,29 +181,42 @@ create: function()
 		exist or can't be used.
 	*/
 	// TODO	Tie into platform specific notification systems when possible
+	// TODO	Allow actions in the notifications
+
+	notify = function(image, title, message) {
+		try {
+			image	= image || '/icon48.png';
+			title	= title || 'macaw';
+
+			webkitNotifications.createNotification(image, title, message).show();
+		} catch (e) {
+			this.$.notifications.pop(this.$.notifications.length);
+			this.$.notifications.push({
+				classes:		"error",
+				content:		message,
+
+				ontap:			"clearError"
+			}, {
+				owner:			this,
+
+				noscrim:		true,
+				modal:			true,
+				ignoreback:		true,
+				notitle:		true
+			});
+
+			clearTimeout(this.$.notifications.timeout);
+
+			this.$.notifications.timeout = setTimeout(function() {
+				this.$.notifications.pop(1);
+			}.bind(this), 3000);
+		}
+	}.bind(this);
+
 	ex = function(error) {
 		console.log('ex:', error);
 
-		this.$.notifications.pop(this.$.notifications.length);
-		this.$.notifications.push({
-			classes:		"error",
-			content:		error,
-
-			ontap:			"clearError"
-		}, {
-			owner:			this,
-
-			noscrim:		true,
-			modal:			true,
-			ignoreback:		true,
-			notitle:		true
-		});
-
-		clearTimeout(this.$.notifications.timeout);
-
-		this.$.notifications.timeout = setTimeout(function() {
-			this.$.notifications.pop(1);
-		}.bind(this), 3000);
+		notify('/assets/error.png', 'Error', error);
 	}.bind(this);
 },
 
@@ -835,6 +848,7 @@ moveIndicator: function(sender, event)
 });
 
 var ex;
+var notify;
 
 onload = function()
 {

@@ -148,9 +148,9 @@ rendered: function()
 		this.loading = true;
 		this.doRefreshStart();
 
-		this.gotTweets(true, results);
+		this.gotTweets(true, results, true);
 	} else {
-		this.refresh();
+		this.refresh(true);
 	}
 },
 
@@ -396,6 +396,22 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 		}
 	}
 	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
+
+	if (this.notify && !autorefresh && results.length > 0) {
+		// TODO	Improve this notification..
+		if (results.length < 3) {
+			for (var i = 0, item; item = results[i]; i++) {
+				notify(
+					item.user.profile_image_url,
+					'@' + item.user.screen_name,
+					item.stripped);
+
+				// TODO	Add action buttons
+			}
+		} else {
+			notify(null, 'New Messages', 'You have ' + results.length + ' new messages');
+		}
+	}
 
 	/*
 		Figure out where to put the new count indicator.
