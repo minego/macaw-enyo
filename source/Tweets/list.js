@@ -28,7 +28,9 @@ published: {
 	notify:								false,
 	cache:								false,
 
-	unseen:								0
+	unseen:								0,
+	type:								null,
+	label:								null
 },
 
 events: {
@@ -401,15 +403,35 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 		// TODO	Improve this notification..
 		if (results.length < 3) {
 			for (var i = 0, item; item = results[i]; i++) {
+				var label;
+
+				switch (this.resource.toLowerCase()) {
+					case 'mentions':
+						label = 'Mentioned by @' + item.user.screen_name;
+						break;
+
+					case 'messages':
+						label = 'Message from @' + item.user.screen_name;
+						break;
+
+					default:
+						label = '@' + item.user.screen_name;
+						break;
+				}
+
 				notify(
 					item.user.profile_image_url,
-					'@' + item.user.screen_name,
+					label,
 					item.stripped);
 
-				// TODO	Add action buttons
+				// TODO	Add action buttons, reply RT/RP etc.
 			}
 		} else {
-			notify(null, 'New Messages', 'You have ' + results.length + ' new messages');
+			notify(
+				this.user.profile ?
+					this.user.profile.profile_image_url : null,
+				'New Messages',
+				'You have ' + results.length + ' new messages');
 		}
 	}
 

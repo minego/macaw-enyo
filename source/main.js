@@ -290,6 +290,7 @@ createTabs: function()
 						resource:			tab.type,
 						refreshTime:		tab.refresh,
 						notify:				tab.notify,
+						label:				tab.label,
 
 						onActivity:			"panelActivity",
 						onRefreshStart:		"panelRefreshStart",
