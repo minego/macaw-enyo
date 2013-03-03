@@ -99,9 +99,7 @@ authorize: function(cb, token)
 			scope:			'basic stream email write_post follow public_messages messages update_profile'
 		};
 
-		var win = window.open(this.buildURL('https://account.app.net/oauth/authorize', params), '_auth');
-
-		console.log(win);
+		window.location = this.buildURL('https://account.app.net/oauth/authorize', params);
 	} else {
 		/* Step 2: Save the token on the user object */
 
