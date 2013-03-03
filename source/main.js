@@ -695,11 +695,17 @@ accountCreated: function(sender, event)
 			label:		'@' + account.screenname + ' mentions',
 			id:			account.id
 		});
-		this.tabs.push({
-			type:		'messages',
-			label:		'@' + account.screenname + ' ' + account.service.terms.PMs,
-			id:			account.id
-		});
+
+		if (account.servicename != 'adn') {
+			// TODO	Add support for the PM panel in ADN
+			/* We don't support the private message panel in ADN yet */
+
+			this.tabs.push({
+				type:		'messages',
+				label:		'@' + account.screenname + ' ' + account.service.terms.PMs,
+				id:			account.id
+			});
+		}
 		prefs.set('panels', this.tabs);
 
 		this.createTabs();

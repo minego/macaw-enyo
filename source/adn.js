@@ -129,9 +129,10 @@ post: function(url, body, cb)
 
 cleanupUser: function(user)
 {
-	var created			= new Date(user.created_at ? user.created_at : user.created);
+	var created			= null;
 	var description		= null;
 	var avatar			= null;
+	var relationship;
 
 	if (user.avatar_image) {
 		avatar = user.avatar_image.url;
@@ -139,6 +140,31 @@ cleanupUser: function(user)
 
 	if (user.description) {
 		description =	user.description.text;
+	}
+
+	if (user.created_at) {
+		created = new Date(user.created_at);
+	} else if (user.created) {
+		created = new Date(user.created);
+	}
+	if (created && isNaN(created.getTime())) {
+		created = null;
+	}
+
+	if (!(relationship = user.relationship)) {
+		relationship = [];
+
+		if (user.id == this.user.id) {
+			relationship.push('you');
+		}
+
+		if (user.follows_you) {
+			relationship.push('followed_by');
+		}
+
+		if (user.you_follow) {
+			relationship.push('following');
+		}
 	}
 
 	return({
@@ -149,7 +175,7 @@ cleanupUser: function(user)
 		avatar:			avatar			|| user.avatar,
 
 		created:		created,
-		createdStr:		this.dateFormat.format(created),
+		createdStr:		created ? this.dateFormat.format(created) : null,
 		type:			user.type,
 
 		counts: {
@@ -157,7 +183,9 @@ cleanupUser: function(user)
 			followers:	user.counts.followers	|| 0,
 			posts:		user.counts.posts		|| 0,
 			favorites:	user.counts.favorites	|| 0
-		}
+		},
+
+		relationship:	relationship
 	});
 },
 
@@ -173,8 +201,10 @@ getUser: function(user, cb, resource)
 			break;
 
 		case 'relationship':
-			// TODO	Write me. The relationship is included in the actual profile
-			//		instead of a different call.
+			/* The relationship details are included in the profile */
+			cb(false);
+			break;
+
 		default:
 			console.log('getUser does not yet support: ' + resource);
 	}
@@ -328,6 +358,12 @@ cleanupMessage: function(message)
 		message.text = message.text.replace(/(^|\s)(@|\.@)(\w+)/g, "$1<span id='user' name='$2' class='link'>$2$3</span>");
 		message.text = message.text.replace(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g, "<span id='link' class='link'>$&</span>");
 		message.text = message.text.replace(/(^|\s)#(\w+)/g, "$1<span id='hashtag' class='link'>#$2</span>");
+	}
+
+	if (message.source) {
+		if (message.source.name) {
+			message.source = message.source.name;
+		}
 	}
 
 

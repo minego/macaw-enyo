@@ -142,7 +142,7 @@ create: function()
 		this.service = this.user.service;
 	}
 
-	if (this.profile) {
+	if (this.profile && this.profile.created) {
 		this.profileChanged();
 	} else if (this.screenname) {
 		this.$.screenname.setContent('@' + this.screenname);
@@ -156,15 +156,13 @@ create: function()
 		}.bind(this));
 	}
 
-	if (!this.relationships) {
+	if (!this.relationship) {
 		this.following = undefined;
 
 		if (this.user.screenname != this.screenname) {
 			this.service.getUser('@' + this.screenname, function(success, result) {
 				if (success) {
 					this.setRelationship(result);
-				} else {
-					this.doCloseToaster();
 				}
 			}.bind(this), 'relationship');
 		} else {
@@ -261,6 +259,11 @@ profileChanged: function()
 		}, { owner: this });
 	}
 	this.$.info.render();
+
+	if (this.profile.relationship) {
+		/* Some services include the relationship in the profile */
+		this.relationship = this.profile.relationship;
+	}
 
 	/* The relationship may have just been overwritten... */
 	if (this.relationship) {
