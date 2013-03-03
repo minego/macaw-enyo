@@ -184,11 +184,15 @@ create: function()
 	// TODO	Allow actions in the notifications
 
 	notify = function(image, title, message) {
+		var n = null;
+
 		try {
 			image	= image || '/icon48.png';
 			title	= title || 'macaw';
 
-			webkitNotifications.createNotification(image, title, message).show();
+			n = webkitNotifications.createNotification(image, title, message);
+
+			n.show();
 		} catch (e) {
 			this.$.notifications.pop(this.$.notifications.length);
 			this.$.notifications.push({
@@ -210,13 +214,21 @@ create: function()
 			this.$.notifications.timeout = setTimeout(function() {
 				this.$.notifications.pop(1);
 			}.bind(this), 3000);
+
+			n = {
+				cancel: function() {
+					this.$.notifications.pop(1);
+				}.bind(this)
+			};
 		}
+
+		return(n);
 	}.bind(this);
 
 	ex = function(error) {
 		console.log('ex:', error);
 
-		notify('/assets/error.png', 'Error', error);
+		return(notify('/assets/error.png', 'Error', error));
 	}.bind(this);
 },
 

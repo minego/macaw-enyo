@@ -399,42 +399,6 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 	}
 	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
 
-	if (this.notify && autorefresh && results.length > 0) {
-		// TODO	Improve this notification..
-		if (results.length < 3) {
-			for (var i = 0, item; item = results[i]; i++) {
-				var label;
-
-				switch (this.resource.toLowerCase()) {
-					case 'mentions':
-						label = 'Mentioned by @' + item.user.screen_name;
-						break;
-
-					case 'messages':
-						label = 'Message from @' + item.user.screen_name;
-						break;
-
-					default:
-						label = '@' + item.user.screen_name;
-						break;
-				}
-
-				notify(
-					item.user.profile_image_url,
-					label,
-					item.stripped);
-
-				// TODO	Add action buttons, reply RT/RP etc.
-			}
-		} else {
-			notify(
-				this.user.profile ?
-					this.user.profile.profile_image_url : null,
-				'New Messages',
-				'You have ' + results.length + ' new messages');
-		}
-	}
-
 	/*
 		Figure out where to put the new count indicator.
 
@@ -450,6 +414,62 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 	if (results.length && this.results.length && isNaN(insertIndex)) {
 		newcount += results.length;
 	}
+
+	/* Display a notification for the most recent message */
+	if (this.notify) {
+		var max = 3;
+
+		if (autorefresh && newcount > 0) {
+			for (var i = Math.min(3, newcount), item; item = results[--i]; ) {
+				var label	= null;
+				var text	= null;
+				var icon	= null;
+
+				switch (this.resource.toLowerCase()) {
+					case 'mentions':
+						label		= 'Mentioned by @' + item.user.screen_name;
+						text		= item.stripped;
+						icon		= item.user.profile_image_url;
+						break;
+
+					case 'messages':
+						label		= 'Message from @' + item.user.screen_name;
+						text		= item.stripped;
+						icon		= item.user.profile_image_url;
+						break;
+
+					default:
+						label		= 'New messages';
+						text		= newcount + ' new messages';
+
+						if (this.user.profile) {
+							icon	= this.user.profile.profile_image_url;
+						}
+
+						/* No need to continue, one notification will do */
+						i			= 0;
+						max			= 1;
+						break;
+				}
+
+				if (!this.notifications) {
+					this.notifications = [];
+				}
+
+				this.notifications.unshift(notify(icon, label, text));
+			}
+		}
+
+		/* Never display more than 3 notifications per panel */
+		if (this.notifications) {
+			while (this.notifications.length > max) {
+				var n = this.notifications.pop();
+
+				n.cancel();
+			}
+		}
+	}
+
 
 	if (newcount > 0) {
 		/* Insert a new newcount indicator */
