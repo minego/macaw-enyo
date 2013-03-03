@@ -8,13 +8,12 @@
 
 body {
 	background:				#5d93fd url('../assets/macawbros/hill2.png') bottom left no-repeat !important;
-	/*background-image:		url('../assets/macawbros/hill1.png') top left no-repeat;*/
 }
 
 .toolbar.topbar {
 	padding-bottom:			0px;
 	border-bottom:			none;
-	background:				url('../assets/macawbros/brick-light.png') repeat-x;
+	background:				url('../assets/macawbros/brick-top2.png') repeat-x;
 }
 
 .toolbar.bottombar {
@@ -114,7 +113,6 @@ body {
 
 .messagedetails {
 	font-size:				16px;
-	/*padding-top:				50px;*/
 }
 
 /* toaster.css */
