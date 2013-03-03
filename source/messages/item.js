@@ -165,10 +165,14 @@ getRelativeTime: function(date, now_threshold)
 	return [delta, units, "ago"].join(" ");
 },
 
-setupMessage: function(item)
+setupMessage: function(item, service)
 {
 	if (!item) {
 		return;
+	}
+
+	if (service) {
+		this.service = service;
 	}
 
 	if (item.favorited) {
@@ -202,7 +206,8 @@ setupMessage: function(item)
 		this.$.rtByline.setClasses('byline');
 
 		this.$.rtAvatar.applyStyle('background-image', 'url(' + item.real.user.profile_image_url + ')');
-		this.$.rtByline.setContent('Retweeted by @' + item.real.user.screen_name);
+		this.$.rtByline.setContent(this.service.terms.reposted +
+										' by @' + item.real.user.screen_name);
 	} else {
 		this.removeClass('rt');
 		this.$.rt.removeClass('rt');

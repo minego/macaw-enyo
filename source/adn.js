@@ -4,7 +4,12 @@ var ADNAPI = function(user) {
 
 	this.terms = {
 		message:		'post',
-		messages:		'posts'
+		messages:		'posts',
+
+		Repost:			'Repost',
+		repost:			'repost',
+		reposted:		'reposted',
+		rp:				'RP'
 	};
 
 	if (this.user && this.user.options) {

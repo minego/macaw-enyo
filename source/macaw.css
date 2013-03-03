@@ -248,8 +248,8 @@ body.Pre3 {
 .reply.icon {
 	background:				url(../assets/icons/reply.png)		center center no-repeat;
 }
-.retweet.icon {
-	background:				url(../assets/icons/retweet.png)	center center no-repeat;
+.repost.icon {
+	background:				url(../assets/icons/repost.png)	center center no-repeat;
 }
 .favorite.icon {
 	background:				url(../assets/icons/favorite.png)	center center no-repeat;

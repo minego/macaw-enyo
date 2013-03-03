@@ -5,7 +5,12 @@ var TwitterAPI = function(user) {
 
 	this.terms = {
 		message:		'tweet',
-		messages:		'tweets'
+		messages:		'tweets',
+
+		Repost:			'Retweet',
+		repost:			'retweet',
+		reposted:		'retweeted',
+		rp:				'RT'
 	};
 
 	if (this.user && this.user.options) {
@@ -272,6 +277,7 @@ changeMessage: function(action, cb, id)
 	};
 
 	switch (action) {
+		case 'repost':
 		case 'retweet':
 		case 'rt':
 			url += 'statuses/retweet/' + id;

@@ -747,7 +747,7 @@ setupItem: function(sender, event)
 		this.$.message.removeClass('favorite');
 	}
 
-	this.$.message.setupMessage(item);
+	this.$.message.setupMessage(item, this.service);
 },
 
 smartscroll: function()

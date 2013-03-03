@@ -151,8 +151,8 @@ body {
 .toaster .reply.icon {
 	background:				url('../assets/macawbros/icon-reply-sub.png')				center center no-repeat;
 }
-.toaster .retweet.icon {
-	background:				url('../assets/macawbros/icon-retweet-sub.png')				center center no-repeat;
+.toaster .repost.icon {
+	background:				url('../assets/macawbros/icon-repost-sub.png')				center center no-repeat;
 }
 .toaster .favorite.icon {
 	background:				url('../assets/macawbros/icon-favorite-sub.png')			center center no-repeat;

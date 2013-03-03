@@ -78,9 +78,9 @@ components: [
 						command:	"reply"
 					},
 					{
-						classes:	"retweet icon",
-						name:		"retweet",
-						command:	"retweet"
+						classes:	"repost icon",
+						name:		"repost",
+						command:	"repost"
 					},
 					{
 						classes:	"favorite icon",
@@ -163,7 +163,7 @@ create: function()
 itemChanged: function()
 {
 	this.$['reply'		].removeClass("hide");
-	this.$['retweet'	].removeClass("hide");
+	this.$['repost'		].removeClass("hide");
 	this.$['favorite'	].removeClass("hide");
 	this.$['convo'		].removeClass("hide");
 	this.$['delete'		].removeClass("hide");
@@ -171,16 +171,16 @@ itemChanged: function()
 	if (this.item.dm) {
 		/* These actions don't make sense for a DM */
 
-		this.$['retweet'	].addClass("hide");
+		this.$['repost'		].addClass("hide");
 		this.$['favorite'	].addClass("hide");
 		this.$['convo'		].addClass("hide");
 	} else {
 		if (!this.user || !this.item.user ||
 			this.user.user_id !== this.item.user.id_str
 		) {
-			this.$['delete'		].addClass("hide");
+			this.$['delete'	].addClass("hide");
 		} else {
-			this.$['retweet'	].addClass("hide");
+			this.$['repost'	].addClass("hide");
 		}
 	}
 
@@ -421,16 +421,17 @@ handleCommand: function(sender, event)
 			});
 			break;
 
-		case "retweet":
+		case "repost":
 			this.doOpenToaster({
 				component: {
 					kind:				"Confirm",
-					title:				"Retweet @" + this.item.user.screen_name + "'s status?",
+					title:				this.service.terms.Repost + " @" +
+											this.item.user.screen_name + "'s status?",
 					onChoose:			"handleCommand",
 					options: [
 						{
 							classes:	"confirm",
-							command:	"retweet-confirmed"
+							command:	"repost-confirmed"
 						},
 						{
 							classes:	"edit",
@@ -450,10 +451,10 @@ handleCommand: function(sender, event)
 			});
 			break;
 
-		case "retweet-confirmed":
+		case "repost-confirmed":
 			this.service.changeMessage('rt', function(success) {
 				if (success) {
-					this.item.retweeted = !this.item.retweeted;
+					this.item.reposted = !this.item.reposted;
 
 					this.doMessageAction({
 						action:		'rt',
