@@ -160,9 +160,9 @@ create: function()
 	this.accounts = prefs.get('accounts');
 	for (var i = 0, a; a = this.accounts[i]; i++) {
 		this.$.accounts.createComponent({
-			content:			'@' + a.screen_name,
-			value:				a.user_id,
-			active:				!tab ? (i == 0) : (a.user_id == tab.user_id)
+			content:			'@' + a.screenname,
+			value:				a.id,
+			active:				!tab ? (i == 0) : (a.id == tab.id)
 		}, { owner: this });
 	}
 
@@ -213,21 +213,21 @@ save: function()
 
 	var tab = {
 		type:		this.$.types.getSelected().value,
-		user_id:	this.$.accounts.getSelected().value,
+		id:			this.$.accounts.getSelected().value,
 		refresh:	this.$.refresh.getSelected().value,
 		notify:		this.$.notify.getValue(),
 		label:		''
 	};
 
 	for (var i = 0, a; a = this.accounts[i]; i++) {
-		if (tab.user_id == a.user_id) {
+		if (tab.id == a.id) {
 			account = a;
 			break;
 		}
 	}
 
 	if (account) {
-		tab.label = '@' + account.screen_name;
+		tab.label = '@' + account.screenname;
 	}
 
 	switch (tab.type) {

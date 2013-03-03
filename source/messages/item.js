@@ -114,6 +114,11 @@ create: function()
 	}
 },
 
+userChanged: function()
+{
+	this.service = this.user.service;
+},
+
 itemChanged: function()
 {
 	if (this.item) {
@@ -179,10 +184,10 @@ setupMessage: function(item, service)
 		this.addClass('favorite');
 	}
 
-	this.$.screenname.setContent('@' + item.user.screen_name);
+	this.$.screenname.setContent('@' + item.user.screenname);
 	this.$.username.setContent(item.user.name);
 
-	this.$.avatar.applyStyle('background-image', 'url(' + item.user.profile_image_url + ')');
+	this.$.avatar.applyStyle('background-image', 'url(' + item.user.avatar + ')');
 
 	this.$.text.setContent(item.text);
 
@@ -208,9 +213,9 @@ setupMessage: function(item, service)
 		this.$.rtAvatar.setClasses('avatar rtavatar');
 		this.$.rtByline.setClasses('byline');
 
-		this.$.rtAvatar.applyStyle('background-image', 'url(' + item.real.user.profile_image_url + ')');
+		this.$.rtAvatar.applyStyle('background-image', 'url(' + item.real.user.avatar + ')');
 		this.$.rtByline.setContent(this.service.terms.reposted +
-										' by @' + item.real.user.screen_name);
+										' by @' + item.real.user.screenname);
 	} else {
 		this.removeClass('rt');
 		this.$.rt.removeClass('rt');

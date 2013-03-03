@@ -134,7 +134,7 @@ rendered: function()
 	var results;
 
 	if (this.cache) {
-		results = prefs.get('cachedmsgs:' + this.user.user_id + ':' + this.resource) || [];
+		results = prefs.get('cachedmsgs:' + this.user.id + ':' + this.resource) || [];
 	} else {
 		results = [];
 	}
@@ -219,8 +219,8 @@ refresh: function(autorefresh, index)
 	} else if (isNaN(index)) {
 		/* Request a bit of an overlap in order to try to detect gaps */
 		for (var i = 4; i >= 0; i--) {
-			if (this.results[i] && this.results[i].id_str) {
-				params.since_id = this.results[i].id_str;
+			if (this.results[i] && this.results[i].id) {
+				params.since_id = this.results[i].id;
 				this.sinceIndex = i;
 				break;
 			}
@@ -228,12 +228,12 @@ refresh: function(autorefresh, index)
 
 		if (!params.since_id) {
 			/* Really? The most recent 5 items didn't have an id? Weird... */
-			while (this.results.length && !this.results[0].id_str) {
+			while (this.results.length && !this.results[0].id) {
 				this.results.splice(0, 1);
 			}
 
-			if (this.results.length && this.results[0].id_str) {
-				params.since_id = this.results[0].id_str;
+			if (this.results.length && this.results[0].id) {
+				params.since_id = this.results[0].id;
 			}
 		}
 
@@ -247,12 +247,12 @@ refresh: function(autorefresh, index)
 		var prev	= this.results[index - 1];
 		var next	= this.results[index + 1];
 
-		if (prev && prev.id_str) {
-			params.max_id = prev.id_str;
+		if (prev && prev.id) {
+			params.max_id = prev.id;
 		}
 
-		if (next && next.id_str) {
-			params.since_id = next.id_str;
+		if (next && next.id) {
+			params.since_id = next.id;
 		} else {
 			params.count = 50;
 		}
@@ -291,7 +291,7 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 	this.loaded = new Date();
 
 	if (!isNaN(insertIndex) && this.results[insertIndex]) {
-		if (!this.results[insertIndex].id_str) {
+		if (!this.results[insertIndex].id) {
 			this.results.splice(insertIndex, 1);
 
 			changed = true;
@@ -361,9 +361,9 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 	if (this.results.length > 0 && results.length > 0) {
 		for (var n = 0, ni; ni = results[n]; n++) {
 			for (var o = 0, oi; oi = this.results[o]; o++) {
-				if (ni.id_str === oi.id_str) {
+				if (ni.id === oi.id) {
 					/* We found a matching item, anything older is a duplicate */
-					// this.log(this.resource, 'Removing duplicates from: ' + ni.id_str);
+					// this.log(this.resource, 'Removing duplicates from: ' + ni.id);
 					match = true;
 
 					if (isNaN(insertIndex)) {
@@ -386,8 +386,8 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 			/* We have a gap! */
 			this.results.unshift({
 				gap: {
-					before:	this.results[0].id_str,
-					after:	results[results.length - 1].id_str
+					before:	this.results[0].id,
+					after:	results[results.length - 1].id
 				}
 			});
 		}
@@ -424,13 +424,13 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 					case 'mentions':
 						label		= 'Mentioned by @' + item.user.screen_name;
 						text		= item.stripped;
-						icon		= item.user.profile_image_url;
+						icon		= item.user.avatar;
 						break;
 
 					case 'messages':
 						label		= 'Message from @' + item.user.screen_name;
 						text		= item.stripped;
-						icon		= item.user.profile_image_url;
+						icon		= item.user.avatar;
 						break;
 
 					default:
@@ -438,7 +438,7 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 						text		= newcount + ' new messages';
 
 						if (this.user.profile) {
-							icon	= this.user.profile.profile_image_url;
+							icon	= this.user.profile.avatar;
 						}
 
 						/* No need to continue, one notification will do */
@@ -599,12 +599,12 @@ writeCache: function()
 	var cache = this.results.slice(0, 35);
 
 	for (var i = cache.length - 1, c; c = cache[i]; i--) {
-		if (!c.id_str && !c.gap) {
+		if (!c.id && !c.gap) {
 			cache.splice(i, 1);
 		}
 	}
 
-	prefs.set('cachedmsgs:' + this.user.user_id + ':' + this.resource, cache);
+	prefs.set('cachedmsgs:' + this.user.id + ':' + this.resource, cache);
 },
 
 setTimer: function()
@@ -632,7 +632,7 @@ itemTap: function(sender, event)
 
 	this.doActivity({});
 
-	if (item.id_str) {
+	if (item.id) {
 		this.doOpenToaster({
 			component: {
 				kind:				"MessageDetails",
@@ -659,7 +659,7 @@ itemAction: function(sender, event)
 	var item;
 
 	for (var i = 0; item = this.results[i]; i++) {
-		if (item.id_str === event.item.id_str) {
+		if (item.id === event.item.id) {
 			break;
 		}
 	}
@@ -704,12 +704,12 @@ setupItem: function(sender, event)
 		return;
 	}
 
-	if (item.id_str && this.$.message.id_str === item.id_str) {
+	if (item.id && this.$.message.id === item.id) {
 		/* Already setup */
 		return;
 	}
 
-	if (!item.id_str) {
+	if (!item.id) {
 		this.$.message.setClasses('hide');
 		this.$.msg.setClasses('listmsg');
 
@@ -734,7 +734,7 @@ setupItem: function(sender, event)
 
 		return;
 	}
-	this.$.message.id_str = item.id_str;
+	this.$.message.id = item.id;
 
 	this.$.msg.setClasses('hide');
 	this.$.msg.setContent('');

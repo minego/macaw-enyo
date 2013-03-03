@@ -111,7 +111,7 @@ userChanged: function()
 	}
 
 	if (this.user && this.user.profile) {
-		this.$.avatar.applyStyle('background-image', 'url(' + this.user.profile.profile_image_url + ')');
+		this.$.avatar.applyStyle('background-image', 'url(' + this.user.profile.avatar + ')');
 	}
 },
 
@@ -130,7 +130,7 @@ rendered: function(sender, event)
 	}
 
 	if (this.dm) {
-		this.$.messageto.setContent('Message to: @' + this.dm.screen_name);
+		this.$.messageto.setContent('Message to: @' + this.dm.screenname);
 	}
 
 	if (this.replyto && !this.replyto.dm) {
@@ -141,23 +141,23 @@ rendered: function(sender, event)
 		var node;
 
 		if (this.replyto.user) {
-			if (!this.user || this.replyto.user.screen_name !== this.user.screen_name) {
-				mentions.push('@' + this.replyto.user.screen_name);
+			if (!this.user || this.replyto.user.screenname !== this.user.screenname) {
+				mentions.push('@' + this.replyto.user.screenname);
 				offset = mentions[0].length + 1;
 			}
 		}
 
 		if (this.replyto.entities) {
 			for (var i = 0, m; m = this.replyto.entities.user_mentions[i]; i++) {
-				if (!this.user || m.screen_name !== this.user.screen_name) {
-					mentions.push('@' + m.screen_name);
+				if (!this.user || m.screenname !== this.user.screenname) {
+					mentions.push('@' + m.screenname);
 				}
 			}
 		}
 
 		/* When replying to a repost include the person that reposted'ed it. */
 		if (this.replyto.real) {
-			mentions.push('@' + this.replyto.real.user.screen_name);
+			mentions.push('@' + this.replyto.real.user.screenname);
 		}
 
 		/* Remove any duplicate mentions */
@@ -302,10 +302,10 @@ autocomplete: function(value)
 	var matches = [];
 
 	for (var i = 0, u; u = this.user.friends[i]; i++) {
-		if (-1 != u.screen_name.toLowerCase().indexOf(word)) {
+		if (-1 != u.screenname.toLowerCase().indexOf(word)) {
 			if (matches.length <= 10) {
 				matches.push({
-					content: '@' + u.screen_name
+					content: '@' + u.screenname
 				});
 			} else {
 				matches.push({
@@ -404,7 +404,7 @@ nextaccount: function(sender, event)
 
 	/* Find the current index */
 	for (var i = 0, u; u = this.users[i]; i++) {
-		if (u.user_id == this.user.user_id) {
+		if (u.id == this.user.id) {
 			/*
 				Reset this.service so that this.userChanged() will set it based
 				on the user that we just selected.
@@ -484,16 +484,16 @@ send: function(sender, event)
 		resource		= 'message';
 
 		/* Don't send a DM to yourself... */
-		if (this.dm.id_str !== this.user.id) {
-			params.user_id = this.dm.id_str;
+		if (this.dm.id !== this.user.id) {
+			params.to = this.dm.id;
 		} else if (this.replyto) {
-			params.user_id = this.replyto.recipient.id_str;
+			params.to = this.replyto.recipient.id;
 		}
 		params.text		= params.status;
 
 		delete params.status;
 	} else if (this.replyto && !this.replyto.dm) {
-		params.in_reply_to_status_id = this.replyto.id_str;
+		params.replyto = this.replyto.id;
 	}
 
 	/* Actually send it */

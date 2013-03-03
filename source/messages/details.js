@@ -176,7 +176,7 @@ itemChanged: function()
 		this.$['convo'		].addClass("hide");
 	} else {
 		if (!this.user || !this.item.user ||
-			this.user.user_id !== this.item.user.id_str
+			this.user.id !== this.item.user.id
 		) {
 			this.$['delete'	].addClass("hide");
 		} else {
@@ -184,7 +184,7 @@ itemChanged: function()
 		}
 	}
 
-	if (!this.item.in_reply_to_status_id) {
+	if (!this.item.replyto) {
 		this.$['convo'		].addClass("hide");
 	}
 
@@ -267,7 +267,7 @@ openProfile: function(sender, event)
 	var name	= event.screenname;
 
 	if (profile && !name) {
-		name = profile.screen_name;
+		name = profile.screenname;
 	}
 
 	if (0 == name.indexOf(".@")) {
@@ -333,7 +333,7 @@ handleCommand: function(sender, event)
 		case "mention":
 			this.doCompose({
 				user:		this.user,
-				text:		'@' + this.item.user.screen_name + ' '
+				text:		'@' + this.item.user.screenname + ' '
 			});
 			break;
 
@@ -348,7 +348,7 @@ handleCommand: function(sender, event)
 			this.doOpenToaster({
 				component: {
 					kind:				"Confirm",
-					title:				"Are you sure you want to block @" + this.item.user.screen_name + "?",
+					title:				"Are you sure you want to block @" + this.item.user.screenname + "?",
 					onChoose:			"handleCommand",
 					options: [
 						{
@@ -373,7 +373,7 @@ handleCommand: function(sender, event)
 			this.doOpenToaster({
 				component: {
 					kind:				"Confirm",
-					title:				"Are you sure you want to report @" + this.item.user.screen_name + " for spam?",
+					title:				"Are you sure you want to report @" + this.item.user.screenname + " for spam?",
 					onChoose:			"handleCommand",
 					options: [
 						{
@@ -401,7 +401,7 @@ handleCommand: function(sender, event)
 				} else {
 					ex('Could not block user');
 				}
-			}.bind(this), { screen_name: this.item.user.screen_name });
+			}.bind(this), { screenname: this.item.user.screenname });
 			break;
 
 		case "spam-confirmed":
@@ -411,7 +411,7 @@ handleCommand: function(sender, event)
 				} else {
 					ex('Could not block user');
 				}
-			}.bind(this), { screen_name: this.item.user.screen_name });
+			}.bind(this), { screenname: this.item.user.screenname });
 			break;
 
 		case "hide":
@@ -426,7 +426,7 @@ handleCommand: function(sender, event)
 				component: {
 					kind:				"Confirm",
 					title:				this.service.terms.Repost + " @" +
-											this.item.user.screen_name + "'s status?",
+											this.item.user.screenname + "'s status?",
 					onChoose:			"handleCommand",
 					options: [
 						{
@@ -463,14 +463,14 @@ handleCommand: function(sender, event)
 				} else {
 					ex('Could not ' + this.service.terms.repost);
 				}
-			}.bind(this), this.item.id_str);
+			}.bind(this), this.item.id);
 			break;
 
 		case "edit":
 			this.doCompose({
 				user:		this.user,
 				text:		this.service.terms.RP + ' @' +
-								this.item.user.screen_name +
+								this.item.user.screenname +
 								': ' + this.item.stripped
 			});
 			break;
@@ -499,7 +499,7 @@ handleCommand: function(sender, event)
 						item:		this.item
 					});
 				}
-			}.bind(this), this.item.id_str);
+			}.bind(this), this.item.id);
 			break;
 
 		case "delete":
@@ -539,7 +539,7 @@ handleCommand: function(sender, event)
 					// TODO	Display a message... "no one will ever know"
 					this.doCloseToaster({});
 				}
-			}.bind(this), this.item.id_str);
+			}.bind(this), this.item.id);
 			break;
 
 		case "convo":

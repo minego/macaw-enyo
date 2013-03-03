@@ -19,6 +19,11 @@ enyo.kind({
 name:							"authorize",
 classes:						"authorize",
 
+published: {
+	servicename:				null,
+	accesstoken:				null
+},
+
 events: {
 	onCancel:					"",
 	onSuccess:					""
@@ -40,7 +45,7 @@ components: [
 			{
 				classes:		"instructions",
 
-				content:		"Tap the button below to continue."
+				content:		"Select an account type"
 			},
 			{
 				kind:			onyx.Button,
@@ -162,6 +167,22 @@ components: [
 create: function()
 {
 	this.inherited(arguments);
+
+	switch (this.servicename) {
+		case 'adn':
+			/* Move on to step 2 */
+			this.step1adn();
+			break;
+
+		case 'twitter':
+			/* Move on to step 2 */
+			this.step1twitter();
+			break;
+
+		default:
+			/* The first question asks the service type */
+			break;
+	}
 },
 
 restart: function()
@@ -212,12 +233,27 @@ step1adn: function()
 	this.$.step1.hide();
 
 	/*
-		Authorizing with ADN will replace the entire app with the ADN
-		authorization page. After authentication the app will be reloaded with
-		either a token or an error.
+		The first step in authorizaing with ADN will replace the entire app with
+		the ADN authorization page. After successful authentication the app will
+		be relaunched with the user's access token.
+
+		There is no step 2 (PIN entry) for ADN, although it may be needed on
+		some platforms where the redirect back to the application can't be used.
+
+		In those cases a page will be displayed on http://minego.net/macawadn/
+		asking the user to copy and paste the token.
 	*/
 	this.adn = new ADNAPI();
-	this.adn.authorize();
+	this.adn.authorize(function(account)
+	{
+		if (!account) {
+			this.$.failed.show();
+			return;
+		}
+
+		this.account = account;
+		this.$.step3.show();
+	}.bind(this), this.accesstoken);
 },
 
 step2: function()

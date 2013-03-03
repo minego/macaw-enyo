@@ -61,7 +61,7 @@ get: function get(name, account)
 	var json	= null;
 
 	if (account) {
-		name += account.user_id;
+		name += account.id;
 	}
 
 	if (typeof(chrome) !== "undefined" && chrome.storage) {
@@ -99,7 +99,7 @@ get: function get(name, account)
 set: function set(name, value, account)
 {
 	if (account) {
-		name += account.user_id;
+		name += account.id;
 	}
 
 	if (typeof(chrome) !== "undefined" && chrome.storage) {

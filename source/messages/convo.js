@@ -101,9 +101,9 @@ gotMessage: function(success, result)
 	}
 
 	/* Get the next item */
-	if (result.in_reply_to_status_id_str) {
+	if (result.replyto) {
 		this.service.getMessages('show', this.gotMessage.bind(this), {
-			id:	result.in_reply_to_status_id_str
+			id:	result.replyto
 		});
 	}
 },
@@ -138,11 +138,11 @@ setupItem: function(sender, event)
 		return;
 	}
 
-	if (item.id_str && this.$.message.id_str === item.id_str) {
+	if (item.id && this.$.message.id === item.id) {
 		/* Already setup */
 		return;
 	}
-	this.$.message.id_str = item.id_str;
+	this.$.message.id = item.id;
 
 	if (item.favorited) {
 		this.$.message.addClass('favorite');

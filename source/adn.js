@@ -1,24 +1,29 @@
 var ADNAPI = function(user) {
-	this.apibase		= 'https://alpha-api.app.net';
+	this.apibase		= 'https://alpha-api.app.net/stream/0/';
 	this.user			= user;
 
 	this.terms = {
 		message:		'post',
 		messages:		'posts',
+		Messages:		'Posts',
 
 		Repost:			'Repost',
 		repost:			'repost',
 		reposted:		'reposted',
-		RP:				'RP'
+		RP:				'RP',
+		PM:				'PM',
+		PMs:			'PMs'
 	};
+
+	if (this.user) {
+		this.accesstoken = this.user.accesstoken;
+	}
 
 	if (this.user && this.user.options) {
 		/* Use whatever key the user's account was created with */
 		this.options = this.user.options;
 	} else {
 		/* Macaw for all the things */
-		// TODO	What do we need for the OAuth requests?
-
 		this.options = {
 			clientID:		'qjpU52DDXuurvMw65gzNbv7XCreV5v3m'
 		};
@@ -26,26 +31,19 @@ var ADNAPI = function(user) {
 
 	if (this.options && this.user && !this.user.options) {
 		/*
-			Save the key on the user. This will ensure that if the supported set
-			of keys changes at some point in the future that the currently setup
-			user accounts won't be broken by the change.
+			Save the clientID on the user object. This will ensure that if the
+			clientID is changed at some point that existing users will be able
+			to continue using their account.
 		*/
 		var users = prefs.get('accounts');
 
 		for (var i = 0, u; u = users[i]; i++) {
-			if (u.user_id == this.user.user_id) {
+			if (u.id == this.user.id) {
 				u.options = this.options;
 				prefs.set('accounts', users);
 				break;
 			}
 		}
-	}
-
-	// TODO	What options do we need for OAuth?
-	this.oauth = OAuth(this.options);
-
-	if (this.user) {
-		this.oauth.setAccessToken([ user.oauth_token, user.oauth_token_secret ]);
 	}
 
 	this.dateFormat	= new enyo.g11n.DateFmt({
@@ -57,11 +55,12 @@ var ADNAPI = function(user) {
 		Load this user's profile information, working under the assumption that
 		a consumer will usually want access to this.
 	*/
-	// TODO	Implement this...
 	if (this.user) {
-		this.getUser(this.user.screen_name, function(success, profile) {
+		this.getUser('me', function(success, profile) {
 			if (success) {
-				this.user.profile = profile;
+				this.user.profile		= profile;
+				this.user.id			= profile.id;
+				this.user.screenname	= profile.screenname;
 
 				console.log(this.user);
 			}
@@ -90,6 +89,81 @@ buildURL: function(url, params)
 	}
 },
 
+get: function(url, cb)
+{
+	var x = new enyo.Ajax({
+		url:				url,
+		method:				"GET",
+		headers: {
+			Authorization:	'Bearer ' + this.accesstoken
+		}
+	});
+	x.go({});
+
+	x.response(this, cb);
+},
+
+post: function(url, body, cb)
+{
+	var x = new enyo.Ajax({
+		url:				url,
+		method:				"POST",
+		postBody:			body,
+		headers: {
+			Authorization:	'Bearer ' + this.accesstoken
+		}
+	});
+	x.go({});
+
+	x.response(this, cb);
+},
+
+getUser: function(user, cb, resource)
+{
+	var url		= this.apibase;
+	var x;
+
+	resource = resource || 'profile';
+	switch (resource) {
+		case 'profile':
+			url += 'users/' + user;
+			break;
+
+		case 'relationship':
+			// TODO	Write me. The relationship is included in the actual profile
+			//		instead of a different call.
+		default:
+			console.log('getUser does not yet support: ' + resource);
+	}
+
+	this.get(url, function(sender, response) {
+		if (response.data) {
+			var profile = {
+				id:				response.data.id,
+				screenname:		response.data.username,
+				name:			response.data.name,
+				description:	response.data.description.html ||
+								response.data.description.text,
+
+				avatar:			response.data.avatar_image.url,
+				created:		new Date(response.data.created_at),
+				type:			response.data.type,
+
+				counts: {
+					following:	response.data.counts.following,
+					followers:	response.data.counts.followers,
+					posts:		response.data.counts.posts,
+					favorites:	response.data.counts.favorites
+				}
+			};
+
+			cb(true, profile);
+		} else {
+			cb(false);
+		}
+	});
+},
+
 authorize: function(cb, token)
 {
 	if (!cb || !token) {
@@ -111,9 +185,13 @@ authorize: function(cb, token)
 
 		window.location = this.buildURL('https://account.app.net/oauth/authorize', params);
 	} else {
-		/* Step 2: Save the token on the user object */
+		/* Step 2: Load the user profile */
+		this.accesstoken = token;
 
-		// TODO	Write me
+		cb({
+			servicename:		'adn',
+			accesstoken:		token
+		});
 	}
 }
 

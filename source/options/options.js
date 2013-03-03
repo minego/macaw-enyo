@@ -337,7 +337,7 @@ createAccountList: function()
 	this.$.accounts.destroyClientControls();
 	for (var i = 0, a; a = accounts[i]; i++) {
 		this.$.accounts.createComponent({
-			content:			'@' + a.screen_name,
+			content:			'@' + a.screenname,
 			account:			a,
 			classes:			"account",
 
@@ -372,14 +372,14 @@ accountAction: function(sender, event)
 		case "delete":
 			/* Remove any tabs that are linked to this account */
 			for (var i = tabs.length - 1, t; t = tabs[i]; i--) {
-				if ("undefined" == typeof(t.user_id) || t.user_id === account.user_id) {
+				if ("undefined" == typeof(t.id) || t.id === account.id) {
 					tabs.splice(i, 1);
 				}
 			}
 
 			/* Remove the account */
 			for (var i = 0, a; a = accounts[i]; i++) {
-				if (a.user_id === account.user_id) {
+				if (a.id === account.id) {
 					accounts.splice(i, 1);
 					break;
 				}

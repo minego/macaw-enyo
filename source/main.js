@@ -130,6 +130,48 @@ components: [
 	}
 ],
 
+parseQueryString: function(query)
+{
+	var	params = {};
+
+	if (query) {
+		var items = query.split('&');
+
+		for (var i = 0, param; param = items[i]; i++) {
+			var pair = param.split('=');
+
+			if (pair.length != 2) {
+				continue;
+			}
+
+			params[pair[0]] = decodeURIComponent(pair[1]);
+		}
+	}
+
+	return(params);
+},
+
+prepareAccount: function(user)
+{
+	/* Cleanup from old builds */
+	if (user.user_id) {
+		user.id = user.user_id;
+		delete user.user_id;
+	}
+
+	/* Prepare the service object */
+	switch (user.servicename) {
+		default:
+		case 'twitter':
+			user.service = new TwitterAPI(user);
+			break;
+
+		case 'adn':
+			user.service = new ADNAPI(user);
+			break;
+	}
+},
+
 create: function()
 {
 	this.inherited(arguments);
@@ -150,17 +192,17 @@ create: function()
 	this.tabWidth	= 0;
 
 	for (var i = 0, u; u = this.users[i]; i++) {
-		switch (u.type) {
-			default:
-			case 'twitter':
-				u.service = new TwitterAPI(u);
-				break;
-
-			case 'adn':
-				u.service = new ADNAPI(u);
-				break;
-		}
+		this.prepareAccount(u);
 	}
+
+	/*
+		Parsee the params and hashes that the app was called with.
+
+		These are used in some cases to complete account authorization and in
+		the future could also be used to enable advanced features.
+	*/
+	this.params = this.parseQueryString((window.location.search	|| '').slice(1));
+	this.hashes = this.parseQueryString((window.location.hash	|| '').slice(1));
 
 	this.createTabs();
 
@@ -257,12 +299,25 @@ createTabs: function()
 	this.$.tabcontainer.destroyClientControls();
 	this.$.panelcontainer.destroyClientControls();
 
-	this.users		= prefs.get('accounts');
 	this.tabs		= prefs.get('panels');
 	this.tabWidth	= 100 / this.tabs.length;
 
-	if (!this.users.length || !this.tabs.length) {
-		/* Cleanup just in case */
+	if (this.hashes.error) {
+		ex(this.hashes.error);
+	}
+
+	/* Are we continuing authorizing an account? */
+	if (this.params.adn && this.hashes.access_token) {
+		setTimeout(function() {
+			this.createAccount({
+				servicename:		'adn',
+				accesstoken:		this.hashes.access_token
+			});
+		}.bind(this), 1000);
+
+		return;
+	} else if (!this.users.length || !this.tabs.length) {
+		/* We appear to have no accounts at all, so create a new one. */
 		prefs.set('accounts',	[]);
 		prefs.set('panels',		[]);
 
@@ -277,10 +332,16 @@ createTabs: function()
 		var kind	= "panel";
 		var user	= null;
 
-		/* Find the correct account for this tab */
+		/* Cleanup from older builds */
 		if (tab.user_id) {
+			tab.id = tab.user_id;
+			delete tab.user_id;
+		}
+
+		/* Find the correct account for this tab */
+		if (tab.id) {
 			for (var i = 0, u; u = this.users[i]; i++) {
-				if (u.user_id == tab.user_id) {
+				if (u.id == tab.id) {
 					user = u;
 					break;
 				}
@@ -319,15 +380,6 @@ createTabs: function()
 			}]
 		});
 	}
-
-	/* Show a special "add tab" panel */
-	components.push({
-		kind:		"TabDetails",
-		classes:	"panel",
-
-		savelabel:	"Add Tab",
-		hidecancel:	true
-	});
 
 	this.$.panelcontainer.createComponent({
 		kind:								SkinnyPanels,
@@ -599,14 +651,18 @@ conversation: function(sender, options)
 	});
 },
 
-createAccount: function()
+createAccount: function(options)
 {
-	this.$.toasters.push({
-		kind:		"authorize",
+	if (!options || options.$) {
+		/* Ignore options if it is an enyo sender */
+		options = {};
+	}
 
-		onCancel:	"closeToaster",
-		onSuccess:	"accountCreated"
-	}, {
+	options.kind		= 'authorize';
+	options.onCancel	= 'closeToaster';
+	options.onSuccess	= 'accountCreated';
+
+	this.$.toasters.push(options, {
 		owner:		this,
 		nobg:		true,
 		notitle:	true
@@ -620,6 +676,8 @@ accountCreated: function(sender, event)
 	this.closeAllToasters();
 
 	/* Store the list of accounts with the new account included */
+	this.prepareAccount(account);
+
 	this.users.push(account);
 	prefs.set('accounts', this.users);
 
@@ -627,17 +685,17 @@ accountCreated: function(sender, event)
 	this.tabs.push({
 		type:		'timeline',
 		label:		'@' + account.screen_name + ' home',
-		user_id:	account.user_id
+		id:			account.id
 	});
 	this.tabs.push({
 		type:		'mentions',
 		label:		'@' + account.screen_name + ' mentions',
-		user_id:	account.user_id
+		id:			account.id
 	});
 	this.tabs.push({
 		type:		'messages',
-		label:		'@' + account.screen_name + ' DMs',
-		user_id:	account.user_id
+		label:		'@' + account.screen_name + ' ' + account.service.terms.PMs,
+		id:			account.id
 	});
 	prefs.set('panels', this.tabs);
 
@@ -872,48 +930,6 @@ var notify;
 
 onload = function()
 {
-	/* Parse the params and hashes we where loaded with */
-	var params	= {};
-	var hashes	= {};
-
-	if (window.location.search) {
-		var tmp = window.location.search.slice(1).split('&');
-
-		for (var i = 0, param; param = tmp[i]; i++) {
-			var pair = param.split('=');
-
-			if (pair.length != 2) {
-				continue;
-			}
-			params[pair[0]] = decodeURIComponent(pair[1]);
-		}
-	}
-
-	if (window.location.hash) {
-		var tmp = window.location.hash.slice(1).split('&');
-
-		for (var i = 0, param; param = tmp[i]; i++) {
-			var pair = param.split('=');
-
-			if (pair.length != 2) {
-				continue;
-			}
-			hashes[pair[0]] = decodeURIComponent(pair[1]);
-		}
-	}
-
-	/* Are we continuing authorizing an account? */
-	console.log(params, hashes);
-	if (params['adn']) {
-		if (hashes['access_token']) {
-			alert('Sorry, ADN support is still a work in progress: ' + hashes['access_token']);
-		} else if (hashes['error']) {
-			alert('ADN authorization failed: ' + hashes['error']);
-		} else {
-			alert('ADN authorization failed');
-		}
-	}
-
 	/*
 		Packaged chrome apps can not run inline javascript in the html document
 		so we need to initialize here in that case.

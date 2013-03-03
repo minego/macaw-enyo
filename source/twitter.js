@@ -6,11 +6,14 @@ var TwitterAPI = function(user) {
 	this.terms = {
 		message:		'tweet',
 		messages:		'tweets',
+		Messages:		'Tweets',
 
 		Repost:			'Retweet',
 		repost:			'retweet',
 		reposted:		'retweeted',
-		RP:				'RT'
+		RP:				'RT',
+		PM:				'DM',
+		PMs:			'DMs'
 	};
 
 	if (this.user && this.user.options) {
@@ -57,7 +60,7 @@ var TwitterAPI = function(user) {
 		var users = prefs.get('accounts');
 
 		for (var i = 0, u; u = users[i]; i++) {
-			if (u.user_id == this.user.user_id) {
+			if (u.id == this.user.id) {
 				u.options = this.options;
 				prefs.set('accounts', users);
 				break;
@@ -81,9 +84,11 @@ var TwitterAPI = function(user) {
 		a consumer will usually want access to this.
 	*/
 	if (this.user) {
-		this.getUser(this.user.screen_name, function(success, profile) {
+		this.getUser('@' + this.user.screen_name, function(success, profile) {
 			if (success) {
-				this.user.profile = profile;
+				this.user.profile		= profile;
+				this.user.id			= profile.id;
+				this.user.screenname	= profile.screenname;
 
 				console.log(this.user);
 			}
@@ -160,6 +165,7 @@ authorize: function(cb, params, pin)
 					params[parts[0]] = decodeURIComponent(parts[1]);
 				};
 
+				params.servicename = 'twitter';
 				cb(params);
 			},
 
@@ -223,6 +229,11 @@ getMessages: function(resource, cb, params)
 			return;
 	}
 	url += '.json';
+
+	if (params.screenname) {
+		params.screen_name = params.screenname;
+		delete params.screen_name;
+	}
 
 	this.oauth.get(this.buildURL(url, params),
 		function(response) {
@@ -339,10 +350,6 @@ cleanupMessages: function(tweets)
 */
 cleanupMessage: function(tweet)
 {
-	if (tweet.sender_id) {
-		tweet.dm = true;
-	}
-
 	/*
 		If this is a RT then we want to act on the RT, not the actual tweet
 		in most cases.
@@ -352,7 +359,20 @@ cleanupMessage: function(tweet)
 
 		tweet = real.retweeted_status;
 		delete real.retweeted_status;
-		tweet.real = real;
+
+		/* Both messages need to be cleaned up */
+		tweet.real = this.cleanupMessage(real);
+	}
+
+	/* Always use a string as the ID */
+	if (tweet.id_str) {
+		tweet.id = tweet.id_str;
+		delete tweet.id_str;
+	}
+
+	if (tweet.in_reply_to_status_id_str) {
+		tweet.replyto = tweet.in_reply_to_status_id_str;
+		delete tweet.in_reply_to_status_id_str;
 	}
 
 	/* Disable clickable source links */
@@ -360,18 +380,25 @@ cleanupMessage: function(tweet)
 		tweet.source = tweet.source.replace('href="', 'href="#');
 	}
 
+	// TODO	Change DM to PM...
 	/*
 		A DM has a sender, but all other tweets have a user. This is an
 		annoying inconsistency.
 	*/
 	if (tweet.sender) {
+		tweet.dm = true;
+
 		tweet.user = tweet.sender;
 		delete tweet.sender;
 	}
 
+	if (tweet.user) {
+		tweet.user = this.cleanupUser(tweet.user);
+	}
+
 	/* Generate a url that can be used to access this tweet directly */
 	if (!tweet.link && tweet.user) {
-		tweet.link = 'https://twitter.com/#!' + tweet.user.screen_name + '/status/' + tweet.id_str;
+		tweet.link = 'https://twitter.com/#!' + tweet.user.screen_name + '/status/' + tweet.id;
 	}
 
 	/* Store a date object, and a properly formated date string */
@@ -516,6 +543,44 @@ cleanupMessage: function(tweet)
 },
 
 /*
+	Sanitize a user object
+
+	It is important that all services return the same fields for user objects.
+*/
+cleanupUser: function(user)
+{
+	var avatar			= user.profile_image_url || user.avatar;
+	var largeAvatar		= avatar ? avatar.replace(/_normal/, '') : null;
+	var created			= new Date(user.created_at ? user.created_at : user.created);
+
+	user.counts = user.counts || {};
+
+	return({
+		id:				user.id_str				|| user.id,
+		screenname:		user.screen_name		|| user.screenname,
+		name:			user.name,
+		description:	user.description,
+		url:			user.url,
+		location:		user.location,
+
+		avatar:			avatar,
+		largeAvatar:	largeAvatar,
+		created:		created,
+		createdStr:		this.dateFormat.format(created),
+		'protected':	user['protected'],
+		verified:		user.verified,
+		type:			'human',
+
+		counts: {
+			following:	user.friends_count		|| user.counts.following	|| 0,
+			followers:	user.followers_count	|| user.counts.followers	|| 0,
+			posts:		user.statuses_count		|| user.counts.posts		|| 0,
+			favorites:	user.favourites_count	|| user.counts.favorites	|| 0
+		}
+	});
+},
+
+/*
 	Send a tweet
 
 	resource may be:
@@ -523,14 +588,31 @@ cleanupMessage: function(tweet)
 
 	The params should contain the following fields:
 		status:					The text of the status update, up to 140 chars.
-		in_reply_to_status_id	The ID of a tweet that this is a response to
+		replyto:				The ID of a tweet that this is a response to.
 
-		user_id					The user ID of the recipient when sending a DM
-		screen_name				The screen name of the recipient when sending a DM
+		to						The screenname (prefixed with a '@') or user ID
+								of the intended recipient of a private message.
 */
 sendMessage: function(resource, cb, params)
 {
 	var url	= this.apibase + '/' + this.version + '/';
+
+	if (params) {
+		if (params.to) {
+			if ('string' == params.to && '@' == params.to.charAt(0)) {
+				params.screen_name	= params.to.slice(1);
+			} else {
+				params.user_id		= params.to;
+			}
+
+			delete params.to;
+		}
+
+		if (params.replyto) {
+			params.in_reply_to_status_id = params.replyto;
+			delete params.replyto;
+		}
+	}
 
 	switch (resource) {
 		case 'update':
@@ -566,15 +648,18 @@ sendMessage: function(resource, cb, params)
 	);
 },
 
-getUser: function(screen_name, cb, resource)
+getUser: function(user, cb, resource)
 {
 	var url		= this.apibase + '/' + this.version;
-	var params	= {
-		screen_name:	screen_name
-	};
+	var params	= {};
+
+	if ('string' == typeof(user) && '@' == user.charAt(0)) {
+		params.screen_name	= user.slice(1);
+	} else {
+		params.user_id		= user;
+	}
 
 	resource = resource || 'profile';
-
 	switch (resource) {
 		case 'profile':
 			url += '/users/show';
@@ -592,10 +677,16 @@ getUser: function(screen_name, cb, resource)
 
 	this.oauth.get(this.buildURL(url, params),
 		function(response) {
-			var result = enyo.json.parse(response.text);
+			var result	= enyo.json.parse(response.text);
 
 			if (result) {
-				cb(true, result);
+				if (result[0] && result[0].connections) {
+					cb(true, result[0].connections);
+				} else if (result.id_str) {
+					cb(true, this.cleanupUser(result));
+				} else {
+					cb(false);
+				}
 			} else {
 				cb(false);
 			}
@@ -630,6 +721,16 @@ getUser: function(screen_name, cb, resource)
 changeUser: function(action, cb, params)
 {
 	var url		= this.apibase + '/' + this.version + '/';
+
+	if (params.screenname) {
+		params.screen_name = params.screenname;
+		delete params.screen_name;
+	}
+
+	if (params.id) {
+		params.id_str = params.id;
+		delete params.id;
+	}
 
 	switch (action) {
 		case 'block':
@@ -745,40 +846,43 @@ updateUsers: function(relationship, screen_name, users, cb)
 	url += '.json';
 
 	var resultsfunc = function(response) {
-		if (response) {
-			var result = enyo.json.parse(response.text);
+		if (!response || !response.text || !response.text.length) {
+			cb(false);
+			return;
+		}
 
-			params.cursor = result.next_cursor_str;
+		var result = enyo.json.parse(response.text);
 
-			for (var i = 0, id; id = result.ids[i]; i++) {
-				var u = null;
+		params.cursor = result.next_cursor_str;
 
-				for (var x = 0; u = users[x]; x++) {
-					if (u.id == id) {
-						break;
-					}
-				}
+		for (var i = 0, id; id = result.ids[i]; i++) {
+			var u = null;
 
-				if (u) {
-					results.push(u);
-				} else {
-					results.push({
-						id:	id
-					});
+			for (var x = 0; u = users[x]; x++) {
+				if (u.id == id) {
+					break;
 				}
 			}
 
-			if (result.next_cursor == 0) {
-				/*
-					The results array now contains an entry for each user, with
-					an id and possibly a screen_name. We must now make another
-					request to obtain the screen_name for any missing users.
-
-					This must be done in chunks of up to 100.
-				*/
-				this.getScreenNames(results, cb);
-				return;
+			if (u) {
+				results.push(u);
+			} else {
+				results.push({
+					id:	id
+				});
 			}
+		}
+
+		if (result.next_cursor == 0) {
+			/*
+				The results array now contains an entry for each user, with
+				an id and possibly a screen_name. We must now make another
+				request to obtain the screen_name for any missing users.
+
+				This must be done in chunks of up to 100.
+			*/
+			this.getScreenNames(results, cb);
+			return;
 		}
 
 		this.oauth.get(this.buildURL(url, params),
@@ -823,9 +927,9 @@ getScreenNames: function(users, cb)
 				for (var x = 0, u; u = users[x]; x++) {
 					if (r.id_str == u.id) {
 						/* We only care about a few fields */
-						u.screen_name		= r.screen_name;
+						u.screenname		= r.screen_name;
 						u.name				= r.name;
-						u.profile_image_url	= r.profile_image_url;
+						u.avatar			= r.profile_image_url;
 						break;
 					}
 				}

@@ -147,7 +147,7 @@ create: function()
 	} else if (this.screenname) {
 		this.$.screenname.setContent('@' + this.screenname);
 
-		this.service.getUser(this.screenname, function(success, profile) {
+		this.service.getUser('@' + this.screenname, function(success, profile) {
 			if (success) {
 				this.setProfile(profile);
 			} else {
@@ -159,10 +159,10 @@ create: function()
 	if (!this.relationships) {
 		this.following = undefined;
 
-		if (this.user.screen_name != this.screenname) {
-			this.service.getUser(this.screenname, function(success, result) {
+		if (this.user.screenname != this.screenname) {
+			this.service.getUser('@' + this.screenname, function(success, result) {
 				if (success) {
-					this.setRelationship(result[0].connections);
+					this.setRelationship(result);
 				} else {
 					this.doCloseToaster();
 				}
@@ -177,16 +177,17 @@ profileChanged: function()
 {
 	this.handleResize();
 
-	this.$.screenname.setContent('@' + this.profile.screen_name);
+	this.$.screenname.setContent('@' + this.profile.screenname);
 	this.$.username.setContent(this.profile.name);
 
-	this.$.avatar.applyStyle('background-image', 'url(' + this.profile.profile_image_url + ')');
+	this.$.avatar.applyStyle('background-image', 'url(' + this.profile.avatar + ')');
 
 	this.$.info.destroyClientControls();
 
 	var fields = [
 		[
 			{ field:	'verified',			label:	'Verified Account'	},
+			{ field:	'private',			label:	'Private Account'	},
 			{ field:	'description'									},
 			{ field:	'url'											},
 			{ field:	'location'										},
@@ -194,9 +195,10 @@ profileChanged: function()
 		],
 
 		[
-			{ field:	'statuses_count',	label:	'Tweets'			},
-			{ field:	'friends_count',	label:	'Following'			},
-			{ field:	'followers_count',	label:	'Followers'			}
+			{ field:	'createdStr',		label:	'User Since'		},
+			{ field:	'counts.posts',		label:	this.service.terms.Messages },
+			{ field:	'counts.following',	label:	'Following'			},
+			{ field:	'counts.followers',	label:	'Followers'			}
 		]
 	];
 
@@ -204,10 +206,18 @@ profileChanged: function()
 		var components = [];
 
 		for (var i = 0, item; item = group[i]; i++) {
-			var value		= this.profile[item.field];
-			var component	= {
-				classes:	item.field
-			};
+			var fieldparts	= item.field.split('.');
+			var component	= {};
+			var value		= this.profile;
+
+			for (var f = 0; fieldparts[f]; f++) {
+				value = value[fieldparts[f]];
+				component.classes = fieldparts[f];
+			}
+
+			if (value == "") {
+				value = null;
+			}
 
 			if (item.name) {
 				component.name = item.name;
@@ -275,7 +285,7 @@ relationshipChanged: function()
 	}
 
 	if (this.profile) {
-		name = this.profile.screen_name;
+		name = this.profile.screenname;
 	} else {
 		name = this.screenname;
 	}
@@ -364,19 +374,21 @@ handleTap: function(sender, event)
 			break;
 
 		case "avatar":
-			var url = this.profile.profile_image_url.replace(/_normal/, '');
+			var url = this.profile.largeAvatar;
 
-			this.doOpenToaster({
-				component: {
-					kind:			Preview,
-					src:			url,
-					url:			url
-				},
+			if (url) {
+				this.doOpenToaster({
+					component: {
+						kind:			Preview,
+						src:			url,
+						url:			url
+					},
 
-				options: {
-					notitle:		true
-				}
-			});
+					options: {
+						notitle:		true
+					}
+				});
+			}
 			break;
 	}
 
@@ -406,7 +418,7 @@ showList: function(name, force)
 				user:						this.user,
 				resource:					'user',
 				params: {
-					screen_name:			this.profile.screen_name
+					screenname:				this.profile.screenname
 				}
 			});
 			this.$.history.render();
@@ -420,7 +432,7 @@ showList: function(name, force)
 				user:						this.user,
 				resource:					'search',
 				params: {
-					q:						'@' + this.profile.screen_name
+					q:						'@' + this.profile.screenname
 				}
 			});
 			this.$.mentions.render();
@@ -434,7 +446,7 @@ showList: function(name, force)
 				user:						this.user,
 				resource:					'favorites',
 				params: {
-					screen_name:			this.profile.screen_name
+					screenname:				this.profile.screenname
 				}
 			});
 			this.$.favorite.render();
