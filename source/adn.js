@@ -9,7 +9,7 @@ var ADNAPI = function(user) {
 		Repost:			'Repost',
 		repost:			'repost',
 		reposted:		'reposted',
-		rp:				'RP'
+		RP:				'RP'
 	};
 
 	if (this.user && this.user.options) {

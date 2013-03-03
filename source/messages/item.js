@@ -198,7 +198,10 @@ setupMessage: function(item, service)
 	this.$.absoluteTime.setContent(item.createdStr);
 
 	if (item.real) {
-		/* This was a RT, show the avatar and name of the person who RT'ed it */
+		/*
+			This was a repost, show the avatar and name of the person who
+			reposted'ed it.
+		*/
 		this.addClass('rt');
 		this.$.rt.addClass('rt');
 

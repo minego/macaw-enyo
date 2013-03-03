@@ -10,7 +10,7 @@ var TwitterAPI = function(user) {
 		Repost:			'Retweet',
 		repost:			'retweet',
 		reposted:		'retweeted',
-		rp:				'RT'
+		RP:				'RT'
 	};
 
 	if (this.user && this.user.options) {

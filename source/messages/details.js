@@ -461,7 +461,7 @@ handleCommand: function(sender, event)
 						item:		this.item
 					});
 				} else {
-					ex('Could not RT');
+					ex('Could not ' + this.service.terms.repost);
 				}
 			}.bind(this), this.item.id_str);
 			break;
@@ -469,7 +469,7 @@ handleCommand: function(sender, event)
 		case "edit":
 			this.doCompose({
 				user:		this.user,
-				text:		'RT @' +
+				text:		this.service.terms.RP + ' @' +
 								this.item.user.screen_name +
 								': ' + this.item.stripped
 			});

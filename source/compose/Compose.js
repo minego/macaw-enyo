@@ -155,7 +155,7 @@ rendered: function(sender, event)
 			}
 		}
 
-		/* When replying to a RT include the person that RT'ed it. */
+		/* When replying to a repost include the person that reposted'ed it. */
 		if (this.replyto.real) {
 			mentions.push('@' + this.replyto.real.user.screen_name);
 		}
