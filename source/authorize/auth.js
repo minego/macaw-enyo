@@ -34,8 +34,7 @@ components: [
 				classes:		"instructions",
 
 				content: [
-					"Before you can use your twitter account with Macaw you",
-					"need to authorize it using twitter's website."
+					"Account authorization"
 				].join(' ')
 			},
 			{
@@ -47,9 +46,17 @@ components: [
 				kind:			onyx.Button,
 				classes:		"button",
 
-				ontap:			"step1",
+				ontap:			"step1twitter",
 
-				content:		"Authorize Account"
+				content:		"Twitter"
+			},
+			{
+				kind:			onyx.Button,
+				classes:		"button",
+
+				ontap:			"step1adn",
+
+				content:		"app.net"
 			}
 		]
 	},
@@ -155,8 +162,6 @@ components: [
 create: function()
 {
 	this.inherited(arguments);
-
-	this.twitter = new TwitterAPI();
 },
 
 restart: function()
@@ -169,7 +174,7 @@ restart: function()
 	this.$.step1.show();
 },
 
-step1: function()
+step1twitter: function()
 {
 	this.$.step1.hide();
 
@@ -186,6 +191,7 @@ step1: function()
 		window.open("", "_auth");
 	}
 
+	this.twitter = new TwitterAPI();
 	this.twitter.authorize(function(params)
 	{
 		if (!params) {
@@ -193,6 +199,7 @@ step1: function()
 			return;
 		}
 
+		this.service = this.twitter;
 		this.$.step2.show();
 
 		/* Save the params, they are needed to complete the authorization */
@@ -200,11 +207,24 @@ step1: function()
 	}.bind(this));
 },
 
+step1adn: function()
+{
+	this.$.step1.hide();
+
+	/*
+		Authorizing with ADN will replace the entire app with the ADN
+		authorization page. After authentication the app will be reloaded with
+		either a token or an error.
+	*/
+	this.adn = new ADNAPI();
+	this.adn.authorize();
+},
+
 step2: function()
 {
 	this.$.step2.hide();
 
-	this.twitter.authorize(function(account)
+	this.service.authorize(function(account)
 	{
 		if (!account) {
 			this.$.failed.show();

@@ -8,8 +8,10 @@ enyo.depends(
 	"webos",
 	"Panels",
 	"BackGesture.js",
-	"twitter.js",
 	"Date.js",
+
+	"twitter.js",
+	"adn.js",
 
 	"toasters",
 	"compose",

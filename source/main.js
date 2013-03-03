@@ -865,6 +865,48 @@ var notify;
 
 onload = function()
 {
+	/* Parse the params and hashes we where loaded with */
+	var params	= {};
+	var hashes	= {};
+
+	if (window.location.search) {
+		var tmp = window.location.search.slice(1).split('&');
+
+		for (var i = 0, param; param = tmp[i]; i++) {
+			var pair = param.split('=');
+
+			if (pair.length != 2) {
+				continue;
+			}
+			params[pair[0]] = decodeURIComponent(pair[1]);
+		}
+	}
+
+	if (window.location.hash) {
+		var tmp = window.location.hash.slice(1).split('&');
+
+		for (var i = 0, param; param = tmp[i]; i++) {
+			var pair = param.split('=');
+
+			if (pair.length != 2) {
+				continue;
+			}
+			hashes[pair[0]] = decodeURIComponent(pair[1]);
+		}
+	}
+
+	/* Are we continuing authorizing an account? */
+	console.log(params, hashes);
+	if (params['adn']) {
+		if (hashes['access_token']) {
+			alert('Sorry, ADN support is still a work in progress: ' + hashes['access_token']);
+		} else if (hashes['error']) {
+			alert('ADN authorization failed: ' + hashes['error']);
+		} else {
+			alert('ADN authorization failed');
+		}
+	}
+
 	/*
 		Packaged chrome apps can not run inline javascript in the html document
 		so we need to initialize here in that case.

@@ -23,6 +23,7 @@
 	"permissions": [
 		"https://twitter.com/",
 		"https://api.twitter.com/",
+		"https://*.app.com/*",
 
 		"geolocation",
 		"storage",
