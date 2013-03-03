@@ -150,7 +150,16 @@ create: function()
 	this.tabWidth	= 0;
 
 	for (var i = 0, u; u = this.users[i]; i++) {
-		u.twitter = new TwitterAPI(u);
+		switch (u.type) {
+			default:
+			case 'twitter':
+				u.service = new TwitterAPI(u);
+				break;
+
+			case 'adn':
+				u.service = new ADNAPI(u);
+				break;
+		}
 	}
 
 	this.createTabs();
@@ -298,7 +307,6 @@ createTabs: function()
 
 						cache:				true,
 						user:				user,
-						twitter:			user.twitter,
 						resource:			tab.type,
 						refreshTime:		tab.refresh,
 						notify:				tab.notify,

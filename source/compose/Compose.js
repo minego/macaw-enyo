@@ -29,7 +29,6 @@ published: {
 	text:						"",		/* Text of the message */
 	dm:							null,	/* User to send a DM to */
 	replyto:					null,	/* Message object to reply to */
-	twitter:					null,
 	user:						null,
 	users:						[]
 },
@@ -107,12 +106,8 @@ create: function()
 
 userChanged: function()
 {
-	if (!this.twitter && this.user) {
-		if (!this.user.twitter) {
-			this.user.twitter = new TwitterAPI(this.user);
-		}
-
-		this.twitter = this.user.twitter;
+	if (this.user) {
+		this.service = this.user.service;
 	}
 
 	if (this.user && this.user.profile) {
@@ -205,8 +200,8 @@ wordLen: function(word)
 
 	try {
 		linklen = {
-			'http:':	this.twitter.config.short_url_length,
-			'https:':	this.twitter.config.short_url_length_https
+			'http:':	this.service.config.short_url_length,
+			'https:':	this.service.config.short_url_length_https
 		};
 	} catch (e) {
 		linklen = {
@@ -411,10 +406,10 @@ nextaccount: function(sender, event)
 	for (var i = 0, u; u = this.users[i]; i++) {
 		if (u.user_id == this.user.user_id) {
 			/*
-				Reset this.twitter so that this.userChanged() will set it based
+				Reset this.service so that this.userChanged() will set it based
 				on the user that we just selected.
 			*/
-			this.twitter = null;
+			this.service = null;
 
 			this.user = this.users[++i % this.users.length];
 			this.userChanged();
@@ -505,7 +500,7 @@ send: function(sender, event)
 	this.$.send.setDisabled(true);
 	this.$.cancel.setDisabled(true);
 
-	this.twitter.sendTweet(resource, function(success, response) {
+	this.service.sendMessage(resource, function(success, response) {
 		if (success) {
 			if (this.todo && this.todo.length > 0) {
 				this.send();

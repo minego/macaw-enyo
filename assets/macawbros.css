@@ -82,7 +82,7 @@ body {
 
 /* tweets.css */
 
-.tweetmsg {
+.listmsg {
 	font-size:				15px;
 	font-weight:			bold;
 	color:					#000;
@@ -91,20 +91,20 @@ body {
 	background:				url('../assets/macawbros/new-tweets-bg.png')	top center no-repeat;
 }
 
-.tweet .text .link {
+.message .text .link {
 	font-weight:			normal;
 }
 
-.tweet .rt,
-.tweet .text {
+.message .rt,
+.message .text {
 	color:					#fff;
 }
 
-.tweet .details,
-.tweet .rt .byline,
-.tweet .screenname,
-.tweet .username,
-.tweet .via {
+.message .details,
+.message .rt .byline,
+.message .screenname,
+.message .username,
+.message .via {
 	color:					#ccc;
 }
 

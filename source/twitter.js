@@ -3,6 +3,11 @@ var TwitterAPI = function(user) {
 	this.version		= '1.1';
 	this.user			= user;
 
+	this.terms = {
+		message:		'tweet',
+		messages:		'tweets'
+	};
+
 	if (this.user && this.user.options) {
 		/* Use whatever key the user's account was created with */
 		this.options = this.user.options;
@@ -172,7 +177,7 @@ authorize: function(cb, params, pin)
 	first argument is a boolean indicating success, and the second is an
 	array of tweets.
 */
-getTweets: function(resource, cb, params)
+getMessages: function(resource, cb, params)
 {
 	var url		= this.apibase + '/' + this.version + '/';
 	var plural	= true;
@@ -209,7 +214,7 @@ getTweets: function(resource, cb, params)
 			break;
 
 		default:
-			console.log('getTweets does not yet support: ' + resource);
+			console.log('getMessages does not yet support: ' + resource);
 			return;
 	}
 	url += '.json';
@@ -223,9 +228,9 @@ getTweets: function(resource, cb, params)
 			}
 
 			if (plural) {
-				this.cleanupTweets(results);
+				this.cleanupMessages(results);
 			} else {
-				this.cleanupTweet(results);
+				this.cleanupMessage(results);
 			}
 
 			if (results) {
@@ -259,7 +264,7 @@ getTweets: function(resource, cb, params)
 	The provided callback will be called when the request is complete. The
 	first argument is a boolean indicating success.
 */
-changeTweet: function(action, cb, id)
+changeMessage: function(action, cb, id)
 {
 	var url		= this.apibase + '/' + this.version + '/';
 	var params	= {
@@ -293,7 +298,7 @@ changeTweet: function(action, cb, id)
 			break;
 
 		default:
-			console.log('changeTweet does not support this action:' + action);
+			console.log('changeMessage does not support this action:' + action);
 			return;
 	}
 	url += '.json';
@@ -309,11 +314,11 @@ changeTweet: function(action, cb, id)
 },
 
 /* Cleanup the provided tweets */
-cleanupTweets: function(tweets)
+cleanupMessages: function(tweets)
 {
 	if (tweets) {
 		for (var i = 0, tweet; tweet = tweets[i]; i++) {
-			tweets[i] = this.cleanupTweet(tweet);
+			tweets[i] = this.cleanupMessage(tweet);
 		}
 	}
 },
@@ -326,7 +331,7 @@ cleanupTweets: function(tweets)
 	same tweet, and it should be called agin if the tweet has been converted to
 	json and back.
 */
-cleanupTweet: function(tweet)
+cleanupMessage: function(tweet)
 {
 	if (tweet.sender_id) {
 		tweet.dm = true;
@@ -517,7 +522,7 @@ cleanupTweet: function(tweet)
 		user_id					The user ID of the recipient when sending a DM
 		screen_name				The screen name of the recipient when sending a DM
 */
-sendTweet: function(resource, cb, params)
+sendMessage: function(resource, cb, params)
 {
 	var url	= this.apibase + '/' + this.version + '/';
 
@@ -531,7 +536,7 @@ sendTweet: function(resource, cb, params)
 			break;
 
 		default:
-			console.log('sendTweet does not yet support: ' + resource);
+			console.log('sendMessage does not yet support: ' + resource);
 			return;
 	}
 	url += '.json';

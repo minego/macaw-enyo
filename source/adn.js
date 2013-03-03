@@ -2,6 +2,11 @@ var ADNAPI = function(user) {
 	this.apibase		= 'https://alpha-api.app.net';
 	this.user			= user;
 
+	this.terms = {
+		message:		'post',
+		messages:		'posts'
+	};
+
 	if (this.user && this.user.options) {
 		/* Use whatever key the user's account was created with */
 		this.options = this.user.options;

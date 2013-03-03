@@ -31,8 +31,7 @@ classes: [
 
 published: {
 	item:							null,
-	user:							null,
-	twitter:						null
+	user:							null
 },
 
 handlers: {
@@ -150,16 +149,11 @@ create: function()
 {
 	this.inherited(arguments);
 
-	if (!this.twitter && this.user) {
-		if (this.user.twitter) {
-			this.twitter = this.user.twitter;
-		} else {
-			this.twitter = new TwitterAPI(this.user);
-		}
+	if (this.user) {
+		this.service = this.user.service;
 	}
 
 	this.$.tweet.setUser(this.user);
-	this.$.tweet.setTwitter(this.twitter);
 	this.$.tweet.setItem(this.item);
 
 	this.log(this.item);
@@ -289,8 +283,7 @@ openProfile: function(sender, event)
 			screenname:		name,
 			profile:		profile,
 
-			user:			this.user,
-			twitter:		this.twitter
+			user:			this.user
 		},
 
 		options: {
@@ -333,15 +326,13 @@ handleCommand: function(sender, event)
 		case "reply":
 			this.doCompose({
 				replyto:	this.item,
-				user:		this.user,
-				twitter:	this.twitter
+				user:		this.user
 			});
 			break;
 
 		case "mention":
 			this.doCompose({
 				user:		this.user,
-				twitter:	this.twitter,
 				text:		'@' + this.item.user.screen_name + ' '
 			});
 			break;
@@ -349,7 +340,6 @@ handleCommand: function(sender, event)
 		case "dm":
 			this.doCompose({
 				user:		this.user,
-				twitter:	this.twitter,
 				dm:			this.item.user
 			});
 			break;
@@ -405,7 +395,7 @@ handleCommand: function(sender, event)
 			break;
 
 		case "block-confirmed":
-			this.twitter.changeUser('block', function(success) {
+			this.service.changeUser('block', function(success) {
 				if (success) {
 					;
 				} else {
@@ -415,7 +405,7 @@ handleCommand: function(sender, event)
 			break;
 
 		case "spam-confirmed":
-			this.twitter.changeUser('spam', function(success) {
+			this.service.changeUser('spam', function(success) {
 				if (success) {
 					;
 				} else {
@@ -461,7 +451,7 @@ handleCommand: function(sender, event)
 			break;
 
 		case "retweet-confirmed":
-			this.twitter.changeTweet('rt', function(success) {
+			this.service.changeMessage('rt', function(success) {
 				if (success) {
 					this.item.retweeted = !this.item.retweeted;
 
@@ -478,7 +468,6 @@ handleCommand: function(sender, event)
 		case "edit":
 			this.doCompose({
 				user:		this.user,
-				twitter:	this.twitter,
 				text:		'RT @' +
 								this.item.user.screen_name +
 								': ' + this.item.stripped
@@ -494,7 +483,7 @@ handleCommand: function(sender, event)
 				action = 'unfavorite';
 			}
 
-			this.twitter.changeTweet(action, function(success) {
+			this.service.changeMessage(action, function(success) {
 				if (success) {
 					this.item.favorited = !this.item.favorited;
 
@@ -538,7 +527,7 @@ handleCommand: function(sender, event)
 			break;
 
 		case "delete-confirmed":
-			this.twitter.changeTweet(this.item.dm ? 'deldm' : 'del', function(success) {
+			this.service.changeMessage(this.item.dm ? 'deldm' : 'del', function(success) {
 				if (success) {
 					this.doTweetAction({
 						action:		'delete',
@@ -554,8 +543,7 @@ handleCommand: function(sender, event)
 		case "convo":
 			this.doConversation({
 				item:		this.item,
-				user:		this.user,
-				twitter:	this.twitter
+				user:		this.user
 			});
 			break;
 	}

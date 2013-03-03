@@ -17,12 +17,11 @@
 enyo.kind({
 
 name:								"Tweet",
-classes:							"tweet",
+classes:							"message",
 
 published: {
 	item:							null,
-	user:							null,
-	twitter:						null
+	user:							null
 },
 
 events: {
@@ -106,23 +105,19 @@ create: function()
 {
 	this.inherited(arguments);
 
-	if (!this.twitter && this.user) {
-		if (this.user.twitter) {
-			this.twitter = this.user.twitter;
-		} else {
-			this.twitter = new TwitterAPI(this.user);
-		}
+	if (this.user) {
+		this.service = this.user.service;
 	}
 
 	if (this.item) {
-		this.setupTweet(this.item);
+		this.setupMessage(this.item);
 	}
 },
 
 itemChanged: function()
 {
 	if (this.item) {
-		this.setupTweet(this.item);
+		this.setupMessage(this.item);
 	}
 },
 
@@ -170,7 +165,7 @@ getRelativeTime: function(date, now_threshold)
 	return [delta, units, "ago"].join(" ");
 },
 
-setupTweet: function(item)
+setupMessage: function(item)
 {
 	if (!item) {
 		return;

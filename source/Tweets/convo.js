@@ -21,8 +21,7 @@ classes:								"tweetconvo tweetlist",
 
 published: {
 	item:								null,
-	user:								null,
-	twitter:							null
+	user:								null
 },
 
 events: {
@@ -57,12 +56,8 @@ create: function()
 {
 	this.inherited(arguments);
 
-	if (!this.twitter && this.user) {
-		if (this.user.twitter) {
-			this.twitter = this.user.twitter;
-		} else {
-			this.twitter = new TwitterAPI(this.user);
-		}
+	if (this.user) {
+		this.service = this.user.service;
 	}
 },
 
@@ -107,7 +102,7 @@ gotTweet: function(success, result)
 
 	/* Get the next item */
 	if (result.in_reply_to_status_id_str) {
-		this.twitter.getTweets('show', this.gotTweet.bind(this), {
+		this.service.getMessages('show', this.gotTweet.bind(this), {
 			id:	result.in_reply_to_status_id_str
 		});
 	}
@@ -125,8 +120,7 @@ itemTap: function(sender, event)
 		component: {
 			kind:			"TweetDetails",
 			item:			item,
-			user:			this.user,
-			twitter:		this.twitter
+			user:			this.user
 		},
 
 		options:{
@@ -156,7 +150,7 @@ setupItem: function(sender, event)
 		this.$.tweet.removeClass('favorite');
 	}
 
-	this.$.tweet.setupTweet(item);
+	this.$.tweet.setupMessage(item);
 }
 
 });

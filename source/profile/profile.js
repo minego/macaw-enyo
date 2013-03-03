@@ -25,8 +25,7 @@ published: {
 	profile:							null,	/* The profile if already loaded */
 	relationship:						null,	/* A list of connections to this user */
 
-	user:								null,
-	twitter:							null
+	user:								null
 },
 
 handlers: {
@@ -139,12 +138,8 @@ create: function()
 {
 	this.inherited(arguments);
 
-	if (!this.twitter && this.user) {
-		if (this.user.twitter) {
-			this.twitter = this.user.twitter;
-		} else {
-			this.twitter = new TwitterAPI(this.user);
-		}
+	if (this.user) {
+		this.service = this.user.service;
 	}
 
 	if (this.profile) {
@@ -152,7 +147,7 @@ create: function()
 	} else if (this.screenname) {
 		this.$.screenname.setContent('@' + this.screenname);
 
-		this.twitter.getUser(this.screenname, function(success, profile) {
+		this.service.getUser(this.screenname, function(success, profile) {
 			if (success) {
 				this.setProfile(profile);
 			} else {
@@ -165,7 +160,7 @@ create: function()
 		this.following = undefined;
 
 		if (this.user.screen_name != this.screenname) {
-			this.twitter.getUser(this.screenname, function(success, result) {
+			this.service.getUser(this.screenname, function(success, result) {
 				if (success) {
 					this.setRelationship(result[0].connections);
 				} else {
@@ -409,8 +404,6 @@ showList: function(name, force)
 				kind:						"TweetList",
 
 				user:						this.user,
-				twitter:					this.twitter,
-
 				resource:					'user',
 				params: {
 					screen_name:			this.profile.screen_name
@@ -425,8 +418,6 @@ showList: function(name, force)
 				kind:						"TweetList",
 
 				user:						this.user,
-				twitter:					this.twitter,
-
 				resource:					'search',
 				params: {
 					q:						'@' + this.profile.screen_name
@@ -441,8 +432,6 @@ showList: function(name, force)
 				kind:						"TweetList",
 
 				user:						this.user,
-				twitter:					this.twitter,
-
 				resource:					'favorites',
 				params: {
 					screen_name:			this.profile.screen_name

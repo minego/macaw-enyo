@@ -11,7 +11,7 @@
 */
 }
 
-.tweetmsg {
+.listmsg {
 	text-align:				center;
 	font-size:				15px;
 	font-weight:			bold;
@@ -21,18 +21,18 @@
 							url(../../assets/highlight-bottom.png)	center bottom	repeat-x;
 }
 
-.tweet {
+.message {
 	padding:				10px;
 	clear:					both;
 }
 
-.tweet .text .link {
+.message .text .link {
 	font-weight:			bold;
 }
 
-.tweet *:link,
-.tweet *:visited,
-.tweet *:active {
+.message *:link,
+.message *:visited,
+.message *:active {
 	text-decoration:		none;
 	font-weight:			bold;
 	color:					#777;
@@ -44,7 +44,7 @@
 	display:				inline-block;
 }
 
-/* Allow customizing the size of text in the tweetlist */
+/* Allow customizing the size of text in the message list */
 .fontSizeTiny .tweetlist {
 	font-size:				12px;
 }
@@ -75,7 +75,7 @@
 }
 
 
-.tweet {
+.message {
 	/* Leave a space on the side for the avatar */
 	margin-left:			55px;
 
@@ -89,7 +89,7 @@
 	background-repeat:		no-repeat;
 }
 
-.tweet .avatar {
+.message .avatar {
 	-webkit-border-radius:	5px;
 	border-radius:			5px;
 
@@ -102,7 +102,7 @@
 	background-size:		48px;
 }
 
-.tweet .rt .avatar {
+.message .rt .avatar {
 	left:					-25px;
 
 	height:					24px;
@@ -110,13 +110,13 @@
 	background-size:		24px;
 }
 
-.tweet .rt {
+.message .rt {
 	/* Leave a space on the side for the avatar */
 	margin-left:			28px;
 
 	/*
-		Position (but don't actually move) the tweet relative so that the avatar
-		can use absolute positioning and be relative to the tweet.
+		Position (but don't actually move) the message relative so that the
+		avatar can use absolute positioning and be relative to the message.
 	*/
 	position:				relative;
 	height:					28px;
@@ -130,14 +130,14 @@
 	min-height:				auto;
 }
 
-.hideAvatar .tweetlist .tweet .avatar {
+.hideAvatar .tweetlist .message .avatar {
 	display:				none;
 }
 
 
 
-.tweet .details,
-.tweet .rt .byline {
+.message .details,
+.message .rt .byline {
 	color:					#777;
 	height:					12px;
 	line-height:			12px;
@@ -150,28 +150,28 @@
 	white-space:			nowrap;
 }
 
-.tweet .screenname {
+.message .screenname {
 	float:					left;
 	color:					#777;
 	font-weight:			normal;
 }
 
-.tweet .username {
+.message .username {
 	float:					right;
 	color:					#777;
 	font-weight:			normal;
 }
 
-.tweet .rt,
-.tweet .text {
+.message .rt,
+.message .text {
 	clear:					both;
 }
 
-.tweet .time {
+.message .time {
 	padding-right:			5px;
 }
 
-.tweet .via {
+.message .via {
 	color:					#777;
 }
 
@@ -179,11 +179,11 @@
 	Each of these items can be toggled using a user option. If the option is
 	enabled then the relevant class will be set on the main kind.
 */
-.tweet .time.relative,
-.tweet .time.absolute,
-.tweet .username,
-.tweet .screenname,
-.tweet .via {
+.message .time.relative,
+.message .time.absolute,
+.message .username,
+.message .screenname,
+.message .via {
 	display:				none;
 }
 
@@ -196,11 +196,11 @@
 }
 
 /* When showing both relative and absolute times wrap the absolute in parens */
-.showTimeRelative.showTimeAbsolute .tweet .time.absolute:before {
+.showTimeRelative.showTimeAbsolute .message .time.absolute:before {
 	content:				" (";
 }
 
-.showTimeRelative.showTimeAbsolute .tweet .time.absolute:after {
+.showTimeRelative.showTimeAbsolute .message .time.absolute:after {
 	content:				")";
 }
 

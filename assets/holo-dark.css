@@ -37,17 +37,17 @@ body {
 
 /* tweets.css */
 
-.tweetmsg {
+.listmsg {
 	color:					#000;
 	background:				#227594;
 }
 
-.tweet .text .link {
+.message .text .link {
 	font-weight:			normal;
 }
 
-.tweet .rt,
-.tweet .text {
+.message .rt,
+.message .text {
 	color:					#bbb;
 }
 

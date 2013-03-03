@@ -21,7 +21,6 @@ classes:								"tweetlist enyo-fit",
 
 published: {
 	user:								null,
-	twitter:							null,
 	resource:							"home",
 
 	refreshTime:						-1,
@@ -70,7 +69,7 @@ components: [
 				name:					"msg",
 				classes:				"hide"
 			}, {
-				name:					"tweet",
+				name:					"message",
 				kind:					"Tweet"
 			}, {
 				name:					"cover",
@@ -84,12 +83,8 @@ create: function()
 {
 	this.inherited(arguments);
 
-	if (!this.twitter && this.user) {
-		if (this.user.twitter) {
-			this.twitter = this.user.twitter;
-		} else {
-			this.twitter = new TwitterAPI(this.user);
-		}
+	if (this.user) {
+		this.service = this.user.service;
 	}
 
     try {
@@ -135,22 +130,22 @@ rendered: function()
 
 	this.results = [];
 
-	/* Load cached tweets */
+	/* Load cached messages */
 	var results;
 
 	if (this.cache) {
-		results = prefs.get('cachedtweets:' + this.user.user_id + ':' + this.resource) || [];
+		results = prefs.get('cachedmsgs:' + this.user.user_id + ':' + this.resource) || [];
 	} else {
 		results = [];
 	}
 
-	this.twitter.cleanupTweets(results);
+	this.service.cleanupMessages(results);
 
 	if (results && results.length) {
 		this.loading = true;
 		this.doRefreshStart();
 
-		this.gotTweets(true, results, false);
+		this.gotMessages(true, results, false);
 	} else {
 		this.refresh(false);
 	}
@@ -177,7 +172,7 @@ pullComplete: function()
 	autorefresh should be true if the refresh was initiated by a timer and not
 	a human interaction.
 
-	index is the offset where the new tweets should be inserted.
+	index is the offset where the new messages should be inserted.
 */
 refresh: function(autorefresh, index)
 {
@@ -246,8 +241,8 @@ refresh: function(autorefresh, index)
 		params.count = 200;
 	} else {
 		/*
-			We're either trying to load tweets at the end of the list, or trying
-			to fill a gap.
+			We're either trying to load messages at the end of the list, or
+			trying to fill a gap.
 		*/
 		var prev	= this.results[index - 1];
 		var next	= this.results[index + 1];
@@ -263,8 +258,8 @@ refresh: function(autorefresh, index)
 		}
 	}
 
-	this.twitter.getTweets(this.resource, enyo.bind(this, function(success, results) {
-		this.gotTweets(success, results, autorefresh, index);
+	this.service.getMessages(this.resource, enyo.bind(this, function(success, results) {
+		this.gotMessages(success, results, autorefresh, index);
 	}), params);
 },
 
@@ -277,7 +272,7 @@ scroll: function(offset)
 	this.handleActivity();
 },
 
-gotTweets: function(success, results, autorefresh, insertIndex)
+gotMessages: function(success, results, autorefresh, insertIndex)
 {
 	var		changed			= false;
 	var		newCountIndex	= NaN;
@@ -330,7 +325,7 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 		changed = true;
 	}
 
-	/* Remove the "no tweets" indicator */
+	/* Remove the "no messages" indicator */
 	if (this.results.length > 0 && this.results[0].empty) {
 		this.results = [];
 		newCountIndex	= NaN;
@@ -362,7 +357,7 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 		have any items that match existing items then we have no gap.
 	*/
 	var match = true;
-	// this.log(this.resource, 'Pre-gap  detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
+	// this.log(this.resource, 'Pre-gap  detection: There are ' + this.results.length + ' existing messages and ' + results.length + ' new messages');
 	if (this.results.length > 0 && results.length > 0) {
 		for (var n = 0, ni; ni = results[n]; n++) {
 			for (var o = 0, oi; oi = this.results[o]; o++) {
@@ -397,7 +392,7 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 			});
 		}
 	}
-	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing tweets and ' + results.length + ' new tweets');
+	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing messages and ' + results.length + ' new messages');
 
 	/*
 		Figure out where to put the new count indicator.
@@ -498,7 +493,8 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 		}
 
 		/*
-			Flush any old results to keep the total number of loaded tweets sane
+			Flush any old results to keep the total number of loaded messages
+			sane.
 
 			Twitter will never return more than 200 results, so keep a few extra
 			for context.
@@ -509,7 +505,7 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 
 		this.writeCache();
 
-		/* Scroll to the oldest new tweet */
+		/* Scroll to the oldest new messages */
 		setTimeout(enyo.bind(this, function() {
 			var oldtop = this.$.list.getScrollTop();
 
@@ -528,7 +524,7 @@ gotTweets: function(success, results, autorefresh, insertIndex)
 				this.$.list.scrollToRow(dest - (autorefresh ? 0 : 1));
 
 				/*
-					Scroll down just a bit to show that there is another tweet
+					Scroll down just a bit to show that there is another message
 					above this one.
 				*/
 				setTimeout(enyo.bind(this, function() {
@@ -608,7 +604,7 @@ writeCache: function()
 		}
 	}
 
-	prefs.set('cachedtweets:' + this.user.user_id + ':' + this.resource, cache);
+	prefs.set('cachedmsgs:' + this.user.user_id + ':' + this.resource, cache);
 },
 
 setTimer: function()
@@ -642,7 +638,6 @@ itemTap: function(sender, event)
 				kind:			"TweetDetails",
 				item:			item,
 				user:			this.user,
-				twitter:		this.twitter,
 
 				onTweetAction:	"itemAction"
 			},
@@ -709,50 +704,50 @@ setupItem: function(sender, event)
 		return;
 	}
 
-	if (item.id_str && this.$.tweet.id_str === item.id_str) {
+	if (item.id_str && this.$.message.id_str === item.id_str) {
 		/* Already setup */
 		return;
 	}
 
 	if (!item.id_str) {
-		this.$.tweet.setClasses('hide');
-		this.$.msg.setClasses('tweetmsg');
+		this.$.message.setClasses('hide');
+		this.$.msg.setClasses('listmsg');
 
 		if (item.newcount) {
 			if (item.newcount > 1) {
-				this.$.msg.setContent(item.newcount + ' new tweets');
+				this.$.msg.setContent(item.newcount + ' new ' + this.service.terms.message);
 			} else {
-				this.$.msg.setContent(item.newcount + ' new tweet');
+				this.$.msg.setContent(item.newcount + ' new ' + this.service.terms.messages);
 			}
 
 			this.$.msg.addClass('newcount');
 		} else if (item.gap) {
-			this.$.msg.setContent('Tap to load missing tweets');
+			this.$.msg.setContent('Tap to load missing ' + this.service.terms.messages);
 			this.$.msg.addClass('gap');
 		} else if (item.empty) {
-			this.$.msg.setContent('No tweets');
-			this.$.msg.addClass('notweets');
+			this.$.msg.setContent('No ' + this.service.terms.messages);
+			this.$.msg.addClass('nomsgs');
 		} else if (item.loadmore) {
-			this.$.msg.setContent('Tap to load more tweets');
+			this.$.msg.setContent('Tap to load more ' + this.service.terms.messages);
 			this.$.msg.addClass('loadmore');
 		}
 
 		return;
 	}
-	this.$.tweet.id_str = item.id_str;
+	this.$.message.id_str = item.id_str;
 
 	this.$.msg.setClasses('hide');
 	this.$.msg.setContent('');
 
-	this.$.tweet.setClasses('tweet');
+	this.$.message.setClasses('message');
 
 	if (item.favorited) {
-		this.$.tweet.addClass('favorite');
+		this.$.message.addClass('favorite');
 	} else {
-		this.$.tweet.removeClass('favorite');
+		this.$.message.removeClass('favorite');
 	}
 
-	this.$.tweet.setupTweet(item);
+	this.$.message.setupMessage(item);
 },
 
 smartscroll: function()
