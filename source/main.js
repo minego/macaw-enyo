@@ -302,8 +302,7 @@ createTabs: function()
 						name:				"panel" + t,
 						index:				t,
 
-						kind:				"TweetList",
-						classes:			"tweetlist",
+						kind:				"MessageList",
 
 						cache:				true,
 						user:				user,
@@ -588,7 +587,7 @@ conversation: function(sender, options)
 {
 	options = options || {};
 
-	options.kind		= "TweetConvo";
+	options.kind		= "Conversation";
 	options.user		= options.user || this.users[0];
 
 	if (!options.user) {

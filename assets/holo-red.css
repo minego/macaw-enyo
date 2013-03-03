@@ -26,7 +26,7 @@
 	background:				url(../assets/indicator-down-holored.png)		no-repeat;
 }
 
-/* tweets.css */
+/* messages.css */
 .listmsg {
 	background:				#cc0000;
 }
@@ -40,7 +40,7 @@
 	border-top:				2px solid #cc0000;
 }
 
-/* composetweet.css */
+/* compose.css */
 .compose .counter {
 	color:					#cc0000;
 }

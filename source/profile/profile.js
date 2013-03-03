@@ -401,7 +401,7 @@ showList: function(name, force)
 		case 'history':
 			this.$.history.destroyClientControls();
 			this.$.history.createComponent({
-				kind:						"TweetList",
+				kind:						"MessageList",
 
 				user:						this.user,
 				resource:					'user',
@@ -415,7 +415,7 @@ showList: function(name, force)
 		case 'mentions':
 			this.$.mentions.destroyClientControls();
 			this.$.mentions.createComponent({
-				kind:						"TweetList",
+				kind:						"MessageList",
 
 				user:						this.user,
 				resource:					'search',
@@ -429,7 +429,7 @@ showList: function(name, force)
 		case 'favorite':
 			this.$.favorite.destroyClientControls();
 			this.$.favorite.createComponent({
-				kind:						"TweetList",
+				kind:						"MessageList",
 
 				user:						this.user,
 				resource:					'favorites',

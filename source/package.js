@@ -17,7 +17,7 @@ enyo.depends(
 	"compose",
 	"authorize",
 	"options",
-	"Tweets",
+	"messages",
 	"profile",
 	"preview",
 

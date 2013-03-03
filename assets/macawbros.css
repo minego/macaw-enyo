@@ -1,6 +1,6 @@
 /*
  *		Macaw Bros
- *		
+ *
  *		Lovingly crafted by @Choorp
  */
 
@@ -80,7 +80,7 @@ body {
 	background:				none;
 }
 
-/* tweets.css */
+/* messages.css */
 
 .listmsg {
 	font-size:				15px;
@@ -112,7 +112,7 @@ body {
 	color:					#cacaca;
 }
 
-.tweetdetails {
+.messagedetails {
 	font-size:				16px;
 	/*padding-top:				50px;*/
 }
@@ -184,7 +184,7 @@ body {
 	padding:				0px;
 }
 
-/* composetweet.css */
+/* compose.css */
 
 .compose {
 	background:				url('../assets/macawbros/brick-sub2.png')	left top repeat-x,

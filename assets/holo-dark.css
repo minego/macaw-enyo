@@ -35,7 +35,7 @@ body {
 	background:				url(../assets/indicator-down-holodark.png)		no-repeat;
 }
 
-/* tweets.css */
+/* messages.css */
 
 .listmsg {
 	color:					#000;
@@ -70,7 +70,7 @@ body {
 	border-top:				2px solid #227594;
 }
 
-/* composetweet.css */
+/* compose.css */
 
 .compose {
 	background:				#222;
