@@ -21,6 +21,7 @@ classes:								"messagelist enyo-fit",
 
 published: {
 	user:								null,
+
 	resource:							"home",
 
 	refreshTime:						-1,
@@ -422,13 +423,13 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 
 				switch (this.resource.toLowerCase()) {
 					case 'mentions':
-						label		= 'Mentioned by @' + item.user.screen_name;
+						label		= 'Mentioned by @' + item.user.screenname;
 						text		= item.stripped;
 						icon		= item.user.avatar;
 						break;
 
 					case 'messages':
-						label		= 'Message from @' + item.user.screen_name;
+						label		= 'Message from @' + item.user.screenname;
 						text		= item.stripped;
 						icon		= item.user.avatar;
 						break;

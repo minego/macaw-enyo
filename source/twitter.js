@@ -1,4 +1,4 @@
-var TwitterAPI = function(user) {
+var TwitterAPI = function(user, readycb) {
 	this.apibase		= 'https://api.twitter.com';
 	this.version		= '1.1';
 	this.user			= user;
@@ -79,11 +79,22 @@ var TwitterAPI = function(user) {
 		time:		'short'
 	});
 
+	var incomplete = 0;
+	var complete = function() {
+		if (0 == --incomplete) {
+			if (readycb) {
+				readycb();
+			}
+		}
+	};
+
 	/*
 		Load this user's profile information, working under the assumption that
 		a consumer will usually want access to this.
 	*/
 	if (this.user) {
+		incomplete++;
+
 		this.getUser('@' + this.user.screen_name, function(success, profile) {
 			if (success) {
 				this.user.profile		= profile;
@@ -92,6 +103,8 @@ var TwitterAPI = function(user) {
 
 				console.log(this.user);
 			}
+
+			complete();
 		}.bind(this));
 	}
 
@@ -101,12 +114,15 @@ var TwitterAPI = function(user) {
 	*/
 	this.config = {};
 
+	incomplete++;
 	this.oauth.get(this.apibase + '/' + this.version + '/help/configuration.json',
 		function(response) {
 			this.config = enyo.json.parse(response.text);
+			complete();
 		}.bind(this),
 
 		function(response) {
+			complete();
 		}
 	);
 
@@ -115,6 +131,8 @@ var TwitterAPI = function(user) {
 		completion.
 	*/
 	if (this.user) {
+		incomplete++;
+
 		this.user.friends = prefs.get('friends', this.user) || [];
 
 		this.updateUsers('friends', this.user.screen_name, this.user.friends,
@@ -123,12 +141,19 @@ var TwitterAPI = function(user) {
 					this.user.friends = results;
 					prefs.set('friends', this.user.friends, this.user);
 				}
+
+				complete();
 			}.bind(this)
 		);
 	}
 };
 
 TwitterAPI.prototype = {
+
+toString: function()
+{
+	return('twitter');
+},
 
 authorize: function(cb, params, pin)
 {
@@ -193,6 +218,18 @@ getMessages: function(resource, cb, params)
 	var url		= this.apibase + '/' + this.version + '/';
 	var plural	= true;
 
+	params = params || {};
+
+	if (params.user) {
+		if ('string' == params.user && '@' == params.user.charAt(0)) {
+			params.screen_name	= params.user.slice(1);
+		} else {
+			params.user_id		= params.user;
+		}
+
+		delete params.user;
+	}
+
 	switch (resource) {
 		case 'timeline':
 			url += 'statuses/home_timeline';
@@ -209,7 +246,14 @@ getMessages: function(resource, cb, params)
 			break;
 
 		case 'mentions':
-			url += 'statuses/mentions_timeline';
+			if (params.screen_name) {
+				params.q = '@' + params.screen_name;
+				delete params.screen_name;
+
+				url += 'search/tweets';
+			} else {
+				url += 'statuses/mentions_timeline';
+			}
 			break;
 
 		case 'messages':
@@ -230,11 +274,6 @@ getMessages: function(resource, cb, params)
 	}
 	url += '.json';
 
-	if (params.screenname) {
-		params.screen_name = params.screenname;
-		delete params.screen_name;
-	}
-
 	this.oauth.get(this.buildURL(url, params),
 		function(response) {
 			var results = enyo.json.parse(response.text);
@@ -244,9 +283,9 @@ getMessages: function(resource, cb, params)
 			}
 
 			if (plural) {
-				this.cleanupMessages(results);
+				results = this.cleanupMessages(results);
 			} else {
-				this.cleanupMessage(results);
+				results = this.cleanupMessage(results);
 			}
 
 			if (results) {
@@ -338,6 +377,8 @@ cleanupMessages: function(tweets)
 			tweets[i] = this.cleanupMessage(tweet);
 		}
 	}
+
+	return(tweets);
 },
 
 /*
@@ -351,8 +392,9 @@ cleanupMessages: function(tweets)
 cleanupMessage: function(tweet)
 {
 	/*
-		If this is a RT then we want to act on the RT, not the actual tweet
-		in most cases.
+		If this is a repost then we want to act on the original message, not the
+		wrapper. Keep the wrapper around so that the details of the sender can
+		be displayed.
 	*/
 	if (tweet.retweeted_status) {
 		var	real = tweet;
@@ -424,8 +466,8 @@ cleanupMessage: function(tweet)
 	}
 
 	/*
-		Expand shortened links via the entities payload, and generate URLs
-		for thumbnails when possible.
+		Expand shortened links via the entities payload, and generate URLs for
+		thumbnails when possible.
 	*/
 	if (!tweet.media) {
 		tweet.media = [];
@@ -437,6 +479,7 @@ cleanupMessage: function(tweet)
 
 				var url = link.expanded_url.toLowerCase();
 
+				// TODO	Move this logic somewhere that ADN can access
 				tweet.text = tweet.text.replace(new RegExp(link.url, 'g'), link.expanded_url);
 
 				if (-1 != url.indexOf('http://instagr.am/p/') ||

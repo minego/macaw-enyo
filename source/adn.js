@@ -1,4 +1,4 @@
-var ADNAPI = function(user) {
+var ADNAPI = function(user, readycb) {
 	this.apibase		= 'https://alpha-api.app.net/stream/0/';
 	this.user			= user;
 
@@ -64,7 +64,11 @@ var ADNAPI = function(user) {
 
 				console.log(this.user);
 			}
+
+			if (readycb) readycb();
 		}.bind(this));
+	} else {
+		if (readycb) readycb();
 	}
 
 	// TODO Does ADN have a similar concept to the twitter configuration.json?
@@ -73,6 +77,11 @@ var ADNAPI = function(user) {
 };
 
 ADNAPI.prototype = {
+
+toString: function()
+{
+	return('adn');
+},
 
 buildURL: function(url, params)
 {
@@ -118,6 +127,40 @@ post: function(url, body, cb)
 	x.response(this, cb);
 },
 
+cleanupUser: function(user)
+{
+	var created			= new Date(user.created_at ? user.created_at : user.created);
+	var description		= null;
+	var avatar			= null;
+
+	if (user.avatar_image) {
+		avatar = user.avatar_image.url;
+	}
+
+	if (user.description) {
+		description =	user.description.text;
+	}
+
+	return({
+		id:				user.id,
+		name:			user.name,
+		screenname:		user.username	|| user.screenname,
+		description:	description		|| user.description,
+		avatar:			avatar			|| user.avatar,
+
+		created:		created,
+		createdStr:		this.dateFormat.format(created),
+		type:			user.type,
+
+		counts: {
+			following:	user.counts.following	|| 0,
+			followers:	user.counts.followers	|| 0,
+			posts:		user.counts.posts		|| 0,
+			favorites:	user.counts.favorites	|| 0
+		}
+	});
+},
+
 getUser: function(user, cb, resource)
 {
 	var url		= this.apibase;
@@ -138,30 +181,159 @@ getUser: function(user, cb, resource)
 
 	this.get(url, function(sender, response) {
 		if (response.data) {
-			var profile = {
-				id:				response.data.id,
-				screenname:		response.data.username,
-				name:			response.data.name,
-				description:	response.data.description.html ||
-								response.data.description.text,
-
-				avatar:			response.data.avatar_image.url,
-				created:		new Date(response.data.created_at),
-				type:			response.data.type,
-
-				counts: {
-					following:	response.data.counts.following,
-					followers:	response.data.counts.followers,
-					posts:		response.data.counts.posts,
-					favorites:	response.data.counts.favorites
-				}
-			};
-
-			cb(true, profile);
+			cb(true, this.cleanupUser(response.data));
 		} else {
 			cb(false);
 		}
 	});
+},
+
+getMessages: function(resource, cb, params)
+{
+	var plural	= true;
+
+	params = params || {};
+
+	if (params.max_id) {
+		params.before_id = params.max_id;
+		delete params.max_id;
+	}
+
+	var url		= this.apibase;
+	var user	= params.user || 'me';
+
+	switch (resource) {
+		case 'timeline':
+			if (params.user) {
+				console.log('ADN does not support getting a timeline for another user');
+				return;
+			}
+
+			url += 'posts/stream';
+			break;
+
+		case 'user':
+			url += 'users/' + user + '/posts';
+			break;
+
+		case 'show':
+			/* Show a single tweet, requires an "id" in params */
+			plural = false;
+			url += 'posts/' + params.id;
+			break;
+
+		case 'mentions':
+			url += 'users/' + user + '/mentions';
+			break;
+
+		case 'favorites':
+			url += 'users/' + user + '/stars';
+			break;
+
+		case 'messages':
+		case 'search':
+		default:
+			console.log('getMessages does not yet support: ' + resource);
+			return;
+	}
+
+	/* Delete any params that we don't want to include in the URI */
+	delete params.user;
+	delete params.id;
+
+	this.get(url, function(sender, response) {
+		if (response.data) {
+			var results = null;
+
+			if (plural) {
+				results = this.cleanupMessages(response.data);
+			} else {
+				results = this.cleanupMessage(response.data);
+			}
+
+			cb(true, results);
+		} else {
+			cb(false);
+		}
+	});
+},
+
+cleanupMessages: function(messages)
+{
+	if (messages) {
+		for (var i = 0, tweet; tweet = messages[i]; i++) {
+			messages[i] = this.cleanupMessage(tweet);
+		}
+	}
+
+	return(messages);
+},
+
+/*
+	Cleanup the provided message
+
+	This function takes a raw message, and does any processing needed to allow
+	displaying it easily. It is safe to call this function multiple times on the
+	same message, and it should be called agin if the message has been converted
+	to json and back.
+*/
+cleanupMessage: function(message)
+{
+	/*
+		If this is a repost then we want to act on the original message, not the
+		wrapper. Keep the wrapper around so that the details of the sender can
+		be displayed.
+	*/
+	if (message.repost_of) {
+		var	real = message;
+
+		message = real.repost_of;
+		delete real.repost_of;
+
+		/* Both messages need to be cleaned up */
+		message.real = this.cleanupMessage(real);
+	}
+
+	/* Store a date object, and a properly formated date string */
+	switch (typeof(message.created)) {
+		case "string":
+			message.created = new Date(message.created);
+			break;
+		default:
+			message.created = new Date(message.created_at);
+			break;
+	}
+
+	if (message.created && !message.createdStr) {
+		message.createdStr = this.dateFormat.format(message.created);
+	}
+
+	if (message.user) {
+		message.user = this.cleanupUser(message.user);
+	}
+
+	if (message.reply_to) {
+		message.replyto = message.reply_to;
+		delete message.reply_to;
+	}
+
+	if (message.canonical_url) {
+		message.link = message.canonical_url;
+		delete message.canonical_url;
+	}
+
+	if (!message.stripped) {
+		message.stripped = message.text;
+
+		message.text = message.text.replace(/(^|\s)(@|\.@)(\w+)/g, "$1<span id='user' name='$2' class='link'>$2$3</span>");
+		message.text = message.text.replace(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g, "<span id='link' class='link'>$&</span>");
+		message.text = message.text.replace(/(^|\s)#(\w+)/g, "$1<span id='hashtag' class='link'>#$2</span>");
+	}
+
+
+	// TODO	Clean up entities (aka media)
+
+	return(message);
 },
 
 authorize: function(cb, token)
@@ -171,10 +343,17 @@ authorize: function(cb, token)
 			Step 1:	Request an authorization token, and open a browser window so
 					that the user may authorize the app.
 		*/
-		var uri = this.buildURL('http://minego.net/macawadn/',
-			{
-				redirect_uri:	window.location + '?adn=true'
-			});
+		var id	= Math.random();
+		var uri	= this.buildURL('http://minego.net/macawadn/', {
+				redirect_uri:	window.location + '?create=' + id
+		});
+
+		/*
+			Store a random number in our prefs and in the URI so that we can
+			tell if we are looking at an old create request once we've finished
+			this one.
+		*/
+		prefs.set('creating', id);
 
 		var params = {
 			client_id:		this.options.clientID,

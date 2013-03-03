@@ -98,6 +98,27 @@ get: function get(name, account)
 
 set: function set(name, value, account)
 {
+	var restore;
+
+	switch (name) {
+		case 'accounts':
+			restore = [];
+
+			for (var i = 0, a; a = value[i]; i++) {
+				restore[i] = {};
+
+				restore[i].service = a.service;
+				delete a.service;
+
+				restore[i].profile = a.profile;
+				delete a.profile;
+			}
+			break;
+
+		default:
+			break;
+	}
+
 	if (account) {
 		name += account.id;
 	}
@@ -120,6 +141,21 @@ set: function set(name, value, account)
 	} else {
 		enyo.setCookie(name, enyo.json.stringify(value));
 	}
+
+	switch (name) {
+		case 'accounts':
+			for (var i = 0, a; a = value[i]; i++) {
+				a.service = restore[i].service;
+				a.profile = restore[i].profile;
+			}
+
+			delete restore;
+			break;
+
+		default:
+			break;
+	}
+
 
 	if ('undefined' != typeof(this.defaults[name])) {
 		this.updateClasses();

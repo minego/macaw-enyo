@@ -401,6 +401,14 @@ handleTap: function(sender, event)
 
 showList: function(name, force)
 {
+	/*
+		Use @screenname and not the ID because getting mentions by ID does not
+		work for twitter.
+	*/
+	var params = {
+		user: '@' + this.profile.screenname
+	};
+
 	if (!this.loaded) {
 		this.loaded = {};
 	}
@@ -417,9 +425,7 @@ showList: function(name, force)
 
 				user:						this.user,
 				resource:					'user',
-				params: {
-					screenname:				this.profile.screenname
-				}
+				params:						params
 			});
 			this.$.history.render();
 			break;
@@ -430,10 +436,8 @@ showList: function(name, force)
 				kind:						"MessageList",
 
 				user:						this.user,
-				resource:					'search',
-				params: {
-					q:						'@' + this.profile.screenname
-				}
+				resource:					'mentions',
+				params:						params
 			});
 			this.$.mentions.render();
 			break;
@@ -445,9 +449,7 @@ showList: function(name, force)
 
 				user:						this.user,
 				resource:					'favorites',
-				params: {
-					screenname:				this.profile.screenname
-				}
+				params:						params
 			});
 			this.$.favorite.render();
 			break;

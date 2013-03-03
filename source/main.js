@@ -151,7 +151,7 @@ parseQueryString: function(query)
 	return(params);
 },
 
-prepareAccount: function(user)
+prepareAccount: function(user, cb)
 {
 	/* Cleanup from old builds */
 	if (user.user_id) {
@@ -163,11 +163,11 @@ prepareAccount: function(user)
 	switch (user.servicename) {
 		default:
 		case 'twitter':
-			user.service = new TwitterAPI(user);
+			user.service = new TwitterAPI(user, cb);
 			break;
 
 		case 'adn':
-			user.service = new ADNAPI(user);
+			user.service = new ADNAPI(user, cb);
 			break;
 	}
 },
@@ -295,6 +295,8 @@ clearError: function()
 
 createTabs: function()
 {
+	var	createid	= prefs.get('creating');
+
 	/* Remove all existing tabs first so we can recreate them */
 	this.$.tabcontainer.destroyClientControls();
 	this.$.panelcontainer.destroyClientControls();
@@ -302,20 +304,22 @@ createTabs: function()
 	this.tabs		= prefs.get('panels');
 	this.tabWidth	= 100 / this.tabs.length;
 
-	if (this.hashes.error) {
-		ex(this.hashes.error);
-	}
-
 	/* Are we continuing authorizing an account? */
-	if (this.params.adn && this.hashes.access_token) {
-		setTimeout(function() {
-			this.createAccount({
-				servicename:		'adn',
-				accesstoken:		this.hashes.access_token
-			});
-		}.bind(this), 1000);
+	if (this.params.create == createid) {
+		prefs.set('creating', -1);
 
-		return;
+		// TODO	Show hashes.error ?
+
+		if (this.hashes.access_token) {
+			setTimeout(function() {
+				this.createAccount({
+					servicename:		'adn',
+					accesstoken:		this.hashes.access_token
+				});
+			}.bind(this), 1000);
+
+			return;
+		}
 	} else if (!this.users.length || !this.tabs.length) {
 		/* We appear to have no accounts at all, so create a new one. */
 		prefs.set('accounts',	[]);
@@ -673,33 +677,33 @@ accountCreated: function(sender, event)
 {
 	var account = event.account;
 
-	this.closeAllToasters();
-
 	/* Store the list of accounts with the new account included */
-	this.prepareAccount(account);
+	this.prepareAccount(account, function() {
+		this.closeAllToasters();
 
-	this.users.push(account);
-	prefs.set('accounts', this.users);
+		this.users.push(account);
+		prefs.set('accounts', this.users);
 
-	/* Create default tabs for the new user */
-	this.tabs.push({
-		type:		'timeline',
-		label:		'@' + account.screen_name + ' home',
-		id:			account.id
-	});
-	this.tabs.push({
-		type:		'mentions',
-		label:		'@' + account.screen_name + ' mentions',
-		id:			account.id
-	});
-	this.tabs.push({
-		type:		'messages',
-		label:		'@' + account.screen_name + ' ' + account.service.terms.PMs,
-		id:			account.id
-	});
-	prefs.set('panels', this.tabs);
+		/* Create default tabs for the new user */
+		this.tabs.push({
+			type:		'timeline',
+			label:		'@' + account.screenname + ' home',
+			id:			account.id
+		});
+		this.tabs.push({
+			type:		'mentions',
+			label:		'@' + account.screenname + ' mentions',
+			id:			account.id
+		});
+		this.tabs.push({
+			type:		'messages',
+			label:		'@' + account.screenname + ' ' + account.service.terms.PMs,
+			id:			account.id
+		});
+		prefs.set('panels', this.tabs);
 
-	this.createTabs();
+		this.createTabs();
+	}.bind(this));
 },
 
 closeToaster: function()
