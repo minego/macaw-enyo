@@ -2,6 +2,10 @@ var ADNAPI = function(user, readycb) {
 	this.apibase		= 'https://alpha-api.app.net/stream/0/';
 	this.user			= user;
 
+	this.limits = {
+		maxLength:		256
+	};
+
 	this.terms = {
 		message:		'post',
 		messages:		'posts',
@@ -101,10 +105,10 @@ buildURL: function(url, params)
 get: function(url, cb)
 {
 	var x = new enyo.Ajax({
-		url:				url,
-		method:				"GET",
+		url:					url,
+		method:					'GET',
 		headers: {
-			Authorization:	'Bearer ' + this.accesstoken
+			'Authorization':	'Bearer ' + this.accesstoken
 		}
 	});
 	x.go({});
@@ -115,11 +119,12 @@ get: function(url, cb)
 post: function(url, body, cb)
 {
 	var x = new enyo.Ajax({
-		url:				url,
-		method:				"POST",
-		postBody:			body,
+		url:					url,
+		method:					'POST',
+		postBody:				enyo.json.stringify(body),
 		headers: {
-			Authorization:	'Bearer ' + this.accesstoken
+			'Authorization':	'Bearer ' + this.accesstoken,
+			'Content-Type':		'application/json'
 		}
 	});
 	x.go({});
@@ -225,6 +230,7 @@ getMessages: function(resource, cb, params)
 
 	params = params || {};
 
+	/* Use since_id and before_id for ADN */
 	if (params.max_id) {
 		params.before_id = params.max_id;
 		delete params.max_id;
@@ -272,7 +278,7 @@ getMessages: function(resource, cb, params)
 	delete params.user;
 	delete params.id;
 
-	this.get(url, function(sender, response) {
+	this.get(this.buildURL(url, params), function(sender, response) {
 		if (response.data) {
 			var results = null;
 
@@ -371,6 +377,36 @@ cleanupMessage: function(message)
 	// TODO	Clean up entities (aka media)
 
 	return(message);
+},
+
+sendMessage: function(resource, cb, params)
+{
+	var url		= this.apibase + 'posts';
+
+	if (params.status) {
+		params.text = params.status;
+		delete params.status;
+	}
+
+	if (params.replyto) {
+		params.reply_to = params.replyto;
+		delete params.replyto;
+	}
+
+	if (params.to) {
+		// TODO	Add ADN support for PMs
+		ex("Sorry, we don't support ADN PMs yet. We're working on it.");
+		cb(false);
+		return;
+	}
+
+	this.post(url, params, function(sender, response) {
+		if (response.data) {
+			cb(true, response.data);
+		} else {
+			cb(false, response);
+		}
+	});
 },
 
 authorize: function(cb, token)

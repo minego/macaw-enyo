@@ -1,19 +1,25 @@
 var TwitterAPI = function(user, readycb) {
-	this.apibase		= 'https://api.twitter.com';
-	this.version		= '1.1';
-	this.user			= user;
+	this.apibase			= 'https://api.twitter.com';
+	this.version			= '1.1';
+	this.user				= user;
+
+	this.limits = {
+		maxLength:			140,
+		short_http_len:		21,
+		short_htts_len:		22
+	};
 
 	this.terms = {
-		message:		'tweet',
-		messages:		'tweets',
-		Messages:		'Tweets',
+		message:			'tweet',
+		messages:			'tweets',
+		Messages:			'Tweets',
 
-		Repost:			'Retweet',
-		repost:			'retweet',
-		reposted:		'retweeted',
-		RP:				'RT',
-		PM:				'DM',
-		PMs:			'DMs'
+		Repost:				'Retweet',
+		repost:				'retweet',
+		reposted:			'retweeted',
+		RP:					'RT',
+		PM:					'DM',
+		PMs:				'DMs'
 	};
 
 	if (this.user && this.user.options) {
@@ -112,12 +118,18 @@ var TwitterAPI = function(user, readycb) {
 		Load twitter configuration so that we know how many characters will be
 		used for URL shortening.
 	*/
-	this.config = {};
-
 	incomplete++;
 	this.oauth.get(this.apibase + '/' + this.version + '/help/configuration.json',
 		function(response) {
-			this.config = enyo.json.parse(response.text);
+			var config = enyo.json.parse(response.text);
+
+			if (config.short_url_length) {
+				this.limits.short_http_len = config.short_url_length;
+			}
+
+			if (config.short_url_length_https) {
+				this.limits.short_https_len = config.short_url_length_https;
+			}
 			complete();
 		}.bind(this),
 
@@ -465,6 +477,11 @@ cleanupMessage: function(tweet)
 		tweet.text = tweet.text.replace(/(^|\s)#(\w+)/g, "$1<span id='hashtag' class='link'>#$2</span>");
 	}
 
+	if (tweet.entities && tweet.entities.user_mentions) {
+		tweet.entities.mentions = tweet.entities.user_mentions;
+		delete tweet.entities.user_mentions;
+	}
+
 	/*
 		Expand shortened links via the entities payload, and generate URLs for
 		thumbnails when possible.
@@ -639,31 +656,40 @@ cleanupUser: function(user)
 sendMessage: function(resource, cb, params)
 {
 	var url	= this.apibase + '/' + this.version + '/';
+	var text;
 
-	if (params) {
-		if (params.to) {
-			if ('string' == params.to && '@' == params.to.charAt(0)) {
-				params.screen_name	= params.to.slice(1);
-			} else {
-				params.user_id		= params.to;
-			}
+	params = params || {};
 
-			delete params.to;
+	var text = params.text || params.status || '';
+	delete params.text;
+	delete params.status;
+
+	if (params.to) {
+		url += 'direct_messages/new';
+
+		if ('string' == params.to && '@' == params.to.charAt(0)) {
+			params.screen_name	= params.to.slice(1);
+		} else {
+			params.user_id		= params.to;
 		}
 
-		if (params.replyto) {
-			params.in_reply_to_status_id = params.replyto;
-			delete params.replyto;
-		}
+		delete params.to;
+		params.text = text;
+	} else {
+		url += 'statuses/update';
+		params.status = text;
+	}
+
+	if (params.replyto) {
+		params.in_reply_to_status_id = params.replyto;
+		delete params.replyto;
 	}
 
 	switch (resource) {
 		case 'update':
-			url += 'statuses/update';
 			break;
 
 		case 'message':
-			url += 'direct_messages/new';
 			break;
 
 		default:

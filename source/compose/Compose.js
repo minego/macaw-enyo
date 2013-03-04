@@ -108,6 +108,9 @@ userChanged: function()
 {
 	if (this.user) {
 		this.service = this.user.service;
+		this.maxLength = this.service.limits.maxLength;
+
+		this.change();
 	}
 
 	if (this.user && this.user.profile) {
@@ -148,7 +151,7 @@ rendered: function(sender, event)
 		}
 
 		if (this.replyto.entities) {
-			for (var i = 0, m; m = this.replyto.entities.user_mentions[i]; i++) {
+			for (var i = 0, m; m = this.replyto.entities.mentions[i]; i++) {
 				if (!this.user || m.screenname !== this.user.screenname) {
 					mentions.push('@' + m.screenname);
 				}
@@ -196,27 +199,25 @@ rendered: function(sender, event)
 
 wordLen: function(word)
 {
-	var linklen;
+	if (this.service.limits) {
+		var linklen = {};
 
-	try {
-		linklen = {
-			'http:':	this.service.config.short_url_length,
-			'https:':	this.service.config.short_url_length_https
-		};
-	} catch (e) {
-		linklen = {
-			'http:':	21,
-			'https:':	22
-		};
-	}
+		if (this.service.limits.short_http_len) {
+			linklen.http = this.service.limits.short_http_len;
+		}
 
-	for (var key in linklen) {
-		if (0 == word.indexOf(key)) {
-			if (word.length > linklen[key]) {
-				return(linklen[key]);
+		if (this.service.limits.short_https_len) {
+			linklen.https = this.service.limits.short_https_len;
+		}
+
+		for (var key in linklen) {
+			if (0 == word.indexOf(key)) {
+				if (word.length > linklen[key]) {
+					return(linklen[key]);
+				}
+
+				break;
 			}
-
-			break;
 		}
 	}
 
@@ -489,11 +490,12 @@ send: function(sender, event)
 		} else if (this.replyto) {
 			params.to = this.replyto.recipient.id;
 		}
-		params.text		= params.status;
+	} else {
+		delete params.to;
 
-		delete params.status;
-	} else if (this.replyto && !this.replyto.dm) {
-		params.replyto = this.replyto.id;
+		if (this.replyto && !this.replyto.dm) {
+			params.replyto = this.replyto.id;
+		}
 	}
 
 	/* Actually send it */
