@@ -471,12 +471,8 @@ cleanupMessage: function(tweet)
 		tweet.createdStr = this.dateFormat.format(tweet.created);
 	}
 
-	if (!tweet.stripped) {
-		tweet.stripped = tweet.text || '';
-	}
-
-	tweet.text	= EntityAPI.text(tweet);
-	tweet.media	= EntityAPI.media(tweet.entities.urls);
+	EntityAPI.text(tweet);
+	tweet.media = EntityAPI.media(tweet.entities.urls);
 
 	/* Generate thumbnail links based on the twitter media entities as well */
 	if (tweet.entities && tweet.entities.media) {

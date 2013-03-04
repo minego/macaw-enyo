@@ -10,11 +10,15 @@ types: [
 
 text: function(message)
 {
-	var text = '';
+	var text;
 
-	if (message) {
-		text = message.stripped || message.text;
+	if (message.stripped) {
+		/* Already done */
+		return;
 	}
+
+	message.stripped = message.text || '';
+	text = message.stripped;
 
 	if (message.entities) {
 		/* We prefer the 'urls' name */
@@ -42,7 +46,6 @@ text: function(message)
 	}
 
 	message.text = text;
-	return(message.text);
 },
 
 /*

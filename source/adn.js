@@ -368,13 +368,8 @@ cleanupMessage: function(message)
 		}
 	}
 
-
-	if (!message.stripped) {
-		message.stripped = message.text || '';
-	}
-
-	message.text	= EntityAPI.text(message);
-	message.media	= EntityAPI.media(message.entities.urls);
+	EntityAPI.text(message);
+	message.media = EntityAPI.media(message.entities.urls);
 
 	return(message);
 },
