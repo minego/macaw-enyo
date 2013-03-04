@@ -688,12 +688,14 @@ accountCreated: function(sender, event)
 		this.tabs.push({
 			type:		'timeline',
 			label:		'@' + account.screenname + ' home',
-			id:			account.id
+			id:			account.id,
+			service:	account.servicename
 		});
 		this.tabs.push({
 			type:		'mentions',
 			label:		'@' + account.screenname + ' mentions',
-			id:			account.id
+			id:			account.id,
+			service:	account.servicename
 		});
 
 		if (account.servicename != 'adn') {
@@ -703,7 +705,8 @@ accountCreated: function(sender, event)
 			this.tabs.push({
 				type:		'messages',
 				label:		'@' + account.screenname + ' ' + account.service.terms.PMs,
-				id:			account.id
+				id:			account.id,
+				service:	account.servicename
 			});
 		}
 		prefs.set('panels', this.tabs);
