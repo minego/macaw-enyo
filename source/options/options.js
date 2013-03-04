@@ -487,6 +487,7 @@ tabAction: function(sender, event)
 				tabs[tabIndex] = tmp;
 
 				this.createTabList();
+				prefs.set('panels', tabs);
 
 				/* Let the main kind know it needs to re-render */
 				this.doTabsChanged();
@@ -500,6 +501,7 @@ tabAction: function(sender, event)
 				tabs[tabIndex] = tmp;
 
 				this.createTabList();
+				prefs.set('panels', tabs);
 
 				/* Let the main kind know it needs to re-render */
 				this.doTabsChanged();
