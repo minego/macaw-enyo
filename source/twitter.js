@@ -508,7 +508,16 @@ cleanupUser: function(user)
 {
 	var avatar			= user.profile_image_url || user.avatar;
 	var largeAvatar		= avatar ? avatar.replace(/_normal/, '') : null;
-	var created			= new Date(user.created_at ? user.created_at : user.created);
+	var created			= null;
+
+	if (user.created_at) {
+		created = new Date(user.created_at);
+	} else if (user.created) {
+		created = new Date(user.created);
+	}
+	if (created && isNaN(created.getTime())) {
+		created = null;
+	}
 
 	user.counts = user.counts || {};
 
@@ -523,7 +532,7 @@ cleanupUser: function(user)
 		avatar:			avatar,
 		largeAvatar:	largeAvatar,
 		created:		created,
-		createdStr:		this.dateFormat.format(created),
+		createdStr:		created ? this.dateFormat.format(created) : null,
 		'protected':	user['protected'],
 		verified:		user.verified,
 		type:			'human',
