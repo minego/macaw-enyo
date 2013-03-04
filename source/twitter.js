@@ -123,12 +123,14 @@ var TwitterAPI = function(user, readycb) {
 		function(response) {
 			var config = enyo.json.parse(response.text);
 
-			if (config.short_url_length) {
-				this.limits.short_http_len = config.short_url_length;
-			}
+			if (config) {
+				if (config.short_url_length) {
+					this.limits.short_http_len = config.short_url_length;
+				}
 
-			if (config.short_url_length_https) {
-				this.limits.short_https_len = config.short_url_length_https;
+				if (config.short_url_length_https) {
+					this.limits.short_https_len = config.short_url_length_https;
+				}
 			}
 			complete();
 		}.bind(this),
@@ -470,130 +472,25 @@ cleanupMessage: function(tweet)
 	}
 
 	if (!tweet.stripped) {
-		tweet.stripped = tweet.text;
-
-		tweet.text = tweet.text.replace(/(^|\s)(@|\.@)(\w+)/g, "$1<span id='user' name='$2' class='link'>$2$3</span>");
-		tweet.text = tweet.text.replace(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g, "<span id='link' class='link'>$&</span>");
-		tweet.text = tweet.text.replace(/(^|\s)#(\w+)/g, "$1<span id='hashtag' class='link'>#$2</span>");
+		tweet.stripped = tweet.text || '';
 	}
 
-	if (tweet.entities && tweet.entities.user_mentions) {
-		tweet.entities.mentions = tweet.entities.user_mentions;
-		delete tweet.entities.user_mentions;
-	}
+	tweet.text	= EntityAPI.text(tweet);
+	tweet.media	= EntityAPI.media(tweet.entities.urls);
 
-	/*
-		Expand shortened links via the entities payload, and generate URLs for
-		thumbnails when possible.
-	*/
-	if (!tweet.media) {
-		tweet.media = [];
-		if (tweet.entities && tweet.entities.urls) {
-			for (var i = 0, link; link = tweet.entities.urls[i]; i++) {
-				if (link.expanded_url === null) {
-					continue;
-				}
-
-				var url = link.expanded_url.toLowerCase();
-
-				// TODO	Move this logic somewhere that ADN can access
-				tweet.text = tweet.text.replace(new RegExp(link.url, 'g'), link.expanded_url);
-
-				if (-1 != url.indexOf('http://instagr.am/p/') ||
-					-1 != url.indexOf('http://instagram.com/p/')
-				) {
-					// Changed from ?size=t so Touchpad details looks better
-					tweet.media.push({
-						thumbnail:	link.expanded_url + "media/?size=m",
-						link:		link.expanded_url
-					});
-				} else if (-1 != url.indexOf('http://twitpic.com')) {
-					var img = link.expanded_url.substr(link.expanded_url.indexOf('/', 8) + 1);
-
-					tweet.media.push({
-						thumbnail:	"http://twitpic.com/show/thumb/" + img,
-						link:		link.expanded_url
-					});
-				} else if (-1 != url.indexOf('http://youtu.be')) {
-					var img = link.expanded_url.substr(link.expanded_url.indexOf("/", 8) + 1);
-
-					if (-1 != img.indexOf('&', 0)) {
-						img = img.slice(0, img.indexOf('&', 0));
-					}
-
-					if (-1 != img.indexOf('?',0)) {
-						img = img.slice(0, img.indexOf('?', 0));
-					}
-
-					if (-1 != img.indexOf('#', 0)) {
-						img = img.slice(0, img.indexOf('#', 0));
-					}
-
-					tweet.media.push({
-						thumbnail:	"http://img.youtube.com/vi/" + img + "/hqdefault.jpg",
-						link:		link.expanded_url
-					});
-
-				} else if (-1 != url.indexOf('youtube.com/watch')) {
-					var img = link.expanded_url.substr(link.expanded_url.indexOf("v=", 8) + 2);
-
-					if (-1 != img.indexOf('&', 0)) {
-						img = img.slice(0, img.indexOf('&', 0));
-					}
-
-					if (-1 != img.indexOf('?',0)) {
-						img = img.slice(0, img.indexOf('?', 0));
-					}
-
-					if (-1 != img.indexOf('#', 0)) {
-						img = img.slice(0, img.indexOf('#', 0));
-					}
-
-					tweet.media.push({
-						thumbnail:	"http://img.youtube.com/vi/" + img + "/hqdefault.jpg",
-						link:		link.expanded_url
-					});
-				} else if (-1 != url.indexOf('http://yfrog.com')) {
-					tweet.media.push({
-						thumbnail:	link.expanded_url + ":iphone",
-						link:		link.expanded_url
-					});
-				} else if (-1 != url.indexOf('img.ly')) {
-					var img = link.expanded_url.substr(link.expanded_url.indexOf('/', 8) + 1);
-
-					tweet.media.push({
-						thumbnail:	"http://img.ly/show/medium/" + img,
-						link:		link.expanded_url
-					});
-				} else if (-1 != url.indexOf('http://phnx.ws/')) {
-					tweet.media.push({
-						thumbnail:	link.expanded_url + "/thumb",
-						link:		link.expanded_url
-					});
-				} else if (-1 != url.indexOf('last.fm/')) {
-					tweet.media.push({
-						/* Sizes: 34s, 64s, 126 */
-						thumbnail:	link.expanded_url.replace(/300x300/, '64s'),
-						link:		link.expanded_url
-					});
-				}
+	/* Generate thumbnail links based on the twitter media entities as well */
+	if (tweet.entities && tweet.entities.media) {
+		for (var i = 0, link; link = tweet.entities.media[i]; i++) {
+			if (link.url === null) {
+				continue;
 			}
-		}
 
-		/* Generate thumbnail links based on the media entities as well */
-		if (tweet.entities && tweet.entities.media) {
-			for (var i = 0, link; link = tweet.entities.media[i]; i++) {
-				if (link.media_url === null) {
-					continue;
-				}
+			tweet.text = tweet.text.replace(new RegExp(link.url, 'g'), link.url);
 
-				tweet.text = tweet.text.replace(new RegExp(link.url, 'g'), link.media_url);
-
-				tweet.media.push({
-					link:		link.media_url,
-					thumbnail:	link.media_url + ":small"
-				});
-			}
+			tweet.media.push({
+				link:		link.url,
+				thumbnail:	link.url + ":small"
+			});
 		}
 	}
 

@@ -10,6 +10,7 @@ enyo.depends(
 	"BackGesture.js",
 	"Date.js",
 
+	"entities.js",
 	"twitter.js",
 	"adn.js",
 

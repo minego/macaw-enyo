@@ -31,7 +31,8 @@ events: {
 },
 
 handlers: {
-	ontap:							"handleTap"
+	ontap:							"handleTap",
+	onclick:						"preventClick"
 },
 
 components: [
@@ -248,6 +249,12 @@ setupMessage: function(item, service)
 	}
 },
 
+preventClick: function(sender, event)
+{
+	event.preventDefault();
+	return(true);
+},
+
 handleTap: function(sender, event)
 {
 	var classes;
@@ -259,7 +266,11 @@ handleTap: function(sender, event)
 	if (event.target) {
 		switch (event.target.id) {
 			case "link":
-				this.doTapLink({ url: event.target.innerText });
+				if (event.target.href) {
+					this.doTapLink({ url: event.target.href });
+				} else {
+					this.doTapLink({ url: event.target.innerText });
+				}
 				return;
 
 			case "user":

@@ -75,8 +75,6 @@ var ADNAPI = function(user, readycb) {
 		if (readycb) readycb();
 	}
 
-	// TODO Does ADN have a similar concept to the twitter configuration.json?
-
 	// TODO	Load a list of friends to use for username auto completion
 };
 
@@ -359,14 +357,6 @@ cleanupMessage: function(message)
 		delete message.canonical_url;
 	}
 
-	if (!message.stripped) {
-		message.stripped = message.text;
-
-		message.text = message.text.replace(/(^|\s)(@|\.@)(\w+)/g, "$1<span id='user' name='$2' class='link'>$2$3</span>");
-		message.text = message.text.replace(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/g, "<span id='link' class='link'>$&</span>");
-		message.text = message.text.replace(/(^|\s)#(\w+)/g, "$1<span id='hashtag' class='link'>#$2</span>");
-	}
-
 	if (message.source) {
 		if (message.source.name) {
 			message.source = message.source.name;
@@ -374,7 +364,12 @@ cleanupMessage: function(message)
 	}
 
 
-	// TODO	Clean up entities (aka media)
+	if (!message.stripped) {
+		message.stripped = message.text || '';
+	}
+
+	message.text	= EntityAPI.text(message);
+	message.media	= EntityAPI.media(message.entities.urls);
 
 	return(message);
 },
