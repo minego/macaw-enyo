@@ -235,7 +235,7 @@ getMessages: function(resource, cb, params)
 	params = params || {};
 
 	if (params.user) {
-		if ('string' == params.user && '@' == params.user.charAt(0)) {
+		if ('string' == typeof params.user && '@' == params.user.charAt(0)) {
 			params.screen_name	= params.user.slice(1);
 		} else {
 			params.user_id		= params.user;
@@ -573,7 +573,7 @@ sendMessage: function(resource, cb, params)
 	if (params.to) {
 		url += 'direct_messages/new';
 
-		if ('string' == params.to && '@' == params.to.charAt(0)) {
+		if ('string' == typeof params.to && '@' == params.to.charAt(0)) {
 			params.screen_name	= params.to.slice(1);
 		} else {
 			params.user_id		= params.to;
@@ -628,7 +628,7 @@ getUser: function(user, cb, resource)
 	var url		= this.apibase + '/' + this.version;
 	var params	= {};
 
-	if ('string' == typeof(user) && '@' == user.charAt(0)) {
+	if ('string' == typeof user && '@' == user.charAt(0)) {
 		params.screen_name	= user.slice(1);
 	} else {
 		params.user_id		= user;
@@ -697,9 +697,14 @@ changeUser: function(action, cb, params)
 {
 	var url		= this.apibase + '/' + this.version + '/';
 
-	if (params.screenname) {
-		params.screen_name = params.screenname;
-		delete params.screen_name;
+	if (params.user) {
+		if ('string' == typeof params.user && '@' == params.user.charAt(0)) {
+			params.screen_name	= params.user.slice(1);
+		} else {
+			params.user_id		= params.user;
+		}
+
+		delete params.user;
 	}
 
 	if (params.id) {

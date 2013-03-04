@@ -397,21 +397,27 @@ handleCommand: function(sender, event)
 		case "block-confirmed":
 			this.service.changeUser('block', function(success) {
 				if (success) {
-					;
+					this.doMessageAction({
+						action:		'delete',
+						item:		this.item
+					});
 				} else {
 					ex('Could not block user');
 				}
-			}.bind(this), { screenname: this.item.user.screenname });
+			}.bind(this), { user: '@' + this.item.user.screenname });
 			break;
 
 		case "spam-confirmed":
 			this.service.changeUser('spam', function(success) {
 				if (success) {
-					;
+					this.doMessageAction({
+						action:		'delete',
+						item:		this.item
+					});
 				} else {
 					ex('Could not block user');
 				}
-			}.bind(this), { screenname: this.item.user.screenname });
+			}.bind(this), { user: '@' + this.item.user.screenname });
 			break;
 
 		case "hide":
