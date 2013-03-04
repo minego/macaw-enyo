@@ -12,6 +12,18 @@
 	font-weight:		bold;
 }
 
+.options .account.twitter {
+	background:			url('../../assets/icons/logo-twitter.png') center left no-repeat;
+	background-size:	contain;
+	padding-left:		20px;
+}
+
+.options .account.adn {
+	background:			url('../../assets/icons/logo-adn.png') center left no-repeat;
+	background-size:	contain;
+	padding-left:		20px;
+}
+
 .options .section {
 	width:				250px;
 	padding:			5px 10px 0px 10px;
