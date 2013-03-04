@@ -216,7 +216,8 @@ save: function()
 		id:			this.$.accounts.getSelected().value,
 		refresh:	this.$.refresh.getSelected().value,
 		notify:		this.$.notify.getValue(),
-		label:		''
+		label:		'',
+		service:	'twitter'
 	};
 
 	for (var i = 0, a; a = this.accounts[i]; i++) {
@@ -228,6 +229,7 @@ save: function()
 
 	if (account) {
 		tab.label = '@' + account.screenname;
+		tab.service = account.servicename;
 	}
 
 	switch (tab.type) {

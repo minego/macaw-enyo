@@ -422,7 +422,7 @@ createTabList: function()
 		this.$.tablist.createComponent({
 			content:			t.label || t.type,
 			tabIndex:			i,
-			classes:			"tab",
+			classes:			"tab " + (t.service || 'twitter'),
 
 			ontap:				"tabOptions"
 		}, { owner: this });
