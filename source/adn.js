@@ -296,8 +296,13 @@ getMessages: function(resource, cb, params)
 cleanupMessages: function(messages)
 {
 	if (messages) {
-		for (var i = 0, tweet; tweet = messages[i]; i++) {
-			messages[i] = this.cleanupMessage(tweet);
+		for (var i = 0, message; message = messages[i]; i++) {
+			if (message.deleted) {
+				messages.splice(i, 1);
+				i--;
+			} else {
+				messages[i] = this.cleanupMessage(message);
+			}
 		}
 	}
 
