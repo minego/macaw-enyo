@@ -771,7 +771,8 @@ handleButton: function(sender, event)
 				onOptionsChanged:	"optionsChanged",
 				onCreateAccount:	"createAccount"
 			}, {
-				owner:				this
+				owner:				this,
+				toastName: 			"options"
 			});
 
 			break;

@@ -205,7 +205,8 @@ showPreview: function(src, url)
 		},
 
 		options: {
-			notitle:		true
+			notitle:		true,
+			toastName:		"imageView"
 		}
 	});
 },

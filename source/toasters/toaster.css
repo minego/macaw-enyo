@@ -19,6 +19,14 @@
 	bottom:					0;
 }
 
+.toaster-chain.bottom .toaster.slim-width {
+	max-width:				550px;
+	margin:					0 auto 0 auto;
+}
+.toaster-chain.bottom .toaster.full-width {
+	max-width:				100%;
+}
+
 .toaster-chain.top .toaster {
 	top:					-1024px;
 	left:					0px;

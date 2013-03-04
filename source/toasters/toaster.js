@@ -162,6 +162,7 @@ push: function(component, options)
 {
 	var toaster;
 	var last;
+	var toasterClass;
 
 	options = options || {};
 
@@ -178,11 +179,23 @@ push: function(component, options)
 		options.owner = this;
 	}
 
+	switch (options.toastName) {
+		case 'options':
+			toasterClass = 'full-width';
+			break;
+		case 'imageView':
+			toasterClass = 'full-width';
+			break;
+		default:
+			toasterClass = 'slim-width';
+	}
+
 	toaster = this.createComponent({
 		kind:					"toaster",
 
 		title:					options.title,
 		notitle:				options.notitle,
+		classes:				toasterClass,
 		components:				[ component ]
 	}, { owner: options.owner });
 
