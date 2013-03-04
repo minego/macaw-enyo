@@ -388,7 +388,8 @@ handleTap: function(sender, event)
 					},
 
 					options: {
-						notitle:		true
+						notitle:		true,
+						wide:			true
 					}
 				});
 			}

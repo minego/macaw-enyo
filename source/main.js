@@ -772,7 +772,7 @@ handleButton: function(sender, event)
 				onCreateAccount:	"createAccount"
 			}, {
 				owner:				this,
-				toastName: 			"options"
+				wide:				true
 			});
 
 			break;

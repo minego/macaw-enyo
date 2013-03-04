@@ -206,7 +206,7 @@ showPreview: function(src, url)
 
 		options: {
 			notitle:		true,
-			toastName:		"imageView"
+			wide:			true
 		}
 	});
 },

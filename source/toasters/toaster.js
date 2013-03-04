@@ -65,6 +65,8 @@
 
 		alwaysshow:		If true then the toaster will not be hidden when another
 						toaster is added to the chain.
+
+		wide:			If true then the toaster will use the full screen width.
 */
 
 enyo.kind({
@@ -162,7 +164,6 @@ push: function(component, options)
 {
 	var toaster;
 	var last;
-	var toasterClass;
 
 	options = options || {};
 
@@ -179,23 +180,12 @@ push: function(component, options)
 		options.owner = this;
 	}
 
-	switch (options.toastName) {
-		case 'options':
-			toasterClass = 'full-width';
-			break;
-		case 'imageView':
-			toasterClass = 'full-width';
-			break;
-		default:
-			toasterClass = 'slim-width';
-	}
-
 	toaster = this.createComponent({
 		kind:					"toaster",
 
 		title:					options.title,
 		notitle:				options.notitle,
-		classes:				toasterClass,
+		classes:				options.wide ? 'full-width' : 'slim-width',
 		components:				[ component ]
 	}, { owner: options.owner });
 

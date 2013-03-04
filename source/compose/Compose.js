@@ -100,8 +100,8 @@ create: function()
 {
 	this.inherited(arguments);
 
-	this.userChanged();
 	this.textChanged();
+	this.userChanged();
 },
 
 userChanged: function()
@@ -122,6 +122,7 @@ textChanged: function()
 {
 	this.$.text.setValue(this.text);
 	this.$.text.moveCursorToEnd();
+	this.change();
 },
 
 rendered: function(sender, event)
