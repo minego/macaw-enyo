@@ -103,6 +103,16 @@ components: [
 								{ label: "Bottom",	value: "bottom"	},
 								{ label: "Hidden",	value: "hide"	}
 							]
+						},
+						{
+							label:					"Image Previews",
+							key:					"thumbnails",
+
+							options: [
+								{ label: "Off",		value: "off"	},
+								{ label: "Small",	value: "small"	},
+								{ label: "Large",	value: "large"	}
+							]
 						}
 					]
 				}

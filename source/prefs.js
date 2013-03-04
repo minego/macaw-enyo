@@ -32,7 +32,9 @@ defaults: {
 	showScreenName:		true,
 	showVia:			false,
 	showTime:			"relative",
-	submitOnEnter:		false
+	submitOnEnter:		false,
+
+	thumbnails:			"large"
 },
 
 ready: function(cb)

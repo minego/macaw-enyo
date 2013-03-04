@@ -205,20 +205,35 @@
 }
 
 .thumbnails * {
-	max-width:				30%;
 	min-width:				64px;
-	width:					30%;
 	height:					64px;
 	display:				inline-block;
 
 	-webkit-border-radius:	5px;
 	border-radius:			5px;
 
-	background-size:		auto 64px;
 	background-repeat:		no-repeat;
 	background-position:	center center;
 
 	margin:					5px 2% 0px 0px;
+}
+
+.thumbnailsOff .thumbnails * {
+	display:				none;
+}
+
+.thumbnailsLarge .thumbnails * {
+	max-width:				100%;
+	width:					100%;
+
+	background-size:		100% auto;
+}
+
+.thumbnailsSmall .thumbnails * {
+	max-width:				30%;
+	width:					30%;
+
+	background-size:		auto 64px;
 }
 
 .messagedetails .thumbnails * {
