@@ -134,7 +134,7 @@ rendered: function()
 	/* Load cached messages */
 	var results;
 
-	if (false && this.cache) {
+	if (this.cache) {
 		results = prefs.get('cachedmsgs:' + this.user.id + ':' + this.resource) || [];
 	} else {
 		results = [];
