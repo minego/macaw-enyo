@@ -173,6 +173,7 @@ cleanupUser: function(user)
 		screenname:		user.username	|| user.screenname,
 		description:	description		|| user.description,
 		avatar:			avatar			|| user.avatar,
+		largeAvatar:	'https://alpha-api.app.net/stream/0/users/' + user.id + '/avatar',
 
 		created:		created,
 		createdStr:		created ? this.dateFormat.format(created) : null,
