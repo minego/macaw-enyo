@@ -349,7 +349,7 @@ createAccountList: function()
 		this.$.accounts.createComponent({
 			content:			'@' + a.screenname,
 			account:			a,
-			classes:			"account " + a.servicename,
+			classes:			"account " + (a.servicename || 'twitter'),
 
 			ontap:				"accountOptions"
 		}, { owner: this });
