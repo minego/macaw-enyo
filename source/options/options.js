@@ -18,6 +18,8 @@ enyo.kind({
 name:												"options",
 classes:											"options",
 
+dirtytabs:											false,
+
 events: {
 	onOptionsChanged:								"",
 	onCreateAccount:								"",
@@ -330,6 +332,14 @@ create: function()
 	}
 },
 
+destroy: function()
+{
+	if (this.dirtytabs) {
+		/* Let the main kind know it needs to re-render */
+		this.doTabsChanged();
+	}
+},
+
 createAccountList: function()
 {
 	var accounts = prefs.get('accounts');
@@ -388,7 +398,6 @@ accountAction: function(sender, event)
 			prefs.set('panels', tabs);
 			prefs.set('accounts', accounts);
 
-			/* Let the main kind know it needs to re-render */
 			this.tabsChanged();
 			break;
 	}
@@ -486,11 +495,10 @@ tabAction: function(sender, event)
 				tabs[tabIndex - 1] = tabs[tabIndex];
 				tabs[tabIndex] = tmp;
 
-				this.createTabList();
 				prefs.set('panels', tabs);
 
 				/* Let the main kind know it needs to re-render */
-				this.doTabsChanged();
+				this.tabsChanged();
 			}
 			break;
 
@@ -500,11 +508,9 @@ tabAction: function(sender, event)
 				tabs[tabIndex + 1] = tabs[tabIndex];
 				tabs[tabIndex] = tmp;
 
-				this.createTabList();
 				prefs.set('panels', tabs);
 
-				/* Let the main kind know it needs to re-render */
-				this.doTabsChanged();
+				this.tabsChanged();
 			}
 			break;
 
@@ -513,7 +519,6 @@ tabAction: function(sender, event)
 			tabs.splice(tabIndex, 1);
 			prefs.set('panels', tabs);
 
-			/* Let the main kind know it needs to re-render */
 			this.tabsChanged();
 			break;
 	}
@@ -577,8 +582,7 @@ tabsChanged: function(sender, event)
 	this.createAccountList();
 	this.createTabList();
 
-	/* Let the main kind know it needs to re-render */
-	this.doTabsChanged();
+	this.dirtytabs = true;
 },
 
 show: function()
