@@ -370,7 +370,7 @@ change: function(sender, event)
 	var parts;
 
 	if ((node = this.$.text.hasNode())) {
-		this.text = node.innerText;
+		this.text = node.innerText.trim();
 	} else {
 		this.text = '';
 	}
