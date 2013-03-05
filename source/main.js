@@ -23,7 +23,9 @@ handlers: {
 
 	onCompose:								"compose",
 	onConversation:							"conversation",
-	onTabsChanged:							"createTabs"
+	onTabsChanged:							"createTabs",
+
+	onresize:								"handleResize"
 },
 
 components: [
@@ -286,6 +288,7 @@ create: function()
 rendered: function()
 {
 	this.inherited(arguments);
+	this.handleResize();
 },
 
 clearError: function()
@@ -357,10 +360,8 @@ createTabs: function()
 		}
 
 		components.push({
-			layoutKind:						"FittableRowsLayout",
 			components: [{
 				classes:					"panel",
-				fit:						true,
 
 				components: [
 					{
@@ -395,6 +396,7 @@ createTabs: function()
 
 		components:							components
 	}, { owner: this });
+	this.handleResize();
 
 	/* Recreate the tabs */
 	var tabs = [];
@@ -554,6 +556,28 @@ toolbarsChanged: function()
 	this.$.panels.resized();
 	this.$.toolbar.resized();
 	this.$.tabbar.resized();
+},
+
+handleResize: function()
+{
+	var width	= enyo.dom.getWindowWidth();
+	var w		= 320;
+
+	/*
+		If the width is less than 640 then the 'SkinnyPanels' kind will show a
+		single column.
+
+		Aside from single column we'll set a minimum width of 250 per panel.
+	*/
+	if (width <= 640) {
+		w = width;
+	} else {
+		w = width / (Math.floor(width / 250));
+	}
+
+	for (var t = 0, tab; tab = this.tabs[t]; t++) {
+		this.$['panel' + t].container.applyStyle('width', w + 'px');
+	}
 },
 
 /*
