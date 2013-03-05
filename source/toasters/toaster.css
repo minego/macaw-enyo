@@ -27,6 +27,16 @@
 	max-width:				100%;
 }
 
+/*
+	On devices with a screen width less than 640px make all toasters the full
+	width of the screen.
+*/
+@media screen and (max-width:640px) {
+	.toaster-chain.bottom .toaster.slim-width {
+		max-width:				100%;
+	}
+}
+
 .toaster-chain.top .toaster {
 	top:					-1024px;
 	left:					0px;
