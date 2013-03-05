@@ -44,6 +44,11 @@
 	display:				inline-block;
 }
 
+/* Try to work around issues with enyo.PulldownList */
+.hide-puller .enyo-list-pulldown {
+	display:				none;
+}
+
 /* Allow customizing the size of text in the message list */
 .fontSizeTiny .messagelist {
 	font-size:				12px;

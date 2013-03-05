@@ -41,8 +41,7 @@ events: {
 },
 
 handlers: {
-	onScrollStart:						"handleActivity",
-	onScrollStop:						"handleActivity"
+	onScroll:							"handleActivity"
 },
 
 components: [
@@ -339,8 +338,8 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 		/* Failed */
 		this.$.list.refresh();
 		this.$.list.completePull();
-
 		this.loading = false;
+
 		this.doRefreshStop({
 			count:		0,
 			failed:		true
@@ -576,8 +575,8 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 	if (this.pulled) {
 		this.$.list.completePull();
 	}
-
 	this.loading = false;
+
 	this.doRefreshStop({
 		count:		!isNaN(newCountIndex) ? newCountIndex : 0
 	});
@@ -764,6 +763,16 @@ smartscroll: function()
 handleActivity: function(sender, event)
 {
 	var top = this.$.list.getScrollTop();
+
+	/*
+		Hide the "pull to refresh" text during normal scrolling. It should only
+		be visible when the list is pulled down.
+	*/
+	if (top >= 0) {
+		this.addClass('hide-puller');
+	} else {
+		this.removeClass('hide-puller');
+	}
 
 	if (!this.loading && this.lastScrollTop != top) {
 		this.doActivity({});
