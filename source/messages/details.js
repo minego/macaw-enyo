@@ -253,6 +253,11 @@ openLink: function(sender, event)
 	} else if (-1 != url.indexOf('://twitter.com/#!/' + this.twitterUsername + '/status/' + this.twitterId)) {
 		// TODO	Open a message details toaster for this url...
 
+	} else if (	 0 == url.indexOf('https://files.app.net') &&
+				-1 != url.indexOf('?image')
+	) {
+		/* ADN image based on annotation, "?image" was added by us */
+		this.showPreview(url.slice(0, url.lastIndexOf('?image')));
 	} else if (	-1 != url.indexOf('.jpg') || -1 != url.indexOf('.jpeg') ||
 				-1 != url.indexOf('.png') || -1 != url.indexOf('.gif')
 	) {

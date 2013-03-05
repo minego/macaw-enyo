@@ -276,6 +276,9 @@ getMessages: function(resource, cb, params)
 	delete params.user;
 	delete params.id;
 
+	/* Include annotations so we can show image previews */
+	params.include_post_annotations = 1;
+
 	this.get(this.buildURL(url, params), function(sender, response) {
 		if (response.data) {
 			var results = null;
@@ -369,7 +372,32 @@ cleanupMessage: function(message)
 	}
 
 	EntityAPI.text(message);
-	message.media = EntityAPI.media(message.entities.urls);
+
+	if (!message.media) {
+		message.media = [];
+
+		/* Look through ADN annotations for embedable images */
+		if (message.annotations) {
+			for (var i = 0, a; a = message.annotations[i]; i++) {
+				if (a.type != "net.app.core.oembed" || !a.value) {
+					/* Doesn't look like an image we can embed */
+					continue;
+				}
+
+				if (a.value.type == "photo" && a.value.url && a.value.thumbnail_url) {
+					message.media.push({
+						link:		a.value.url + '?image',
+						thumbnail:	a.value.thumbnail_url
+					});
+				}
+			}
+
+			delete message.annotations;
+		}
+
+		// TODO	Should we remove this? We may end up with duplicates...
+		message.media = EntityAPI.media(message.entities.urls, message.media);
+	}
 
 	return(message);
 },
