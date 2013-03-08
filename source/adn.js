@@ -440,7 +440,7 @@ authorize: function(cb, token)
 					that the user may authorize the app.
 		*/
 		var id	= Math.random();
-		var uri	= this.buildURL('http://minego.net/macawadn/', {
+		var uri	= this.buildURL('https://minego.net/macawadn/', {
 				redirect_uri:	window.location + '?create=' + id
 		});
 

@@ -5,6 +5,11 @@
 		- Other share options (platform specific)
 
 + Compose
+	- Show a menu when tapping on the user's avatar with a checkbox next to
+	  each account to allow cross posting? Need to think that through... There
+	  needs to be an easy way to switch an account but not cross post...
+
+
 	- Auto complete user names (implemented, but not complete)
 	+ Implement missing buttons
 		- Attach image

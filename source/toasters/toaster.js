@@ -180,6 +180,11 @@ push: function(component, options)
 		options.owner = this;
 	}
 
+	if (window.android || window.PalmSystem) {
+		/* Always show wide toasters on these platforms for now */
+		options.wide = true;
+	}
+
 	toaster = this.createComponent({
 		kind:					"toaster",
 
