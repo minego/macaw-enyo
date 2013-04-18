@@ -25,7 +25,7 @@
 <widget
 	xmlns="http://www.w3.org/ns/widgets"
 	xmlns:rim="http://www.blackberry.com/ns/widgets"
-	version="autoversion.1"
+	version="autoversion.1" id="net.minego.macaw"
 >
 	<name>Macaw</name>
 
