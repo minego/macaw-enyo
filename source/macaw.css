@@ -190,11 +190,34 @@ body.Pre3 {
 	}
 }
 
+@keyframes Spin {
+	from {
+		transform:			rotate(0deg);
+	}
+
+	to {
+		transform:			rotate(359deg);
+	}
+}
+
+@keyframes NoSpin {
+	from {
+		transform:			rotate(0deg);
+	}
+
+	to {
+		transform:			rotate(0deg);
+	}
+}
+
+
 .spin {
 	-webkit-animation:		Spin 1s linear infinite;
+	animation:				Spin 1s linear infinite;
 }
 .endspin {
 	-webkit-animation:		NoSpin 0.1s linear;
+	animation:				NoSpin 0.1s linear;
 }
 
 .tab-timeline {

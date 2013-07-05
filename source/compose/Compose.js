@@ -121,7 +121,11 @@ userChanged: function()
 textChanged: function()
 {
 	this.$.text.setValue(this.text);
-	this.$.text.moveCursorToEnd();
+	try {
+		this.$.text.moveCursorToEnd();
+	} catch (e) {
+		// This fails on Firefox OS right now
+	}
 	this.change();
 },
 
@@ -178,7 +182,11 @@ rendered: function(sender, event)
 		}
 
 		this.$.text.setValue(mentions.join(' ') + ' ');
-		this.$.text.moveCursorToEnd();
+		try {
+			this.$.text.moveCursorToEnd();
+		} catch (e) {
+			// This fails on Firefox OS right now
+		}
 
 		/* Highlight all mentions except the person being replied to */
 		if (mentions.length > 1 &&
