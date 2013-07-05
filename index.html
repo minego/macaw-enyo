@@ -18,12 +18,55 @@
 	</head>
 	<body class="enyo-unselectable onyx" onload="onload">
 		<script>
-			try {
-				prefs.ready(function() {
-					new net.minego.macaw.main().renderInto(document.body);
-				});
-			} catch (e) {
-				location = 'debug.html';
+			if (window.navigator && window.navigator.mozApps) {
+				var request = window.navigator.mozApps.getInstalled();
+
+				request.onsuccess = function () {
+					var found	= false;
+					var i		= 0;
+
+					if (request.result && request.result.length) {
+						for (i = 0; i < request.result.length; i++) {
+							if (request.result[i] && request.result[i].manifest &&
+								request.result[i].manifest.name === "MacawEnyo"
+							) {
+								found = true;
+								break;
+							}
+						}
+					}
+
+					if (!found) {
+						this.installUrl = (
+							location.href.substring(0, location.href.lastIndexOf("/")) + "/manifest.webapp"
+						);
+
+						this.doIt = function() {
+							try {
+								var req2 = navigator.mozApps.install(this.installUrl);
+
+								req2.onsuccess = function(data) {
+									document.body.innerHTML = 'Application successfully installed';
+								};
+								req2.onerror = function(error) {
+									document.body.innerHTML = 'Application could not be installed: ' + error;
+								};
+							} catch (error) {
+								this.error = error;
+							}
+						};
+
+						this.doIt();
+					} else {
+						document.body.innerHTML = 'Application is already installed';
+					}
+				}.bind(this);
+
+				request.onerror = function (error) {
+					document.body.innerHTML = 'Could not determine if application is installed';
+				}.bind(this);
+			} else {
+				location = 'app.html';
 			}
 		</script>
 	</body>

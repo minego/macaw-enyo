@@ -3,7 +3,7 @@ VENDOR		:= net.minego
 APPID		:= $(VENDOR).$(APP)
 PKG			:= Macaw
 VERSION		:= 2.2.$(shell git log --pretty=format:'' | wc -l | sed 's/ *//')
-DEPLOY		:= deploy/macaw
+DEPLOY		:= deploy/macaw-enyo
 APK			:= Macaw-debug.apk
 BAR			:= macaw-device.bar
 ZIP			:= macaw.zip
@@ -12,14 +12,16 @@ clean:
 	rm -rf *.ipk *.apk *.bar *.zip deploy build device simulator .tmp 2>/dev/null || true
 
 ${DEPLOY}:
-	mkdir -p deploy/macaw
-	cp -r assets enyo lib source package.js *.png framework_config.json deploy/macaw/
-	cp debug.html deploy/macaw/index.html
+	mkdir -p ${DEPLOY}
+	cp -r assets enyo lib source package.js *.png framework_config.json manifest.webapp ${DEPLOY}
+	cp debug.html ${DEPLOY}/index.html
+	cp debug.html ${DEPLOY}/app.html
 
 release:
 	rm -rf deploy build
 	mkdir build
 	./tools/deploy.sh
+	cp app.html manifest.webapp ${DEPLOY}
 
 ${DEPLOY}/appinfo.json: ${DEPLOY} appinfo.json
 	cat appinfo.json | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/appinfo.json
@@ -52,7 +54,7 @@ ipk: webos
 webos: deploy/${APPID}_${VERSION}_all.ipk
 
 openwebos: webos
-	@scp -r deploy/macaw root@192.168.7.2:/usr/palm/applications/${APPID}
+	@scp -r ${DEPLOY} root@192.168.7.2:/usr/palm/applications/${APPID}
 
 install:
 	@(ls *.ipk 2>/dev/null && palm-install *.ipk)		|| \
