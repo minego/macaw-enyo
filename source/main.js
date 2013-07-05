@@ -593,23 +593,26 @@ isPanelVisible: function(index, selected)
 	}
 
 	/* Is the panel visible?  */
-	var bounds		= panels.getBounds();
-	var pbounds		= panels.getPanels()[0].getBounds();
+	try {
+		var bounds		= panels.getBounds();
+		var pbounds		= panels.getPanels()[0].getBounds();
 
-	/* Figure out the left and right position based on the selected panel */
-	bounds.left		= pbounds.width * selected;
-	bounds.right	= bounds.left + bounds.width;
+		/* Figure out the left and right position based on the selected panel */
+		bounds.left		= pbounds.width * selected;
+		bounds.right	= bounds.left + bounds.width;
 
-	/* Figure out the left and right position of the panel */
-	pbounds.left	= pbounds.width * index;
-	pbounds.right	= pbounds.left + pbounds.width;
+		/* Figure out the left and right position of the panel */
+		pbounds.left	= pbounds.width * index;
+		pbounds.right	= pbounds.left + pbounds.width;
 
-	if (bounds.left > pbounds.left) {
-		return(-1);
-	}
+		if (bounds.left > pbounds.left) {
+			return(-1);
+		}
 
-	if (bounds.right < pbounds.right) {
-		return(1);
+		if (bounds.right < pbounds.right) {
+			return(1);
+		}
+	} catch (e) {
 	}
 
 	return(0);
