@@ -1,31 +1,33 @@
 {
-	"name":					"MacawEnyo",
-	"description":			"An open source micro-blogging client",
-	"launch_path":			"/app.html",
+	"name":						"Macaw",
+	"description":				"An open source micro-blogging client",
+	"launch_path":				"/app.html",
 
 	"icons": {
-		"512":				"/icon512.png",
-		"256":				"/icon256.png",
-		"128":				"/icon128.png",
-		"64":				"/icon64.png",
-		"32":				"/icon32.png",
-		"48":				"/icon48.png",
-		"24":				"/icon24.png"
+		"512":					"/icon512.png",
+		"256":					"/icon256.png",
+		"128":					"/icon128.png",
+		"64":					"/icon64.png",
+		"32":					"/icon32.png",
+		"48":					"/icon48.png",
+		"24":					"/icon24.png"
 	},
 
 	"developer": {
-		"name":				"Micah N Gorrell",
-		"url":				"http://minego.net"
+		"name":					"Micah N Gorrell",
+		"url":					"http://minego.net"
 	},
 
 	"permissions": {
-		"systemXHR":		{},
+		"systemXHR":			{},
 
-		"geolocation":		{},
-		"storage":			{}
+		"geolocation":			{},
+		"storage":				{},
+		"desktop-notification":	{}
 	},
 
-	"type":					"privileged",
+	"type":						"privileged",
 
-	"default_locale":		"en"
+	"default_locale":			"en"
 }
+

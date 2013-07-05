@@ -239,49 +239,65 @@ create: function()
 	notify = function(image, title, message) {
 		var n = null;
 
+		image	= image || '/icon48.png';
+		title	= title || 'macaw';
+
 		try {
-			image	= image || '/icon48.png';
-			title	= title || 'macaw';
-
+			/* webkit */
 			n = webkitNotifications.createNotification(image, title, message);
-
 			n.show();
+			return(n);
 		} catch (e) {
-			this.$.notifications.pop(this.$.notifications.length);
-			this.$.notifications.push({
-				classes:		"error",
-				content:		message,
-
-				ontap:			"clearError"
-			}, {
-				owner:			this,
-
-				noscrim:		true,
-				modal:			true,
-				ignoreback:		true,
-				notitle:		true
-			});
-
-			clearTimeout(this.$.notifications.timeout);
-
-			this.$.notifications.timeout = setTimeout(function() {
-				this.$.notifications.pop(1);
-			}.bind(this), 3000);
-
-			n = {
-				cancel: function() {
-					this.$.notifications.pop(1);
-				}.bind(this)
-			};
 		}
+
+		try {
+			/* mozilla */
+			// TODO	Add support for onclick? It could select the right panel
+			//		and select the tweet in question.
+
+			n = navigator.mozNotification.createNotification(title, message, image);
+			n.show();
+			return(n);
+		} catch (e) {
+		}
+
+
+		this.$.notifications.pop(this.$.notifications.length);
+		this.$.notifications.push({
+			classes:		"error",
+			content:		message,
+
+			ontap:			"clearError"
+		}, {
+			owner:			this,
+
+			noscrim:		true,
+			modal:			true,
+			ignoreback:		true,
+			notitle:		true
+		});
+
+		clearTimeout(this.$.notifications.timeout);
+
+		this.$.notifications.timeout = setTimeout(function() {
+			this.$.notifications.pop(1);
+		}.bind(this), 3000);
+
+		n = {
+			cancel: function() {
+				this.$.notifications.pop(1);
+			}.bind(this)
+		};
 
 		return(n);
 	}.bind(this);
 
 	ex = function(error) {
+		var origin = window.location.protocol + '//' + window.location.hostname;
+
 		console.log('ex:', error);
 
-		return(notify('/assets/error.png', 'Error', error));
+		return(notify(origin + '/assets/error.png', 'Error', error));
 	}.bind(this);
 },
 
