@@ -250,7 +250,11 @@ autocomplete: function(value)
 	var c;
 
 	if ((node = this.$.text.hasNode())) {
-		this.text = node.innerText;
+		try {
+			this.text = node.innerText;
+		} catch (e) {
+			this.text = node.textContent;
+		}
 	} else {
 		this.text = '';
 	}
@@ -338,7 +342,11 @@ autocompletetap: function(sender, event)
 	var start;
 
 	if ((node = this.$.text.hasNode())) {
-		this.text = node.innerText;
+		try {
+			this.text = node.innerText;
+		} catch (e) {
+			this.text = node.textContent;
+		}
 	} else {
 		this.text = '';
 	}
@@ -371,7 +379,11 @@ change: function(sender, event)
 	var parts;
 
 	if ((node = this.$.text.hasNode())) {
-		this.text = node.innerText.trim();
+		try {
+			this.text = node.innerText.trim();
+		} catch (e) {
+			this.text = node.textContent.trim();
+		}
 	} else {
 		this.text = '';
 	}
@@ -445,11 +457,15 @@ send: function(sender, event)
 	var node;
 
 	if (this.todo && this.todo.length > 0) {
-		params.status	= this.todo.shift();
+		params.status = this.todo.shift();
 	} else if ((node = this.$.text.hasNode())) {
-		params.status	= node.innerText.trim();
+		try {
+			params.status = node.innerText.trim();
+		} catch (e) {
+			params.status = node.textContent.trim();
+		}
 	} else {
-		params.status	= '';
+		params.status = '';
 	}
 
 	/* Replace any non-breaking spaces with regular spaces */
@@ -530,7 +546,11 @@ split: function()
 	var parts		= [];
 
 	if ((node = this.$.text.hasNode())) {
-		text		= node.innerText.trim();
+		try {
+			text = node.innerText.trim();
+		} catch (e) {
+			text = node.textContent.trim();
+		}
 	} else {
 		text		= '';
 	}

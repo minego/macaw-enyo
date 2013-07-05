@@ -188,7 +188,7 @@ create: function()
 	*/
 	prefs.updateClasses(this);
 
-	this.users		= prefs.get('accounts');
+	this.users		= prefs.get('accounts') || [];
 	this.index		= 0;
 	this.tabs		= [];
 	this.tabWidth	= 0;
@@ -324,7 +324,7 @@ createTabs: function()
 	this.tabWidth	= 100 / this.tabs.length;
 
 	/* Are we continuing authorizing an account? */
-	if (this.params.create == createid) {
+	if (createid && this.params.create == createid) {
 		prefs.set('creating', -1);
 
 		// TODO	Show hashes.error ?
@@ -966,7 +966,13 @@ keypress: function(sender, event)
 moveIndicator: function(sender, event)
 {
 	if (event && !this.ignoreMove) {
-		this.index += event.toIndex - event.fromIndex;
+		var difference = event.toIndex - event.fromIndex;
+
+		if (0 == difference) {
+			return;
+		}
+
+		this.index += difference;
 		this.log(event, this.index, event.toIndex, event.fromIndex);
 
 		if (0 != this.isPanelVisible(this.index)) {
