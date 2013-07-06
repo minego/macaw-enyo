@@ -30,7 +30,13 @@ published: {
 
 	unseen:								0,
 	type:								null,
-	label:								null
+	label:								null,
+
+	/*
+		Minimum number of pixels that the list must be pulled down before a
+		refresh will be triggered in order to prevent accidental refreshes.
+	*/
+	minRefreshPixels:					40
 },
 
 events: {
@@ -61,6 +67,9 @@ components: [
 		thumb:							true,
 		enableSwipe:					false,
 		noSelect:						true,
+
+		preventDragPropagation:			false,
+		preventScrollPropagation:		false,
 
 		components: [{
 			classes:					"listitem",
@@ -153,19 +162,15 @@ rendered: function()
 
 pullRelease: function()
 {
-	if (!this.pulled) {
-		this.pulled = true;
-
-		setTimeout(enyo.bind(this, function() {
-			this.refresh();
-		}), 500);
-	}
+	setTimeout(enyo.bind(this, function() {
+		this.refresh();
+		this.$.list.completePull();
+	}), 500);
 },
 
 pullComplete: function()
 {
 	this.$.list.reset();
-	this.pulled = false;
 },
 
 /*
@@ -201,7 +206,7 @@ refresh: function(autorefresh, index)
 	this.doRefreshStart();
 
 	var params = {
-		include_entities:		true
+		include_entities: true
 	};
 
 	if (this.params) {
@@ -572,9 +577,6 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 		this.$.list.refresh();
 	}
 
-	if (this.pulled) {
-		this.$.list.completePull();
-	}
 	this.loading = false;
 
 	this.doRefreshStop({
@@ -768,11 +770,13 @@ handleActivity: function(sender, event)
 		Hide the "pull to refresh" text during normal scrolling. It should only
 		be visible when the list is pulled down.
 	*/
-	if (top >= 0) {
+if (false) {
+	if (top > 0) {
 		this.addClass('hide-puller');
 	} else {
 		this.removeClass('hide-puller');
 	}
+}
 
 	if (!this.loading && this.lastScrollTop != top) {
 		this.doActivity({});
