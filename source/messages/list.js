@@ -163,8 +163,8 @@ rendered: function()
 pullRelease: function()
 {
 	setTimeout(enyo.bind(this, function() {
+		this.pulled = true;
 		this.refresh();
-		this.$.list.completePull();
 	}), 500);
 },
 
@@ -578,6 +578,10 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 	}
 
 	this.loading = false;
+	if (this.pulled) {
+		this.$.list.completePull();
+		this.pulled = false;
+	}
 
 	this.doRefreshStop({
 		count:		!isNaN(newCountIndex) ? newCountIndex : 0
