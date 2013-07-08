@@ -184,7 +184,7 @@ authorize: function(cb, params, pin)
 			Step 1:	Request an authorization token, and open a browser
 					window so that the user may get a PIN.
 		*/
-		this.oauth.post(this.apibase + '/oauth/request_token', { },
+		this.oauth.get(this.apibase + '/oauth/request_token',
 			function(response) {
 				window.open('https://twitter.com/oauth/authorize?' +
 					response.text, '_auth');
