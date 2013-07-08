@@ -46,7 +46,7 @@
 
 /* Try to work around issues with enyo.PulldownList */
 .hide-puller .enyo-list-pulldown {
-	display:				none;
+	opacity:				0;
 }
 
 /* Allow customizing the size of text in the message list */

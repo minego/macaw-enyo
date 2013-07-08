@@ -773,14 +773,16 @@ handleActivity: function(sender, event)
 	/*
 		Hide the "pull to refresh" text during normal scrolling. It should only
 		be visible when the list is pulled down.
+
+		This sets a style which changes the opacity of the "pull to refresh"
+		text to 0. Setting display: none; breaks the behavior, but setting the
+		opacity does not.
 	*/
-if (false) {
-	if (top > 0) {
+	if (top >= 0) {
 		this.addClass('hide-puller');
 	} else {
 		this.removeClass('hide-puller');
 	}
-}
 
 	if (!this.loading && this.lastScrollTop != top) {
 		this.doActivity({});
