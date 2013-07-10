@@ -34,8 +34,11 @@
 .message a:link,
 .message a:visited,
 .message a:active {
+	font-size:				15px;
 	text-decoration:		none;
+	font-weight:			normal;
 	color:					#777;
+	vertical-align:			bottom;
 
 	max-width:				200px;
 	text-overflow:			ellipsis;
@@ -50,16 +53,20 @@
 }
 
 /* Allow customizing the size of text in the message list */
-.fontSizeTiny .messagelist {
+.fontSizeTiny .messagelist,
+.fontSizeTiny .messagelist a {
 	font-size:				12px;
 }
-.fontSizeSmall .messagelist {
+.fontSizeSmall .messagelist,
+.fontSizeSmall .messagelist a {
 	font-size:				14px;
 }
-.fontSizeMedium .messagelist {
+.fontSizeMedium .messagelist,
+.fontSizeMedium .messagelist a {
 	font-size:				16px;
 }
-.fontSizeLarge .messagelist {
+.fontSizeLarge .messagelist,
+.fontSizeLarge .messagelist a {
 	font-size:				18px;
 }
 
