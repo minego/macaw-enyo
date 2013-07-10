@@ -170,54 +170,40 @@ body.Pre3 {
 	transition:				left .25s;
 }
 
-@-webkit-keyframes Spin {
-	from {
-		-webkit-transform:	rotate(0deg);
-	}
 
-	to {
-		-webkit-transform:	rotate(359deg);
-	}
-}
+/*
+	Spin (or stop spinning) an item for up to 5 minutes
 
-@-webkit-keyframes NoSpin {
-	from {
-		-webkit-transform:	rotate(0deg);
-	}
-
-	to {
-		-webkit-transform:	rotate(0deg);
-	}
-}
-
-@keyframes Spin {
-	from {
-		transform:			rotate(0deg);
-	}
-
-	to {
-		transform:			rotate(359deg);
-	}
-}
-
-@keyframes NoSpin {
-	from {
-		transform:			rotate(0deg);
-	}
-
-	to {
-		transform:			rotate(0deg);
-	}
-}
-
-
+	This was originally done using a keyframe animation, but that failed on some
+	platforms. This approach is simpler, with the only downside being a maximum
+	time period, but for this usage that is okay.
+*/
 .spin {
-	-webkit-animation:		Spin 1s linear infinite;
-	animation:				Spin 1s linear infinite;
+	transition:             transform           300s linear;
+	-webkit-transition:     -webkit-transform   300s linear;
+	-moz-transition:        -moz-transform      300s linear;
+	-o-transition:          -o-transform        300s linear;
+	-ms-transition:         -ms-transform       300s linear;
+
+	transform:              rotate(150000deg);
+	-webkit-transform:      rotate(150000deg);
+	-moz-transform:         rotate(150000deg);
+	-o-transform:           rotate(150000deg);
+	-ms-transform:          rotate(150000deg);
 }
+
 .endspin {
-	-webkit-animation:		NoSpin 0.1s linear;
-	animation:				NoSpin 0.1s linear;
+	transition:             transform           0s linear;
+	-webkit-transition:     -webkit-transform   0s linear;
+	-moz-transition:        -moz-transform      0s linear;
+	-o-transition:          -o-transform        0s linear;
+	-ms-transition:         -ms-transform       0s linear;
+
+	transform:              rotate(0deg);
+	-webkit-transform:      rotate(0deg);
+	-moz-transform:         rotate(0deg);
+	-o-transform:           rotate(0deg);
+	-ms-transform:          rotate(0deg);
 }
 
 .tab-timeline {
