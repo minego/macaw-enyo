@@ -30,11 +30,11 @@
 	font-weight:			bold;
 }
 
+.message a,
 .message a:link,
 .message a:visited,
 .message a:active {
 	text-decoration:		none;
-	font-weight:			bold;
 	color:					#777;
 
 	max-width:				200px;
