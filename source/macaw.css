@@ -105,14 +105,19 @@ body.Pre3 {
 	take the whole screen width.
 
 	When showing multiple columns at once the indicator is not very useful, so
-	hide it.
+	hide it, unless the user selects a panel with the keyboard.
 */
-@media screen and (min-width:640px) {
+@media screen and (min-width:641px) {
 	.indicator {
 		display:			none;
 	}
 
 	.manualIndex .indicator {
+		display:			block;
+	}
+}
+@media all and (max-width: 640px) {
+	.indicator {
 		display:			block;
 	}
 }

@@ -305,6 +305,9 @@ rendered: function()
 {
 	this.inherited(arguments);
 	this.handleResize();
+
+	this.index = 0;
+	this.moveIndicator();
 },
 
 clearError: function()
@@ -446,9 +449,6 @@ createTabs: function()
 	this.toolbarsChanged();
 	this.$.panelcontainer.render();
 	this.$.tabcontainer.render();
-
-	this.index = 0;
-	this.moveIndicator();
 },
 
 panelActivity: function(sender, event)
