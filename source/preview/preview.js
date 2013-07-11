@@ -72,11 +72,36 @@ rendered: function()
 
 create: function()
 {
+	/* Unlock the orientation while looking at an image preview */
+	this.log('Unlocking screen orientation while viewing image preview');
+	try {
+		window.screen.unlockOrientation();
+	} catch (e) {
+		try {
+			window.screen.mozUnLockOrientation();
+		} catch (e) { }
+	}
+
 	this.inherited(arguments);
 
 	if (this.src) {
 		this.srcChanged();
 	}
+},
+
+destroy: function()
+{
+	/* Restore the orientation lock */
+	this.log('Restoring screen orientation lock');
+	try {
+		window.screen.lockOrientation('portrait');
+	} catch (e) {
+		try {
+			window.screen.mozLockOrientation('portrait');
+		} catch (e) { }
+	}
+
+	this.inherited(arguments);
 },
 
 srcChanged: function()
