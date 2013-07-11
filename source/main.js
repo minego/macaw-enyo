@@ -446,6 +446,9 @@ createTabs: function()
 	this.toolbarsChanged();
 	this.$.panelcontainer.render();
 	this.$.tabcontainer.render();
+
+	this.index = 0;
+	this.moveIndicator();
 },
 
 panelActivity: function(sender, event)
@@ -465,7 +468,9 @@ panelActivity: function(sender, event)
 	// this.log(sender.index);
 	count.setContent('');
 
-	if (this.index != sender.index) {
+	if (!this.isReady) {
+		this.isReady = true;
+	} else if (this.index != sender.index) {
 		this.index =  sender.index;
 
 		this.moveIndicator();
@@ -636,21 +641,13 @@ isPanelVisible: function(index, selected)
 
 selectpanel: function(sender, event)
 {
-	var index		= sender.index;
-	var selected	= this.$.panels.getIndex();
-	var offset;
+	var was	= this.index;
 
-	while (0 != (offset = this.isPanelVisible(index, selected))) {
-		selected += offset;
+	this.index = sender.index;
 
-		if (selected > this.tabs.length || selected < 0) {
-			this.log('oops, something went wrong');
-			break;
-		}
-	}
-
-	if (selected != this.$.panels.getIndex()) {
-		this.$.panels.setIndex(selected);
+	if (this.index != was) {
+		this.ignoreMove = true;
+		this.$.panels.setIndex(this.index);
 	} else {
 		this.smartscroll(sender, event);
 	}
@@ -968,16 +965,16 @@ moveIndicator: function(sender, event)
 	if (event && !this.ignoreMove) {
 		var difference = event.toIndex - event.fromIndex;
 
-		if (0 == difference) {
-			return;
-		}
-
 		this.index += difference;
 		this.log(event, this.index, event.toIndex, event.fromIndex);
 
-		if (0 != this.isPanelVisible(this.index)) {
-			this.index = event.toIndex;
-		}
+		this.index = event.toIndex;
+	} else {
+		this.log(this.index);
+	}
+
+	if (this.index === undefined) {
+		this.index = 0;
 	}
 
 	this.ignoreMove = false;
