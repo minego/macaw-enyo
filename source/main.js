@@ -599,6 +599,8 @@ handleResize: function()
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
 		this.$['panel' + t].container.applyStyle('width', w + 'px');
 	}
+
+	this.moveIndicator();
 },
 
 /*
@@ -641,15 +643,27 @@ isPanelVisible: function(index, selected)
 
 selectpanel: function(sender, event)
 {
-	var was	= this.index;
+	var was		= this.index;
+	var move;
 
 	this.index = sender.index;
 
-	if (this.index != was) {
-		this.ignoreMove = true;
-		this.$.panels.setIndex(this.index);
-	} else {
+	if (this.index == was) {
+		/* This panel is already active, scroll to the top or bottom */
 		this.smartscroll(sender, event);
+	} else {
+		move = this.isPanelVisible(this.index);
+
+		if (0 == move) {
+			/* The panel is already visible, so just move the indicator */
+			this.moveIndicator();
+		} else {
+			/* Scroll the panel into view */
+			do {
+				this.ignoreMove = true;
+				this.$.panels.setIndex(this.$.panels.getIndex() + move);
+			} while (0 != (move = this.isPanelVisible(this.index)));
+		}
 	}
 },
 
@@ -870,14 +884,24 @@ keydown: function(sender, event)
 
 			if (this.index > 0) {
 				this.index--;
-
-				if (0 != this.isPanelVisible(this.index)) {
-					this.ignoreMove = true;
-					this.$.panels.setIndex(this.$.panels.getIndex() - 1);
-				} else {
-					this.moveIndicator();
-				}
+			} else {
+				this.index = this.tabs.length - 1;
 			}
+
+			var pindex = this.$.panels.getIndex();
+			if (pindex > 0) {
+				pindex--;
+			} else {
+				pindex = this.tabs.length - 1;
+			}
+
+			if (0 != this.isPanelVisible(this.index)) {
+				this.ignoreMove = true;
+				this.$.panels.setIndex(pindex);
+			} else {
+				this.moveIndicator();
+			}
+
 			break;
 
 		case 39: /* right */
@@ -885,21 +909,33 @@ keydown: function(sender, event)
 
 			if (this.index < (this.tabs.length - 1)) {
 				this.index++;
-
-				if (0 != this.isPanelVisible(this.index)) {
-					this.ignoreMove = true;
-					this.$.panels.setIndex(this.$.panels.getIndex() + 1);
-				} else {
-					this.moveIndicator();
-				}
+			} else {
+				this.index = 0;
 			}
+
+			var pindex = this.$.panels.getIndex();
+			if (pindex < (this.tabs.length - 1)) {
+				pindex++;
+			} else {
+				pindex = 0;
+			}
+
+			if (0 != this.isPanelVisible(this.index)) {
+				this.ignoreMove = true;
+				this.$.panels.setIndex(pindex);
+			} else {
+				this.moveIndicator();
+			}
+
 			break;
 
 		case 38: /* up */
+			this.addClass('manualIndex');
 			this.$['panel' + this.index].scroll(-25);
 			break;
 
 		case 40: /* down */
+			this.addClass('manualIndex');
 			this.$['panel' + this.index].scroll(25);
 			break;
 
