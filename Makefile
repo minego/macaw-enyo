@@ -16,12 +16,14 @@ ${DEPLOY}:
 	cp -r assets enyo lib source package.js *.png framework_config.json manifest.webapp ${DEPLOY}
 	cp debug.html ${DEPLOY}/index.html
 	cp debug.html ${DEPLOY}/app.html
+	cp icon48.png ${DEPLOY}/
 
 release:
 	rm -rf deploy build
 	mkdir build
 	./tools/deploy.sh
 	cp app.html manifest.webapp ${DEPLOY}
+	cp icon48.png ${DEPLOY}/
 
 ${DEPLOY}/appinfo.json: ${DEPLOY} appinfo.json
 	cat appinfo.json | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/appinfo.json
@@ -34,7 +36,7 @@ deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
 
 all: ${DEPLOY}
 
-full-webos: clean release webos install
+full-webos: clean webos install
 
 full-android: clean release android install
 
