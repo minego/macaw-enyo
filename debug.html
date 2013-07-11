@@ -15,9 +15,19 @@
 	</head>
 	<body class="enyo-unselectable onyx">
 		<script>
-			prefs.ready(function() {
-				new net.minego.macaw.main().renderInto(document.body);
-			});
+			try {
+				prefs.ready(function() {
+					new net.minego.macaw.main().renderInto(document.body);
+				});
+			} catch (e) {
+				document.body.innerHTML = [
+					"<h1>Incomplete build</h1>",
+
+					"You probably need to run <pre>make init</pre> to checkout",
+					"the project dependencies. Please read the README file for",
+					"more details."
+				].join('\n');
+			}
 		</script>
 	</body>
 </html>
