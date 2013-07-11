@@ -420,8 +420,6 @@ createTabs: function()
 	/* Recreate the tabs */
 	var tabs = [];
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
-		var icon;
-
 		tabs.push({
 			name:			"tab" + t,
 			classes:		"tab",
