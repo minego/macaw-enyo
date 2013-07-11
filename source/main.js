@@ -33,7 +33,8 @@ components: [
 		kind:								enyo.Signals,
 		onbackbutton:						"back",
 		onkeydown:							"keydown",
-		onkeypress:							"keypress"
+		onkeypress:							"keypress",
+		onPalmRelaunch:						"relaunch"
 	},
 	{
 		name:								"panelcontainer"
@@ -308,6 +309,29 @@ create: function()
 
 		return(notify(origin + '/assets/error.png', 'Error', error));
 	}.bind(this);
+},
+
+relaunch: function(sender, params)
+{
+	if (params && params.target) {
+		var temp = params.target.split('?')[1];
+		if (temp) {
+			var search = "";
+			var hash = "";
+			var parts = temp.split('#');
+			if (parts) {
+				search = parts[0];
+				hash = parts[1];
+			} else {
+				search = temp;
+			}
+            
+			this.params = this.parseQueryString((search	|| ''));
+			this.hashes = this.parseQueryString((hash	|| ''));
+		}
+	}
+	this.handleResize();
+	this.createTabs();
 },
 
 rendered: function()

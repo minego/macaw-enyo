@@ -440,9 +440,13 @@ authorize: function(cb, token)
 					that the user may authorize the app.
 		*/
 		var id	= Math.random();
-		var uri	= this.buildURL('https://minego.net/macawadn/', {
+		var uri = this.buildURL('https://minego.net/macawadn/', {
 				redirect_uri:	window.location + '?create=' + id
-		});
+			});
+        
+		if (enyo.platform.webos) {
+			uri	= "macaw://adncallback/?create=" + id;
+		}
 
 		/*
 			Store a random number in our prefs and in the URI so that we can
