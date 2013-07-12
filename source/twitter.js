@@ -49,7 +49,10 @@ var TwitterAPI = function(user, readycb) {
 			consumerKey:	'W8A4QdKtIf8vBt4TldWyA',
 			consumerSecret:	'y0l39C41x4LMI1Y8LKT1y0Qro6HijTYztuS7o4NWjEs'
 		};
-	} else if (enyo.platform.firefoxOS) {
+	// } else if (enyo.platform.firefoxOS) {
+	} else if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
+				-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
+	) {
 		/* Macaw for Firefox OS */
 		this.options = {
 			consumerKey:	'YJz4ojP1DCBa4Wwm0qvlww',
