@@ -82,6 +82,13 @@ var TwitterAPI = function(user, readycb) {
 		}
 	}
 
+	this.id = Math.random();
+	if (enyo.platform.webos) {
+		this.options.callbackUrl = 'macaw://twittercallback/?create=' + this.id;
+	} else {
+		this.options.callbackUrl = 'https://minego.net/macawtwitter/?create=' + this.id;
+	}
+
 	this.oauth = OAuth(this.options);
 
 	if (this.user) {
@@ -177,7 +184,62 @@ toString: function()
 	return('twitter');
 },
 
-authorize: function(cb, params, pin)
+authorize: function(cb, verifier)
+{
+	if (!cb || !verifier) {
+		/*
+			Step 1:	Request an authorization token, and open a browser window so
+					that the user may authorize the app.
+		*/
+		var url		= this.apibase + '/oauth/request_token';
+
+		/*
+			Store a random number in our prefs and in the URI so that we can
+			tell if we are looking at an old create request once we've finished
+			this one.
+		*/
+		prefs.set('creating', this.id);
+
+		this.oauth.post(this.buildURL(url, {}), '',
+			function(response) {
+				if (response.text && response.text.length) {
+					window.twitterparams = response.text;
+
+					if (cb) cb(null, 'https://twitter.com/oauth/authorize?' + response.text, response.text);
+				} else {
+					if (cb) cb(null, null, null);
+				}
+			}.bind(this),
+			function(response) {
+			}
+		);
+	} else {
+		/*
+			Step 2:	Complete authorization
+		*/
+		this.oauth.get(this.apibase + '/oauth/access_token?oauth_verifier=' + verifier + '&' + window.twitterparams,
+			function(response) {
+				var params	= {};
+				var results	= response.text.split('&');
+
+				for (var i = 0, v; v = results[i]; i++) {
+					var parts = v.split('=');
+
+					params[parts[0]] = decodeURIComponent(parts[1]);
+				};
+
+				params.servicename = 'twitter';
+				cb(params);
+			},
+
+			function(response) {
+				cb();
+			}
+		);
+	}
+},
+
+oldauthorize: function(cb, params, pin)
 {
 	if (!params || !pin) {
 		/*

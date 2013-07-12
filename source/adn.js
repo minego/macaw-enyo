@@ -453,8 +453,6 @@ authorize: function(cb, token)
 			tell if we are looking at an old create request once we've finished
 			this one.
 		*/
-		prefs.set('creating', id);
-
 		var params = {
 			client_id:		this.options.clientID,
 			response_type:	'token',

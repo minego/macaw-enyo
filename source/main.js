@@ -183,8 +183,14 @@ create: function()
 	window.addEventListener('message', function(e) {
 		console.log(e.origin);
 
-		if (e.origin !== 'https://minego.net') {
-			return;
+		switch (e.origin) {
+			case 'https://minego.net':
+			// case 'https://twitter.com':
+				/* Okay, we're good */
+				break;
+
+			default:
+				return;
 		}
 
 		var data = e.data;
@@ -202,6 +208,21 @@ create: function()
 				}
 
 				break;
+
+			case 'newtwitteraccount':
+				if (data.oauth_token) {
+					setTimeout(function() {
+						this.createAccount({
+							servicename:		'twitter',
+							oauth_verifier:		data.oauth_verifier
+						});
+					}.bind(this), 1000);
+				} else {
+					this.$.toasters.pop();
+				}
+
+				break;
+
 		}
 	}.bind(this), false);
 
@@ -392,7 +413,7 @@ createTabs: function()
 	if (createid && this.params.create == createid) {
 		prefs.set('creating', -1);
 
-		// TODO	Show hashes.error ?
+		/* ADN */
 		if (this.hashes.access_token) {
 			setTimeout(function() {
 				this.createAccount({
@@ -401,6 +422,17 @@ createTabs: function()
 				});
 			}.bind(this), 1000);
 		}
+
+		/* Twitter */
+		if (this.params.oauth_verifier) {
+			setTimeout(function() {
+				this.createAccount({
+					servicename:		'twitter',
+					oauth_verifier:		this.params.oauth_verifier
+				});
+			}.bind(this), 1000);
+		}
+
 		return;
 	} else if (!this.users.length || !this.tabs.length) {
 		/* We appear to have no accounts at all, so create a new one. */

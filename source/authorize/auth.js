@@ -21,7 +21,13 @@ classes:						"authorize",
 
 published: {
 	servicename:				null,
-	accesstoken:				null
+
+	/* Used for ADN */
+	accesstoken:				null,
+
+	/* Used for Twitter */
+	oauth_token:				null,
+	oauth_verifier:				null
 },
 
 events: {
@@ -106,19 +112,6 @@ components: [
 	},
 
 	{
-		name:					"step2adn",
-		classes:				"step step2adn",
-		showing:				false,
-
-		components: [
-			{
-				name:			"iframe",
-				tag:			"iframe"
-			}
-		]
-	},
-
-	{
 		name:					"step3",
 		classes:				"step step3",
 		showing:				false,
@@ -189,7 +182,7 @@ create: function()
 
 		case 'twitter':
 			/* Move on to step 2 */
-			this.step1twitter();
+			this.step1twitter(true);
 			break;
 
 		default:
@@ -205,10 +198,18 @@ restart: function()
 	this.$.step3.hide();
 	this.$.failed.hide();
 
+	/* Cleanup */
+	this.params			= null;
+	this.oauth_token	= null;
+	this.oauth_verifier	= null;
+	this.accesstoken	= null;
+
+	window.twitterparams = null;
+
 	this.$.step1.show();
 },
 
-step1twitter: function()
+step1twitter: function(skipwindow)
 {
 	this.$.step1.hide();
 
@@ -216,32 +217,31 @@ step1twitter: function()
 		Open the window right away to avoid being blocked by the browser's
 		popup blocker.
 
-		The call to twitter.authorize() will open the correct URL in the same
-		window that we just opened.
+		The call to twitter.authorize() will return the URL that we need to open
+		in the window to continue.
 
 		This isn't needed on webOS.
 	*/
-	if (!window.PalmSystem) {
+	if (skipwindow !== true && !window.PalmSystem) {
 		window.open("", "_auth");
 	}
 
 	this.twitter = new TwitterAPI();
-	this.twitter.authorize(function(params)
+	this.twitter.authorize(function(account, url)
 	{
-		if (!params || !params.length) {
-			this.$.failed.show();
+		if (url) {
+			window.open(url, "_auth");
 			return;
-		} else {
-			window.open('https://twitter.com/oauth/authorize?' +
-				params, '_auth');
 		}
 
-		this.service = this.twitter;
-		this.$.step2.show();
+		if (!account) {
+			this.$.failed.show();
+			return;
+		}
 
-		/* Save the params, they are needed to complete the authorization */
-		this.params = params;
-	}.bind(this));
+		this.account = account;
+		this.$.step3.show();
+	}.bind(this), this.oauth_verifier);
 },
 
 step1adn: function(skipwindow)
@@ -252,8 +252,8 @@ step1adn: function(skipwindow)
 		Open the window right away to avoid being blocked by the browser's
 		popup blocker.
 
-		The call to twitter.authorize() will open the correct URL in the same
-		window that we just opened.
+		The call to adn.authorize() will return the correct URL to open in the
+		window to continue.
 
 		This isn't needed on webOS.
 	*/
@@ -276,17 +276,7 @@ step1adn: function(skipwindow)
 	this.adn.authorize(function(account, url)
 	{
 		if (url) {
-			if (true) {
-				window.open(url, "_auth");
-			} else if (enyo.platform.webos) {
-				window.location = url;
-			} else {
-				var iframe = this.$.iframe;
-
-				this.$.step2adn.show();
-				iframe.setSrc(url);
-			}
-
+			window.open(url, "_auth");
 			return;
 		}
 
