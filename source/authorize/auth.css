@@ -1,6 +1,4 @@
 .authorize {
-	background:				url('../../assets/compose-bg.png') left top repeat-x;
-	padding-top:			60px;
 }
 
 .authorize .step {
@@ -43,3 +41,12 @@
 	outline:				none !important;
 }
 
+.authorize .step2adn {
+	width:					100%;
+	height:					100%;
+}
+
+.authorize iframe {
+	width:					100%;
+	height:					300px;
+}

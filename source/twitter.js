@@ -186,9 +186,6 @@ authorize: function(cb, params, pin)
 		*/
 		this.oauth.get(this.apibase + '/oauth/request_token',
 			function(response) {
-				window.open('https://twitter.com/oauth/authorize?' +
-					response.text, '_auth');
-
 				cb(response.text);
 			},
 

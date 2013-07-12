@@ -179,6 +179,32 @@ create: function()
 {
 	this.inherited(arguments);
 
+	/* Monitor for messages posted from the authorization windows */
+	window.addEventListener('message', function(e) {
+		console.log(e.origin);
+
+		if (e.origin !== 'https://minego.net') {
+			return;
+		}
+
+		var data = e.data;
+		switch (data.name) {
+			case 'newadnaccount':
+				if (data.access_token) {
+					setTimeout(function() {
+						this.createAccount({
+							servicename:		'adn',
+							accesstoken:		data.access_token
+						});
+					}.bind(this), 1000);
+				} else {
+					this.$.toasters.pop();
+				}
+
+				break;
+		}
+	}.bind(this), false);
+
 	/*
 		Set classes on the main kind based on the user's preferences. A class
 		will automatically be set for any true boolean, and for each string
@@ -311,21 +337,24 @@ create: function()
 	}.bind(this);
 },
 
+/* webOS relaunch */
 relaunch: function(sender, params)
 {
 	if (params && params.target) {
 		var temp = params.target.split('?')[1];
+
 		if (temp) {
 			var search = "";
 			var hash = "";
 			var parts = temp.split('#');
+
 			if (parts) {
 				search = parts[0];
 				hash = parts[1];
 			} else {
 				search = temp;
 			}
-            
+
 			this.params = this.parseQueryString((search	|| ''));
 			this.hashes = this.parseQueryString((hash	|| ''));
 		}
@@ -364,7 +393,6 @@ createTabs: function()
 		prefs.set('creating', -1);
 
 		// TODO	Show hashes.error ?
-
 		if (this.hashes.access_token) {
 			setTimeout(function() {
 				this.createAccount({
@@ -372,9 +400,8 @@ createTabs: function()
 					accesstoken:		this.hashes.access_token
 				});
 			}.bind(this), 1000);
-
-			return;
 		}
+		return;
 	} else if (!this.users.length || !this.tabs.length) {
 		/* We appear to have no accounts at all, so create a new one. */
 		prefs.set('accounts',	[]);
@@ -753,7 +780,7 @@ createAccount: function(options)
 
 	this.$.toasters.push(options, {
 		owner:		this,
-		nobg:		true,
+		wide:		true,
 		notitle:	true
 	});
 },

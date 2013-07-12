@@ -440,12 +440,12 @@ authorize: function(cb, token)
 					that the user may authorize the app.
 		*/
 		var id	= Math.random();
-		var uri = this.buildURL('https://minego.net/macawadn/', {
-				redirect_uri:	window.location + '?create=' + id
-			});
-        
+		var uri;
+
 		if (enyo.platform.webos) {
-			uri	= "macaw://adncallback/?create=" + id;
+			uri	= 'macaw://adncallback/?create=' + id;
+		} else {
+			uri = 'https://minego.net/macawadn/?create=' + id;
 		}
 
 		/*
@@ -462,7 +462,7 @@ authorize: function(cb, token)
 			scope:			'basic stream email write_post follow public_messages messages update_profile'
 		};
 
-		window.location = this.buildURL('https://account.app.net/oauth/authorize', params);
+		cb(null, this.buildURL('https://account.app.net/oauth/authorize', params));
 	} else {
 		/* Step 2: Load the user profile */
 		this.accesstoken = token;

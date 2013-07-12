@@ -106,6 +106,19 @@ components: [
 	},
 
 	{
+		name:					"step2adn",
+		classes:				"step step2adn",
+		showing:				false,
+
+		components: [
+			{
+				name:			"iframe",
+				tag:			"iframe"
+			}
+		]
+	},
+
+	{
 		name:					"step3",
 		classes:				"step step3",
 		showing:				false,
@@ -171,7 +184,7 @@ create: function()
 	switch (this.servicename) {
 		case 'adn':
 			/* Move on to step 2 */
-			this.step1adn();
+			this.step1adn(true);
 			break;
 
 		case 'twitter':
@@ -215,9 +228,12 @@ step1twitter: function()
 	this.twitter = new TwitterAPI();
 	this.twitter.authorize(function(params)
 	{
-		if (!params) {
+		if (!params || !params.length) {
 			this.$.failed.show();
 			return;
+		} else {
+			window.open('https://twitter.com/oauth/authorize?' +
+				params, '_auth');
 		}
 
 		this.service = this.twitter;
@@ -228,9 +244,22 @@ step1twitter: function()
 	}.bind(this));
 },
 
-step1adn: function()
+step1adn: function(skipwindow)
 {
 	this.$.step1.hide();
+
+	/*
+		Open the window right away to avoid being blocked by the browser's
+		popup blocker.
+
+		The call to twitter.authorize() will open the correct URL in the same
+		window that we just opened.
+
+		This isn't needed on webOS.
+	*/
+	if (skipwindow !== true && !window.PalmSystem) {
+		window.open("", "_auth");
+	}
 
 	/*
 		The first step in authorizaing with ADN will replace the entire app with
@@ -240,12 +269,27 @@ step1adn: function()
 		There is no step 2 (PIN entry) for ADN, although it may be needed on
 		some platforms where the redirect back to the application can't be used.
 
-		In those cases a page will be displayed on http://minego.net/macawadn/
+		In those cases a page will be displayed on http://minego.net/macawadn2/
 		asking the user to copy and paste the token.
 	*/
 	this.adn = new ADNAPI();
-	this.adn.authorize(function(account)
+	this.adn.authorize(function(account, url)
 	{
+		if (url) {
+			if (true) {
+				window.open(url, "_auth");
+			} else if (enyo.platform.webos) {
+				window.location = url;
+			} else {
+				var iframe = this.$.iframe;
+
+				this.$.step2adn.show();
+				iframe.setSrc(url);
+			}
+
+			return;
+		}
+
 		if (!account) {
 			this.$.failed.show();
 			return;
