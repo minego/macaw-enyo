@@ -121,12 +121,16 @@ rendered: function()
 		focus. The browser is just trying to keep a focused input visible. This
 		is very annoying though, so let's try to prevent it.
 	*/
-	var main = document.getElementById("main");
+	var main;
 
-	main.addEventListener('scroll', function(e) {
-		main.scrollTop	= 0;
-		main.scrollLeft	= 0;
-	}, false);
+	if ((main = document.getElementById("main")) ||
+		(main = document.getElementById("main2"))
+	) {
+		main.addEventListener('scroll', function(e) {
+			main.scrollTop	= 0;
+			main.scrollLeft	= 0;
+		}, false);
+	}
 },
 
 slideInFromChanged: function()
