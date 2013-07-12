@@ -179,6 +179,8 @@ create: function()
 {
 	this.inherited(arguments);
 
+	this.spincount = 0;
+
 	/* Monitor for messages posted from the authorization windows */
 	window.addEventListener('message', function(e) {
 		console.log(e.origin);
@@ -581,51 +583,51 @@ panelRefreshStart: function(sender, event)
 	icon.addClass("spin");
 
 	/* Spin the refresh icon as well */
-	if (isNaN(refresh.spincount)) {
-		refresh.spincount = 0;
-	}
-
-	if (refresh.spincount == 0) {
+	if (this.spincount == 0) {
 		refresh.removeClass("endspin");
 		refresh.addClass("spin");
 	}
-	refresh.spincount++;
+	this.spincount++;
 },
 
 panelRefreshStop: function(sender, event)
 {
-	var icon	= this.$['tabicon'	+ sender.index];
-	var count	= this.$['tabcount'	+ sender.index];
 	var refresh	= this.$.refreshbtn;
 
-	if (!isNaN(event.count) && event.count > 0) {
-		count.setContent(event.count);
-	} else {
-		count.setContent('');
-	}
+	if (sender) {
+		var icon	= this.$['tabicon'	+ sender.index];
+		var count	= this.$['tabcount'	+ sender.index];
 
-	/*
-		This is WAY too complicated, but android tends to keep running the
-		animation forever even if the class is removed. Setting an animation
-		that it can finish is the only way I've found to ensure that it actually
-		stops.
-	*/
-	setTimeout(function() {
-		icon.removeClass("spin");
-		setTimeout(function() {
-			icon.addClass("endspin");
-		}.bind(this), 50);
-
-		refresh.spincount--;
-		if (refresh.spincount == 0) {
-			refresh.removeClass("spin");
-			setTimeout(function() {
-				refresh.addClass("endspin");
-			}.bind(this), 50);
+		if (!isNaN(event.count) && event.count > 0) {
+			count.setContent(event.count);
+		} else {
+			count.setContent('');
 		}
 
+		icon.removeClass("spin");
+		icon.addClass("endspin");
+
+		this.spincount--;
 		count.busy = false;
-	}.bind(this), 1000);
+	}
+
+	/* Allow refreshing up to 2 panels at once */
+	if (this.spincount < 2) {
+		var p;
+
+		/* Start refreshing the next panel */
+		if (this.refreshTodo && (p = this.refreshTodo.shift())) {
+			this.log('Refreshing: ', p.name, p);
+			p.refresh();
+
+			return;
+		}
+	}
+
+	if (this.spincount == 0) {
+		refresh.removeClass("spin");
+		refresh.addClass("endspin");
+	}
 },
 
 optionsChanged: function(sender, event)
@@ -906,9 +908,13 @@ handleButton: function(sender, event)
 			break;
 
 		case "refresh":
+			this.refreshTodo = [];
 			for (var t = 0, tab; tab = this.tabs[t]; t++) {
-				this.$['panel' + t].refresh();
+				this.refreshTodo.push(this.$['panel' + t]);
 			}
+
+			/* panelRefreshStop() will pop things off the todo list... */
+			this.panelRefreshStop();
 			break;
 
 		case "compose":

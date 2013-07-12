@@ -33,6 +33,7 @@ ${DEPLOY}/config.xml: ${DEPLOY} bb10/config.xml
 	cat bb10/config.xml | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/config.xml
 
 deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
+	cat index.html | sed 's/device-width/320/' > ${DEPLOY}/index.html
 	palm-package --exclude=assets/old-images ${DEPLOY}
 
 all: ${DEPLOY}
@@ -102,7 +103,7 @@ ${APK}: ${DEPLOY}/project.properties ${DEPLOY}/appinfo.json
 	@mv .tmp/bin/$(APK) .
 
 bar: ${DEPLOY}/config.xml
-	@cp bb10/*.html ${DEPLOY}
+	@cp framework_config.json *.html icon*.png ${DEPLOY}/
 	@(cd ${DEPLOY} && zip -r ../../${ZIP} *)
 	# TODO Allow signing with a real key
 	@${BB10SDK}/bbwp -d ${ZIP}
@@ -113,7 +114,7 @@ bar: ${DEPLOY}/config.xml
 	@rmdir device
 
 barsigned: ${DEPLOY}/config.xml
-	@cp bb10/*.html ${DEPLOY}
+	@cp framework_config.json *.html icon*.png ${DEPLOY}/
 	@(cd ${DEPLOY} && zip -r ../../${ZIP} *)
 	@${BB10SDK}/bbwp -g ${BB10SIGNPASS} ${ZIP}
 	@rm ${ZIP}
