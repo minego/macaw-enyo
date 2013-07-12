@@ -24,6 +24,7 @@ release:
 	mv ${DEPLOY}/lib/g11n/source/*data ${DEPLOY}/lib/g11n/source/base
 	mv ${DEPLOY}/lib/g11n/source/formats ${DEPLOY}/lib/g11n/source/base
 	cp framework_config.json manifest.* *.html icon*.png ${DEPLOY}/
+	rm -rf build
 
 ${DEPLOY}/appinfo.json: ${DEPLOY} appinfo.json
 	cat appinfo.json | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/appinfo.json

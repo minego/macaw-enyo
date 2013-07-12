@@ -123,9 +123,7 @@ rendered: function()
 	*/
 	var main;
 
-	if ((main = document.getElementById("main")) ||
-		(main = document.getElementById("main2"))
-	) {
+	if ((main = document.getElementById("main"))) {
 		main.addEventListener('scroll', function(e) {
 			main.scrollTop	= 0;
 			main.scrollLeft	= 0;
