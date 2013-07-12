@@ -16,7 +16,7 @@
 
 	"app": {
 		"launch": {
-			"local_path": "debug.html"
+			"local_path": "index.html"
 		}
 	},
 

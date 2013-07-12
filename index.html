@@ -10,64 +10,16 @@
 		<meta name="apple-mobile-web-app-capable" content="yes"/>
 		<meta name="viewport" content="width=320, height=device-height, user-scalable=no"/>
 
+		<!-- Release build links -->
 		<link href="build/enyo.css" rel="stylesheet" />
 		<link href="build/app.css" rel="stylesheet" />
 
 		<script src="build/enyo.js"></script>
 		<script src="build/app.js" type="text/javascript"></script>
+
+		<!-- Debug build links -->
+		<script src="enyo/enyo.js"></script>
+		<script src="source/package.js" type="text/javascript"></script>
 	</head>
-	<body class="enyo-unselectable onyx" onload="onload">
-		<script>
-			if (window.navigator && window.navigator.mozApps) {
-				var request = window.navigator.mozApps.getInstalled();
-
-				request.onsuccess = function () {
-					var found	= false;
-					var i		= 0;
-
-					if (request.result && request.result.length) {
-						for (i = 0; i < request.result.length; i++) {
-							if (request.result[i] && request.result[i].manifest &&
-								request.result[i].manifest.name === "MacawEnyo"
-							) {
-								found = true;
-								break;
-							}
-						}
-					}
-
-					if (!found) {
-						this.installUrl = (
-							location.href.substring(0, location.href.lastIndexOf("/")) + "/manifest.webapp"
-						);
-
-						this.doIt = function() {
-							try {
-								var req2 = navigator.mozApps.install(this.installUrl);
-
-								req2.onsuccess = function(data) {
-									document.body.innerHTML = 'Application successfully installed';
-								};
-								req2.onerror = function(error) {
-									document.body.innerHTML = 'Application could not be installed: ' + error;
-								};
-							} catch (error) {
-								this.error = error;
-							}
-						};
-
-						this.doIt();
-					} else {
-						document.body.innerHTML = 'Application is already installed';
-					}
-				}.bind(this);
-
-				request.onerror = function (error) {
-					document.body.innerHTML = 'Could not determine if application is installed';
-				}.bind(this);
-			} else {
-				location = 'app.html';
-			}
-		</script>
-	</body>
+	<body class="enyo-unselectable onyx"></body>
 </html>

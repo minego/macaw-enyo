@@ -1,7 +1,7 @@
 {
 	"name":						"Macaw",
 	"description":				"An open source micro-blogging client",
-	"launch_path":				"/app.html",
+	"launch_path":				"/index.html",
 
 	"icons": {
 		"512":					"/icon512.png",

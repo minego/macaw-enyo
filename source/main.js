@@ -205,6 +205,7 @@ create: function()
 					}.bind(this), 1000);
 				} else {
 					this.$.toasters.pop();
+					this.createTabs();
 				}
 
 				break;
@@ -219,6 +220,7 @@ create: function()
 					}.bind(this), 1000);
 				} else {
 					this.$.toasters.pop();
+					this.createTabs();
 				}
 
 				break;
@@ -440,7 +442,7 @@ createTabs: function()
 		prefs.set('panels',		[]);
 
 		setTimeout(function() {
-			this.createAccount();
+			this.createAccount({}, true);
 		}.bind(this), 1000);
 		return;
 	}
@@ -799,21 +801,27 @@ conversation: function(sender, options)
 	});
 },
 
-createAccount: function(options)
+createAccount: function(options, force)
 {
 	if (!options || options.$) {
 		/* Ignore options if it is an enyo sender */
 		options = {};
 	}
 
-	options.kind		= 'authorize';
-	options.onCancel	= 'closeToaster';
-	options.onSuccess	= 'accountCreated';
+	options.kind			= 'authorize';
+	options.onSuccess		= 'accountCreated';
+
+	if (!options.onCancel) {
+		options.onCancel	= 'closeToaster';
+	}
 
 	this.$.toasters.push(options, {
 		owner:		this,
 		wide:		true,
-		notitle:	true
+		notitle:	true,
+
+		modal:		force || false,
+		ignoreback:	force || false
 	});
 },
 
@@ -1114,25 +1122,15 @@ moveIndicator: function(sender, event)
 var ex;
 var notify;
 
-onload = function()
+/*
+	Packaged chrome apps can not run inline javascript in the html document so
+	we need to initialize here instead of in the html.
+*/
+window.addEventListener('load', function()
 {
-	/*
-		Packaged chrome apps can not run inline javascript in the html document
-		so we need to initialize here in that case.
-
-		We still require initialization in the html documents for other
-		platforms that do not properly support setting an onload function
-		including webOS.
-	*/
-	if (typeof(chrome) !== "undefined" && chrome.storage) {
-		try {
-			prefs.ready(function() {
-				new net.minego.macaw.main().renderInto(document.body);
-			});
-		} catch (e) {
-			location = 'debug.html';
-		}
-	}
-};
+	prefs.ready(function() {
+		new net.minego.macaw.main().renderInto(document.body);
+	});
+}, false);
 
 
