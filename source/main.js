@@ -258,7 +258,6 @@ create: function()
 	this.users		= prefs.get('accounts') || [];
 	this.index		= 0;
 	this.tabs		= [];
-	this.tabWidth	= 0;
 
 	for (var i = 0, u; u = this.users[i]; i++) {
 		this.prepareAccount(u);
@@ -417,7 +416,6 @@ createTabs: function()
 	this.$.panelcontainer.destroyClientControls();
 
 	this.tabs		= prefs.get('panels');
-	this.tabWidth	= 100 / this.tabs.length;
 
 	/* Are we continuing authorizing an account? */
 	if (createid && this.params.create == createid) {
@@ -558,7 +556,6 @@ createTabs: function()
 		tabs.push({
 			name:			"tab" + t,
 			classes:		"tab",
-			style:			"width: " + this.tabWidth + "%;",
 
 			index:			t,
 			ontap:			"selectPanel",
@@ -722,12 +719,15 @@ handleResize: function()
 	/*
 		If the width is less than 640 then the 'SkinnyPanels' kind will show a
 		single column.
-
-		Aside from single column we'll set a minimum width of 250 per panel.
 	*/
 	if (width <= 640) {
+		/* Single column, match the screen width */
 		w = width;
 	} else {
+		/*
+			Multi column, minimum width of 250. Size the columns such that there
+			will not be a partial column displayed.
+		*/
 		w = width / (Math.floor(width / 250));
 	}
 
@@ -1128,6 +1128,12 @@ keypress: function(sender, event)
 
 moveIndicator: function(sender, event)
 {
+	var		first	= -1;
+	var		last	= -1;
+	var		tabWidth;
+	var		width;
+	var		left;
+
 	if (event && !this.ignoreMove) {
 		var difference = event.toIndex - event.fromIndex;
 
@@ -1138,15 +1144,71 @@ moveIndicator: function(sender, event)
 	} else {
 		this.log(this.index);
 	}
+	this.ignoreMove = false;
 
 	if (this.index === undefined) {
 		this.index = 0;
 	}
 
-	this.ignoreMove = false;
+	/*
+		Adjust the width of the tabs. Those with a panel visible on screen
+		should be wider than those that aren't.
+	*/
+	for (var i = 0; i < this.tabs.length; i++) {
+		if (0 == this.isPanelVisible(i)) {
+			if (-1 == first) {
+				first = i;
+			}
 
-	this.$.indicator.applyStyle('width', this.tabWidth + '%');
-	this.$.indicator.applyStyle('left', (this.index * this.tabWidth) + '%');
+			last = i;
+		}
+	}
+
+	if ((first == last) || ((0 == first) && (this.tabs.length - 1 == last))) {
+		/*
+			Either all tabs are visible, or there is only 1 visible.
+
+			Make all tabs even.
+		*/
+		first = -1;
+		last = -1;
+
+		tabWidth = 100 / this.tabs.length;
+		left = 0;
+	} else {
+		/* Make the visible tabs triple the width of those that aren't */
+		var count;
+
+		count = ((last - first) + 1) * 2;
+		count += this.tabs.length;
+
+		tabWidth = 100 / count;
+
+		/* Offset by 1 so the indicator will be centered */
+		left = tabWidth;
+	}
+
+	/* Apply the sizes */
+	for (var i = 0; i < this.tabs.length; i++) {
+		var tab = this.$['tab' + i];
+
+		if (i >= first && i <= last) {
+			width = tabWidth * 3;
+		} else {
+			width = tabWidth;
+		}
+
+		if (tab) {
+			tab.applyStyle('width', width + '%');
+		}
+
+		if (this.index > i) {
+			left += width;
+		}
+	}
+
+	this.$.indicator.applyStyle('width', tabWidth + '%');
+	this.$.indicator.applyStyle('left', left + '%');
 }
 
 });
