@@ -38,7 +38,7 @@ deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
 
 all: ${DEPLOY}
 
-full-webos: clean webos install
+full-webos: clean release webos install
 
 full-android: clean release android install
 
