@@ -589,7 +589,7 @@ panelActivity: function(sender, event)
 	var count	= this.$['tabcount'	+ sender.index];
 	var refresh	= this.$.refreshbtn;
 
-	if (count.busy) {
+	if (sender.loading) {
 		/* Wait until the refresh is done */
 		return;
 	}
@@ -614,8 +614,6 @@ panelRefreshStart: function(sender, event)
 	var icon	= this.$['tabicon'	+ sender.index];
 	var count	= this.$['tabcount'	+ sender.index];
 	var refresh	= this.$.refreshbtn;
-
-	count.busy = true;
 
 	icon.removeClass("endspin");
 	icon.addClass("spin");
@@ -646,7 +644,6 @@ panelRefreshStop: function(sender, event)
 		icon.addClass("endspin");
 
 		this.spincount--;
-		count.busy = false;
 	}
 
 	/* Allow refreshing up to 2 panels at once */

@@ -36,7 +36,10 @@ published: {
 		Minimum number of pixels that the list must be pulled down before a
 		refresh will be triggered in order to prevent accidental refreshes.
 	*/
-	minRefreshPixels:					40
+	minRefreshPixels:					40,
+
+	/* Will be set to true if the panel is in the middle of a refresh already */
+	loading:							false
 },
 
 events: {
@@ -91,6 +94,8 @@ components: [
 create: function()
 {
 	this.inherited(arguments);
+
+	this.ignoreActivity = 0;
 
 	if (this.user) {
 		this.service = this.user.service;
@@ -526,6 +531,7 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 				}
 
 				this.log(this.resource, 'Scrolling to: ' + dest);
+				this.ignoreActivity++;
 				this.$.list.scrollToRow(dest - (autorefresh ? 0 : 1));
 
 				/*
@@ -548,12 +554,18 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 						}
 					}
 
+					this.ignoreActivity++;
 					this.$.list.setScrollTop(top);
+					this.loading = false;
 				}), 30);
 			} else {
+				this.ignoreActivity++;
 				this.$.list.scrollToRow(0);
+				this.loading = false;
 			}
 		}), 500);
+	} else {
+		this.loading = false;
 	}
 
 	if (this.results.length == 0) {
@@ -577,7 +589,6 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 		this.$.list.refresh();
 	}
 
-	this.loading = false;
 	if (this.pulled) {
 		this.$.list.completePull();
 		this.pulled = false;
@@ -769,6 +780,11 @@ smartscroll: function()
 handleActivity: function(sender, event)
 {
 	var top = this.$.list.getScrollTop();
+
+	if (this.ignoreActivity > 0) {
+		this.ignoreActivity--;
+		return;
+	}
 
 	/*
 		Hide the "pull to refresh" text during normal scrolling. It should only
