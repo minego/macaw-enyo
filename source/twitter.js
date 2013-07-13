@@ -9,6 +9,12 @@ var TwitterAPI = function(user, readycb) {
 		short_htts_len:		22
 	};
 
+	this.features = {
+		dm:					true,
+		mute:				false,
+		spam:				true
+	};
+
 	this.terms = {
 		message:			'tweet',
 		messages:			'tweets',
@@ -781,6 +787,11 @@ changeUser: function(action, cb, params)
 	switch (action) {
 		case 'block':
 			url += 'blocks/create';
+			params.skip_status = true;
+			break;
+
+		case 'unblock':
+			url += 'blocks/destroy';
 			params.skip_status = true;
 			break;
 

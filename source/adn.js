@@ -6,6 +6,13 @@ var ADNAPI = function(user, readycb) {
 		maxLength:		256
 	};
 
+	this.features = {
+		// TODO	Implement DM support for ADN
+		dm:				false,
+		mute:			true,
+		spam:			false
+	};
+
 	this.terms = {
 		message:		'post',
 		messages:		'posts',
@@ -100,11 +107,13 @@ buildURL: function(url, params)
 	}
 },
 
-get: function(url, cb)
+get: function(url, cb, method)
 {
+	method = method || 'GET';
+
 	var x = new enyo.Ajax({
 		url:					url,
-		method:					'GET',
+		method:					method,
 		headers: {
 			'Authorization':	'Bearer ' + this.accesstoken
 		}
@@ -114,11 +123,13 @@ get: function(url, cb)
 	x.response(this, cb);
 },
 
-post: function(url, body, cb)
+post: function(url, body, cb, method)
 {
+	method = method || 'POST';
+
 	var x = new enyo.Ajax({
 		url:					url,
-		method:					'POST',
+		method:					method,
 		postBody:				enyo.json.stringify(body),
 		headers: {
 			'Authorization':	'Bearer ' + this.accesstoken,
@@ -189,7 +200,11 @@ cleanupUser: function(user)
 			favorites:	user.counts.favorites	|| 0
 		},
 
-		relationship:	relationship
+		relationship:	relationship,
+
+		muted:			user.you_muted,
+		blocked:		user.you_blocked,
+		canfollow:		user.you_can_follow
 	});
 },
 
@@ -220,6 +235,71 @@ getUser: function(user, cb, resource)
 			cb(false);
 		}
 	});
+},
+
+/*
+	Perform an action on a user
+
+	action may be:
+		follow, unfollow, block, unblock, mute, unmute
+
+	The provided callback will be called when the request is complete. The first
+	argument is a boolean indicating success.
+
+	The provided params must include either user_id or screen_name.
+*/
+changeUser: function(action, cb, params)
+{
+	var url		= this.apibase + 'users/';
+	var user	= params.user || 'me';
+	var method	= 'POST';
+
+	if (user) {
+		if ('string' == typeof user && '@' == user.charAt(0)) {
+			url += user;
+		} else {
+			url += user_id;
+		}
+	}
+
+	switch (action) {
+		case 'unfollow':
+			method = 'DELETE';
+			// fallthrough
+		case 'follow':
+			url += '/follow';
+			break;
+
+
+		case 'unmute':
+			method = 'DELETE';
+			// fallthrough
+		case 'mute':
+			url += '/mute';
+			break;
+
+
+		case 'unblock':
+			method = 'DELETE';
+			// fallthrough
+		case 'block':
+			url += '/block';
+			break;
+
+
+
+		default:
+			console.log('changeUser does not support this action:' + action);
+			return;
+	}
+
+	this.post(url, {}, function(sender, response) {
+		if (response.data) {
+			cb(true, this.cleanupUser(response.data));
+		} else {
+			cb(false);
+		}
+	}, method);
 },
 
 getMessages: function(resource, cb, params)

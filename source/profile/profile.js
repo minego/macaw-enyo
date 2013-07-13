@@ -142,11 +142,18 @@ components: [
 					},
 					{
 						content:		"Send Direct Message",
-						command:		"dm"
+						command:		"dm",
+						name:			"dmMenuItem"
+					},
+					{
+						content:		"Mute",
+						command:		"mute",
+						name:			"muteMenuItem"
 					},
 					{
 						content:		"Block",
-						command:		"block"
+						command:		"block",
+						name:			"blockMenuItem"
 					},
 					{
 						content:		"Follow",
@@ -172,6 +179,14 @@ create: function()
 
 	if (this.user) {
 		this.service = this.user.service;
+	}
+
+	if (!this.service.features.dm) {
+		this.$.dmMenuItem.destroy();
+	}
+
+	if (!this.service.features.mute) {
+		this.$.muteMenuItem.destroy();
 	}
 
 	if (this.profile && this.profile.created) {
@@ -296,6 +311,16 @@ profileChanged: function()
 		case 1:	this.showList('history',	true);	break;
 		case 2:	this.showList('mentions',	true);	break;
 		case 3:	this.showList('favorite',	true);	break;
+	}
+
+	if (undefined != this.profile.blocked) {
+		this.$.blockMenuItem.setContent(this.profile.blocked ? "Unblock" : "Block");
+		this.$.blockMenuItem.command = this.profile.blocked ? "unblock" : "block";
+	}
+
+	if (undefined != this.profile.muted) {
+		this.$.muteMenuItem.setContent(this.profile.muted ? "Unmute" : "Mute");
+		this.$.muteMenuItem.command = this.profile.muted ? "unmute" : "mute";
 	}
 },
 
@@ -459,16 +484,18 @@ handleCommand: function(sender, event)
 			});
 			break;
 
+		case "mute":
 		case "block":
+			/* Ask for confirmation */
 			this.doOpenToaster({
 				component: {
 					kind:				"Confirm",
-					title:				"Are you sure you want to block @" + this.profile.screenname + "?",
+					title:				"Are you sure you want to " + cmd + " @" + this.profile.screenname + "?",
 					onChoose:			"handleCommand",
 					options: [
 						{
 							classes:	"confirm",
-							command:	"block-confirmed"
+							command:	cmd + "-confirmed"
 						},
 						{
 							classes:	"cancel",
@@ -484,39 +511,45 @@ handleCommand: function(sender, event)
 			});
 			break;
 
+		case "mute-confirmed":
 		case "block-confirmed":
-			this.service.changeUser('block', function(success) {
-				if (success) {
-
-				} else {
-					ex('Could not block user');
-				}
-			}.bind(this), { user: '@' + this.profile.screenname });
-			break;
-
+		case "unmute":
+		case "unblock":
 		case "follow":
-			this.service.changeUser('follow', function(success) {
-				if (success) {
-					this.relationships.push('following');
-					this.relationshipChanged();
-				} else {
-					ex('Could not follow user');
-				}
-			}.bind(this), { user: '@' + this.profile.screenname });
-			break;
-
 		case "unfollow":
-			this.service.changeUser('unfollow', function(success) {
+			cmd = cmd.split('-')[0];
+
+			this.service.changeUser(cmd, function(success, details) {
 				if (success) {
-					for (var i = this.relationships.length - 1; i >= 0; i--) {
-						if (this.relationships[i].toLowerCase() == 'following') {
-							this.relationships.splice(i, 1);
+					if (undefined != details.blocked) {
+						this.profile.blocked = details.blocked;
+					}
+					if (undefined != details.muted) {
+						this.profile.muted = details.muted;
+					}
+					if (undefined != details.following) {
+						if (!this.relationship) {
+							this.relationship = [];
+						}
+
+						if (details.following) {
+							this.relationship.push('following');
+						} else {
+							for (var i = this.relationship.length - 1; i >= 0; i--) {
+								if (this.relationship[i].toLowerCase() == 'following') {
+									this.relationship.splice(i, 1);
+								}
+							}
 						}
 					}
 
-					this.relationshipChanged();
+					this.profileChanged();
+
+					if (undefined != details.relationship) {
+						this.setRelationship(details.relationship);
+					}
 				} else {
-					ex('Could not unfollow user');
+					ex('Could not ' + cmd + ' user');
 				}
 			}.bind(this), { user: '@' + this.profile.screenname });
 			break;

@@ -122,7 +122,13 @@ components: [
 					},
 					{
 						content:	"Send Direct Message",
-						command:	"dm"
+						command:	"dm",
+						name:		"dmMenuItem"
+					},
+					{
+						content:	"Mute",
+						command:	"mute",
+						name:		"muteMenuItem"
 					},
 					{
 						content:	"Block",
@@ -130,7 +136,8 @@ components: [
 					},
 					{
 						content:	"Report Spam",
-						command:	"spam"
+						command:	"spam",
+						name:		"spamMenuItem"
 					},
 					{
 						content:	"Hide",
@@ -151,6 +158,18 @@ create: function()
 
 	if (this.user) {
 		this.service = this.user.service;
+	}
+
+	if (!this.service.features.dm) {
+		this.$.dmMenuItem.destroy();
+	}
+
+	if (!this.service.features.mute) {
+		this.$.muteMenuItem.destroy();
+	}
+
+	if (!this.service.features.spam) {
+		this.$.spamMenuItem.destroy();
 	}
 
 	this.$.message.setUser(this.user);
@@ -350,16 +369,17 @@ handleCommand: function(sender, event)
 			});
 			break;
 
+		case "mute":
 		case "block":
 			this.doOpenToaster({
 				component: {
 					kind:				"Confirm",
-					title:				"Are you sure you want to block @" + this.item.user.screenname + "?",
+					title:				"Are you sure you want to " + cmd + " @" + this.item.user.screenname + "?",
 					onChoose:			"handleCommand",
 					options: [
 						{
 							classes:	"confirm",
-							command:	"block-confirmed"
+							command:	cmd + "-confirmed"
 						},
 						{
 							classes:	"cancel",
@@ -400,28 +420,22 @@ handleCommand: function(sender, event)
 			});
 			break;
 
+		case "mute-confirmed":
 		case "block-confirmed":
-			this.service.changeUser('block', function(success) {
-				if (success) {
-					this.doMessageAction({
-						action:		'delete',
-						item:		this.item
-					});
-				} else {
-					ex('Could not block user');
-				}
-			}.bind(this), { user: '@' + this.item.user.screenname });
-			break;
-
 		case "spam-confirmed":
-			this.service.changeUser('spam', function(success) {
+			cmd = cmd.split('-')[0];
+
+			this.service.changeUser(cmd, function(success) {
 				if (success) {
 					this.doMessageAction({
 						action:		'delete',
 						item:		this.item
 					});
 				} else {
-					ex('Could not block user');
+					if (cmd == "spam") {
+						cmd = "report";
+					}
+					ex('Could not ' + cmd + ' user');
 				}
 			}.bind(this), { user: '@' + this.item.user.screenname });
 			break;
