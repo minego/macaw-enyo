@@ -4,3 +4,4 @@ deploy
 *.apk
 *.bar
 .tmp
+libpeerconnection.log
