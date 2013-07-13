@@ -21,8 +21,8 @@ release:
 	mkdir build
 	./tools/deploy.sh
 	mkdir -p ${DEPLOY}/lib/g11n/source/base			# Fix base data dir for g11n
-	mv ${DEPLOY}/lib/g11n/source/*data ${DEPLOY}/lib/g11n/source/base
-	mv ${DEPLOY}/lib/g11n/source/formats ${DEPLOY}/lib/g11n/source/base
+	@mv ${DEPLOY}/lib/g11n/source/*data ${DEPLOY}/lib/g11n/source/base || true
+	@mv ${DEPLOY}/lib/g11n/source/formats ${DEPLOY}/lib/g11n/source/base || true
 	cp framework_config.json manifest.* *.html icon*.png ${DEPLOY}/
 	rm -rf build
 
