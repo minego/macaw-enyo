@@ -77,11 +77,12 @@ body.Pre3 {
 .toolbar * {
 	pointer-events:			auto;
 
-	height:					48px;
 	line-height:			48px;
+	display:				inline-block;
+}
 
-	margin:					0px;
-	padding:				0px;
+.toolbar .composebutton {
+	float:					right;
 }
 
 .toolbar.topbar {
@@ -98,6 +99,11 @@ body.Pre3 {
 	bottom:					0px;
 	background:				url(../assets/bottom-bar.png)		left bottom repeat-x;
 	padding-top:			20px;
+}
+
+.toolbar .tabcontainer {
+	width:					100%;
+	height:					100%;
 }
 
 /*
@@ -131,13 +137,13 @@ body.Pre3 {
 
 	pointer-events:			auto;
 
-	margin:					auto 0 auto 0;
 	background:				url(../assets/vertical-border.png) left top no-repeat
 }
 
-.tabbar .tab .icon {
-	position:				absolute;
-	width:					100%;
+.tabbar .tab .imgbtn {
+	display:				block;
+
+	margin:					16px auto;
 }
 
 .tabbar .tab .count {
@@ -211,6 +217,7 @@ body.Pre3 {
 	-ms-transform:          rotate(0deg);
 }
 
+/*
 .tab-timeline {
 	background:				url(../assets/icons/tweets.png)		center center no-repeat;
 }
@@ -234,6 +241,7 @@ body.Pre3 {
 .tab-searchresults {
 	background:				url(../assets/icons/search.png)		center center no-repeat;
 }
+*/
 
 .toolbar .title {
 	text-align:				center;
@@ -252,6 +260,7 @@ body.Pre3 {
 .refresh.icon {
 	background:				url(../assets/icons/refresh.png)	center center no-repeat;
 }
+
 .back.icon {
 	background:				url(../assets/icons/back.png)		center center no-repeat;
 }
@@ -262,7 +271,7 @@ body.Pre3 {
 	background:				url(../assets/icons/reply.png)		center center no-repeat;
 }
 .repost.icon {
-	background:				url(../assets/icons/repost.png)	center center no-repeat;
+	background:				url(../assets/icons/repost.png)		center center no-repeat;
 }
 .favorite.icon {
 	background:				url(../assets/icons/favorite.png)	center center no-repeat;
@@ -285,10 +294,28 @@ body.Pre3 {
 	background:				url(../assets/icons/cancel.png)		center center no-repeat;
 }
 
+/*
+	An icon (used in most cases) uses a background to set the image so that it
+	can be completely controlled with css.
+*/
 .icon {
 	width:					48px;
 	height:					100%;
 	background-position:	center center;
+
+	display:				inline-block;
+}
+
+/*
+	A imgbtn is used for anything that needs to be animated and uses an html img
+	tag, since animations using backgrounds don't work on all devices.
+*/
+.imgbtn {
+	margin:					15px;
+	padding:				0px;
+
+	width:					18px;
+	height:					16px;
 
 	display:				inline-block;
 }

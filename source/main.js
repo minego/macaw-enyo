@@ -43,17 +43,20 @@ components: [
 		name:								"toolbar",
 		classes:							"toolbar",
 
-		layoutKind:							"FittableColumnsLayout",
 		components: [
 			{
-				classes:					"options icon",
+				kind:						enyo.Image,
+				classes:					"imgbtn",
+				src:						"../assets/icons/opts.png",
 				name:						"options",
 				cmd:						"options",
 				ontap:						"handleButton"
 			},
 			{
+				kind:						enyo.Image,
 				name:						"refreshbtn",
-				classes:					"refresh icon",
+				classes:					"imgbtn",
+				src:						"../assets/icons/refresh.png",
 				cmd:						"refresh",
 				ontap:						"handleButton"
 			},
@@ -64,8 +67,10 @@ components: [
 				fit:						true
 			},
 			{
+				kind:						enyo.Image,
+				classes:					"imgbtn composebutton",
+				src:						"../assets/icons/compose.png",
 				cmd:						"compose",
-				classes:					"compose icon",
 				ontap:						"handleButton"
 			}
 		]
@@ -81,7 +86,8 @@ components: [
 				classes:					"indicator"
 			},
 			{
-				name:						"tabcontainer"
+				name:						"tabcontainer",
+				classes:					"tabcontainer"
 			}
 		]
 	},
@@ -516,6 +522,39 @@ createTabs: function()
 	/* Recreate the tabs */
 	var tabs = [];
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
+		var src;
+
+		src = '../assets/icons/';
+
+		switch (tab.type.toLowerCase()) {
+			case 'timeline':
+				src += 'tweets.png';
+				break;
+
+			case 'mentions':
+				src += 'mentions.png';
+				break;
+
+			case 'messages':
+				src += 'messages.png';
+				break;
+
+			case 'favorites':
+				src += 'favorite.png';
+				break;
+
+			case 'list':
+			case 'lists':
+				src += 'lists.png';
+				break;
+
+			case 'search':
+			case 'searchresults':
+				src += 'search.png';
+				break;
+
+		}
+
 		tabs.push({
 			name:			"tab" + t,
 			classes:		"tab",
@@ -525,8 +564,10 @@ createTabs: function()
 			ontap:			"selectpanel",
 
 			components: [{
+				kind:		enyo.Image,
 				name:		"tabicon" + t,
-				classes:	"icon tab-" + tab.type.toLowerCase()
+				classes:	"imgbtn tab-" + tab.type.toLowerCase(),
+				src:		src
 			}, {
 				name:		"tabcount" + t,
 				classes:	"count"
@@ -822,8 +863,8 @@ createAccount: function(options, force)
 		wide:		true,
 		notitle:	true,
 
-		modal:		force || false,
-		ignoreback:	force || false
+		modal:		force === true ? true : false,
+		ignoreback:	force === true ? true : false
 	});
 },
 
