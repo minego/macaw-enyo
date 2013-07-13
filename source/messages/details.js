@@ -137,7 +137,7 @@ components: [
 						command:	"hide"
 					}
 
-					// Add share options
+					// TODO	Add share options
 				]
 			}
 		]

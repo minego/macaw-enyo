@@ -29,7 +29,7 @@ published: {
 },
 
 handlers: {
-	ontap:								"handleTap",
+	ontap:								"handleCommand",
 	onresize:							"handleResize"
 },
 
@@ -125,7 +125,39 @@ components: [
 				command:				"back"
 			}
 		]
+	},
+
+	{
+		kind:							onyx.MenuDecorator,
+
+		components: [
+			{
+				name:					"optionsMenu",
+				onSelect:				"handleCommand",
+				kind:					onyx.Menu,
+				components: [
+					{
+						content:		"Public Mention",
+						command:		"mention"
+					},
+					{
+						content:		"Send Direct Message",
+						command:		"dm"
+					},
+					{
+						content:		"Block",
+						command:		"block"
+					},
+					{
+						content:		"Follow",
+						command:		"follow",
+						name:			"followMenuItem"
+					}
+				]
+			}
+		]
 	}
+
 ],
 
 rendered: function()
@@ -157,17 +189,7 @@ create: function()
 	}
 
 	if (!this.relationship) {
-		this.following = undefined;
-
-		if (this.user.screenname != this.screenname) {
-			this.service.getUser('@' + this.screenname, function(success, result) {
-				if (success) {
-					this.setRelationship(result);
-				}
-			}.bind(this), 'relationship');
-		} else {
-			this.setRelationship([ 'you' ]);
-		}
+		this.getRelationship();
 	}
 },
 
@@ -277,11 +299,27 @@ profileChanged: function()
 	}
 },
 
+getRelationship: function()
+{
+	this.following = undefined;
+
+	if (this.user.screenname != this.screenname) {
+		this.service.getUser('@' + this.screenname, function(success, result) {
+			if (success) {
+				this.setRelationship(result);
+			}
+		}.bind(this), 'relationship');
+	} else {
+		this.setRelationship([ 'you' ]);
+	}
+},
+
 relationshipChanged: function()
 {
 	var		followed	= false;
 	var		following	= false;
 	var		name;
+	var		disp;
 
 	if (!this.$.relationship) {
 		return;
@@ -295,6 +333,7 @@ relationshipChanged: function()
 
 	this.following = false;
 
+	disp = '@' + name + ' does not follow you';
 	for (var i = 0, c; c = this.relationship[i]; i++) {
 		switch (c.toLowerCase()) {
 			case 'following':
@@ -305,19 +344,27 @@ relationshipChanged: function()
 				break;
 
 			case 'followed_by':
-				this.$.relationship.setContent('@' + name + ' follows you');
-				return;
+				disp = '@' + name + ' follows you';
+				break;
 
 			case 'you':
-				this.$.relationship.setContent('@' + name + ' is you');
-				return;
+				disp = '@' + name + ' is you';
+				break;
 
 			case 'none':
 				break;
 		}
 	}
 
-	this.$.relationship.setContent('@' + name + ' does not follow you');
+	this.$.relationship.setContent(disp);
+
+	if (this.following) {
+		this.$.followMenuItem.setContent("Unfollow");
+		this.$.followMenuItem.command = "unfollow";
+	} else {
+		this.$.followMenuItem.setContent("Follow");
+		this.$.followMenuItem.command = "follow";
+	}
 },
 
 handleResize: function()
@@ -342,7 +389,7 @@ handleResize: function()
 	});
 },
 
-handleTap: function(sender, event)
+handleCommand: function(sender, event)
 {
 	var	index = NaN;
 
@@ -351,13 +398,16 @@ handleTap: function(sender, event)
 		sender = event.dispatchTarget;
 	}
 
-	switch (sender.command || event.command) {
+	cmd = sender.command || event.command;
+
+	switch (cmd) {
 		case "back":
 			this.doCloseToaster();
 			break;
 
 		case "options":
-			// TODO	Write me!!!
+			this.$.optionsMenu.applyPosition(sender.getBounds);
+			this.$.optionsMenu.show();
 			break;
 
 		case "info":
@@ -393,6 +443,82 @@ handleTap: function(sender, event)
 					}
 				});
 			}
+			break;
+
+		case "mention":
+			this.doCompose({
+				user:		this.user,
+				text:		'@' + this.profile.screenname + ' '
+			});
+			break;
+
+		case "dm":
+			this.doCompose({
+				user:		this.user,
+				dm:			this.profile
+			});
+			break;
+
+		case "block":
+			this.doOpenToaster({
+				component: {
+					kind:				"Confirm",
+					title:				"Are you sure you want to block @" + this.profile.screenname + "?",
+					onChoose:			"handleCommand",
+					options: [
+						{
+							classes:	"confirm",
+							command:	"block-confirmed"
+						},
+						{
+							classes:	"cancel",
+							command:	"ignore"
+						}
+					]
+				},
+
+				options:{
+					notitle:		true,
+					owner:			this
+				}
+			});
+			break;
+
+		case "block-confirmed":
+			this.service.changeUser('block', function(success) {
+				if (success) {
+
+				} else {
+					ex('Could not block user');
+				}
+			}.bind(this), { user: '@' + this.profile.screenname });
+			break;
+
+		case "follow":
+			this.service.changeUser('follow', function(success) {
+				if (success) {
+					this.relationships.push('following');
+					this.relationshipChanged();
+				} else {
+					ex('Could not follow user');
+				}
+			}.bind(this), { user: '@' + this.profile.screenname });
+			break;
+
+		case "unfollow":
+			this.service.changeUser('unfollow', function(success) {
+				if (success) {
+					for (var i = this.relationships.length - 1; i >= 0; i--) {
+						if (this.relationships[i].toLowerCase() == 'following') {
+							this.relationships.splice(i, 1);
+						}
+					}
+
+					this.relationshipChanged();
+				} else {
+					ex('Could not unfollow user');
+				}
+			}.bind(this), { user: '@' + this.profile.screenname });
 			break;
 	}
 
