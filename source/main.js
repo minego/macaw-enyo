@@ -561,7 +561,7 @@ createTabs: function()
 			style:			"width: " + this.tabWidth + "%;",
 
 			index:			t,
-			ontap:			"selectpanel",
+			ontap:			"selectPanel",
 
 			components: [{
 				kind:		enyo.Image,
@@ -653,7 +653,7 @@ panelRefreshStop: function(sender, event)
 	}
 
 	/* Allow refreshing up to 2 panels at once */
-	if (this.spincount < 2) {
+	for (var i = 2 - this.spincount; i > 0; i--) {
 		var p;
 
 		/* Start refreshing the next panel */
@@ -763,11 +763,12 @@ isPanelVisible: function(index, selected)
 		pbounds.left	= pbounds.width * index;
 		pbounds.right	= pbounds.left + pbounds.width;
 
-		if (bounds.left > pbounds.left) {
+		/* Don't require that the panel be completely in view */
+		if (bounds.left > (pbounds.left + 5)) {
 			return(-1);
 		}
 
-		if (bounds.right < pbounds.right) {
+		if (bounds.right < (pbounds.right - 5)) {
 			return(1);
 		}
 	} catch (e) {
@@ -776,28 +777,50 @@ isPanelVisible: function(index, selected)
 	return(0);
 },
 
-selectpanel: function(sender, event)
+selectPanel: function(sender, event)
 {
 	var was		= this.index;
 	var move;
+	var distance;
 
 	this.index = sender.index;
 
+	/* Wrap if needed */
+	if (this.index < 0) {
+		this.index = this.tabs.length - 1;
+	}
+	if (this.index >= this.tabs.length) {
+		this.index = 0;
+	}
+
 	if (this.index == was) {
 		/* This panel is already active, scroll to the top or bottom */
-		this.smartscroll(sender, event);
+		if (event) {
+			this.smartscroll(sender, event);
+		}
 	} else {
 		move = this.isPanelVisible(this.index);
 
 		if (0 == move) {
 			/* The panel is already visible, so just move the indicator */
 			this.moveIndicator();
-		} else {
-			/* Scroll the panel into view */
-			do {
+			return;
+		}
+
+		/* Figure out how far we need to slide */
+		current = this.$.panels.getIndex();
+
+		for (distance = 1; distance <= this.tabs.length; distance++) {
+			if (0 == this.isPanelVisible(this.index - (move * distance))) {
+				/*
+					Move the indicator directly to the selected panel, instead
+					of a relative moved based on how far we slid.
+				*/
 				this.ignoreMove = true;
-				this.$.panels.setIndex(this.$.panels.getIndex() + move);
-			} while (0 != (move = this.isPanelVisible(this.index)));
+
+				this.$.panels.setIndex(current + (move * distance));
+				break;
+			}
 		}
 	}
 },
@@ -1027,51 +1050,13 @@ keydown: function(sender, event)
 		case 37: /* left */
 			this.addClass('manualIndex');
 
-			if (this.index > 0) {
-				this.index--;
-			} else {
-				this.index = this.tabs.length - 1;
-			}
-
-			var pindex = this.$.panels.getIndex();
-			if (pindex > 0) {
-				pindex--;
-			} else {
-				pindex = this.tabs.length - 1;
-			}
-
-			if (0 != this.isPanelVisible(this.index)) {
-				this.ignoreMove = true;
-				this.$.panels.setIndex(pindex);
-			} else {
-				this.moveIndicator();
-			}
-
+			this.selectPanel({ index: this.index - 1 });
 			break;
 
 		case 39: /* right */
 			this.addClass('manualIndex');
 
-			if (this.index < (this.tabs.length - 1)) {
-				this.index++;
-			} else {
-				this.index = 0;
-			}
-
-			var pindex = this.$.panels.getIndex();
-			if (pindex < (this.tabs.length - 1)) {
-				pindex++;
-			} else {
-				pindex = 0;
-			}
-
-			if (0 != this.isPanelVisible(this.index)) {
-				this.ignoreMove = true;
-				this.$.panels.setIndex(pindex);
-			} else {
-				this.moveIndicator();
-			}
-
+			this.selectPanel({ index: this.index + 1 });
 			break;
 
 		case 38: /* up */
