@@ -47,7 +47,7 @@ components: [
 			{
 				kind:						enyo.Image,
 				classes:					"imgbtn",
-				src:						"../assets/icons/opts.png",
+				src:						"assets/icons/opts.png",
 				name:						"options",
 				cmd:						"options",
 				ontap:						"handleButton"
@@ -56,7 +56,7 @@ components: [
 				kind:						enyo.Image,
 				name:						"refreshbtn",
 				classes:					"imgbtn",
-				src:						"../assets/icons/refresh.png",
+				src:						"assets/icons/refresh.png",
 				cmd:						"refresh",
 				ontap:						"handleButton"
 			},
@@ -69,7 +69,7 @@ components: [
 			{
 				kind:						enyo.Image,
 				classes:					"imgbtn composebutton",
-				src:						"../assets/icons/compose.png",
+				src:						"assets/icons/compose.png",
 				cmd:						"compose",
 				ontap:						"handleButton"
 			}
@@ -522,7 +522,7 @@ createTabs: function()
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
 		var src;
 
-		src = '../assets/icons/';
+		src = 'assets/icons/';
 
 		switch (tab.type.toLowerCase()) {
 			case 'timeline':
