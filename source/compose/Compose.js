@@ -14,11 +14,6 @@
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// TODO	On some OSes it may make more sense to put the compose toaster on top
-//		in order to avoid interactions with the virtual keyboard...
-//
-//		Or, alternatively try to force the keyboard to never hide while the
-//		compose toaster is open
 enyo.kind({
 
 name:									"Compose",
@@ -30,7 +25,8 @@ events: {
 },
 
 handlers: {
-	ontap:								"handleCommand"
+	ontap:								"handleCommand",
+	onresize:							"handleResize"
 },
 
 published: {
@@ -146,6 +142,23 @@ create: function()
 {
 	this.inherited(arguments);
 
+	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
+			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
+	) {
+		/*
+			Firefox OS
+
+			The virtual keyboard on Firefox OS causes elements to move around a
+			great deal. Make compose full screen in this case.
+		*/
+		this.vkb = true;
+	}
+	// this.vkb = true;
+
+	if (this.vkb) {
+		this.addClass('vkb');
+	}
+
 	this.textChanged();
 	this.userChanged();
 	this.imagesChanged();
@@ -219,6 +232,7 @@ textChanged: function()
 rendered: function(sender, event)
 {
 	this.inherited(arguments);
+	this.handleResize();
 
 	if (this.replyto && this.replyto.dm) {
 		this.dm = this.replyto.user;
@@ -293,6 +307,25 @@ rendered: function(sender, event)
 	this.change();
 },
 
+handleResize: function()
+{
+	var p = this;
+
+	if (!this.vkb) {
+		return;
+	}
+
+	/* This is a fullscreen toaster */
+	while (p.parent) {
+		p = p.parent;
+	}
+	var pb = p.getBounds();
+
+	this.setBounds({
+		height:		pb.height
+	});
+},
+
 handleCommand: function(sender, event)
 {
 	/* Find the real sender */
@@ -326,14 +359,20 @@ handleCommand: function(sender, event)
 		// TODO	Add an option to cross post?
 
 		case "pick":
-			if ('undefined' !== typeof MozActivity) {
+			var activity;
+
+			try {
 				var activity = new MozActivity({
 					name: "pick",
 					data: {
 						type: "image/*"
 					}
 				});
+			} catch (e) {
+				activity = null;
+			}
 
+			if (activity) {
 				activity.onsuccess = function() {
 					this.images.push(activity.result.blob);
 					this.imagesChanged();

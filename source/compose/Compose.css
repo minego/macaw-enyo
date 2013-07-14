@@ -6,6 +6,10 @@
 	background:				url('../../assets/compose-bg.png') left top repeat-x;
 	padding-top:			60px;
 }
+.compose.vkb {
+	background:				url('../../assets/toaster-bg.png') left top repeat-x;
+	padding-top:			10px;
+}
 
 .compose .avatar {
 	position:				absolute;
@@ -34,13 +38,13 @@
 }
 
 .compose .text.haveimages {
-	padding-bottom:			32px;
+	min-height:				130px !important;
 }
 
 .compose .images {
 	position:				absolute;
-	left:					15px;
-	bottom:					55px;
+	right:					15px;
+	top:					120px;
 }
 
 .compose .images * {
@@ -80,6 +84,10 @@
 	bottom:					50px;
 	font-size:				40px;
 	font-family:			Prelude, Arial, Helvetica, sans-serif;
+}
+
+.compose.vkb .counter {
+	top:					75px;
 }
 
 .compose .button {

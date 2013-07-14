@@ -61,7 +61,8 @@ body {
 	background:				#222222;
 }
 
-.toaster .profile {
+.toaster .profile,
+.toaster .compose.vkb {
 	background:				#333333;
 }
 
