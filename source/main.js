@@ -984,7 +984,7 @@ closeAllToasters: function()
 handleButton: function(sender, event)
 {
 	/* Find the real sender */
-	if (event.dispatchTarget) {
+	if (event && event.dispatchTarget) {
 		sender = event.dispatchTarget;
 	}
 
