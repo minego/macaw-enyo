@@ -37,7 +37,7 @@
 	padding:				0 58px 0 0;
 }
 
-.compose .text.haveimages {
+.compose.haveimages .text {
 	min-height:				130px !important;
 }
 
@@ -84,6 +84,9 @@
 	bottom:					50px;
 	font-size:				40px;
 	font-family:			Prelude, Arial, Helvetica, sans-serif;
+}
+.compose.haveimages .counter {
+	bottom:					100px;
 }
 
 .compose.vkb .counter {

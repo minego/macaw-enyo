@@ -187,7 +187,7 @@ imagesChanged: function()
 	}
 
 	if (this.images && this.images.length > 0) {
-		this.$.text.addClass("haveimages");
+		this.addClass("haveimages");
 
 		for (var i = 0, img; img = this.images[i]; i++) {
 			this.$.images.createComponent({
@@ -196,7 +196,7 @@ imagesChanged: function()
 			}, { owner: this });
 		}
 	} else {
-		this.$.text.removeClass("haveimages");
+		this.removeClass("haveimages");
 	}
 	this.$.images.render();
 },
