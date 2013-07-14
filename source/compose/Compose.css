@@ -24,14 +24,32 @@
 .compose .text {
 	color:					#fff;
 	border-width:			12px;
+	border:					12px solid transparent;
 	border-image:			url('../../assets/compose-border.png') 12 12 fill stretch;
 	-webkit-border-image:	url('../../assets/compose-border.png') 12 stretch;
 	min-height:				80px;
 
 	margin:					5px;
-	padding:				0;
-
 	padding:				0 58px 0 0;
+}
+
+.compose .text.haveimages {
+	padding-bottom:			32px;
+}
+
+.compose .images {
+	position:				absolute;
+	left:					15px;
+	bottom:					55px;
+}
+
+.compose .images * {
+	width:					32px;
+	height:					32px;
+	background-position:	center center !important;
+	margin:					5px;
+
+	display:				inline-block;
 }
 
 .compose .messageto {
@@ -68,4 +86,8 @@
 	margin:					7px !important;
 
 	font-weight:			bold;
+}
+
+.compose .icon {
+	height:					49px;
 }

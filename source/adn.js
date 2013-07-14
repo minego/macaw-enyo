@@ -3,7 +3,9 @@ var ADNAPI = function(user, readycb) {
 	this.user			= user;
 
 	this.limits = {
-		maxLength:		256
+		maxLength:		256,
+// TODO	What is the max number of images???
+		maxImages:		3
 	};
 
 	this.features = {

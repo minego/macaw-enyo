@@ -26,5 +26,7 @@ enyo.depends(
 	"main.js",
 
 	"prefs.js",
-	"confirm.js"
+	"confirm.js",
+
+	"imagedata.js"
 );

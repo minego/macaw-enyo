@@ -187,6 +187,30 @@ create: function()
 
 	this.spincount = 0;
 
+	/* Monitor for Web Activity share requests */
+	try {
+		navigator.mozSetMessageHandler('activity', function(request) {
+			switch (request.source.name) {
+				case 'share':
+					var		images = [];
+
+					for (var i = 0, b; b = request.source.data.blobs[i]; i++) {
+						/* Set the filename, it is needed for the upload */
+						b.fileName = request.source.data.filenames[i];
+
+						images.push(b);
+					}
+
+					this.compose(this, {
+						images:		images
+					});
+
+					break;
+			}
+		}.bind(this));
+	} catch (e) {
+	}
+
 	/* Monitor for messages posted from the authorization windows */
 	window.addEventListener('message', function(e) {
 		console.log(e.origin);
@@ -834,6 +858,8 @@ compose: function(sender, options)
 	options.kind		= "Compose";
 	options.user		= options.user || this.users[0];
 	options.users		= this.users;
+
+	options.images		= options.images || [];
 
 	if (!options.user) {
 		return;

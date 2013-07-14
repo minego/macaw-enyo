@@ -6,7 +6,8 @@ var TwitterAPI = function(user, readycb) {
 	this.limits = {
 		maxLength:			140,
 		short_http_len:		21,
-		short_htts_len:		22
+		short_htts_len:		22,
+		maxImages:			1
 	};
 
 	this.features = {
@@ -138,7 +139,7 @@ var TwitterAPI = function(user, readycb) {
 
 	/*
 		Load twitter configuration so that we know how many characters will be
-		used for URL shortening.
+		used for URL shortening and other important details.
 	*/
 	incomplete++;
 	this.oauth.get(this.apibase + '/' + this.version + '/help/configuration.json',
@@ -152,6 +153,10 @@ var TwitterAPI = function(user, readycb) {
 
 				if (config.short_url_length_https) {
 					this.limits.short_https_len = config.short_url_length_https;
+				}
+
+				if (config.max_media_per_upload) {
+					this.limits.maxImages = config.max_media_per_upload;
 				}
 			}
 			complete();
@@ -633,8 +638,8 @@ cleanupUser: function(user)
 */
 sendMessage: function(resource, cb, params)
 {
-	var url	= this.apibase + '/' + this.version + '/';
-	var text;
+	var url		= this.apibase + '/' + this.version + '/';
+	var type	= null;
 
 	params = params || {};
 
@@ -654,9 +659,21 @@ sendMessage: function(resource, cb, params)
 		delete params.to;
 		params.text = text;
 	} else {
-		url += 'statuses/update';
+		// TODO	Figure out a way to include more than one image.. the name is
+		//		supposed to be the same for each..
+		if (params.images && params.images.length > 0) {
+			for (var i = 0, img; img = params.images[i]; i++) {
+				params['media[]$' + i] = img;
+			}
+
+			url += 'statuses/update_with_media';
+		} else {
+			url += 'statuses/update';
+		}
+
 		params.status = text;
 	}
+	delete params.images;
 
 	if (params.replyto) {
 		params.in_reply_to_status_id = params.replyto;
@@ -676,23 +693,31 @@ sendMessage: function(resource, cb, params)
 	}
 	url += '.json';
 
-	this.oauth.post(url, params,
-		function(response) {
-			cb(true, enyo.json.parse(response.text));
-		},
-		function(response) {
-			var results = enyo.json.parse(response.text);
+	/*
+		This uses a modified version of jsOAuth which adds a 'formdata' option
+		to force sending the form as multipart/form-data.
+	*/
+	this.oauth.request({
+		url:		url,
+		method:		'POST',
+		formdata:	true,
+		data:		params,
+		success:	function(response) {
+						cb(true, enyo.json.parse(response.text));
+					},
+		failure:	function(response) {
+						var results = enyo.json.parse(response.text);
 
-			if (results.errors) {
-				for (var i = 0, e; e = results.errors[i]; i++) {
-					if (e.message) {
-						ex(e.message);
+						if (results.errors) {
+							for (var i = 0, e; e = results.errors[i]; i++) {
+								if (e.message) {
+									ex(e.message);
+								}
+							}
+						}
+						cb(false, results);
 					}
-				}
-			}
-			cb(false, results);
-		}
-	);
+	});
 },
 
 getUser: function(user, cb, resource)

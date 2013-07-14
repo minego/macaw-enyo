@@ -1,0 +1,10 @@
+This is the jsOAuth library: https://github.com/bytespider/jsOAuth
+
+This library has been modified as needed for use in the macaw-enyo project:
+	-	Added an option to force a request to be sent as multipart/form-data
+		even if there are no files.
+
+	-	Automatically remove a $ and any data following it from field names to
+		allow multiple fields with the same name.
+
+

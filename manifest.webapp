@@ -26,6 +26,14 @@
 		"desktop-notification":	{}
 	},
 
+	"activities": {
+		"share": {
+			"href":				"/index.html",
+			"disposition":		"window",
+			"returnValue":		false
+		}
+	},
+
 	"type":						"privileged",
 
 	"default_locale":			"en"

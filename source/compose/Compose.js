@@ -13,84 +13,130 @@
 	OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+// TODO	On some OSes it may make more sense to put the compose toaster on top
+//		in order to avoid interactions with the virtual keyboard...
+//
+//		Or, alternatively try to force the keyboard to never hide while the
+//		compose toaster is open
 enyo.kind({
 
-name:							"Compose",
-classes:						"compose",
+name:									"Compose",
+classes:								"compose",
 
 events: {
-	onOpenToaster:				"",
-	onCloseToaster:				""
+	onOpenToaster:						"",
+	onCloseToaster:						""
+},
+
+handlers: {
+	ontap:								"handleCommand"
 },
 
 published: {
-	maxLength:					140,
+	maxLength:							140,	/* Varies depending on service */
 
-	text:						"",		/* Text of the message */
-	dm:							null,	/* User to send a DM to */
-	replyto:					null,	/* Message object to reply to */
-	user:						null,
-	users:						[]
+	text:								"",		/* Text of the message */
+	dm:									null,	/* User to send a DM to */
+	replyto:							null,	/* Message object to reply to */
+	user:								null,
+	users:								[],
+
+	images:								[]		/* An array of images to attach */
 },
 
 components: [
 	{
-		name:					"messageto",
-		classes:				"messageto"
+		name:							"messageto",
+		classes:						"messageto"
 	},
 	{
-		name:					"autocomplete",
-		classes:				"autocomplete",
+		name:							"autocomplete",
+		classes:						"autocomplete",
 
-		ontap:					"autocompletetap",
-		defaultKind:			onyx.Button
+		ontap:							"autocompletetap",
+		defaultKind:					onyx.Button
 	},
 	{
-		name:					"avatar",
-		classes:				"avatar",
+		name:							"avatar",
+		classes:						"avatar",
 
-		ontap:					"nextaccount"
+		ontap:							"nextaccount"
 	},
 	{
-		name:					"text",
-		classes:				"text",
+		name:							"text",
+		classes:						"text",
 
-		kind:					enyo.RichText,
+		kind:							enyo.RichText,
 
-		allowHtml:				false,
-		defaultFocus:			true,
+		allowHtml:						false,
+		defaultFocus:					true,
 
-		onchange:				"change",
-		onkeyup:				"change"
+		onchange:						"change",
+		onkeyup:						"change"
 	},
 	{
-		name:					"counter",
-		classes:				"counter"
+		name:							"counter",
+		classes:						"counter"
+	},
+	{
+		name:							"images",
+		classes:						"images"
+	},
+	{
+		allowHtml:						true,
+
+		content: [
+			'<input type="file" id="composefile" multiple',
+			'	accepts="image/*" style="display: none;" />'
+		].join('\n')
 	},
 
 	{
-		layoutKind:				"FittableColumnsLayout",
+		layoutKind:						"FittableColumnsLayout",
 		components: [
 			{
-				name:			"cancel",
-
-				kind:			onyx.Button,
-				classes:		"button onyx-negative",
-				content:		"Cancel",
-
-				ontap:			"cancel"
+				classes:				"options icon",
+				command:				"options"
 			},
 			{
-				fit:			true
+				fit:					true
 			},
 			{
-				name:			"send",
+				name:					"cancel",
 
-				kind:			onyx.Button,
-				classes:		"button onyx-affirmative",
-				content:		"Post",
+				kind:					onyx.Button,
+				classes:				"button onyx-negative",
+				content:				"Cancel",
 
-				ontap:			"send"
+				command:				"cancel"
+			},
+			{
+				name:					"send",
+
+				kind:					onyx.Button,
+				classes:				"button onyx-affirmative",
+				content:				"Post",
+
+				command:				"send"
+			}
+		]
+	},
+
+	{
+		kind:							onyx.MenuDecorator,
+
+		components: [
+			{
+				name:					"optionsMenu",
+				onSelect:				"handleCommand",
+				kind:					onyx.Menu,
+				components: [
+					{
+						content:		"Attach Image",
+						command:		"pick"
+					}
+				]
 			}
 		]
 	}
@@ -102,6 +148,35 @@ create: function()
 
 	this.textChanged();
 	this.userChanged();
+	this.imagesChanged();
+},
+
+imagesChanged: function()
+{
+	// TODO
+	//		- Allow tapping on an image to remove it
+	//		- Take the image into account in the length of the post
+	//		- Allow posting images with ADN as well
+
+	this.$.images.destroyClientControls();
+
+	while (this.images.length > this.service.limits.maxImages) {
+		this.images.shift();
+	}
+
+	if (this.images && this.images.length > 0) {
+		this.$.text.addClass("haveimages");
+
+		for (var i = 0, img; img = this.images[i]; i++) {
+			this.$.images.createComponent({
+				name:	"image" + i,
+				style:	"background: url(" + URL.createObjectURL(img) + ");"
+			}, { owner: this });
+		}
+	} else {
+		this.$.text.removeClass("haveimages");
+	}
+	this.$.images.render();
 },
 
 userChanged: function()
@@ -116,6 +191,9 @@ userChanged: function()
 	if (this.user && this.user.profile) {
 		this.$.avatar.applyStyle('background-image', 'url(' + this.user.profile.avatar + ')');
 	}
+
+	/* The number of allowed images may be different... */
+	this.imagesChanged();
 },
 
 textChanged: function()
@@ -204,6 +282,73 @@ rendered: function(sender, event)
 	}
 
 	this.change();
+},
+
+handleCommand: function(sender, event)
+{
+	/* Find the real sender */
+	if (event.dispatchTarget) {
+		sender = event.dispatchTarget;
+	}
+
+	cmd = sender.command || event.command;
+
+	switch (cmd) {
+		case "cancel":
+			this.doCloseToaster();
+			break;
+
+		case "send":
+			this.send();
+			break;
+
+		case "options":
+			this.$.optionsMenu.applyPosition(sender.getBounds);
+			this.$.optionsMenu.show();
+			break;
+
+		case "split":
+			this.todo = this.split();
+			this.send();
+			break;
+
+		// TODO	Other options? Tag location, etc...
+
+		// TODO	Add an option to cross post?
+
+		case "pick":
+			if ('undefined' !== typeof MozActivity) {
+				var activity = new MozActivity({
+					name: "pick",
+					data: {
+						type: "image/*"
+					}
+				});
+
+				activity.onsuccess = function() {
+					this.images.push(activity.result.blob);
+					this.imagesChanged();
+				}.bind(this);
+
+				activity.onerror = function() {
+				};
+			} else {
+				/* More generic approach */
+				var input = document.getElementById('composefile');
+
+				input.onchange = function() {
+					for (var i = 0, f; f = input.files[i]; i++) {
+						this.images.push(f);
+					}
+					this.imagesChanged();
+				}.bind(this);
+				input.click();
+			}
+
+			break;
+	}
+
+	return(true);
 },
 
 wordLen: function(word)
@@ -440,25 +585,7 @@ nextaccount: function(sender, event)
 	}
 },
 
-cancel: function(sender, event)
-{
-	this.doCloseToaster();
-},
-
-handleConfirm: function(sender, event)
-{
-	switch (event.command) {
-		case "split":
-			this.todo = this.split();
-			this.send();
-			break;
-
-		case "ignore":
-			break;
-	}
-},
-
-send: function(sender, event)
+send: function()
 {
 	var resource		= 'update';
 	var params			= {};
@@ -484,7 +611,7 @@ send: function(sender, event)
 			component: {
 				kind:				"Confirm",
 				title:				"Your message is too long. Would you like to split it into multiple messages?",
-				onChoose:			"handleConfirm",
+				onChoose:			"handleCommand",
 				options: [
 					{
 						classes:	"confirm",
@@ -523,10 +650,14 @@ send: function(sender, event)
 		}
 	}
 
-	/* Actually send it */
 	this.$.send.setDisabled(true);
 	this.$.cancel.setDisabled(true);
 
+	if (this.images && this.images.length > 0) {
+		params.images = this.images;
+	}
+
+	/* Actually send it */
 	this.service.sendMessage(resource, function(success, response) {
 		if (success) {
 			if (this.todo && this.todo.length > 0) {
