@@ -390,7 +390,9 @@ focus: function()
 	setTimeout(function() {
 		var node;
 
-		if (!this.destroyed && (node = this.$.text.hasNode())) {
+		if (!this.closing && !this.destroyed &&
+			(node = this.$.text.hasNode())
+		) {
 			node.focus();
 
 				this.$.text.moveCursorToEnd();
@@ -432,6 +434,7 @@ handleCommand: function(sender, event)
 
 	switch (cmd) {
 		case "cancel":
+			this.closing = true;
 			this.doCloseToaster();
 			break;
 
@@ -830,6 +833,7 @@ send: function()
 			if (this.todo && this.todo.length > 0) {
 				this.send();
 			} else {
+				this.closing = true;
 				this.doCloseToaster();
 			}
 		} else {
