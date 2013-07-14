@@ -132,7 +132,25 @@ components: [
 					{
 						content:		"Attach Image",
 						command:		"pick"
+					},
+					{
+						content:		"Send As ...",
+						command:		"chooseAccount"
 					}
+				]
+			}
+		]
+	},
+
+	{
+		kind:							onyx.MenuDecorator,
+
+		components: [
+			{
+				name:					"sendAsMenu",
+				onSelect:				"handleCommand",
+				kind:					onyx.Menu,
+				components: [
 				]
 			}
 		]
@@ -163,6 +181,14 @@ create: function()
 	this.textChanged();
 	this.userChanged();
 	this.imagesChanged();
+
+	for (var i = 0, u; u = this.users[i]; i++) {
+		this.$.sendAsMenu.createComponent({
+			command:		"selectAccount",
+			content:		'@' + u.screenname,
+			userid:			u.id
+		}, { owner: this });
+	}
 },
 
 imagesChanged: function()
@@ -429,6 +455,30 @@ handleCommand: function(sender, event)
 				input.click();
 			}
 
+			break;
+
+		case "chooseAccount":
+			/*
+				Display a list of accounts to let the user pick which one they
+				would like to send as.
+			*/
+			this.$.sendAsMenu.applyPosition(sender.getBounds);
+			this.$.sendAsMenu.show();
+			break;
+
+		case "selectAccount":
+			for (var i = 0, u; u = this.users[i]; i++) {
+				if (u.id == event.dispatchTarget.userid) {
+					/*
+						Reset this.service so that this.userChanged() will set
+						it based on the user that we just selected.
+					*/
+					this.service = null;
+
+					this.user = u;
+					this.userChanged();
+				}
+			}
 			break;
 	}
 
