@@ -156,9 +156,18 @@ imagesChanged: function()
 	// TODO
 	//		- Allow tapping on an image to remove it
 	//		- Take the image into account in the length of the post
-	//		- Allow posting images with ADN as well
 
 	this.$.images.destroyClientControls();
+
+	/*
+		Remove any images that the user attempted to add which are not actually
+		images. Silly user.
+	*/
+	for (var i = this.images.length - 1, img; img = this.images[i]; i--) {
+		if (!img.type || 0 != img.type.toLowerCase().indexOf("image/")) {
+			this.images.splice(i, 1);
+		}
+	}
 
 	while (this.images.length > this.service.limits.maxImages) {
 		this.images.shift();
