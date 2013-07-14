@@ -486,7 +486,7 @@ cleanupMessage: function(message)
 
 sendMessage: function(resource, cb, params)
 {
-	var url		= this.apibase + 'posts';
+	var url		= this.apibase + 'posts?include_post_annotations=1';
 
 	if (params.status) {
 		params.text = params.status;
@@ -502,6 +502,61 @@ sendMessage: function(resource, cb, params)
 		// TODO	Add ADN support for PMs
 		ex("Sorry, we don't support ADN PMs yet. We're working on it.");
 		cb(false);
+		return;
+	}
+
+	if (params.images && params.images.length > 0) {
+		var xhr		= OAuth.Request();
+		var form	= new FormData();
+		var image	= params.images.shift();
+
+		xhr.onreadystatechange = function () {
+			if (xhr.readyState !== 4) {
+				return;
+			}
+
+			switch (xhr.status / 100) {
+				case 2:
+				case 3:
+				case 0:
+					var results = enyo.json.parse(xhr.responseText);
+
+					/*
+						Pull the file details out and use them to add a new
+						annotation to the message being posted.
+
+						Once the annotation is added call sendMessage() again.
+					*/
+					if (!params.annotations) {
+						params.annotations = [];
+					}
+
+					params.annotations.push({
+						type: "net.app.core.oembed",
+						value: {
+							"+net.app.core.file": {
+								"file_id":		results.data.id,
+								"file_token":	results.data.file_token,
+								"format":		"oembed"
+							}
+						}
+					});
+
+					this.sendMessage(resource, cb, params);
+					break;
+
+				default:
+					cb(false, "Image upload failed");
+					break;
+			}
+		}.bind(this);
+
+		form.append("content", image);
+		form.append("type", "net.minego.macaw");
+
+		xhr.open("POST", this.apibase + 'files', true);
+		xhr.setRequestHeader('Authorization', 'Bearer ' + this.accesstoken);
+		xhr.send(form);
 		return;
 	}
 

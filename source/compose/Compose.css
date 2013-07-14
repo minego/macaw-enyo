@@ -46,6 +46,7 @@
 .compose .images * {
 	width:					32px;
 	height:					32px;
+	background-size:		contain !important;
 	background-position:	center center !important;
 	margin:					5px;
 
