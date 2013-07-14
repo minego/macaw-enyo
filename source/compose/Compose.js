@@ -401,7 +401,7 @@ handleCommand: function(sender, event)
 				var activity = new MozActivity({
 					name: "pick",
 					data: {
-						type: "image/*"
+						type: "image/jpeg"
 					}
 				});
 			} catch (e) {
