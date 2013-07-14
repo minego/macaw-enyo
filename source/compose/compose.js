@@ -69,7 +69,8 @@ components: [
 		defaultFocus:					true,
 
 		onchange:						"change",
-		onkeyup:						"change"
+		onkeyup:						"change",
+		onblur:							"focus"
 	},
 	{
 		name:							"counter",
@@ -191,6 +192,21 @@ create: function()
 	}
 },
 
+destroy: function()
+{
+	var node;
+
+	/*
+		Attempt to avoid the case where a virtual keyboard does not get closed
+		because the input was still focused when it was destroyed.
+	*/
+	if ((node = this.$.text.hasNode())) {
+		node.blur();
+	}
+
+	this.inherited(arguments);
+},
+
 imagesChanged: function()
 {
 	this.$.images.destroyClientControls();
@@ -283,8 +299,8 @@ userChanged: function()
 textChanged: function()
 {
 	this.$.text.setValue(this.text);
-	try {
 		this.$.text.moveCursorToEnd();
+	try {
 	} catch (e) {
 		// This fails on Firefox OS right now
 	}
@@ -345,8 +361,8 @@ rendered: function(sender, event)
 		}
 
 		this.$.text.setValue(mentions.join(' ') + ' ');
-		try {
 			this.$.text.moveCursorToEnd();
+		try {
 		} catch (e) {
 			// This fails on Firefox OS right now
 		}
@@ -367,6 +383,23 @@ rendered: function(sender, event)
 	}
 
 	this.change();
+},
+
+focus: function()
+{
+	setTimeout(function() {
+		var node;
+
+		if (!this.destroyed && (node = this.$.text.hasNode())) {
+			node.focus();
+
+				this.$.text.moveCursorToEnd();
+			try {
+			} catch (e) {
+				// This fails on Firefox OS right now
+			}
+		}
+	}.bind(this), 300);
 },
 
 handleResize: function()

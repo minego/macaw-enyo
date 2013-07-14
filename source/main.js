@@ -42,6 +42,7 @@ components: [
 	{
 		name:								"toolbar",
 		classes:							"toolbar",
+		ontap:								"handleButton",
 
 		components: [
 			{
@@ -49,16 +50,14 @@ components: [
 				classes:					"imgbtn",
 				src:						"assets/icons/opts.png",
 				name:						"options",
-				cmd:						"options",
-				ontap:						"handleButton"
+				command:					"options"
 			},
 			{
 				kind:						enyo.Image,
 				name:						"refreshbtn",
 				classes:					"imgbtn",
 				src:						"assets/icons/refresh.png",
-				cmd:						"refresh",
-				ontap:						"handleButton"
+				command:					"refresh"
 			},
 			{
 				content:					'',
@@ -70,8 +69,7 @@ components: [
 				kind:						enyo.Image,
 				classes:					"imgbtn composebutton",
 				src:						"assets/icons/compose.png",
-				cmd:						"compose",
-				ontap:						"handleButton"
+				command:					"compose"
 			}
 		]
 	},
@@ -99,22 +97,22 @@ components: [
 		components: [
 			{
 				content:					$L("Refresh"),
-				cmd:						"refresh",
+				command:					"refresh",
 				onSelect:					"handleButton"
 			},
 			{
 				content:					$L("Redraw"),
-				cmd:						"redraw",
+				command:					"redraw",
 				onSelect:					"createTabs"
 			},
 			{
 				content:					$L("Compose"),
-				cmd:						"compose",
+				command:					"compose",
 				onSelect:					"handleButton"
 			},
 			{
 				content:					$L("Preferences"),
-				cmd:						"preferences",
+				command:					"preferences",
 				onSelect:					"handleButton"
 			}
 		]
@@ -985,11 +983,14 @@ closeAllToasters: function()
 
 handleButton: function(sender, event)
 {
-	while (sender && !sender.cmd) {
-		sender = sender.parent;
+	/* Find the real sender */
+	if (event.dispatchTarget) {
+		sender = event.dispatchTarget;
 	}
 
-	switch (sender.cmd) {
+	cmd = sender.command || event.command;
+
+	switch (cmd) {
 		case "options":
 			this.$.appmenu.toggle();
 			break;
@@ -1052,7 +1053,7 @@ keydown: function(sender, event)
 			if (event.ctrlKey) {
 				if (!event.shiftKey) {
 					/* Refresh all panels */
-					this.handleButton({ cmd: "refresh" });
+					this.handleButton({ command: "refresh" });
 				} else {
 					/* Refresh the current panel */
 					var panel;
@@ -1066,7 +1067,7 @@ keydown: function(sender, event)
 
 		case 188: /* comma (,) */
 			if (event.ctrlKey) {
-				this.handleButton({ cmd: "preferences" });
+				this.handleButton({ command: "preferences" });
 			}
 			break;
 
