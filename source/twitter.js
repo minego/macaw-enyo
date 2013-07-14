@@ -5,9 +5,10 @@ var TwitterAPI = function(user, readycb) {
 
 	this.limits = {
 		maxLength:			140,
-		short_http_len:		21,
-		short_htts_len:		22,
-		maxImages:			1
+		short_http_len:		21,		/* Chars required for a shortened url	*/
+		short_https_len:	22,		/* Chars required for a shortened url	*/
+		img_len:			22,		/* Chars required in for each image		*/
+		maxImages:			1		/* Maximum images per post				*/
 	};
 
 	this.features = {
@@ -149,10 +150,12 @@ var TwitterAPI = function(user, readycb) {
 			if (config) {
 				if (config.short_url_length) {
 					this.limits.short_http_len = config.short_url_length;
+					this.limits.img_len = config.short_url_length;
 				}
 
 				if (config.short_url_length_https) {
 					this.limits.short_https_len = config.short_url_length_https;
+					this.limits.img_len = config.short_url_length_https;
 				}
 
 				if (config.max_media_per_upload) {

@@ -77,7 +77,8 @@ components: [
 	},
 	{
 		name:							"images",
-		classes:						"images"
+		classes:						"images",
+		ontap:							"removeImage"
 	},
 	{
 		allowHtml:						true,
@@ -166,10 +167,6 @@ create: function()
 
 imagesChanged: function()
 {
-	// TODO
-	//		- Allow tapping on an image to remove it
-	//		- Take the image into account in the length of the post
-
 	this.$.images.destroyClientControls();
 
 	/*
@@ -199,13 +196,52 @@ imagesChanged: function()
 		this.removeClass("haveimages");
 	}
 	this.$.images.render();
+	this.change();
+},
+
+removeImage: function(sender, e)
+{
+	if (!event.dispatchTarget) {
+		return;
+	}
+
+	for (var i = 0, c; c = sender.children[i]; i++) {
+		if (c == event.dispatchTarget) {
+			this.images.splice(i, 1);
+			this.imagesChanged();
+
+			return;
+		}
+	}
+},
+
+getMaxLength: function()
+{
+	var		ml, il;
+
+	try {
+		ml = this.service.limits.maxLength || this.maxLength;
+	} catch (e) {
+		ml = this.maxLength;
+	}
+
+	try {
+		il = this.service.limits.img_len || 0;
+	} catch (e) {
+		il = 0;
+	}
+
+	if (this.images) {
+		ml -= (this.images.length * il);
+	}
+
+	return(ml);
 },
 
 userChanged: function()
 {
 	if (this.user) {
 		this.service = this.user.service;
-		this.maxLength = this.service.limits.maxLength;
 
 		this.change();
 	}
@@ -591,13 +627,13 @@ change: function(sender, event)
 
 	count = this.countChars(this.text);
 
-	if (count <= this.maxLength) {
-		this.$.counter.setContent(this.maxLength - count);
+	if (count <= this.getMaxLength()) {
+		this.$.counter.setContent(this.getMaxLength() - count);
 	} else {
 		parts = this.split();
 
 		count = this.countChars(parts[parts.length - 1]);
-		this.$.counter.setContent((this.maxLength - count) + 'x' + parts.length);
+		this.$.counter.setContent((this.getMaxLength() - count) + 'x' + parts.length);
 	}
 
 	/* Did the user press enter? */
@@ -654,7 +690,7 @@ send: function()
 	/* Replace any non-breaking spaces with regular spaces */
 	params.status = params.status.replace(/\u00A0/g, " ");
 
-	if (this.countChars(params.status) > this.maxLength) {
+	if (this.countChars(params.status) > this.getMaxLength()) {
 		this.doOpenToaster({
 			component: {
 				kind:				"Confirm",
@@ -816,7 +852,7 @@ split: function()
 			Include 1 extra character when counting the length since the check
 			below will assume a space.
 		*/
-		var left	= this.maxLength - padding + 1;
+		var left	= this.getMaxLength() - padding + 1;
 		var msg		= [];
 
 		while (words.length && left > 0) {
