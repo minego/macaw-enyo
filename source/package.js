@@ -6,7 +6,7 @@ enyo.depends(
     "$lib/webos-ext",
 
 	"webos",
-	"Panels",
+	"panels",
 	"BackGesture.js",
 	"Date.js",
 
