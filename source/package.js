@@ -22,10 +22,10 @@ enyo.depends(
 	"profile",
 	"preview",
 
-	"macaw.css",
-	"main.js",
-
 	"prefs.js",
 	"confirm.js",
-	"chooseaccount.js"
+	"chooseaccount.js",
+
+	"macaw.css",
+	"main.js"
 );
