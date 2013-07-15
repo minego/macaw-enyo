@@ -295,6 +295,38 @@ body.Pre3 {
 	background:				url(../assets/icons/cancel.png)		center center no-repeat;
 }
 
+.chooseaccount .users {
+	margin:					15px;
+}
+
+.chooseaccount .user {
+	display:				block;
+
+	-webkit-border-radius:	5px;
+	border-radius:			5px;
+
+	margin:					15px;
+
+	height:					55px;
+	line-height:			48px;
+	padding-left:			55px;
+	background-size:		48px !important;
+}
+
+.chooseaccount .enabled {
+	border:					1px solid white;
+	margin:					14px !important;
+}
+
+.chooseaccount .button {
+	width:					125px;
+	margin:					7px !important;
+
+	font-weight:			bold;
+}
+
+
+
 /*
 	An icon (used in most cases) uses a background to set the image so that it
 	can be completely controlled with css.
@@ -322,7 +354,7 @@ body.Pre3 {
 }
 
 .confirm .title {
-	padding:				5px;
+	padding:				15px;
 	text-align:				center;
 }
 

@@ -56,8 +56,8 @@ components: [
 	{
 		name:							"avatar",
 		classes:						"avatar",
-
-		ontap:							"nextaccount"
+		command:						"nextAccount",
+		ontap:							"handleCommand"
 	},
 	{
 		name:							"text",
@@ -134,24 +134,18 @@ components: [
 						content:		"Attach Image",
 						command:		"pick"
 					},
+
 					{
-						content:		"Send As ...",
-						command:		"chooseAccount"
+						content:		"Switch Account",
+						command:		"chooseAccount",
+						name:			"chooseAccountItem"
+					},
+
+					{
+						content:		"Cross Post",
+						command:		"crossPost",
+						name:			"crossPostItem"
 					}
-				]
-			}
-		]
-	},
-
-	{
-		kind:							onyx.MenuDecorator,
-
-		components: [
-			{
-				name:					"sendAsMenu",
-				onSelect:				"handleCommand",
-				kind:					onyx.Menu,
-				components: [
 				]
 			}
 		]
@@ -183,12 +177,28 @@ create: function()
 	this.userChanged();
 	this.imagesChanged();
 
-	for (var i = 0, u; u = this.users[i]; i++) {
-		this.$.sendAsMenu.createComponent({
-			command:		"selectAccount",
-			content:		'@' + u.screenname,
-			userid:			u.id
-		}, { owner: this });
+	/*
+		Ensure we have a fresh copy of the users array, since it may be modified
+		here based on which users are allowed to send.
+	*/
+	this.users = this.users.slice(0);
+
+	if (this.dm || this.replyto) {
+		/*
+			Only allow switching between accounts on the same service when
+			sending a DM.
+		*/
+		for (var i = this.users.length - 1, u; u = this.users[i]; i--) {
+			if (this.user.service.toString() != u.service.toString()) {
+				this.users.splice(i, 1);
+			}
+		}
+	}
+
+	if (this.users.length <= 1) {
+		/* Hide multi account features */
+		this.$.chooseAccountItem.destroy();
+		this.$.crossPostItem.destroy();
 	}
 },
 
@@ -209,6 +219,12 @@ destroy: function()
 
 imagesChanged: function()
 {
+	var		max = 3;
+
+	if (this.service) {
+		max = this.service.limits.maxImages;
+	}
+
 	this.$.images.destroyClientControls();
 
 	/*
@@ -221,7 +237,7 @@ imagesChanged: function()
 		}
 	}
 
-	while (this.images.length > this.service.limits.maxImages) {
+	while (this.images.length > max) {
 		this.images.shift();
 	}
 
@@ -282,9 +298,27 @@ getMaxLength: function()
 
 userChanged: function()
 {
+	if (!this.user) {
+		/* Select the first user */
+		for (var i = 0, u; u = this.users[i]; i++) {
+			if (u.enabled) {
+				this.user = u;
+				break;
+			}
+		}
+	} else {
+		/* Make sure only one user is selected */
+		for (var i = 0, u; u = this.users[i]; i++) {
+			if (u.id == this.user.id) {
+				u.enabled = true;
+			} else {
+				u.enabled = false;
+			}
+		}
+	}
+
 	if (this.user) {
 		this.service = this.user.service;
-
 		this.change();
 	}
 
@@ -454,8 +488,6 @@ handleCommand: function(sender, event)
 
 		// TODO	Other options? Tag location, etc...
 
-		// TODO	Add an option to cross post?
-
 		case "pick":
 			var activity;
 
@@ -495,24 +527,103 @@ handleCommand: function(sender, event)
 
 		case "chooseAccount":
 			/*
-				Display a list of accounts to let the user pick which one they
-				would like to send as.
+				Display a list of accounts to let the user pick which one
+				they would like to send as.
 			*/
-			this.$.sendAsMenu.applyPosition(sender.getBounds);
-			this.$.sendAsMenu.show();
+			this.doOpenToaster({
+				component: {
+					kind:				"ChooseAccount",
+					title:				"Which account would you like to send as?",
+					onChoose:			"handleCommand",
+					users:				this.users,
+					multi:				false,
+					command:			"selectAccount",
+
+					buttons: [
+					]
+
+				},
+
+				options:{
+					notitle:		true,
+					owner:			this
+				}
+			});
 			break;
 
 		case "selectAccount":
+			this.users		= sender.users;
+			this.user		= null;
+			this.service	= null;
+			this.userChanged();
+			break;
+
+		case "crossPost":
+			/*
+				Display a list of accounts and let the user choose one or more
+				that they would like to send as.
+
+				This action actually does the post.
+			*/
+			this.doOpenToaster({
+				component: {
+					kind:				"ChooseAccount",
+					title:				"Which accounts would you like to send as?",
+					onChoose:			"handleCommand",
+					users:				this.users,
+					multi:				true,
+
+					buttons: [
+						{
+							content:	"Cancel",
+							command:	"ignore",
+							classes:	"button onyx-negative"
+						},
+						{
+							content:	"Post",
+							command:	"crossPostSend",
+							classes:	"button onyx-affirmative"
+						}
+					]
+				},
+
+				options:{
+					notitle:		true,
+					owner:			this
+				}
+			});
+			break;
+
+		case "crossPostSend":
+			// TODO	Remember what the last set of multiple accounts was and
+			//		allow selecting that in the list of accounts by tapping the
+			//		icon...
+
+			this.users		= sender.users;
+			this.user		= null;
+			this.service	= null;
+			this.userChanged();
+			this.send();
+			break;
+
+		case "nextAccount":
+			if (this.users.length <= 1) {
+				/* There isn't an account to switch to */
+				break;
+			}
+
+			/* Find the current index */
 			for (var i = 0, u; u = this.users[i]; i++) {
-				if (u.id == event.dispatchTarget.userid) {
+				if (u.id == this.user.id) {
 					/*
-						Reset this.service so that this.userChanged() will set
-						it based on the user that we just selected.
+						Reset this.service so that this.userChanged() will set it based
+						on the user that we just selected.
 					*/
 					this.service = null;
 
-					this.user = u;
+					this.user = this.users[++i % this.users.length];
 					this.userChanged();
+					break;
 				}
 			}
 			break;
@@ -523,7 +634,7 @@ handleCommand: function(sender, event)
 
 wordLen: function(word)
 {
-	if (this.service.limits) {
+	if (this.service && this.service.limits) {
 		var linklen = {};
 
 		if (this.service.limits.short_http_len) {
@@ -732,29 +843,6 @@ change: function(sender, event)
 	this.autocomplete(this.text);
 },
 
-nextaccount: function(sender, event)
-{
-	if (this.users.length <= 1) {
-		/* There isn't an account to switch to */
-		return;
-	}
-
-	/* Find the current index */
-	for (var i = 0, u; u = this.users[i]; i++) {
-		if (u.id == this.user.id) {
-			/*
-				Reset this.service so that this.userChanged() will set it based
-				on the user that we just selected.
-			*/
-			this.service = null;
-
-			this.user = this.users[++i % this.users.length];
-			this.userChanged();
-			return;
-		}
-	}
-},
-
 send: function()
 {
 	var resource		= 'update';
@@ -833,8 +921,24 @@ send: function()
 			if (this.todo && this.todo.length > 0) {
 				this.send();
 			} else {
-				this.closing = true;
-				this.doCloseToaster();
+				/*
+					Send with any other accounts?
+
+					This user is no longer enabled. userChanged will set
+					this.user if there is another one that is enabled.
+				*/
+				this.user.enabled	= false;
+				this.user			= null;
+				this.service		= null;
+
+				this.userChanged();
+
+				if (this.user) {
+					this.send();
+				} else {
+					this.closing = true;
+					this.doCloseToaster();
+				}
 			}
 		} else {
 			this.$.send.setDisabled(false);

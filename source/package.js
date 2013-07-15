@@ -26,5 +26,6 @@ enyo.depends(
 	"main.js",
 
 	"prefs.js",
-	"confirm.js"
+	"confirm.js",
+	"chooseaccount.js"
 );
