@@ -177,6 +177,9 @@ create: function()
 	this.userChanged();
 	this.imagesChanged();
 
+	this.$.send.setDisabled(false);
+	this.$.cancel.setDisabled(false);
+
 	/*
 		Ensure we have a fresh copy of the users array, since it may be modified
 		here based on which users are allowed to send.
@@ -460,7 +463,7 @@ handleResize: function()
 handleCommand: function(sender, event)
 {
 	/* Find the real sender */
-	if (event.dispatchTarget) {
+	if (event && event.dispatchTarget) {
 		sender = event.dispatchTarget;
 	}
 
@@ -565,12 +568,14 @@ handleCommand: function(sender, event)
 
 				This action actually does the post.
 			*/
+			var users = prefs.get('crosspostusers') || this.users;
+
 			this.doOpenToaster({
 				component: {
 					kind:				"ChooseAccount",
 					title:				"Which accounts would you like to send as?",
 					onChoose:			"handleCommand",
-					users:				this.users,
+					users:				users,
 					multi:				true,
 
 					buttons: [
@@ -582,7 +587,8 @@ handleCommand: function(sender, event)
 						{
 							content:	"Post",
 							command:	"crossPostSend",
-							classes:	"button onyx-affirmative"
+							classes:	"button onyx-affirmative",
+							onenter:	true
 						}
 					]
 				},
@@ -602,6 +608,10 @@ handleCommand: function(sender, event)
 			this.users		= sender.users;
 			this.user		= null;
 			this.service	= null;
+
+			/* Remember the users that where selected */
+			prefs.set('crosspostusers', this.users);
+
 			this.userChanged();
 			this.send();
 			break;
@@ -833,10 +843,17 @@ change: function(sender, event)
 		this.$.counter.setContent((this.getMaxLength() - count) + 'x' + parts.length);
 	}
 
-	/* Did the user press enter? */
+	/*
+		Did the user press enter?
+
+		ctrl+enter			send
+		ctrl+shift+enter	cross post
+	*/
 	if (event && event.which == 13) {
 		if (event.ctrlKey || prefs.get('submitOnEnter')) {
-			this.send(sender, event);
+			this.handleCommand(this, {
+				command: event.shiftKey ? "crossPost" : "send"
+			});
 		}
 	}
 
