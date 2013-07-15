@@ -378,6 +378,59 @@ getMessages: function(resource, cb, params)
 	});
 },
 
+/*
+	Perform an action on a message
+
+	action may be:
+		rt, favorite, destroy, destroydm
+
+	The provided callback will be called when the request is complete. The first
+	argument is a boolean indicating success.
+*/
+changeMessage: function(action, cb, id)
+{
+	var verb	= 'POST';
+	var url		= this.apibase;
+
+	switch (action) {
+		case 'repost':
+		case 'retweet':
+		case 'rt':
+			url += 'posts/' + id + '/repost';
+			break;
+
+		case 'del':
+		case 'destroy':
+			verb = 'DELETE';
+			url += 'posts/' + id;
+			break;
+
+		case 'unfav':
+		case 'unfavorite':
+			verb = 'DELETE';
+			/* fallthrough */
+
+		case 'fav':
+		case 'favorite':
+			url += 'posts/' + id + '/star';
+			break;
+
+		case 'deldm':
+		case 'destroydm':
+		default:
+			console.log('changeMessage does not support this action:' + action);
+			return;
+	}
+
+	this.get(url, function(sender, response) {
+		if (response.data) {
+			cb(true, response.data);
+		} else {
+			cb(false);
+		}
+	}, verb);
+},
+
 cleanupMessages: function(messages)
 {
 	if (messages) {
