@@ -568,7 +568,21 @@ handleCommand: function(sender, event)
 
 				This action actually does the post.
 			*/
-			var users = prefs.get('crosspostusers') || this.users;
+			var users	= this.users.slice(0);
+			var enabled;
+
+			if ((enabled = prefs.get('crosspostusers'))) {
+				for (var i = 0, u; u = this.users[i]; i++) {
+					u.enabled = false;
+
+					for (var c = 0, e; e = enabled[c]; c++) {
+						if (u.id == e.id && u.service.toString() == e.service) {
+							u.enabled = true;
+							break;
+						}
+					}
+				}
+			}
 
 			this.doOpenToaster({
 				component: {
@@ -610,7 +624,16 @@ handleCommand: function(sender, event)
 			this.service	= null;
 
 			/* Remember the users that where selected */
-			prefs.set('crosspostusers', this.users);
+			var tosave = [];
+			for (var i = 0, u; u = this.users[i]; i++) {
+				if (u.enabled) {
+					tosave.push({
+						id:			u.id,
+						service:	u.service.toString()
+					});
+				}
+			}
+			prefs.set('crosspostusers', tosave);
 
 			this.userChanged();
 			this.send();
