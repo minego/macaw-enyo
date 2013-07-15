@@ -336,8 +336,8 @@ userChanged: function()
 textChanged: function()
 {
 	this.$.text.setValue(this.text);
-		this.$.text.moveCursorToEnd();
 	try {
+		this.$.text.moveCursorToEnd();
 	} catch (e) {
 		// This fails on Firefox OS right now
 	}
@@ -398,8 +398,8 @@ rendered: function(sender, event)
 		}
 
 		this.$.text.setValue(mentions.join(' ') + ' ');
-			this.$.text.moveCursorToEnd();
 		try {
+			this.$.text.moveCursorToEnd();
 		} catch (e) {
 			// This fails on Firefox OS right now
 		}
@@ -432,8 +432,8 @@ focus: function()
 		) {
 			node.focus();
 
-				this.$.text.moveCursorToEnd();
 			try {
+				this.$.text.moveCursorToEnd();
 			} catch (e) {
 				// This fails on Firefox OS right now
 			}
