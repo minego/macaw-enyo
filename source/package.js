@@ -24,6 +24,7 @@ enyo.depends(
 
 	"prefs.js",
 	"confirm.js",
+	"chooseaccount.js"
 
 	"macaw.css",
 	"main.js"
