@@ -14,6 +14,16 @@
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+var deftheme	= 'light';
+
+if (window.android) {
+	deftheme	= 'holo-dark';
+} else if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
+			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
+) {
+	deftheme	= 'ffos';
+}
+
 var prefs =
 {
 
@@ -23,7 +33,7 @@ defaults: {
 	accounts:			[],
 
 	fontSize:			"tiny",
-	theme:				!window.android ? "light" : "holo-dark",
+	theme:				deftheme,
 	toolbar:			"top",
 	tabs:				"bottom",
 

@@ -387,7 +387,7 @@ create: function()
 
 		return(notify(origin + '/assets/error.png', 'Error', error));
 	}.bind(this);
-    
+
     this.render();
 },
 

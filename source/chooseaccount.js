@@ -122,6 +122,8 @@ usersChanged: function()
 
 
 	for (i = 0; u = this.users[i]; i++) {
+		var origin = window.location.protocol + '//' + window.location.hostname;
+
 		var item = this.$.users.createComponent({
 			name:			'user' + i,
 			classes:		'user',
@@ -131,7 +133,7 @@ usersChanged: function()
 			content:		'@' + u.screenname,
 			style:			'background: ' +
 								'url(' + u.profile.avatar + ') left 5px center no-repeat, ' +
-								'url(assets/icons/logo-' + u.service.toString() + '.png) right 5px center no-repeat;'
+								'url(' + origin + '/assets/icons/logo-' + u.service.toString() + '.png) right 5px center no-repeat;'
 		}, { owner: this });
 
 		if (u.enabled) {

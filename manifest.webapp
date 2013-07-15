@@ -19,11 +19,16 @@
 	},
 
 	"permissions": {
-		"systemXHR":			{},
+		"systemXHR":			{
+			"description":		"Required to access twitter.com and app.net"
+		},
 
-		"geolocation":			{},
-		"storage":				{},
-		"desktop-notification":	{}
+		"geolocation":			{
+			"description":		"Required to geo-tag posts"
+		},
+		"desktop-notification":	{
+			"description":		"Required to post notifications of new messages"
+		}
 	},
 
 	"activities": {

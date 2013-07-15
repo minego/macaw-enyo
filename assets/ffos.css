@@ -1,0 +1,85 @@
+/*
+	A theme meant to mimic the Firefox OS look and feel
+*/
+
+.themeFfos @font-face {
+	font-family:			'MozTTLight';
+	src:					url(../assets/MozTT%20Light.ttf) format("truetype");
+}
+
+body {
+	background:				#fefefe !important;
+}
+
+.themeFfos .toolbar {
+	background:				linear-gradient(		top, #c66a00, #b54d17);
+	background:				-o-linear-gradient(		top, #c66a00, #b54d17);
+	background:				-ms-linear-gradient(	top, #c66a00, #b54d17);
+	background:				-moz-linear-gradient(	top, #c66a00, #b54d17);
+	background:				-webkit-linear-gradient(top, #c66a00, #b54d17);
+	box-shadow:				0 1px 2px -1px rgba(0, 0, 0, 0.7);
+	-o-box-shadow:			0 1px 2px -1px rgba(0, 0, 0, 0.7);
+	-ms-box-shadow:			0 1px 2px -1px rgba(0, 0, 0, 0.7);
+	-webkit-box-shadow:		0 1px 5px -1px rgba(0, 0, 0, 0.7);
+	-moz-box-shadow:		0 1px 2px -1px rgba(0, 0, 0, 0.7);
+	color:					white;
+}
+
+.themeFfos .toolbar.topbar {
+	padding-bottom:			0px;
+	border-bottom:			1px solid #933212;
+}
+
+.themeFfos .toolbar.bottombar {
+	border-top:				1px solid #933212;
+	padding-top:			0px;
+}
+
+.themeFfos .listitem {
+	border-bottom:			1px solid #ddd;
+}
+
+.themeFfos .message .time,
+.themeFfos .newcount {
+	color:					#99bbdd;
+	font-weight:			bold;
+}
+
+.themeFfos .tabbar .tab {
+	background:				none;
+}
+
+.themeFfos button {
+	box-shadow:				none;
+
+	color:					#333;
+	background:				#fafafa;
+	border:					0.1rem solid #a6a6a6;
+	border-radius:			0px;
+}
+
+.themeFfos button.onyx-negative {
+	color:					#333;
+	background:				#fafafa;
+}
+
+.themeFfos button.onyx-affirmative {
+	color:					#333;
+	background:				#99bbdd;
+}
+
+/* Toasters */
+.themeFfos .toaster.bg,
+.themeFfos .compose {
+	background:				url(../assets/ffos-gradient.png) no-repeat left top / 100% 100%;
+}
+
+.themeFfos .toaster .controls {
+	background:				none;
+}
+
+.themeFfos .compose {
+	padding-top:			10px;
+}
+
+

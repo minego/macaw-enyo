@@ -65,11 +65,12 @@ components: [
 							key:					"theme",
 
 							options: [
-								{ label: "Light",	value: "light"	},
-								{ label: "Dark",	value: "dark"	},
-								{ label: "Holo Dark",	value: "holo-dark"	},
+								{ label: "Light",		value: "light"				},
+								{ label: "Dark",		value: "dark"				},
+								{ label: "Holo Dark",	value: "holo-dark"			},
 								{ label: "Holo Red",	value: "holo-dark,holo-red"	},
-								{ label: "Macaw Bros",	value: "macawbros"}
+								// { label: "Macaw Bros",	value: "macawbros"		},
+								{ label: "Firefox OS",	value: "ffos"				}
 							]
 						},
 
