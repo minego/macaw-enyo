@@ -95,7 +95,8 @@ components: [
 		components: [
 			{
 				classes:				"options icon",
-				command:				"options"
+				command:				"options",
+				name:					"optionsButton"
 			},
 			{
 				fit:					true
@@ -132,7 +133,8 @@ components: [
 				components: [
 					{
 						content:		"Attach Image",
-						command:		"pick"
+						command:		"pick",
+						name:			"pickItem"
 					},
 
 					{
@@ -154,6 +156,8 @@ components: [
 
 create: function()
 {
+	var		showmenu = false;
+
 	this.inherited(arguments);
 
 	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
@@ -198,10 +202,23 @@ create: function()
 		}
 	}
 
+	/* Don't allow attaching an image on a DM */
+	if (this.dm) {
+		this.$.pickItem.destroy();
+	} else {
+		showmenu = true;
+	}
+
 	if (this.users.length <= 1) {
 		/* Hide multi account features */
 		this.$.chooseAccountItem.destroy();
 		this.$.crossPostItem.destroy();
+	} else {
+		showmenu = true;
+	}
+
+	if (!showmenu) {
+		this.$.optionsButton.destroy();
 	}
 },
 
