@@ -56,7 +56,7 @@ components: [
 	{
 		name:							"avatar",
 		classes:						"avatar",
-		command:						"nextAccount",
+		command:						"chooseAccount",
 		ontap:							"handleCommand"
 	},
 	{
@@ -637,28 +637,6 @@ handleCommand: function(sender, event)
 
 			this.userChanged();
 			this.send();
-			break;
-
-		case "nextAccount":
-			if (this.users.length <= 1) {
-				/* There isn't an account to switch to */
-				break;
-			}
-
-			/* Find the current index */
-			for (var i = 0, u; u = this.users[i]; i++) {
-				if (u.id == this.user.id) {
-					/*
-						Reset this.service so that this.userChanged() will set it based
-						on the user that we just selected.
-					*/
-					this.service = null;
-
-					this.user = this.users[++i % this.users.length];
-					this.userChanged();
-					break;
-				}
-			}
 			break;
 	}
 
