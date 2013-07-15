@@ -33,7 +33,7 @@ ${DEPLOY}/config.xml: ${DEPLOY} bb10/config.xml
 	cat bb10/config.xml | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/config.xml
 
 deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
-	cat index.html | sed 's/device-width/320/' > ${DEPLOY}/index.html
+	cat webos-index.html | sed 's/device-width/320/' > ${DEPLOY}/index.html
 	palm-package --exclude=assets/old-images ${DEPLOY}
 
 all: ${DEPLOY}

@@ -22,9 +22,9 @@ enyo.depends(
 	"profile",
 	"preview",
 
-	"macaw.css",
-	"main.js",
-
 	"prefs.js",
-	"confirm.js"
+	"confirm.js",
+
+	"macaw.css",
+	"main.js"
 );

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Macaw</title>
+
+		<link rel="shortcut icon" href="assets/favicon.ico"/>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf8"/>
+		<meta name="apple-mobile-web-app-capable" content="yes"/>
+		<meta name="viewport" content="width=device-width, height=device-height, user-scalable=no"/>
+        
+        <!-- Release build links -->
+		<link href="build/enyo.css" rel="stylesheet" />
+		<link href="build/app.css" rel="stylesheet" />
+        
+        <script src="build/enyo.js" type="text/javascript" />
+	</head>
+	<body class="enyo-unselectable onyx">
+		<div>Replace with splash page</div>
+		<script>
+			/*if (window.PalmSystem) {
+				PalmSystem.stageReady();
+			}*/
+
+			function loadScript(file) {
+				var ref = document.createElement("script");
+				ref.setAttribute("type", "text/javascript");
+				ref.setAttribute("src", file);
+                
+				document.getElementsByTagName("head")[0].appendChild(ref);
+			}
+
+			window.addEventListener('load', function() {
+					loadScript("build/app.js");
+				}, false);
+        </script>
+        <div id="webos">
+        </div>
+    </body>
+</html>

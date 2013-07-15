@@ -387,6 +387,8 @@ create: function()
 
 		return(notify(origin + '/assets/error.png', 'Error', error));
 	}.bind(this);
+    
+    this.render();
 },
 
 /* webOS relaunch */
@@ -1240,15 +1242,19 @@ moveIndicator: function(sender, event)
 var ex;
 var notify;
 
-/*
-	Packaged chrome apps can not run inline javascript in the html document so
-	we need to initialize here instead of in the html.
-*/
-window.addEventListener('load', function()
-{
-	prefs.ready(function() {
-		new net.minego.macaw.main().renderInto(document.body);
-	});
-}, false);
+if (enyo.platform.webos) {
+	var element = document.getElementById("webos"); //document.body;
+	new net.minego.macaw.main().renderInto(element);
+} else {
+	/*
+		Packaged chrome apps can not run inline javascript in the html document so
+		we need to initialize here instead of in the html.
+	*/
+	window.addEventListener('load', function() {
+		prefs.ready(function() {
+			new net.minego.macaw.main().renderInto(document.body);
+		});
+	}, false);
+}
 
 
