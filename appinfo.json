@@ -5,7 +5,7 @@
 	"type":			"web",
 	"main":			"index.html",
 	"title":		"Macaw",
-	"icon":			"icon.png",
+	"icon":			"macaw.png",
 	"splashicon":	"splash-icon.png",
 	"uiRevision":	2,
 	"noWindow":		false,

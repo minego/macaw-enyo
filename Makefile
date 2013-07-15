@@ -34,6 +34,7 @@ ${DEPLOY}/config.xml: ${DEPLOY} bb10/config.xml
 
 deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
 	cat webos-index.html | sed 's/device-width/320/' > ${DEPLOY}/index.html
+	cp macaw.png ${DEPLOY}
 	palm-package --exclude=assets/old-images ${DEPLOY}
 
 all: ${DEPLOY}
