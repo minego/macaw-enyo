@@ -129,7 +129,9 @@ usersChanged: function()
 			userid:			u.id,
 
 			content:		'@' + u.screenname,
-			style:			'background: url(' + u.profile.avatar + ') left center no-repeat'
+			style:			'background: ' +
+								'url(' + u.profile.avatar + ') left 5px center no-repeat, ' +
+								'url(assets/icons/logo-' + u.service.toString() + '.png) right 5px center no-repeat;'
 		}, { owner: this });
 
 		if (u.enabled) {
