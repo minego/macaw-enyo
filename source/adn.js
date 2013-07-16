@@ -187,7 +187,7 @@ cleanupUser: function(user)
 		largeAvatar:	'https://alpha-api.app.net/stream/0/users/' + user.id + '/avatar',
 
 		created:		created,
-		createdStr:		created ? created.toLocaleFormat('%x %R') : null,
+		createdStr:		created ? created.toLocaleString() : null,
 		type:			user.type,
 
 		counts: {
@@ -478,7 +478,7 @@ cleanupMessage: function(message)
 	}
 
 	if (message.created && !message.createdStr) {
-		message.createdStr = message.created.toLocaleFormat('%x %R');
+		message.createdStr = message.created.toLocaleString();
 	}
 
 	if (message.user) {

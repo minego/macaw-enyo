@@ -547,7 +547,7 @@ cleanupMessage: function(tweet)
 	}
 
 	if (tweet.created && !tweet.createdStr) {
-		tweet.createdStr = tweet.created.toLocaleFormat('%x %R');
+		tweet.createdStr = tweet.created.toLocaleString();
 	}
 
 	EntityAPI.text(tweet);
@@ -607,7 +607,7 @@ cleanupUser: function(user)
 		avatar:			avatar,
 		largeAvatar:	largeAvatar,
 		created:		created,
-		createdStr:		created ? created.toLocaleFormat('%x %R') : null,
+		createdStr:		created ? created.toLocaleString() : null,
 		'protected':	user['protected'],
 		verified:		user.verified,
 		type:			'human',
