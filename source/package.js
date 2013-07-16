@@ -1,7 +1,6 @@
 enyo.depends(
 	"$lib/layout",
 	"$lib/onyx",
-	"$lib/g11n",
 	"$lib/jsOAuth",
     "$lib/webos-ext",
 

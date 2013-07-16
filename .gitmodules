@@ -7,6 +7,3 @@
 [submodule "lib/layout"]
 	path = lib/layout
 	url = git://github.com/enyojs/layout.git
-[submodule "lib/g11n"]
-	path = lib/g11n
-	url = git://github.com/enyojs/g11n.git

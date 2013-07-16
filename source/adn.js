@@ -59,11 +59,6 @@ var ADNAPI = function(user, readycb) {
 		}
 	}
 
-	this.dateFormat	= new enyo.g11n.DateFmt({
-		date:		'short',
-		time:		'short'
-	});
-
 	/*
 		Load this user's profile information, working under the assumption that
 		a consumer will usually want access to this.
@@ -192,7 +187,7 @@ cleanupUser: function(user)
 		largeAvatar:	'https://alpha-api.app.net/stream/0/users/' + user.id + '/avatar',
 
 		created:		created,
-		createdStr:		created ? this.dateFormat.format(created) : null,
+		createdStr:		created ? created.toLocaleFormat('%x %R') : null,
 		type:			user.type,
 
 		counts: {
@@ -483,7 +478,7 @@ cleanupMessage: function(message)
 	}
 
 	if (message.created && !message.createdStr) {
-		message.createdStr = this.dateFormat.format(message.created);
+		message.createdStr = message.created.toLocaleFormat('%x %R');
 	}
 
 	if (message.user) {

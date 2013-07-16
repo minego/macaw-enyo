@@ -104,11 +104,6 @@ var TwitterAPI = function(user, readycb) {
 		this.oauth.setAccessToken([ user.oauth_token, user.oauth_token_secret ]);
 	}
 
-	this.dateFormat	= new enyo.g11n.DateFmt({
-		date:		'short',
-		time:		'short'
-	});
-
 	var incomplete = 0;
 	var complete = function() {
 		if (0 == --incomplete) {
@@ -552,7 +547,7 @@ cleanupMessage: function(tweet)
 	}
 
 	if (tweet.created && !tweet.createdStr) {
-		tweet.createdStr = this.dateFormat.format(tweet.created);
+		tweet.createdStr = tweet.created.toLocaleFormat('%x %R');
 	}
 
 	EntityAPI.text(tweet);
@@ -612,7 +607,7 @@ cleanupUser: function(user)
 		avatar:			avatar,
 		largeAvatar:	largeAvatar,
 		created:		created,
-		createdStr:		created ? this.dateFormat.format(created) : null,
+		createdStr:		created ? created.toLocaleFormat('%x %R') : null,
 		'protected':	user['protected'],
 		verified:		user.verified,
 		type:			'human',
