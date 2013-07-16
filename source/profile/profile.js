@@ -204,7 +204,7 @@ create: function()
 	}
 
 	if (!this.relationship) {
-		this.getRelationship();
+		this.loadRelationship();
 	}
 },
 
@@ -324,7 +324,7 @@ profileChanged: function()
 	}
 },
 
-getRelationship: function()
+loadRelationship: function()
 {
 	this.following = undefined;
 
