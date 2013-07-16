@@ -80,23 +80,30 @@ body {
 	display:				none;
 }
 
-.themeFfos button {
+.themeFfos button,
+.themeFfos button.onyx-negative {
 	box-shadow:				none;
 
 	color:					#333;
-	background:				#fafafa;
-	border:					0.1rem solid #a6a6a6;
 	border-radius:			0px;
+
+
+	background:				#fafafa url(../assets/ffos/button-bg.png) repeat-x left bottom / auto 100%;
+	border:					0.1rem solid #a6a6a6;
+	border-radius:			0.2rem;
 }
 
-.themeFfos button.onyx-negative {
+.themeFfos button:active {
+	border-color:			#008aaa;
+	background:				#008aaa;
+	background-size:		auto 100%;
 	color:					#333;
-	background:				#fafafa;
 }
 
 .themeFfos button.onyx-affirmative {
+	background-color:		#00caf2;
+	border-color:			#008eab;
 	color:					#333;
-	background:				#99bbdd;
 }
 
 /* Toasters */
