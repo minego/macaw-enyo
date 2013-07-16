@@ -129,9 +129,17 @@ components: [
 				kind:			onyx.Button,
 				classes:		"button",
 
-				ontap:			"step3",
+				ontap:			"step3done",
 
 				content:		"Done"
+			},
+			{
+				kind:			onyx.Button,
+				classes:		"button",
+
+				ontap:			"step3another",
+
+				content:		"Add Another Account"
 			}
 		]
 	},
@@ -149,9 +157,6 @@ components: [
 					"Account authorization failed. Please verify the",
 					"following:"
 				].join(' ')
-			},
-			{
-				content:		"- Did you enter the PIN correctly?"
 			},
 			{
 				content:		"- Is your clock correct?"
@@ -306,10 +311,18 @@ step2: function()
 	}.bind(this), this.params, this.$.pin.getValue());
 },
 
-step3: function()
+step3done: function()
 {
+	/* Done */
 	this.$.step3.hide();
 	this.doSuccess({ account: this.account });
+},
+
+step3another: function()
+{
+	/* Create another */
+	this.$.step3.hide();
+	this.doSuccess({ account: this.account, another: true });
 },
 
 pinChanged: function()

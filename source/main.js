@@ -969,6 +969,11 @@ accountCreated: function(sender, event)
 		prefs.set('panels', this.tabs);
 
 		this.createTabs();
+
+		if (event.another) {
+			/* The user wants to create another account...  */
+			this.createAccount();
+		}
 	}.bind(this));
 },
 
