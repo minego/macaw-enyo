@@ -60,7 +60,7 @@ body {
 }
 
 /* This is causing wrapping... grumble */
-.themeFfos .title {
+.themeFfos .titlebar .title {
 	display:				none;
 }
 
