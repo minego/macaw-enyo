@@ -35,6 +35,12 @@ body {
 	padding-top:			0px;
 }
 
+.themeFfos .composebutton {
+	width:					25px;
+	height:					25px;
+	padding:				12px 15px;
+}
+
 .themeFfos .listitem {
 	border-bottom:			1px solid #ddd;
 }
@@ -49,10 +55,16 @@ body {
 .themeFfos .tabbar {
 	background:				#000;
 	color:					#fff;
+	border:					none !important;
 }
 
 .themeFfos .tabbar .tab {
 	background:				none;
+}
+
+.themeFfos .tabbar .tab:active,
+.themeFfos .imgbtn:active {
+	background:				#00caf2;
 }
 
 .themeFfos .indicator {

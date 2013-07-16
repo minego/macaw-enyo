@@ -69,8 +69,7 @@ components: [
 		defaultFocus:					true,
 
 		onchange:						"change",
-		onkeyup:						"change",
-		onblur:							"focus"
+		onkeyup:						"change"
 	},
 	{
 		name:							"counter",

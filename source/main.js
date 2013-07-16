@@ -48,16 +48,18 @@ components: [
 			{
 				kind:						enyo.Image,
 				classes:					"imgbtn",
-				src:						"assets/icons/opts.png",
+				iconname:					"opts",
 				name:						"options",
-				command:					"options"
+				command:					"options",
+				onerror:					"fixicon"
 			},
 			{
 				kind:						enyo.Image,
 				name:						"refreshbtn",
 				classes:					"imgbtn",
-				src:						"assets/icons/refresh.png",
-				command:					"refresh"
+				iconname:					"refresh",
+				command:					"refresh",
+				onerror:					"fixicon"
 			},
 			{
 				content:					'',
@@ -68,8 +70,10 @@ components: [
 			{
 				kind:						enyo.Image,
 				classes:					"imgbtn composebutton",
-				src:						"assets/icons/compose.png",
-				command:					"compose"
+				name:						"composebtn",
+				iconname:					"compose",
+				command:					"compose",
+				onerror:					"fixicon"
 			}
 		]
 	},
@@ -588,7 +592,7 @@ createTabs: function()
 				classes:	"imgbtn tab-" + tab.type.toLowerCase(),
 				src:		'assets/' + prefs.get('theme') + '/icons/' + iconname + '.png',
 				iconname:	iconname,
-				onerror:	"fixtab"
+				onerror:	"fixicon"
 			}, {
 				name:		"tabcount" + t,
 				classes:	"count"
@@ -602,7 +606,7 @@ createTabs: function()
 	//		decide which to show in a wide view though?
 	// this.$.title.setContent('@' + user.screen_name);
 
-	this.toolbarsChanged();
+	this.optionsChanged();
 	this.$.panelcontainer.render();
 	this.$.tabcontainer.render();
 },
@@ -691,6 +695,13 @@ panelRefreshStop: function(sender, event)
 
 optionsChanged: function(sender, event)
 {
+	var		icons = [ 'options', 'refreshbtn', 'composebtn' ];
+
+	/* Fix up the icons based on the current theme */
+	for (var i = 0, icon; icon = this.$[icons[i]]; i++) {
+		icon.setSrc('assets/' + prefs.get('theme') + '/icons/' + icon.iconname + '.png');
+	}
+
 	this.toolbarsChanged();
 	this.moveIndicator(null, { force: true });
 },
@@ -745,12 +756,14 @@ handleResize: function()
 	if (width <= 640) {
 		/* Single column, match the screen width */
 		w = width;
+		this.addClass('manualIndex');
 	} else {
 		/*
 			Multi column, minimum width of 250. Size the columns such that there
 			will not be a partial column displayed.
 		*/
 		w = width / (Math.floor(width / 250));
+		this.removeClass('manualIndex');
 	}
 
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
@@ -1158,7 +1171,7 @@ keypress: function(sender, event)
 	not all themes provide their own images. If a theme does not then fall back
 	to the default.
 */
-fixtab: function(sender, event)
+fixicon: function(sender, event)
 {
 	var src			= 'assets/icons/' + sender.iconname;
 	var active		= sender.parent.hasClass('active');
