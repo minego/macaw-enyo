@@ -76,9 +76,10 @@ body.Pre3 {
 
 .toolbar * {
 	pointer-events:			auto;
+	display:				inline-block;
 
 	line-height:			48px;
-	display:				inline-block;
+	vertical-align:			top;
 }
 
 .toolbar .composebutton {
@@ -107,25 +108,16 @@ body.Pre3 {
 }
 
 /*
-	When the screen is less than 640px a single panel will be displayed and will
-	take the whole screen width.
-
-	When showing multiple columns at once the indicator is not very useful, so
-	hide it, unless the user selects a panel with the keyboard.
+	Only display the indicator if there is a single column visible, or the user
+	has used the arrow keys to select a column.
 */
-@media screen and (min-width:641px) {
-	.indicator {
-		display:			none;
-	}
-
-	.manualIndex .indicator {
-		display:			block;
-	}
+.indicator {
+	display:			none;
 }
-@media all and (max-width: 640px) {
-	.indicator {
-		display:			block;
-	}
+
+.skinny .indicator,
+.manualIndex .indicator {
+	display:			block;
 }
 
 .tabbar .tab {
@@ -231,7 +223,6 @@ body.Pre3 {
 .tab-favorites {
 	background:				url(../assets/icons/favorite.png)	center center no-repeat;
 
-	/* The favorite icon is larger since it is used in other places */
 	background-size:		16px;
 }
 .tab-list,
@@ -245,11 +236,10 @@ body.Pre3 {
 */
 
 .toolbar .title {
+	margin-left:			10px;
 	text-align:				center;
 
 	color:					white;
-	background:				url(../assets/vertical-border.png)	left top no-repeat,
-							url(../assets/vertical-border.png)	right top no-repeat;
 }
 
 .compose.icon {

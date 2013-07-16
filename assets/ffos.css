@@ -35,12 +35,18 @@ body {
 	padding-top:			0px;
 }
 
+.toolbar.titlebar .imgbtn {
+	background:				url(../assets/ffos/separator.png) right center no-repeat;
+}
+
+.toolbar.titlebar .imgbtn:last-child {
+	background:				url(../assets/ffos/separator.png) left center no-repeat;
+}
+
 .themeFfos .toolbar .composebutton {
 	width:					30px;
 	height:					30px;
 	padding:				9px 15px;
-
-	background:				url(../assets/ffos/separator.png) left center no-repeat;
 }
 
 

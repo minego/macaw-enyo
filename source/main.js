@@ -41,7 +41,7 @@ components: [
 	},
 	{
 		name:								"toolbar",
-		classes:							"toolbar",
+		classes:							"toolbar titlebar",
 		ontap:								"handleButton",
 
 		components: [
@@ -534,7 +534,7 @@ createTabs: function()
 	}
 
 	this.$.panelcontainer.createComponent({
-		kind:								SkinnyPanels,
+		kind:								enyo.Panels,
 		name:								"panels",
 		classes:							"panels",
 		arrangerKind:						"CarouselArranger",
@@ -600,11 +600,6 @@ createTabs: function()
 		});
 	}
 	this.$.tabcontainer.createComponents(tabs, { owner: this });
-
-	/* Set a title */
-	// TODO	The title really should show the current panel's title... How do we
-	//		decide which to show in a wide view though?
-	// this.$.title.setContent('@' + user.screen_name);
 
 	this.optionsChanged();
 	this.$.panelcontainer.render();
@@ -750,13 +745,15 @@ handleResize: function()
 	var w		= 320;
 
 	/*
-		If the width is less than 640 then the 'SkinnyPanels' kind will show a
-		single column.
+		If the screen is not wide enough to display multiple columns then the
+		enyo.Panels kind will show a single column.
 	*/
-	if (width <= 640) {
+	if (enyo.Panels.isScreenNarrow()) {
 		/* Single column, match the screen width */
 		w = width;
+
 		this.addClass('manualIndex');
+		this.addClass('skinny');
 	} else {
 		/*
 			Multi column, minimum width of 250. Size the columns such that there
@@ -764,6 +761,7 @@ handleResize: function()
 		*/
 		w = width / (Math.floor(width / 250));
 		this.removeClass('manualIndex');
+		this.removeClass('skinny');
 	}
 
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
@@ -1299,6 +1297,14 @@ moveIndicator: function(sender, event)
 
 	this.$.indicator.applyStyle('width', tabWidth + '%');
 	this.$.indicator.applyStyle('left', left + '%');
+
+	if (this.hasClass('skinny')) {
+		var panel	= this.$['panel' + this.index];
+
+		this.$.title.setContent(panel.label);
+	} else {
+		this.$.title.setContent('');
+	}
 }
 
 });
