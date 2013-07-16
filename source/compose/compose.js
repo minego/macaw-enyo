@@ -883,6 +883,10 @@ send: function()
 	var params			= {};
 	var node;
 
+	if ((node = this.$.text.hasNode())) {
+		node.blur();
+	}
+
 	if (this.todo && this.todo.length > 0) {
 		params.status = this.todo.shift();
 	} else if ((node = this.$.text.hasNode())) {
