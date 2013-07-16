@@ -25,6 +25,7 @@ release:
 	@mv ${DEPLOY}/lib/g11n/source/formats ${DEPLOY}/lib/g11n/source/base || true
 	cp framework_config.json manifest.* *.html icon*.png ${DEPLOY}/
 	rm -rf build
+	(cd ${DEPLOY} && zip -r ../macaw-enyo.zip *)
 
 ${DEPLOY}/appinfo.json: ${DEPLOY} appinfo.json
 	cat appinfo.json | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/appinfo.json

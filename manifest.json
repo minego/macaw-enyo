@@ -11,7 +11,8 @@
 		"64":			"icon64.png",
 		"32":			"icon32.png",
 		"48":			"icon48.png",
-		"24":			"icon24.png"
+		"24":			"icon24.png",
+		"16":			"icon16.png"
 	},
 
 	"app": {
