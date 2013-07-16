@@ -35,17 +35,28 @@ body {
 	padding-top:			0px;
 }
 
-.toolbar.titlebar .imgbtn {
-	background:				url(../assets/ffos/separator.png) right center no-repeat;
-}
-
-.toolbar.titlebar .imgbtn:last-child {
+.themeFfos .toolbar.titlebar * {
+	position:				relative;
+	left:					-27px;
 	background:				url(../assets/ffos/separator.png) left center no-repeat;
 }
+.themeFfos .toolbar.titlebar .imgbtn:nth-child(2) {
+	background:				url(../assets/ffos/separator-large.png) left center no-repeat;
+}
 
-.themeFfos .toolbar .composebutton {
-	width:					30px;
-	height:					30px;
+.themeFfos .toolbar.titlebar .imgbtn:last-child {
+	left:					auto;
+}
+
+.themeFfos .toolbar.titlebar .imgbtn:first-child {
+	background:				url(../assets/ffos/shadow.png) repeat-x;
+	background-size:		auto 100%;
+	padding-right:			5px;
+}
+
+.themeFfos .titlebar .imgbtn {
+	box-sizing:				border-box;
+	height:					100%;
 	padding:				9px 15px;
 }
 
@@ -71,9 +82,12 @@ body {
 	background:				none;
 }
 
-.themeFfos .tabbar .tab:active,
+.themeFfos .tab:active,
 .themeFfos .imgbtn:active {
-	background:				#008aaa;
+	background:				#008aaa !important;
+}
+.themeFfos .imgbtn.spin {
+	background:				none !important;
 }
 
 .themeFfos .indicator {

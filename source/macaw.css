@@ -236,7 +236,7 @@ body.Pre3 {
 */
 
 .toolbar .title {
-	margin-left:			10px;
+	padding-left:			10px;
 	text-align:				center;
 
 	color:					white;
@@ -340,10 +340,10 @@ body.Pre3 {
 .imgbtn {
 	width:					auto;
 
-	padding:				14px;
+	padding:				16px;
 	margin:					0px;
 
-	height:					20px;
+	height:					18px;
 	width:					auto;
 
 	display:				inline-block;
