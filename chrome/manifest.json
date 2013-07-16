@@ -1,5 +1,5 @@
 {
-	"name":				"Macaw Debug",
+	"name":				"Macaw",
 	"description":		"An open source twitter client",
 	"version":			"0.0.1",
 	"manifest_version":	2,
@@ -16,8 +16,8 @@
 	},
 
 	"app": {
-		"launch": {
-			"local_path": "index.html"
+		"background": {
+			"scripts": [ "chrome.js" ]
 		}
 	},
 
