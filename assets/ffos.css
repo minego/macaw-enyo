@@ -102,11 +102,11 @@ body {
 /* Toasters */
 .themeFfos .toaster.bg,
 .themeFfos .compose {
-	background:				url(../assets/ffos-gradient.png) no-repeat left top / 100% 100%;
+	background:				url(../assets/ffos/gradient.png) no-repeat left top / 100% 100%;
 }
 
 .themeFfos .toaster .controls {
-	background:				none;
+	background:				url(../assets/ffos/pattern.png) repeat scroll left top #2D2D2D;
 }
 
 .themeFfos .compose {
