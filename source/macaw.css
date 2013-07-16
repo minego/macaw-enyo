@@ -343,13 +343,18 @@ body.Pre3 {
 /*
 	A imgbtn is used for anything that needs to be animated and uses an html img
 	tag, since animations using backgrounds don't work on all devices.
+
+	Total height of a toolbar is 48, so the height and the padding togehter must
+	add up to 48.
 */
 .imgbtn {
-	padding:				15px;
+	width:					auto;
+
+	padding:				14px;
 	margin:					0px;
 
-	width:					18px;
-	height:					16px;
+	height:					20px;
+	width:					auto;
 
 	display:				inline-block;
 }

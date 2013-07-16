@@ -35,11 +35,14 @@ body {
 	padding-top:			0px;
 }
 
-.themeFfos .composebutton {
-	width:					25px;
-	height:					25px;
-	padding:				12px 15px;
+.themeFfos .toolbar .composebutton {
+	width:					30px;
+	height:					30px;
+	padding:				9px 15px;
+
+	background:				url(../assets/ffos/separator.png) left center no-repeat;
 }
+
 
 .themeFfos .listitem {
 	border-bottom:			1px solid #ddd;
@@ -64,7 +67,7 @@ body {
 
 .themeFfos .tabbar .tab:active,
 .themeFfos .imgbtn:active {
-	background:				#00caf2;
+	background:				#008aaa;
 }
 
 .themeFfos .indicator {

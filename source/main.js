@@ -47,7 +47,7 @@ components: [
 		components: [
 			{
 				kind:						enyo.Image,
-				classes:					"imgbtn",
+				classes:					"imgbtn optsbutton",
 				iconname:					"opts",
 				name:						"options",
 				command:					"options",
@@ -55,8 +55,8 @@ components: [
 			},
 			{
 				kind:						enyo.Image,
+				classes:					"imgbtn refreshbutton",
 				name:						"refreshbtn",
-				classes:					"imgbtn",
 				iconname:					"refresh",
 				command:					"refresh",
 				onerror:					"fixicon"
