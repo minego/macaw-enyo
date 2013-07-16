@@ -645,6 +645,8 @@ panelRefreshStart: function(sender, event)
 	if (this.spincount == 0) {
 		refresh.removeClass("endspin");
 		refresh.addClass("spin");
+
+		this.addClass("loading");
 	}
 	this.spincount++;
 },
@@ -685,6 +687,8 @@ panelRefreshStop: function(sender, event)
 	if (this.spincount == 0) {
 		refresh.removeClass("spin");
 		refresh.addClass("endspin");
+
+		this.removeClass("loading");
 	}
 },
 
