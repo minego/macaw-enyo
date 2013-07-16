@@ -4,7 +4,7 @@
 
 .themeFfos @font-face {
 	font-family:			'MozTTLight';
-	src:					url(../assets/MozTT%20Light.ttf) format("truetype");
+	src:					url(MozTT%20Light.ttf) format("truetype");
 }
 
 body {
@@ -38,10 +38,10 @@ body {
 .themeFfos .toolbar.titlebar * {
 	position:				relative;
 	left:					-27px;
-	background:				url(../assets/ffos/separator.png) left center no-repeat;
+	background:				url(ffos/separator.png) left center no-repeat;
 }
 .themeFfos .toolbar.titlebar .imgbtn:nth-child(2) {
-	background:				url(../assets/ffos/separator-large.png) left center no-repeat;
+	background:				url(ffos/separator-large.png) left center no-repeat;
 }
 
 .themeFfos .toolbar.titlebar .imgbtn:last-child {
@@ -49,15 +49,19 @@ body {
 }
 
 .themeFfos .toolbar.titlebar .imgbtn:first-child {
-	background:				url(../assets/ffos/shadow.png) repeat-x;
+	background:				url(ffos/shadow.png) repeat-x;
 	background-size:		auto 100%;
 	padding-right:			5px;
 }
 
 .themeFfos .titlebar .imgbtn {
-	box-sizing:				border-box;
-	height:					100%;
+	height:					30px;
 	padding:				9px 15px;
+}
+
+/* This is causing wrapping... grumble */
+.themeFfos .title {
+	display:				none;
 }
 
 
@@ -102,7 +106,7 @@ body {
 	border-radius:			0px;
 
 
-	background:				#fafafa url(../assets/ffos/button-bg.png) repeat-x left bottom / auto 100%;
+	background:				#fafafa url(ffos/button-bg.png) repeat-x left bottom / auto 100%;
 	border:					0.1rem solid #a6a6a6;
 	border-radius:			0.2rem;
 }
@@ -123,11 +127,11 @@ body {
 /* Toasters */
 .themeFfos .toaster.bg,
 .themeFfos .compose {
-	background:				url(../assets/ffos/gradient.png) no-repeat left top / 100% 100%;
+	background:				url(ffos/gradient.png) no-repeat left top / 100% 100%;
 }
 
 .themeFfos .toaster .controls {
-	background:				url(../assets/ffos/pattern.png) repeat scroll left top #2D2D2D;
+	background:				url(ffos/pattern.png) repeat scroll left top #2D2D2D;
 }
 
 .themeFfos .compose {

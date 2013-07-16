@@ -1305,7 +1305,7 @@ moveIndicator: function(sender, event)
 	if (this.hasClass('skinny')) {
 		var panel	= this.$['panel' + this.index];
 
-		this.$.title.setContent(panel.label);
+		this.$.title.setContent(panel ? panel.label : '');
 	} else {
 		this.$.title.setContent('');
 	}
