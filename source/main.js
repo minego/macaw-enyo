@@ -544,35 +544,33 @@ createTabs: function()
 	/* Recreate the tabs */
 	var tabs = [];
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
-		var src;
-
-		src = 'assets/icons/';
+		var iconname;
 
 		switch (tab.type.toLowerCase()) {
 			case 'timeline':
-				src += 'tweets.png';
+				iconname = 'tweets';
 				break;
 
 			case 'mentions':
-				src += 'mentions.png';
+				iconname = 'mentions';
 				break;
 
 			case 'messages':
-				src += 'messages.png';
+				iconname = 'messages';
 				break;
 
 			case 'favorites':
-				src += 'favorite.png';
+				iconname = 'favorite';
 				break;
 
 			case 'list':
 			case 'lists':
-				src += 'lists.png';
+				iconname = 'lists';
 				break;
 
 			case 'search':
 			case 'searchresults':
-				src += 'search.png';
+				iconname = 'search';
 				break;
 
 		}
@@ -588,7 +586,9 @@ createTabs: function()
 				kind:		enyo.Image,
 				name:		"tabicon" + t,
 				classes:	"imgbtn tab-" + tab.type.toLowerCase(),
-				src:		src
+				src:		'assets/' + prefs.get('theme') + '/icons/' + iconname + '.png',
+				iconname:	iconname,
+				onerror:	"fixtab"
 			}, {
 				name:		"tabcount" + t,
 				classes:	"count"
@@ -692,6 +692,7 @@ panelRefreshStop: function(sender, event)
 optionsChanged: function(sender, event)
 {
 	this.toolbarsChanged();
+	this.moveIndicator(null, { force: true });
 },
 
 toolbarsChanged: function()
@@ -1152,13 +1153,50 @@ keypress: function(sender, event)
 	}
 },
 
+/*
+	By default we attempt to assign an image for the tabs from the theme, but
+	not all themes provide their own images. If a theme does not then fall back
+	to the default.
+*/
+fixtab: function(sender, event)
+{
+	var src			= 'assets/icons/' + sender.iconname;
+	var active		= sender.parent.hasClass('active');
+	var was			= sender.getSrc();
+	var themed		= -1 == was.indexOf('assets/icons/');
+	var wasactive	= -1 != was.indexOf('-active');
+
+	if (themed) {
+		wasactive = false;
+	}
+
+	if (active && !wasactive) {
+		src += '-active';
+	}
+	src += '.png';
+
+	sender.setSrc(src);
+},
+
 moveIndicator: function(sender, event)
 {
-	var		first	= -1;
-	var		last	= -1;
-	var		tabWidth;
-	var		width;
-	var		left;
+	var first		= -1;
+	var last		= -1;
+	var tabWidth;
+	var width;
+	var left;
+	var theme		= prefs.get('theme');
+	var haveactive	= (event && event.force) ? true : false;
+
+	/*
+		Only change the images for themes that use active images. Otherwise
+		there will be an annoying flicker.
+	*/
+	switch (theme) {
+		case 'ffos':
+			haveactive	= true;
+			break;
+	}
 
 	if (event && !this.ignoreMove) {
 		var difference = event.toIndex - event.fromIndex;
@@ -1216,7 +1254,8 @@ moveIndicator: function(sender, event)
 
 	/* Apply the sizes */
 	for (var i = 0; i < this.tabs.length; i++) {
-		var tab = this.$['tab' + i];
+		var tab		= this.$['tab' + i];
+		var tabicon	= this.$['tabicon' + i];
 
 		if (i >= first && i <= last) {
 			width = tabWidth * 3;
@@ -1230,6 +1269,18 @@ moveIndicator: function(sender, event)
 
 		if (this.index > i) {
 			left += width;
+		}
+
+		if (tab && tabicon) {
+			tab.addRemoveClass('active', this.index == i);
+
+			if (haveactive) {
+				if (this.index == i && this.hasClass('manualIndex')) {
+					tabicon.setSrc('assets/' + theme + '/icons/' + tabicon.iconname + '-active.png');
+				} else {
+					tabicon.setSrc('assets/' + theme + '/icons/' + tabicon.iconname + '.png');
+				}
+			}
 		}
 	}
 

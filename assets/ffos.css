@@ -40,13 +40,23 @@ body {
 }
 
 .themeFfos .message .time,
-.themeFfos .newcount {
+.themeFfos .newcount,
+.themeFfos .compose .counter {
 	color:					#99bbdd;
 	font-weight:			bold;
 }
 
+.themeFfos .tabbar {
+	background:				#000;
+	color:					#fff;
+}
+
 .themeFfos .tabbar .tab {
 	background:				none;
+}
+
+.themeFfos .indicator {
+	display:				none;
 }
 
 .themeFfos button {

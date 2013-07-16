@@ -69,8 +69,8 @@ components: [
 								{ label: "Dark",		value: "dark"				},
 								{ label: "Holo Dark",	value: "holo-dark"			},
 								{ label: "Holo Red",	value: "holo-dark,holo-red"	},
-								// { label: "Macaw Bros",	value: "macawbros"		},
-								{ label: "Firefox OS",	value: "ffos"				}
+								{ label: "Firefox OS",	value: "ffos"				},
+								{ label: "Macaw Bros",	value: "macawbros"			}
 							]
 						},
 
