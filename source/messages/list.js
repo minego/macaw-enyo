@@ -287,7 +287,9 @@ refresh: function(autorefresh, index)
 	}
 
 	this.service.getMessages(this.resource, enyo.bind(this, function(success, results) {
-		this.gotMessages(success, results, autorefresh, index);
+		this.removeIndicators(index, autorefresh, enyo.bind(this, function(insertIndex, newCountIndex) {
+			this.gotMessages(success, results, autorefresh, insertIndex);
+		}));
 	}), params);
 },
 
@@ -300,12 +302,81 @@ scroll: function(offset)
 	this.handleActivity();
 },
 
-gotMessages: function(success, results, autorefresh, insertIndex)
+/*
+	Remove the new count and no message indicators
+
+	Since this may change the offset of an index needed for insertion that index
+	can be passed in, and a corrected index will be passed to the callback;
+*/
+removeIndicators: function(insertIndex, autorefresh, cb)
 {
-	var		changed			= false;
-	var		newCountIndex	= NaN;
-	var		reverseScroll	= false;
-	var		oldLength		= this.results.length;
+	var index			= NaN;
+	var changed			= false;
+	var oldScrollHeight	= this.$.list.getScrollBounds().height;
+	var oldScrollTop	= this.$.list.getScrollTop();
+
+	if (this.destroyed) {
+		return;
+	}
+
+	for (var i = 0, t; t = this.results[i]; i++) {
+		if (t.newcount) {
+			index = i;
+			break;
+		}
+	}
+
+	if (!isNaN(index)) {
+		if (index < insertIndex) {
+			insertIndex--;
+		}
+
+		this.results.splice(index, 1);
+		changed = true;
+	}
+
+	/*
+		If the user triggered the refresh, or has scrolled since the last
+		refresh then the position of the new count indicator is reset.
+	*/
+
+	if (!autorefresh || this.userIsActive) {
+		index = NaN;
+	}
+	this.userIsActive = false;
+
+	if (this.results.length > 0 && this.results[0].empty) {
+		this.results = [];
+
+		changed = true;
+
+		insertIndex = NaN;
+	}
+
+	if (changed) {
+		this.$.list.setCount(this.results.length);
+		this.$.list.refresh();
+	}
+
+	setTimeout(enyo.bind(this, function() {
+		var newScrollHeight = this.$.list.getScrollBounds().height;
+
+		this.$.list.setScrollTop(
+			this.$.list.getScrollTop() +
+			newScrollHeight - oldScrollHeight
+		);
+
+		cb(insertIndex, index);
+	}), 0);
+},
+
+gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
+{
+	var changed			= false;
+	var reverseScroll	= false;
+	var oldLength		= this.results.length;
+	var oldScrollHeight	= this.$.list.getScrollBounds().height;
+	var oldScrollTop	= this.$.list.getScrollTop();
 
 	if (this.destroyed) {
 		/*
@@ -331,35 +402,6 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 		}
 	} else {
 		insertIndex = NaN;
-	}
-
-	/* Find the newcount indicator */
-	for (var i = 0, t; t = this.results[i]; i++) {
-		if (t.newcount) {
-			newCountIndex = i;
-			break;
-		}
-	}
-
-	/* Remove the previous newcount indicator */
-	if (!isNaN(newCountIndex)) {
-		if (newCountIndex < insertIndex) {
-			insertIndex--;
-		}
-
-		this.results.splice(newCountIndex, 1);
-		newCountIndex = NaN;
-
-		changed = true;
-	}
-
-	/* Remove the "no messages" indicator */
-	if (this.results.length > 0 && this.results[0].empty) {
-		this.results = [];
-		newCountIndex	= NaN;
-		insertIndex		= NaN;
-
-		changed = true;
 	}
 
 	if (!success) {
@@ -493,21 +535,26 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 		}
 	}
 
-
 	if (newcount > 0) {
 		/* Insert a new newcount indicator */
 		changed = true;
 
-		this.results.splice(this.unseen, 0, {
+		if (isNaN(newCountIndex)) {
+			newCountIndex = this.unseen;
+		} else {
+			newCountIndex += this.unseen;
+		}
+
+		this.results.splice(newCountIndex, 0, {
 			newcount:	newcount
 		});
 
-		newCountIndex = this.unseen;
 		this.unseen = newcount;
 	}
 
 	if (results.length) {
 		changed = true;
+
 		if (isNaN(insertIndex)) {
 			this.results = results.concat(this.results);
 		} else {
@@ -520,68 +567,40 @@ gotMessages: function(success, results, autorefresh, insertIndex)
 			newCountIndex += results.length;
 		}
 
-		/*
-			Flush any old results to keep the total number of loaded messages
-			sane.
-
-			Twitter will never return more than 200 results, so keep a few extra
-			for context.
-		*/
-		if (isNaN(insertIndex) && this.results.length > 205) {
-			this.results.splice(205);
-		}
-
-		this.writeCache();
-
 		/* Scroll to the oldest new messages */
 		setTimeout(enyo.bind(this, function() {
-			var oldtop = this.$.list.getScrollTop();
+			var newScrollHeight = this.$.list.getScrollBounds().height;
 
-			if (results.length && oldLength > 0) {
-				var dest = results.length;
-
-				if (reverseScroll) {
-					/* Scroll to the first new, not the last */
-					dest = this.results.length - results.length;
-					dest--;
-				} else if (!isNaN(insertIndex)) {
-					dest += insertIndex;
-				}
-
-				this.log(this.resource, 'Scrolling to: ' + dest);
-				this.ignoreActivity++;
-				this.$.list.scrollToRow(dest - (autorefresh ? 0 : 1));
-
+			if (oldScrollTop <= 45) {
 				/*
-					Scroll down just a bit to show that there is another message
-					above this one.
+					If the panel is right at the top then scroll a bit to show
+					the new count indicator and to indicate that there is some
+					new content.
 				*/
-				setTimeout(enyo.bind(this, function() {
-					var top = this.$.list.getScrollTop();
-
-					if (autorefresh) {
-						/* Preserve the original scroll position */
-						top += oldtop;
-					}
-
-					if (!autorefresh || oldtop <= 35) {
-						if (top > 35) {
-							top -= 35;
-						} else {
-							top = 0;
-						}
-					}
-
-					this.ignoreActivity++;
-					this.$.list.setScrollTop(top);
-					this.loading = false;
-				}), 30);
-			} else {
-				this.ignoreActivity++;
-				this.$.list.scrollToRow(0);
-				this.loading = false;
+				this.$.list.setScrollTop(
+					(newScrollHeight - oldScrollHeight) - 45
+				);
+			} else if (oldScrollHeight) {
+				this.$.list.setScrollTop(
+					this.$.list.getScrollTop() +
+					newScrollHeight - oldScrollHeight
+				);
 			}
-		}), 500);
+
+			/*
+				Flush any old results to keep the total number of loaded messages
+				sane.
+
+				Twitter will never return more than 200 results, so keep a few extra
+				for context.
+			*/
+			if (isNaN(insertIndex) && this.results.length > 205) {
+				this.results.splice(205);
+			}
+
+			this.writeCache();
+			this.loading = false;
+		}), 0);
 	} else {
 		this.loading = false;
 	}
@@ -825,6 +844,8 @@ handleActivity: function(sender, event)
 	if (!this.loading && this.lastScrollTop != top) {
 		this.doActivity({});
 		this.lastScrollTop = top;
+
+		this.userIsActive = true;
 	}
 }
 
