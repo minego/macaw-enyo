@@ -241,14 +241,14 @@ step1: function(skipwindow, servicename)
 	var arg;
 	var chromeapp	= false;
 
-	this.$.step1.hide();
-
 	try {
 		if (chrome.app.window) {
 			chromeapp = true;
 		}
 	} catch(e) {
 	}
+
+	this.$.step1.hide();
 
 	/*
 		Open the window right away to avoid being blocked by the browser's
