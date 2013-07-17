@@ -43,6 +43,7 @@ defaults: {
 	showVia:			false,
 	showTime:			"relative",
 	submitOnEnter:		false,
+	alwaysCrossPost:	false,
 
 	thumbnails:			"large"
 },

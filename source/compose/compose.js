@@ -493,10 +493,6 @@ handleCommand: function(sender, event)
 			this.doCloseToaster();
 			break;
 
-		case "send":
-			this.send();
-			break;
-
 		case "options":
 			this.$.optionsMenu.applyPosition(sender.getBounds);
 			this.$.optionsMenu.show();
@@ -578,6 +574,13 @@ handleCommand: function(sender, event)
 			this.service	= null;
 			this.userChanged();
 			break;
+
+		case "send":
+			if (!prefs.get('alwaysCrossPost')) {
+				this.send();
+				break;
+			}
+			/* fallthrough */
 
 		case "crossPost":
 			/*
