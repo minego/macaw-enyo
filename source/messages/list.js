@@ -361,6 +361,7 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 	setTimeout(enyo.bind(this, function() {
 		var newScrollHeight = this.$.list.getScrollBounds().height;
 
+		this.ignoreActivity++;
 		this.$.list.setScrollTop(
 			this.$.list.getScrollTop() +
 			newScrollHeight - oldScrollHeight
@@ -571,14 +572,15 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 		setTimeout(enyo.bind(this, function() {
 			var newScrollHeight = this.$.list.getScrollBounds().height;
 
-			if (oldScrollTop <= 45) {
+			this.ignoreActivity++;
+			if (oldScrollTop <= 60) {
 				/*
 					If the panel is right at the top then scroll a bit to show
 					the new count indicator and to indicate that there is some
 					new content.
 				*/
 				this.$.list.setScrollTop(
-					(newScrollHeight - oldScrollHeight) - 45
+					(newScrollHeight - oldScrollHeight) - 60
 				);
 			} else if (oldScrollHeight) {
 				this.$.list.setScrollTop(
