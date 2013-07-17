@@ -13,7 +13,8 @@ loading:	{ },
 	This is needed for some use cases, such as chrome packaged apps which are
 	not permitted to reference an image URL that does not match the app's origin
 */
-load: function(url, cb, force) {
+load: function(url, cb, force)
+{
 	var chromeapp	= false;
 
 	try {
@@ -37,7 +38,7 @@ load: function(url, cb, force) {
 
 	if (typeof(xhrImages.cache[url]) !== "undefined") {
 		/* We have a cached blob */
-		cb(xhrImages.cache, true);
+		cb(xhrImages.cache[url], true);
 		return;
 	}
 
