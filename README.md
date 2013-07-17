@@ -28,8 +28,8 @@ must run:
 	git submodule update --init
 
 
-This application can currently be packaged for chrome, webOS and android.
-Packaging for other platforms may be included in the future.
+This application can currently be packaged for chrome, Firefox OS webOS and
+android.  Packaging for other platforms may be included in the future.
 
 Building requires gnu make. Minifying requires nodejs.
 
@@ -37,7 +37,18 @@ Building requires gnu make. Minifying requires nodejs.
 	make clean all
 
 ### Deploy release (minified):
-	make clean release all
+	make clean release
+
+### Running as a chrome app:
+	* Run either "make clean all" or "make clean release"
+	* Navigate to "chrome:extensions"
+	* Click "Load unpacked extension"
+	# Select the 'deploy/macaw-enyo' directory
+
+### Running on Firefox OS
+	* Run either "make clean all" or "make clean release"
+	* Open the Firefox OS simulator, and add the 'deploy/macaw-enyo' directory
+	* Click "Push" to install on your device
 
 ### Package for webOS:
 	make webos
@@ -66,11 +77,6 @@ Building requires gnu make. Minifying requires nodejs.
 
 ### View logs on a webOS or android device
 	make log
-
-### Running as a chrome application:
-	* Navigate to "chrome:extensions"
-	* Click "Load unpacked extension"
-	* Select the directory where you checked out the macaw-enyo source
 
 Macaw License
 ================================================================================
