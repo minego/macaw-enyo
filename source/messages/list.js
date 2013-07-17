@@ -155,6 +155,24 @@ rendered: function()
 
 	this.service.cleanupMessages(results);
 
+	/* Remove any blob urls */
+	for (var i = 0, item; item = results[i]; i++) {
+		if (item.media) {
+			for (var c = 0, m; m = item.media[i]; i++) {
+				if (m.blobthumbnail) {
+					delete m.blobthumbnail;
+				}
+			}
+		}
+
+		if (item.user && item.user.blobavatar) {
+			delete item.user.blobavatar;
+		}
+		if (item.real && item.real.user && item.real.user.blobavatar) {
+			delete item.real.user.blobavatar;
+		}
+	}
+
 	if (results && results.length) {
 		this.loading = true;
 		this.doRefreshStart();

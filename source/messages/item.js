@@ -190,6 +190,7 @@ setupMessage: function(item, service, changecb)
 	this.$.screenname.setContent('@' + item.user.screenname);
 	this.$.username.setContent(item.user.name);
 
+	this.$.avatar.applyStyle('background-image', 'none');
 	LoadImage(item.user.blobavatar || item.user.avatar, function(url, inline) {
 		if (inline) {
 			this.$.avatar.applyStyle('background-image', 'url(' + url + ')');
@@ -231,6 +232,7 @@ setupMessage: function(item, service, changecb)
 		this.$.rtByline.setContent(this.service.terms.reposted +
 										' by @' + item.real.user.screenname);
 
+		this.$.rtAvatar.applyStyle('background-image', 'none');
 		LoadImage(item.real.user.blobavatar || item.real.user.avatar, function(url, inline) {
 			if (inline) {
 				this.$.rtAvatar.applyStyle('background-image', 'url(' + url + ')');
@@ -263,6 +265,7 @@ setupMessage: function(item, service, changecb)
 			thumb.link = media.link;
 			thumb.setClasses('thumb');
 
+			thumb.applyStyle('background-image', 'none');
 			LoadImage(media.blobthumbnail || media.thumbnail, function(url, inline) {
 				if (inline) {
 					thumb.applyStyle('background-image', 'url(' + url + ')');
