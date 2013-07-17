@@ -1,25 +1,16 @@
 + Tweet Details
 	+ Implement share options
-		- Copy Text
+		- Copy Text (where possible)
 		- Copy URL (show list)
 		- Other share options (platform specific)
 
 + Compose
-	- Show a menu when tapping on the user's avatar with a checkbox next to
-	  each account to allow cross posting? Need to think that through... There
-	  needs to be an easy way to switch an account but not cross post...
-
-
 	- Auto complete user names (implemented, but not complete)
 	+ Implement missing buttons
-		- Attach image
 		- Location
 		- Link...?
 		- Emoji
 		- Compose in new card/window?
-
-+ Profile
-	- Implement options menu
 
 + Preview
 	- Implement options menu
@@ -32,13 +23,17 @@
 	  in the twitter helper.
 
 - Implement notifications. (A "notify" boolean is set on each tab)
-- Finish styling and implement some nice themes
-- Show a visual indication of a refresh when the tab bar is hidden. Currently
-  the icons on the tab bar spin while refreshing.
-- Show an indicator when a request is in progress
 
 + Missing panels
 	- Search
 	- List
 	- User tweets
+
+- Restyle options
+
+- Correct error handling for failed ADN requests. Currently enyo.Ajax does not
+  hit our callback on failure. This needs to be resolved.
+
+- Implement an xhr based loader for icons that figures out if a theme has an
+  icon? The current method blanks to a missing image view for a moment.
 

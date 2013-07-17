@@ -135,7 +135,7 @@ usersChanged: function()
 		}, { owner: this });
 
 
-		LoadImage(user.profile.avatar, function(url, inline) {
+		xhrImages.load(user.profile.avatar, function(url, inline) {
 			item.applyStyle('background',
 				'url(' + url + ') left 5px center no-repeat, ' +
 				'url(' + origin + '/assets/icons/logo-' + service + '.png) right 5px center no-repeat;');

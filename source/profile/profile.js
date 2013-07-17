@@ -215,7 +215,7 @@ profileChanged: function()
 	this.$.screenname.setContent('@' + this.profile.screenname);
 	this.$.username.setContent(this.profile.name);
 
-	LoadImage(this.profile.avatar, function(url, inline) {
+	xhrImages.load(this.profile.avatar, function(url, inline) {
 		this.$.avatar.applyStyle('background-image', 'url(' + url + ')');
 	}.bind(this));
 

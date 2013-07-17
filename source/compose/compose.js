@@ -342,7 +342,7 @@ userChanged: function()
 	}
 
 	if (this.user && this.user.profile) {
-		LoadImage(this.user.profile.avatar, function(url, inline) {
+		xhrImages.load(this.user.profile.avatar, function(url, inline) {
 			this.$.avatar.applyStyle('background-image', 'url(' + url + ')');
 		}.bind(this));
 	}

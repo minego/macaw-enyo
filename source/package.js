@@ -7,6 +7,7 @@ enyo.depends(
 	"webos",
 	"BackGesture.js",
 	"Date.js",
+	"xhrimages.js",
 
 	"entities.js",
 	"twitter.js",
