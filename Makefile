@@ -15,6 +15,7 @@ ${DEPLOY}:
 	mkdir -p ${DEPLOY}
 	cp -r assets enyo lib source package.js *.png ${DEPLOY}
 	cp framework_config.json manifest.* *.html icon*.png ${DEPLOY}/
+	cp  chrome/* ${DEPLOY}/
 
 release:
 	rm -rf deploy build

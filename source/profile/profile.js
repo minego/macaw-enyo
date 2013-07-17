@@ -215,7 +215,10 @@ profileChanged: function()
 	this.$.screenname.setContent('@' + this.profile.screenname);
 	this.$.username.setContent(this.profile.name);
 
-	this.$.avatar.applyStyle('background-image', 'url(' + this.profile.avatar + ')');
+	LoadImage(this.profile.avatar, function(url, inline) {
+		this.$.avatar.applyStyle('background-image', 'url(' + url + ')');
+	}.bind(this));
+
 
 	this.$.info.destroyClientControls();
 

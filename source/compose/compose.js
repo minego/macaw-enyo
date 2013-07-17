@@ -342,7 +342,9 @@ userChanged: function()
 	}
 
 	if (this.user && this.user.profile) {
-		this.$.avatar.applyStyle('background-image', 'url(' + this.user.profile.avatar + ')');
+		LoadImage(this.user.profile.avatar, function(url, inline) {
+			this.$.avatar.applyStyle('background-image', 'url(' + url + ')');
+		}.bind(this));
 	}
 
 	/* The number of allowed images may be different... */

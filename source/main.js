@@ -219,7 +219,6 @@ create: function()
 
 		switch (e.origin) {
 			case 'https://minego.net':
-			// case 'https://twitter.com':
 				/* Okay, we're good */
 				break;
 
@@ -258,7 +257,6 @@ create: function()
 				}
 
 				break;
-
 		}
 	}.bind(this), false);
 
@@ -1326,8 +1324,8 @@ if (enyo.platform.webos) {
 	new net.minego.macaw.main().renderInto(element);
 } else {
 	/*
-		Packaged chrome apps can not run inline javascript in the html document so
-		we need to initialize here instead of in the html.
+		Packaged chrome apps can not run inline javascript in the html document
+		so we need to initialize here instead of in the html.
 	*/
 	window.addEventListener('load', function() {
 		prefs.ready(function() {
@@ -1336,4 +1334,59 @@ if (enyo.platform.webos) {
 	}, false);
 }
 
+/*
+	Depending on the platform either return the url to be used inline, or load
+	the image using an XHR, and then call the specified callback with a blob
+	url.
+*/
+function LoadImage(url, cb)
+{
+	var chromeapp	= false;
+
+	try {
+		if (chrome.app.window) {
+			chromeapp = true;
+		}
+	} catch(e) {
+	}
+
+	if (0 == url.indexOf("blob:")) {
+		/* This URL has already been converted to a blob */
+		cb(url, true);
+		return;
+	}
+
+	if (!chromeapp) {
+		/* On most platforms the existing URL is just fine */
+		cb(url, true);
+		return;
+	}
+
+	var xhr	= new XMLHttpRequest();
+
+	xhr.open('GET', url, true);
+	xhr.responseType = 'blob';
+
+	xhr.onload = function(e) {
+		if (cb) {
+			cb(window.webkitURL.createObjectURL(xhr.response), false);
+		}
+	};
+
+	xhr.onerror = function(e) {
+		console.log('Could not load image', url);
+		if (cb) {
+			cb(null, false);
+		}
+	};
+
+	try {
+		xhr.send();
+	} catch (e) {
+		if (cb) {
+			console.log('Could not load image', url);
+			cb(null, true);
+		}
+	}
+}
 

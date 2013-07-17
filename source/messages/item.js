@@ -171,8 +171,10 @@ getRelativeTime: function(date, now_threshold)
 	return [delta, units, "ago"].join(" ");
 },
 
-setupMessage: function(item, service)
+setupMessage: function(item, service, changecb)
 {
+	var avatar;
+
 	if (!item) {
 		return;
 	}
@@ -188,7 +190,19 @@ setupMessage: function(item, service)
 	this.$.screenname.setContent('@' + item.user.screenname);
 	this.$.username.setContent(item.user.name);
 
-	this.$.avatar.applyStyle('background-image', 'url(' + item.user.avatar + ')');
+	LoadImage(item.user.blobavatar || item.user.avatar, function(url, inline) {
+		if (inline) {
+			this.$.avatar.applyStyle('background-image', 'url(' + url + ')');
+			return;
+		}
+
+		item.user.blobavatar = url ? url : '#';
+		if (changecb) {
+			changecb();
+		} else {
+			this.itemChanged();
+		}
+	}.bind(this));
 
 	this.$.text.setContent(item.text);
 
@@ -214,9 +228,22 @@ setupMessage: function(item, service)
 		this.$.rtAvatar.setClasses('avatar rtavatar');
 		this.$.rtByline.setClasses('byline');
 
-		this.$.rtAvatar.applyStyle('background-image', 'url(' + item.real.user.avatar + ')');
 		this.$.rtByline.setContent(this.service.terms.reposted +
 										' by @' + item.real.user.screenname);
+
+		LoadImage(item.real.user.blobavatar || item.real.user.avatar, function(url, inline) {
+			if (inline) {
+				this.$.rtAvatar.applyStyle('background-image', 'url(' + url + ')');
+				return;
+			}
+
+			item.real.user.blobavatar = url ? url : '#';
+			if (changecb) {
+				changecb();
+			} else {
+				this.itemChanged();
+			}
+		}.bind(this));
 	} else {
 		this.removeClass('rt');
 		this.$.rt.removeClass('rt');
@@ -232,17 +259,34 @@ setupMessage: function(item, service)
 			The number of possible thumbnails is determined by the number of
 			thumb items in the components.
 		*/
-		for (var i = 0, e; e = this.$['thumb' + i]; i++) {
-			var media = item.media[i];
+		var setThumb = function setThumb(media) {
+			thumb.link = media.link;
+			thumb.setClasses('thumb');
 
-			if (media) {
-				e.link = media.link;
+			LoadImage(media.blobthumbnail || media.thumbnail, function(url, inline) {
+				if (inline) {
+					thumb.applyStyle('background-image', 'url(' + url + ')');
+					return;
+				}
 
-				e.applyStyle('background-image', 'url(' + media.thumbnail + ')');
-				e.setClasses('thumb');
-			} else {
-				e.setClasses('hide');
+				media.blobthumbnail = url ? url : '#';
+				if (changecb) {
+					changecb();
+				} else {
+					this.itemChanged();
+				}
+			}.bind(this));
+		}.bind(this);
+
+		for (var i = 0, thumb; thumb = this.$['thumb' + i]; i++) {
+			var m;
+
+			if (!(m = item.media[i])) {
+				thumb.setClasses('hide');
+				continue;
 			}
+
+			setThumb(m);
 		}
 	} else {
 		this.$.thumbnails.setClasses('hide');

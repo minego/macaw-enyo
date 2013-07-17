@@ -120,26 +120,31 @@ usersChanged: function()
 		this.users[0].enabled = true;
 	}
 
-
-	for (i = 0; u = this.users[i]; i++) {
-		var origin = window.location.protocol + '//' + window.location.hostname;
+	var i = 0;
+	enyo.forEach(this.users, function(user) {
+		var service	= user.service.toString();
+		var origin	= window.location.protocol + '//' + window.location.hostname;
 
 		var item = this.$.users.createComponent({
-			name:			'user' + i,
+			name:			'user' + i++,
 			classes:		'user',
 			command:		this.multi ? 'toggle' : 'select',
-			userid:			u.id,
+			userid:			user.id,
 
-			content:		'@' + u.screenname,
-			style:			'background: ' +
-								'url(' + u.profile.avatar + ') left 5px center no-repeat, ' +
-								'url(' + origin + '/assets/icons/logo-' + u.service.toString() + '.png) right 5px center no-repeat;'
+			content:		'@' + user.screenname
 		}, { owner: this });
 
-		if (u.enabled) {
+
+		LoadImage(user.profile.avatar, function(url, inline) {
+			item.applyStyle('background',
+				'url(' + url + ') left 5px center no-repeat, ' +
+				'url(' + origin + '/assets/icons/logo-' + service + '.png) right 5px center no-repeat;');
+		}.bind(this));
+
+		if (user.enabled) {
 			item.addClass('enabled');
 		}
-	}
+	}, this);
 	this.$.users.render();
 },
 

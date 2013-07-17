@@ -81,32 +81,9 @@ components: [
 			{
 				classes:		"instructions",
 
-				content:		"Enter PIN:"
-			},
-			{
-				name:			"pin",
-				classes:		"pin",
-
-				kind:			enyo.Input,
-
-				placeholder:	"PIN",
-
-				defaultFocus:	true,
-				selectOnFocus:	true,
-
-				onkeyup:		"pinChanged",
-				onchange:		"pinChanged"
-			},
-			{
-				name:			"step2btn",
-
-				kind:			onyx.Button,
-				classes:		"button",
-
-				ontap:			"step2",
-				disabled:		true,
-
-				content:		"Next"
+				content: [
+					"Waiting for authorization"
+				].join(' ')
 			}
 		]
 	},
@@ -196,10 +173,15 @@ create: function()
 	}
 },
 
+destroy: function()
+{
+	this.restart();
+	this.inherited(arguments);
+},
+
 restart: function()
 {
 	this.$.step1.hide();
-	this.$.step2.hide();
 	this.$.step3.hide();
 	this.$.failed.hide();
 
@@ -211,12 +193,62 @@ restart: function()
 
 	window.twitterparams = null;
 
+	if (this.readyloop) {
+		clearTimeout(this.readyloop);
+	}
+
 	this.$.step1.show();
+},
+
+ready: function(win)
+{
+	var w;
+
+	if (typeof(win) === "string") {
+		w = document.getElementById(win);
+
+		if (w) {
+			w = w.contentWindow;
+		}
+	} else {
+		w = win;
+	}
+
+	if (this.readyloop) {
+		clearTimeout(this.readyloop);
+	}
+
+	if (w) w.postMessage({ name: "authready" }, "*");
+
+	this.readyloop = setTimeout(function()
+	{
+		this.ready(win);
+	}.bind(this), 1000);
 },
 
 step1twitter: function(skipwindow)
 {
+	this.step1(skipwindow, 'twitter');
+},
+
+step1adn: function(skipwindow)
+{
+	this.step1(skipwindow, 'adn');
+},
+
+step1: function(skipwindow, servicename)
+{
+	var arg;
+	var chromeapp	= false;
+
 	this.$.step1.hide();
+
+	try {
+		if (chrome.app.window) {
+			chromeapp = true;
+		}
+	} catch(e) {
+	}
 
 	/*
 		Open the window right away to avoid being blocked by the browser's
@@ -225,66 +257,50 @@ step1twitter: function(skipwindow)
 		The call to twitter.authorize() will return the URL that we need to open
 		in the window to continue.
 
-		This isn't needed on webOS.
+		This isn't needed on webOS, or in a chrome app.
 	*/
-	if (skipwindow !== true && !window.PalmSystem) {
+	if (!chromeapp && skipwindow !== true && !window.PalmSystem) {
 		window.open("", "_auth");
 	}
 
-	this.twitter = new TwitterAPI();
-	this.twitter.authorize(function(account, url)
-	{
-		if (url) {
-			window.open(url, "_auth");
-			return;
-		}
+	switch (servicename) {
+		case "twitter":
+			this.service = new TwitterAPI();
+			arg = this.oauth_verifier;
+			break;
 
-		if (!account) {
-			this.$.failed.show();
-			return;
-		}
-
-		this.account = account;
-		this.$.step3.show();
-	}.bind(this), this.oauth_verifier);
-},
-
-step1adn: function(skipwindow)
-{
-	this.$.step1.hide();
-
-	/*
-		Open the window right away to avoid being blocked by the browser's
-		popup blocker.
-
-		The call to adn.authorize() will return the correct URL to open in the
-		window to continue.
-
-		This isn't needed on webOS.
-	*/
-	if (skipwindow !== true && !window.PalmSystem) {
-		window.open("", "_auth");
+		case "adn":
+			this.service = new ADNAPI();
+			arg = this.accesstoken;
+			break;
 	}
 
-	/*
-		The first step in authorizaing with ADN will replace the entire app with
-		the ADN authorization page. After successful authentication the app will
-		be relaunched with the user's access token.
-
-		There is no step 2 (PIN entry) for ADN, although it may be needed on
-		some platforms where the redirect back to the application can't be used.
-
-		In those cases a page will be displayed on http://minego.net/macawadn2/
-		asking the user to copy and paste the token.
-	*/
-	this.adn = new ADNAPI();
-	this.adn.authorize(function(account, url)
+	this.service.authorize(function(account, url)
 	{
 		if (url) {
-			window.open(url, "_auth");
+			if (!chromeapp) {
+				this.ready(window.open(url, "_auth"));
+			} else {
+				this.$.step2.destroyClientControls();
+				this.$.step2.createComponent({
+					allowHtml: true,
+					content: [
+						'<webview',
+							'id="authwebview"',
+							'src="' + url + '"',
+							'style="width: 100%; height: 100%;"',
+						'></webview>'
+					].join('\n')
+				}, { owner: this });
+				this.$.step2.render();
+
+				this.ready('authwebview');
+			}
+			this.$.step2.show();
 			return;
 		}
 
+		this.$.step2.hide();
 		if (!account) {
 			this.$.failed.show();
 			return;
@@ -292,23 +308,7 @@ step1adn: function(skipwindow)
 
 		this.account = account;
 		this.$.step3.show();
-	}.bind(this), this.accesstoken);
-},
-
-step2: function()
-{
-	this.$.step2.hide();
-
-	this.service.authorize(function(account)
-	{
-		if (!account) {
-			this.$.failed.show();
-			return;
-		}
-
-		this.account = account;
-		this.$.step3.show();
-	}.bind(this), this.params, this.$.pin.getValue());
+	}.bind(this), arg);
 },
 
 step3done: function()
@@ -323,24 +323,6 @@ step3another: function()
 	/* Create another */
 	this.$.step3.hide();
 	this.doSuccess({ account: this.account, another: true });
-},
-
-pinChanged: function()
-{
-	var		value = this.$.pin.getValue();
-
-	this.$.step2btn.setDisabled(true);
-
-	if (isNaN(value)) {
-		value = parseInt(value, 10);
-		this.$.pin.setValue(value);
-	}
-
-	if (!isNaN(value)) {
-		this.$.step2btn.setDisabled(false);
-	} else {
-		this.$.pin.setValue('');
-	}
 }
 
 });

@@ -714,7 +714,8 @@ itemAction: function(sender, event)
 
 setupItem: function(sender, event)
 {
-	var item	= this.results[event.index];
+	var index	= event.index;
+	var item	= this.results[index];
 	var d;
 
 	if (!item) {
@@ -764,7 +765,10 @@ setupItem: function(sender, event)
 		this.$.message.removeClass('favorite');
 	}
 
-	this.$.message.setupMessage(item, this.service);
+	this.$.message.setupMessage(item, this.service, function() {
+		/* Tell the list to re-render the row on change */
+		this.$.list.renderRow(index);
+	}.bind(this));
 },
 
 smartscroll: function()

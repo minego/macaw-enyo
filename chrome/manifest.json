@@ -3,6 +3,7 @@
 	"description":		"An open source twitter client",
 	"version":			"0.0.1",
 	"manifest_version":	2,
+	"offline_enabled":	false,
 
 	"icons": {
 		"512":			"icon512.png",
@@ -22,16 +23,15 @@
 	},
 
 	"permissions": [
-		"https://twitter.com/",
-		"https://api.twitter.com/",
-		"https://files.app.net/",
-		"https://alpha-api.app.net/",
-		"https://account.app.net/",
+		"*://*/*",
 
+		"webview",
 		"geolocation",
 		"storage",
 		"notifications",
 		"clipboardRead",
-		"clipboardWrite"
+		"clipboardWrite",
+		"app.window"
 	]
 }
+

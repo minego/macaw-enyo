@@ -107,7 +107,9 @@ destroy: function()
 srcChanged: function()
 {
 	this.handleResize();
-	this.$.image.setSrc(this.src);
+	LoadImage(this.src, function(url, inline) {
+		this.$.image.setSrc(url);
+	}.bind(this));
 },
 
 handleResize: function()

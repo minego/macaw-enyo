@@ -33,11 +33,8 @@
 	font-family:			Prelude, Arial, Helvetica, sans-serif;
 }
 
-/*
-	Prevent showing an annoying border when the field is selected. Of course it
-	is selected... It is the only field.
-*/
-.authorize .step2 .pin:focus {
-	outline:				none !important;
+.authorize .step2 {
+	min-height:				500px;
+	width:					100%;
 }
 

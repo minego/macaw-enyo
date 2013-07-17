@@ -22,12 +22,9 @@
 	},
 
 	"permissions": [
-		"https://twitter.com/",
-		"https://api.twitter.com/",
-		"https://files.app.net/",
-		"https://alpha-api.app.net/",
-		"https://account.app.net/",
+		"*://*/*",
 
+		"webview",
 		"geolocation",
 		"storage",
 		"notifications",
