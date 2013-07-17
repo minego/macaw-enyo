@@ -576,7 +576,9 @@ handleCommand: function(sender, event)
 			break;
 
 		case "send":
-			if (!prefs.get('alwaysCrossPost')) {
+			if (this.users.length <= 1 ||
+				!prefs.get('alwaysCrossPost')
+			) {
 				this.send();
 				break;
 			}
