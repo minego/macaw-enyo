@@ -253,3 +253,8 @@
 	background-size:		auto 128px;
 }
 
+.messagedetails .text {
+	-moz-user-select:		text;
+	-webkit-user-select:	text;
+}
+
