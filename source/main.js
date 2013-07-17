@@ -828,34 +828,31 @@ selectPanel: function(sender, event)
 		this.index = 0;
 	}
 
-	if (this.index == was) {
-		/* This panel is already active, scroll to the top or bottom */
+	move = this.isPanelVisible(this.index);
+
+	if (0 == move) {
+		/* The panel is already visible, so just move the indicator */
 		if (event) {
 			this.smartscroll(sender, event);
 		}
-	} else {
-		move = this.isPanelVisible(this.index);
 
-		if (0 == move) {
-			/* The panel is already visible, so just move the indicator */
-			this.moveIndicator();
-			return;
-		}
+		this.moveIndicator();
+		return;
+	}
 
-		/* Figure out how far we need to slide */
-		current = this.$.panels.getIndex();
+	/* Figure out how far we need to slide */
+	current = this.$.panels.getIndex();
 
-		for (distance = 1; distance <= this.tabs.length; distance++) {
-			if (0 == this.isPanelVisible(this.index - (move * distance))) {
-				/*
-					Move the indicator directly to the selected panel, instead
-					of a relative moved based on how far we slid.
-				*/
-				this.ignoreMove = true;
+	for (distance = 1; distance <= this.tabs.length; distance++) {
+		if (0 == this.isPanelVisible(this.index - (move * distance))) {
+			/*
+				Move the indicator directly to the selected panel, instead
+				of a relative moved based on how far we slid.
+			*/
+			this.ignoreMove = true;
 
-				this.$.panels.setIndex(current + (move * distance));
-				break;
-			}
+			this.$.panels.setIndex(current + (move * distance));
+			break;
 		}
 	}
 },
