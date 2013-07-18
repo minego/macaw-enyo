@@ -15,7 +15,10 @@
 + Preview
 	- Implement options menu
 
-- Include sent DMs in the DM panel
+- Include sent DMs in the DM panel, or possibly load all DMS to or from a person
+into the conversation view when a DM is selected.
+
+- Implement DM support for ADN
 
 + Implement filters
 	- Display list of filters in options panel
