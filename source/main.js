@@ -833,7 +833,10 @@ selectPanel: function(sender, event)
 	if (0 == move) {
 		/* The panel is already visible, so just move the indicator */
 		if (event) {
-			this.smartscroll(sender, event);
+			var panel	= this.$['panel' + sender.index];
+
+			panel.smartscroll();
+			this.panelActivity(panel, event);
 		}
 
 		this.moveIndicator();
