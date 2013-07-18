@@ -4,7 +4,6 @@ var ADNAPI = function(user, readycb) {
 
 	this.limits = {
 		maxLength:		256,
-// TODO	What is the max number of images???
 		maxImages:		3
 	};
 
@@ -118,6 +117,7 @@ get: function(url, cb, method)
 	x.go({});
 
 	x.response(this, cb);
+	x.error(this, cb);
 },
 
 post: function(url, body, cb, method)
@@ -136,6 +136,7 @@ post: function(url, body, cb, method)
 	x.go({});
 
 	x.response(this, cb);
+	x.error(this, cb);
 },
 
 cleanupUser: function(user)
@@ -368,7 +369,7 @@ getMessages: function(resource, cb, params)
 
 			cb(true, results);
 		} else {
-			cb(false);
+			cb(false, []);
 		}
 	});
 },
@@ -525,7 +526,6 @@ cleanupMessage: function(message)
 			delete message.annotations;
 		}
 
-		// TODO	Should we remove this? We may end up with duplicates...
 		message.media = EntityAPI.media(message.entities.urls, message.media);
 	}
 
