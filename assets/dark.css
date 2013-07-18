@@ -7,3 +7,7 @@
 
 	color:					white;
 }
+
+.selected .message.selected {
+	background:				#222;
+}

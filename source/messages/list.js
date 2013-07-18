@@ -61,6 +61,7 @@ components: [
 
 		ontap:							"itemTap",
 		onSetupItem:					"setupItem",
+		onSelect:						"setupItem",
 		onPullRelease:					"pullRelease",
 		onPullComplete:					"pullComplete",
 
@@ -69,7 +70,9 @@ components: [
 
 		thumb:							true,
 		enableSwipe:					false,
-		noSelect:						true,
+
+		noSelect:						false,
+		multiSelect:					false,
 
 		preventDragPropagation:			false,
 		preventScrollPropagation:		false,
@@ -700,7 +703,9 @@ itemTap: function(sender, event)
 
 			options:{
 				notitle:			true,
-				owner:				this
+				owner:				this,
+				type:				"MessageDetails",
+				instant:			event.instant
 			}
 		});
 	} else if (item.gap) {
@@ -753,16 +758,12 @@ itemAction: function(sender, event)
 
 setupItem: function(sender, event)
 {
-	var index	= event.index;
-	var item	= this.results[index];
+	var index		= event.index;
+	var item		= this.results[index];
+	var selected	= this.$.list.isSelected(index);
 	var d;
 
 	if (!item) {
-		return;
-	}
-
-	if (item.id && this.$.message.id === item.id) {
-		/* Already setup */
 		return;
 	}
 
@@ -791,23 +792,84 @@ setupItem: function(sender, event)
 
 		return;
 	}
-	this.$.message.id = item.id;
+
+	if (this.$.message.id === item.id && this.$.message.selected === selected) {
+		/* Already setup */
+		return;
+	}
+
+	this.$.message.id		= item.id;
+	this.$.message.selected	= selected;
 
 	this.$.msg.setClasses('hide');
 	this.$.msg.setContent('');
-
 	this.$.message.setClasses('message');
 
-	if (item.favorited) {
-		this.$.message.addClass('favorite');
-	} else {
-		this.$.message.removeClass('favorite');
-	}
+	this.$.message.addRemoveClass('favorite', item.favorited);
+	this.$.message.addRemoveClass('selected', selected);
 
 	this.$.message.setupMessage(item, this.service, function() {
 		/* Tell the list to re-render the row on change */
 		this.$.list.renderRow(index);
 	}.bind(this));
+},
+
+clear: function()
+{
+	this.$.list.getSelection().clear();
+},
+
+move: function(x)
+{
+	var selection	= this.$.list.getSelection();
+	var selected	= selection.getSelected();
+	var index		= NaN;
+
+	for (var name in selected) {
+		index = name * 1;
+	}
+
+	if (isNaN(index)) {
+		index = -1;
+	}
+
+	index += x;
+	this.select(index);
+},
+
+select: function(index)
+{
+	var selection	= this.$.list.getSelection();
+
+	if (index < 0) {
+		index = 0;
+	}
+
+	if (index >= this.results.length) {
+		index = this.results.length - 1;
+	}
+
+	selection.select(index);
+	this.$.list.scrollToRow(index - 1);
+},
+
+open: function(index, instant)
+{
+	var selection	= this.$.list.getSelection();
+	var selected	= selection.getSelected();
+
+	if (isNaN(index)) {
+		for (var name in selected) {
+			index = name * 1;
+		}
+	}
+
+	if (isNaN(index)) {
+		return(false);
+	}
+
+	this.itemTap(this, { index: index, instant: instant });
+	return(true);
 },
 
 smartscroll: function()

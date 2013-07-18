@@ -67,6 +67,8 @@
 						toaster is added to the chain.
 
 		wide:			If true then the toaster will use the full screen width.
+
+		instant:		Disable animations
 */
 
 enyo.kind({
@@ -146,6 +148,15 @@ getLength: function()
 	return(this.toasters.length);
 },
 
+getTop: function()
+{
+	if (!this.toasters.length) {
+		return(null);
+	}
+
+	return(this.toasters[this.toasters.length - 1]);
+},
+
 showScrim: function(visible)
 {
 	this.hideScrim();
@@ -166,6 +177,7 @@ push: function(component, options)
 {
 	var toaster;
 	var last;
+	var classes	= [];
 
 	options = options || {};
 
@@ -187,12 +199,23 @@ push: function(component, options)
 		options.wide = true;
 	}
 
+	if (options.wide) {
+		classes.push('full-width');
+	} else {
+		classes.push('slim-width');
+	}
+
+	if (options.instant) {
+		classes.push('instant');
+	}
+
 	toaster = this.createComponent({
 		kind:					"toaster",
 
 		title:					options.title,
 		notitle:				options.notitle,
-		classes:				options.wide ? 'full-width' : 'slim-width',
+		type:					options.type,
+		classes:				classes.join(' '),
 		components:				[ component ]
 	}, { owner: options.owner });
 

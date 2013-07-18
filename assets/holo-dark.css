@@ -82,3 +82,7 @@ body {
 .compose .counter {
 	color:					#227594;
 }
+
+.selected .message.selected {
+	background:				#222;
+}

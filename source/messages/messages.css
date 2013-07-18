@@ -101,6 +101,10 @@
 	background-repeat:		no-repeat;
 }
 
+.selected .message.selected {
+	background:				#ddd;
+}
+
 .message .avatar {
 	-webkit-border-radius:	5px;
 	border-radius:			5px;

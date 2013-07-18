@@ -27,6 +27,12 @@
 	max-width:				100%;
 }
 
+.toaster.instant {
+	-webkit-transition:		0s !important;
+	transition:				0s !important;
+}
+
+
 /*
 	On devices with a screen width less than 640px make all toasters the full
 	width of the screen.

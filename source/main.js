@@ -426,6 +426,7 @@ rendered: function()
 
 	this.index = 0;
 	this.moveIndicator();
+	this.selectPanel({ index: 0 });
 },
 
 clearError: function()
@@ -615,6 +616,8 @@ panelActivity: function(sender, event)
 		return;
 	}
 
+	this.$['panel' + this.index].removeClass('selected');
+
 	/* Let the list know that all messages have been noticed */
 	sender.setUnseen(0);
 
@@ -628,6 +631,8 @@ panelActivity: function(sender, event)
 
 		this.moveIndicator();
 	}
+
+	this.$['panel' + this.index].addClass('selected');
 },
 
 panelRefreshStart: function(sender, event)
@@ -818,6 +823,7 @@ selectPanel: function(sender, event)
 	var move;
 	var distance;
 
+	this.$['panel' + this.index].removeClass('selected');
 	this.index = sender.index;
 
 	/* Wrap if needed */
@@ -827,6 +833,7 @@ selectPanel: function(sender, event)
 	if (this.index >= this.tabs.length) {
 		this.index = 0;
 	}
+	this.$['panel' + this.index].addClass('selected');
 
 	move = this.isPanelVisible(this.index);
 
@@ -1053,82 +1060,162 @@ back: function(sender, event)
 
 keydown: function(sender, event)
 {
-	if (this.$.toasters.getLength() > 0) {
-		/*
-			Ignore key presses when a toaster is visible
+	var toaster		= this.$.toasters.getTop();
 
-			If it happens to be ctrl+r though, then we still want to prevent the
-			default behavior so that the user doesn't reload the browser window
-			without meaning to.
-		*/
-		if (event.keyCode == 82 && event.ctrlKey) {
-			event.preventDefault();
-			return(false);
-		}
+	switch (toaster ? toaster.type : "none") {
+		case "MessageDetails":
+			switch (event.keyCode) {
+				case 82: /* reply */
+					// TODO write me
+					return(true);
 
-		return(true);
-	}
+				case 37: /* left */
+					this.selectPanel({ index: this.index - 1 });
+					this.$['panel' + this.index].move(0);
+					break;
 
-	switch (event.keyCode) {
-		case 82: /* r */
-			if (event.ctrlKey) {
-				if (!event.shiftKey) {
-					/* Refresh all panels */
-					this.handleButton({ command: "refresh" });
-				} else {
-					/* Refresh the current panel */
-					var panel;
+				case 39: /* right */
+					this.selectPanel({ index: this.index + 1 });
+					this.$['panel' + this.index].move(0);
+					break;
 
-					if ((panel = this.$['panel' + this.index])) {
-						panel.refresh();
-					}
-				}
+				case 38: /* up */
+					this.$['panel' + this.index].move(-1);
+					break;
+
+				case 40: /* down */
+					this.$['panel' + this.index].move(1);
+					break;
+
+				case 33: /* page up */
+					this.$['panel' + this.index].move(-5);
+					break;
+
+				case 34: /* page down */
+					this.$['panel' + this.index].move(5);
+					break;
+
+				case 35: /* end */
+					this.$['panel' + this.index].select(1000000);
+					break;
+
+				case 36: /* home */
+					this.$['panel' + this.index].select(0);
+					break;
+
+				default:
+					// this.log(event.keyCode);
+					return(true);
 			}
-			break;
 
-		case 188: /* comma (,) */
-			if (event.ctrlKey) {
-				this.handleButton({ command: "preferences" });
+			this.closeToaster(true);
+			if (this.$['panel' + this.index].open(NaN, true)) {
+				break;
 			}
+
 			break;
 
-		case 37: /* left */
-			this.addClass('manualIndex');
-
-			this.selectPanel({ index: this.index - 1 });
-			break;
-
-		case 39: /* right */
-			this.addClass('manualIndex');
-
-			this.selectPanel({ index: this.index + 1 });
-			break;
-
-		case 38: /* up */
-			this.addClass('manualIndex');
-			this.$['panel' + this.index].scroll(-25);
-			break;
-
-		case 40: /* down */
-			this.addClass('manualIndex');
-			this.$['panel' + this.index].scroll(25);
-			break;
-
-		case 33: /* page up */
-			var bounds = this.$.panels.getPanels()[0].getBounds();
-
-			this.$['panel' + this.index].scroll(-(bounds.height - 25));
-			break;
-
-		case 34: /* page down */
-			var bounds = this.$.panels.getPanels()[0].getBounds();
-
-			this.$['panel' + this.index].scroll(bounds.height - 25);
-			break;
+		case "SubMessageDetails":
+		case "Conversation":
+			// TODO	Implement keyboard control for conversations
+			//		Fallthrough until written
 
 		default:
-			// this.log(event.keyCode);
+			/*
+				By default ignore key presses when a toaster is visible.
+
+				If it happens to be ctrl+r though, then we still want to prevent the
+				default behavior so that the user doesn't reload the browser window
+				without meaning to.
+			*/
+			if (event.keyCode == 82 && event.ctrlKey) {
+				event.preventDefault();
+				return(false);
+			}
+
 			return(true);
+
+		case "none":
+			switch (event.keyCode) {
+				case 82: /* r */
+					if (event.ctrlKey) {
+						if (!event.shiftKey) {
+							/* Refresh all panels */
+							this.handleButton({ command: "refresh" });
+						} else {
+							/* Refresh the current panel */
+							var panel;
+
+							if ((panel = this.$['panel' + this.index])) {
+								panel.refresh();
+							}
+						}
+					}
+					break;
+
+				case 188: /* comma (,) */
+					if (event.ctrlKey) {
+						this.handleButton({ command: "preferences" });
+					}
+					break;
+
+				case 37: /* left */
+					this.addClass('manualIndex');
+
+					this.selectPanel({ index: this.index - 1 });
+					this.$['panel' + this.index].move(0);
+					break;
+
+				case 39: /* right */
+					this.addClass('manualIndex');
+
+					this.selectPanel({ index: this.index + 1 });
+					this.$['panel' + this.index].move(0);
+					break;
+
+				case 38: /* up */
+					this.addClass('manualIndex');
+					this.$['panel' + this.index].move(-1);
+					break;
+
+				case 40: /* down */
+					this.addClass('manualIndex');
+					this.$['panel' + this.index].move(1);
+					break;
+
+				case 33: /* page up */
+					this.addClass('manualIndex');
+					this.$['panel' + this.index].move(-5);
+					break;
+
+				case 34: /* page down */
+					this.addClass('manualIndex');
+					this.$['panel' + this.index].move(5);
+					break;
+
+				case 35: /* end */
+					this.addClass('manualIndex');
+					this.$['panel' + this.index].select(1000000);
+					break;
+
+				case 36: /* home */
+					this.addClass('manualIndex');
+					this.$['panel' + this.index].select(0);
+					break;
+
+				case 13: /* enter */
+					if (this.$['panel' + this.index].open()) {
+						break;
+					} else {
+						/* Fallthrough */
+					}
+
+				default:
+					this.log(event.keyCode);
+					return(true);
+			}
+
+			break;
 	}
 
 	event.preventDefault();

@@ -124,7 +124,8 @@ itemTap: function(sender, event)
 		},
 
 		options:{
-			notitle: true
+			notitle:		true,
+			kind:			"SubMessageDetails"
 		}
 	});
 },
