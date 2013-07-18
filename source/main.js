@@ -822,8 +822,12 @@ selectPanel: function(sender, event)
 	var was		= this.index;
 	var move;
 	var distance;
+	var panel;
 
-	this.$['panel' + this.index].removeClass('selected');
+	if ((panel = this.$['panel' + this.index])) {
+		panel.removeClass('selected');
+	}
+
 	this.index = sender.index;
 
 	/* Wrap if needed */
@@ -833,15 +837,16 @@ selectPanel: function(sender, event)
 	if (this.index >= this.tabs.length) {
 		this.index = 0;
 	}
-	this.$['panel' + this.index].addClass('selected');
+	if (!(panel = this.$['panel' + this.index])) {
+		return;
+	}
+	panel.addClass('selected');
 
 	move = this.isPanelVisible(this.index);
 
 	if (0 == move) {
 		/* The panel is already visible, so just move the indicator */
 		if (event) {
-			var panel	= this.$['panel' + sender.index];
-
 			panel.smartscroll();
 			this.panelActivity(panel, event);
 		}

@@ -190,6 +190,7 @@ restart: function()
 	this.oauth_token	= null;
 	this.oauth_verifier	= null;
 	this.accesstoken	= null;
+	this.account		= null;
 
 	window.twitterparams = null;
 
@@ -301,13 +302,16 @@ step1: function(skipwindow, servicename)
 		}
 
 		this.$.step2.hide();
-		if (!account) {
-			this.$.failed.show();
+
+		if (account) {
+			this.account = account;
+			this.$.step3.show();
 			return;
 		}
 
-		this.account = account;
-		this.$.step3.show();
+		if (!this.account) {
+			this.$.failed.show();
+		}
 	}.bind(this), arg);
 },
 
