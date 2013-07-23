@@ -571,6 +571,13 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 			newCountIndex += results.length;
 		}
 
+		// TODO	If there isn't a selection then select the oldest new message.
+
+		// TODO	If there is a selection then adjust it by the number of new
+		//		messages.
+
+		// TODO	Scroll to the selected item after a refresh? Not ideal... grr
+
 		/* Scroll to the oldest new messages */
 		setTimeout(enyo.bind(this, function() {
 			var newScrollHeight = this.$.list.getScrollBounds().height;

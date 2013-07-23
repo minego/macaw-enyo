@@ -50,6 +50,21 @@ init:
 initrepo:
 	@git remote add upstream git://github.com/dkirker/macaw-enyo.git
 
+initzip:
+	@mkdir -p lib
+	@curl -O https://codeload.github.com/enyojs/enyo/zip/master
+	@unzip master
+	@rm -rf enyo
+	@mv enyo-master enyo
+	@curl -O https://codeload.github.com/enyojs/onyx/zip/master
+	@unzip master
+	@rm -rf lib/onyx
+	@mv onyx-master lib/onyx
+	@curl -O https://codeload.github.com/enyojs/layout/zip/master
+	@unzip master
+	@rm -rf lib/layout
+	@mv layout-master lib/layout
+
 update:
 	@git fetch upstream
 	@git merge upstream/master

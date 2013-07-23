@@ -25,7 +25,11 @@ Building
 This application relies on a number of git sub modules. After checking out you
 must run:
 
-	git submodule update --init
+	make init
+
+If you downloaded as a zip from github instead of a checkout then you must run:
+
+	make initzip
 
 
 This application can currently be packaged for chrome, Firefox OS webOS and
