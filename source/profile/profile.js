@@ -29,8 +29,7 @@ published: {
 },
 
 handlers: {
-	ontap:								"handleCommand",
-	onresize:							"handleResize"
+	ontap:								"handleCommand"
 },
 
 events: {
@@ -170,7 +169,6 @@ components: [
 rendered: function()
 {
 	this.inherited(arguments);
-	this.handleResize();
 },
 
 create: function()
@@ -210,8 +208,6 @@ create: function()
 
 profileChanged: function()
 {
-	this.handleResize();
-
 	this.$.screenname.setContent('@' + this.profile.screenname);
 	this.$.username.setContent(this.profile.name);
 
@@ -393,28 +389,6 @@ relationshipChanged: function()
 		this.$.followMenuItem.setContent("Follow");
 		this.$.followMenuItem.command = "follow";
 	}
-},
-
-handleResize: function()
-{
-	/* This is a fullscreen toaster */
-	var p = this;
-
-	while (p.parent) {
-		p = p.parent;
-	}
-	var pb = p.getBounds();
-
-	this.setBounds({
-		height:		pb.height
-	});
-
-	this.$.panels.setBounds({
-		height:		pb.height - (
-						this.$.controls.getBounds().height +
-						this.$.banner.getBounds().height
-					)
-	});
 },
 
 handleCommand: function(sender, event)

@@ -313,7 +313,8 @@ openProfile: function(sender, event)
 
 		options: {
 			notitle:		true,
-			alwaysshow:		true
+			alwaysshow:		true,
+			tall:			true
 		}
 	});
 },

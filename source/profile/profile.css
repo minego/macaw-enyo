@@ -1,9 +1,15 @@
 .profile {
 	font-size:				16px;
+	height:					100%;
 }
 
 .profile .profilepanels {
-	max-width:				500px;
+	position:				absolute;
+	top:					150px;
+	bottom:					60px;
+
+	width:					100%;
+
 	margin-left:			auto;
 	margin-right:			auto;
 }
@@ -17,7 +23,7 @@
 }
 
 .profile .banner {
-	height:					160px;
+	height:					150px;
 	width:					100%;
 
 	background-repeat:		no-repeat;

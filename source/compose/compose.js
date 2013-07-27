@@ -25,8 +25,7 @@ events: {
 },
 
 handlers: {
-	ontap:								"handleCommand",
-	onresize:							"handleResize"
+	ontap:								"handleCommand"
 },
 
 published: {
@@ -158,23 +157,6 @@ create: function()
 	var		showmenu = false;
 
 	this.inherited(arguments);
-
-	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
-			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
-	) {
-		/*
-			Firefox OS
-
-			The virtual keyboard on Firefox OS causes elements to move around a
-			great deal. Make compose full screen in this case.
-		*/
-		this.vkb = true;
-	}
-	// this.vkb = true;
-
-	if (this.vkb) {
-		this.addClass('vkb');
-	}
 
 	this.textChanged();
 	this.userChanged();
@@ -365,7 +347,6 @@ textChanged: function()
 rendered: function(sender, event)
 {
 	this.inherited(arguments);
-	this.handleResize();
 
 	if (this.replyto && this.replyto.dm) {
 		this.dm = this.replyto.user;
@@ -457,25 +438,6 @@ focus: function()
 			}
 		}
 	}.bind(this), 300);
-},
-
-handleResize: function()
-{
-	var p = this;
-
-	if (!this.vkb) {
-		return;
-	}
-
-	/* This is a fullscreen toaster */
-	while (p.parent) {
-		p = p.parent;
-	}
-	var pb = p.getBounds();
-
-	this.setBounds({
-		height:		pb.height
-	});
 },
 
 handleCommand: function(sender, event)

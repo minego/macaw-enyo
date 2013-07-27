@@ -187,6 +187,23 @@ create: function()
 {
 	this.inherited(arguments);
 
+	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
+			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
+	) {
+		/*
+			Firefox OS
+
+			The virtual keyboard on Firefox OS causes elements to move around a
+			great deal. Make compose full screen in this case.
+		*/
+		this.vkb = true;
+	}
+	// this.vkb = true;
+
+	if (this.vkb) {
+		this.addClass('vkb');
+	}
+
 	this.spincount = 0;
 
 	/* Monitor for Web Activity share requests */
@@ -896,7 +913,15 @@ compose: function(sender, options)
 		noscrim:	true,
 		nobg:		true,
 		modal:		true,
-		notitle:	true
+		notitle:	true,
+
+		/*
+			On devices with a virtual keyboard it can be annoying to move the
+			compose toaster around if it shows/hides. So, simply make it full
+			height to avoid this.
+		*/
+		tall:		this.vkb ? true : false,
+		instant:	this.vkb ? true : false
 	});
 },
 

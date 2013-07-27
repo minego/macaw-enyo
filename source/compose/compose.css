@@ -6,9 +6,19 @@
 	background:				url('../../assets/compose-bg.png') left top repeat-x;
 	padding-top:			60px;
 }
-.compose.vkb {
+
+/*
+	Tweak the display when the compose dialog is full-height which is the
+	default on some systems like Firefox OS.
+*/
+.full-height .compose {
 	background:				url('../../assets/toaster-bg.png') left top repeat-x;
 	padding-top:			10px;
+	height:					100%;
+}
+
+.full-height .compose .counter {
+	top:					75px;
 }
 
 .compose .avatar {
@@ -87,10 +97,6 @@
 }
 .compose.haveimages .counter {
 	bottom:					100px;
-}
-
-.compose.vkb .counter {
-	top:					75px;
 }
 
 .compose .button {

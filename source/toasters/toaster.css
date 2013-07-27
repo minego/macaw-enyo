@@ -27,6 +27,12 @@
 	max-width:				100%;
 }
 
+.toaster-chain.bottom .toaster.full-height {
+	position:				fixed;
+	top:					0px;
+	bottom:					0px;
+}
+
 .toaster.instant {
 	-webkit-transition:		0s !important;
 	transition:				0s !important;

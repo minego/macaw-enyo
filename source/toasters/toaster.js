@@ -68,6 +68,8 @@
 
 		wide:			If true then the toaster will use the full screen width.
 
+		tall:			If true then the toaster will use the full screen height.
+
 		instant:		Disable animations
 */
 
@@ -203,6 +205,10 @@ push: function(component, options)
 		classes.push('full-width');
 	} else {
 		classes.push('slim-width');
+	}
+
+	if (options.tall) {
+		classes.push('full-height');
 	}
 
 	if (options.instant) {
