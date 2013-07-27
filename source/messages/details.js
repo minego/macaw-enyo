@@ -225,7 +225,8 @@ showPreview: function(src, url)
 
 		options: {
 			notitle:		true,
-			wide:			true
+			wide:			true,
+			tall:			true
 		}
 	});
 },

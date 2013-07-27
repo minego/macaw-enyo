@@ -3,3 +3,9 @@
 	bottom:					0px;
 }
 
+.preview,
+.preview .image {
+	height:					100%;
+	width:					100%;
+}
+

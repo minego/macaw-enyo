@@ -25,8 +25,7 @@ published: {
 },
 
 handlers: {
-	ontap:								"handleTap",
-	onresize:							"handleResize"
+	ontap:								"handleTap"
 },
 
 events: {
@@ -37,6 +36,7 @@ events: {
 components: [
 	{
 		name:							"image",
+		classes:						"image",
 		kind:							enyo.ImageView
 	},
 
@@ -67,7 +67,6 @@ components: [
 rendered: function()
 {
 	this.inherited(arguments);
-	this.handleResize();
 },
 
 create: function()
@@ -106,30 +105,9 @@ destroy: function()
 
 srcChanged: function()
 {
-	this.handleResize();
 	xhrImages.load(this.src, function(url, inline) {
 		this.$.image.setSrc(url);
 	}.bind(this));
-},
-
-handleResize: function()
-{
-	/* This is a fullscreen toaster */
-	var p = this;
-
-	while (p.parent) {
-		p = p.parent;
-	}
-	var pb = p.getBounds();
-
-	this.setBounds({
-		height:		pb.height
-	});
-
-	this.$.image.setBounds({
-		height:		pb.height - this.$.controls.getBounds().height,
-		width:		pb.width
-	});
 },
 
 handleTap: function(sender, event)
