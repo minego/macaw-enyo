@@ -766,15 +766,25 @@ toolbarsChanged: function()
 handleResize: function()
 {
 	var width	= enyo.dom.getWindowWidth();
-	var w		= 320;
+	var w		= '320px';
 
 	/*
 		If the screen is not wide enough to display multiple columns then the
 		enyo.Panels kind will show a single column.
 	*/
 	if (enyo.Panels.isScreenNarrow()) {
+		if (this.hasClass('skinny')) {
+			/*
+				Already setup
+
+				The actual size isn't important here since it is set using a
+				percentage so there is no need to resize anything.
+			*/
+			return;
+		}
+
 		/* Single column, match the screen width */
-		w = width;
+		w = '100%';
 
 		this.addClass('manualIndex');
 		this.addClass('skinny');
@@ -783,13 +793,14 @@ handleResize: function()
 			Multi column, minimum width of 250. Size the columns such that there
 			will not be a partial column displayed.
 		*/
-		w = width / (Math.floor(width / 250));
+		w = (width / (Math.floor(width / 250))) + 'px';
+
 		this.removeClass('manualIndex');
 		this.removeClass('skinny');
 	}
 
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
-		this.$['panel' + t].container.applyStyle('width', w + 'px');
+		this.$['panel' + t].container.applyStyle('width', w);
 	}
 
 	this.moveIndicator();
@@ -1422,7 +1433,7 @@ moveIndicator: function(sender, event)
 	this.$.indicator.applyStyle('width', tabWidth + '%');
 	this.$.indicator.applyStyle('left', left + '%');
 
-	if (this.hasClass('skinny')) {
+	if (false && this.hasClass('skinny')) {
 		var panel	= this.$['panel' + this.index];
 
 		this.$.title.setContent(panel ? panel.label : '');
