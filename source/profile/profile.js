@@ -441,7 +441,8 @@ handleCommand: function(sender, event)
 
 					options: {
 						notitle:		true,
-						wide:			true
+						wide:			true,
+						tall:			true
 					}
 				});
 			}
