@@ -1,11 +1,14 @@
 .preview .controls {
-	position:				absolute;
+	position:				fixed;
 	bottom:					0px;
 }
 
 .preview,
 .preview .image {
-	height:					100%;
+	position:				absolute;
+	top:					0px;
+	bottom:					32px;
+
 	width:					100%;
 }
 
