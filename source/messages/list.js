@@ -334,6 +334,8 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 		if (index < topIndex) {
 			index--;
 		}
+
+		this.move(-1, index);
 	}
 
 	/*
@@ -569,10 +571,11 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex,
 	if (results.length) {
 		changed = true;
 
-
 		if (isNaN(insertIndex) || insertIndex < topIndex) {
 			topIndex += results.length;
 		}
+
+		this.move(results.length, isNaN(insertIndex) ? 0 : insertIndex);
 
 		if (isNaN(insertIndex)) {
 			this.results = results.concat(this.results);
@@ -589,13 +592,6 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex,
 		if (!isNaN(newCountIndex)) {
 			newCountIndex += results.length;
 		}
-
-		// TODO	If there isn't a selection then select the oldest new message.
-
-		// TODO	If there is a selection then adjust it by the number of new
-		//		messages.
-
-		// TODO	Scroll to the selected item after a refresh? Not ideal... grr
 
 		setTimeout(enyo.bind(this, function() {
 			/* Scroll to the oldest new messages */
@@ -831,7 +827,7 @@ clear: function()
 	this.$.list.getSelection().clear();
 },
 
-move: function(x)
+move: function(x, position)
 {
 	var selection	= this.$.list.getSelection();
 	var selected	= selection.getSelected();
@@ -843,9 +839,20 @@ move: function(x)
 
 	if (isNaN(index)) {
 		index = -1;
+	} else if (!isNaN(position) && index > position) {
+		return;
 	}
 
 	index += x;
+
+	try {
+		while (!this.results[index].id) {
+			/* This is an indicator */
+			index += (x > 0 ? 1 : -1);
+		}
+	} catch (e) {
+	}
+
 	this.select(index);
 },
 
