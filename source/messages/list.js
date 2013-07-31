@@ -549,10 +549,20 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 		/* Insert a new newcount indicator */
 		changed = true;
 
+		/* Adjust the scroll position (topIndex) based on the new item count */
 		if (isNaN(newCountIndex) || newCountIndex <= topIndex) {
-			topIndex += newcount + 1;
+			if (topIndex > 0) {
+				/*
+					If the list is currently at the top then show the new count
+					indicator. Otherwise leave the scroll position alone.
+				*/
+				topIndex++;
+			}
+
+			topIndex += newcount;
 		}
 
+		/* Move the selected item based on the new item count */
 		this.move(newcount + 1, isNaN(newCountIndex) ? 0 : newCountIndex);
 
 		if (isNaN(newCountIndex)) {
