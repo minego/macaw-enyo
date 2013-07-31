@@ -290,19 +290,12 @@ refresh: function(autorefresh, index)
 	}
 
 	this.service.getMessages(this.resource, enyo.bind(this, function(success, results) {
-		this.removeIndicators(index, autorefresh, enyo.bind(this, function(insertIndex, newCountIndex) {
-			this.gotMessages(success, results, autorefresh, insertIndex);
-		}));
+		this.removeIndicators(index, autorefresh,
+			enyo.bind(this, function(insertIndex, newCountIndex, topIndex) {
+				this.gotMessages(success, results, autorefresh, insertIndex, 0, topIndex);
+			}
+		));
 	}), params);
-},
-
-/* Scroll the list by the specified offset */
-scroll: function(offset)
-{
-	var top = this.$.list.getScrollTop();
-
-	this.$.list.setScrollTop(top + offset);
-	this.handleActivity();
 },
 
 /*
@@ -315,8 +308,9 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 {
 	var index			= NaN;
 	var changed			= false;
-	var oldScrollHeight	= this.$.list.getScrollBounds().height;
-	var oldScrollTop	= this.$.list.getScrollTop();
+	var topIndex		= this.$.list.getRowIndexFromCoordinate(48);
+
+	this.log(this.resource, 'topIndex is', topIndex);
 
 	if (this.destroyed) {
 		return;
@@ -336,6 +330,10 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 
 		this.results.splice(index, 1);
 		changed = true;
+
+		if (index < topIndex) {
+			index--;
+		}
 	}
 
 	/*
@@ -349,11 +347,11 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 	this.userIsActive = false;
 
 	if (this.results.length > 0 && this.results[0].empty) {
-		this.results = [];
+		changed			= true;
+		this.results	= [];
 
-		changed = true;
-
-		insertIndex = NaN;
+		topIndex		= 0;
+		insertIndex		= NaN;
 	}
 
 	if (changed) {
@@ -362,25 +360,30 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 	}
 
 	setTimeout(enyo.bind(this, function() {
-		var newScrollHeight = this.$.list.getScrollBounds().height;
-
+		/* Scroll to the oldest new messages */
 		this.ignoreActivity++;
-		this.$.list.setScrollTop(
-			this.$.list.getScrollTop() +
-			newScrollHeight - oldScrollHeight
-		);
+		console.log(this.resource, 'Scroll to: ' + topIndex);
 
-		cb(insertIndex, index);
-	}), 0);
+		this.$.list.scrollToRow(topIndex);
+
+		if (cb) cb(insertIndex, index, topIndex);
+	}), 300);
 },
 
-gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
+gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex, topIndex)
 {
 	var changed			= false;
 	var reverseScroll	= false;
 	var oldLength		= this.results.length;
-	var oldScrollHeight	= this.$.list.getScrollBounds().height;
-	var oldScrollTop	= this.$.list.getScrollTop();
+
+	if (isNaN(topIndex)) {
+		try {
+			topIndex = this.$.list.getRowIndexFromCoordinate(48);
+		} catch (e) {
+			topIndex = 0;
+		}
+		this.log(this.resource, 'topIndex is', topIndex);
+	}
 
 	if (this.destroyed) {
 		/*
@@ -398,6 +401,9 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 			this.results.splice(insertIndex, 1);
 
 			changed = true;
+			if (insertIndex < topIndex) {
+				topIndex--;
+			}
 		}
 
 		if (insertIndex == this.results.length) {
@@ -466,7 +472,7 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 			});
 		}
 	}
-	this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing messages and ' + results.length + ' new messages');
+	// this.log(this.resource, 'Post-gap detection: There are ' + this.results.length + ' existing messages and ' + results.length + ' new messages');
 
 	/*
 		Figure out where to put the new count indicator.
@@ -553,11 +559,20 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 			newcount:	newcount
 		});
 
+		if (newCountIndex < topIndex) {
+			topIndex++;
+		}
+
 		this.unseen = newcount;
 	}
 
 	if (results.length) {
 		changed = true;
+
+
+		if (isNaN(insertIndex) || insertIndex < topIndex) {
+			topIndex += results.length;
+		}
 
 		if (isNaN(insertIndex)) {
 			this.results = results.concat(this.results);
@@ -565,6 +580,10 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 			for (var i = 0, r; r = results[i]; i++) {
 				this.results.splice(insertIndex + i, 0, r);
 			}
+		}
+
+		if (topIndex >= this.results.length) {
+			topIndex = 0;
 		}
 
 		if (!isNaN(newCountIndex)) {
@@ -578,26 +597,12 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 
 		// TODO	Scroll to the selected item after a refresh? Not ideal... grr
 
-		/* Scroll to the oldest new messages */
 		setTimeout(enyo.bind(this, function() {
-			var newScrollHeight = this.$.list.getScrollBounds().height;
-
+			/* Scroll to the oldest new messages */
 			this.ignoreActivity++;
-			if (oldScrollTop <= 60) {
-				/*
-					If the panel is right at the top then scroll a bit to show
-					the new count indicator and to indicate that there is some
-					new content.
-				*/
-				this.$.list.setScrollTop(
-					(newScrollHeight - oldScrollHeight) - 60
-				);
-			} else if (oldScrollHeight) {
-				this.$.list.setScrollTop(
-					this.$.list.getScrollTop() +
-					newScrollHeight - oldScrollHeight
-				);
-			}
+			console.log(this.resource, 'Scroll to: ' + topIndex);
+
+			this.$.list.scrollToRow(topIndex);
 
 			/*
 				Flush any old results to keep the total number of loaded messages
@@ -612,7 +617,7 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 
 			this.writeCache();
 			this.loading = false;
-		}), 0);
+		}), 300);
 	} else {
 		this.loading = false;
 	}

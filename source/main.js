@@ -697,7 +697,7 @@ panelRefreshStop: function(sender, event)
 
 		/* Start refreshing the next panel */
 		if (this.refreshTodo && (p = this.refreshTodo.shift())) {
-			this.log('Refreshing: ', p.name, p);
+			// this.log('Refreshing: ', p.name, p);
 			p.refresh();
 
 			return;
@@ -1348,11 +1348,11 @@ moveIndicator: function(sender, event)
 		var difference = event.toIndex - event.fromIndex;
 
 		this.index += difference;
-		this.log(event, this.index, event.toIndex, event.fromIndex);
+		// this.log(event, this.index, event.toIndex, event.fromIndex);
 
 		this.index = event.toIndex;
 	} else {
-		this.log(this.index);
+		// this.log(this.index);
 	}
 	this.ignoreMove = false;
 
