@@ -350,8 +350,8 @@ getMessages: function(resource, cb, params)
 			break;
 
 		case 'messages':
-			url += 'direct_messages';
-			break;
+			this.getDMs(cb, params);
+			return;
 
 		case 'favorites':
 			url += 'favorites/list';
@@ -400,6 +400,87 @@ getMessages: function(resource, cb, params)
 			}
 			cb(false, results);
 		}
+	);
+},
+
+getDMs: function(cb, params)
+{
+	var url		= this.apibase + '/' + this.version + '/';
+
+	params = params || {};
+
+	if (params.user) {
+		if ('string' == typeof params.user && '@' == params.user.charAt(0)) {
+			params.screen_name	= params.user.slice(1);
+		} else {
+			params.user_id		= params.user;
+		}
+
+		delete params.user;
+	}
+
+	// url += 'direct_messages/sent';
+	url += 'direct_messages';
+
+	failureCB = function(response) {
+		var results = enyo.json.parse(response.text);
+
+		if (results.errors) {
+			for (var i = 0, e; e = results.errors[i]; i++) {
+				if (e.message) {
+					ex(e.message);
+				}
+			}
+		}
+		cb(false, results);
+	};
+
+	this.oauth.get(this.buildURL(url + '.json', params),
+		function(responseIn) {
+			url += '/sent';
+
+			this.oauth.get(this.buildURL(url + '.json', params),
+				function(responseOut) {
+					var resultsIn	= enyo.json.parse(responseIn.text);
+					var resultsOut	= enyo.json.parse(responseOut.text);
+					var resultsAll	= [];
+					var results		= [];
+
+					resultsIn		= this.cleanupMessages(resultsIn);
+					resultsOut		= this.cleanupMessages(resultsOut);
+
+					/* Merge the results, and sort by date... Newest first */
+					resultsAll		= resultsIn.concat(resultsOut).sort(function(a, b) {
+						return(b.created - a.created);
+					});
+
+					/* Filter results, keeping a single message per sender */
+					for (var i = 0, a; a = resultsIn[i]; i++) {
+						var b = null;
+
+						for (var x = 0; b = results[x]; x++) {
+							if (a.user.screenname === b.user.screenname) {
+								break;
+							}
+						}
+
+						if (!b) {
+							results.push(a);
+						}
+					}
+
+					results = this.cleanupMessages(results);
+
+					if (results) {
+						cb(true, results, resultsAll);
+					} else {
+						cb(false);
+					}
+				}.bind(this),
+				failureCB.bind(this)
+			);
+		}.bind(this),
+		failureCB.bind(this)
 	);
 },
 
@@ -529,6 +610,11 @@ cleanupMessage: function(tweet)
 
 	if (tweet.user) {
 		tweet.user = this.cleanupUser(tweet.user);
+	}
+
+	if (tweet.recipient) {
+		/* A DM will include a recipient, which we need to cleanup as well */
+		tweet.recipient = this.cleanupUser(tweet.recipient);
 	}
 
 	/* Generate a url that can be used to access this tweet directly */

@@ -31,7 +31,10 @@ classes: [
 
 published: {
 	item:							null,
-	user:							null
+	user:							null,
+
+	/* A list of items to use for the conversation view */
+	convo:							null
 },
 
 handlers: {
@@ -192,7 +195,10 @@ itemChanged: function()
 
 		this.$['repost'		].addClass("hide");
 		this.$['favorite'	].addClass("hide");
-		this.$['convo'		].addClass("hide");
+
+		if (!this.convo || this.convo.length <= 1) {
+			this.$['convo'		].addClass("hide");
+		}
 	} else {
 		if (!this.user || !this.item.user ||
 			this.user.id !== this.item.user.id
@@ -201,10 +207,10 @@ itemChanged: function()
 		} else {
 			this.$['repost'	].addClass("hide");
 		}
-	}
 
-	if (!this.item.replyto) {
-		this.$['convo'		].addClass("hide");
+		if (!this.item.replyto) {
+			this.$['convo'		].addClass("hide");
+		}
 	}
 
 	if (this.item.favorited) {
@@ -573,7 +579,8 @@ handleCommand: function(sender, event)
 		case "convo":
 			this.doConversation({
 				item:		this.item,
-				user:		this.user
+				user:		this.user,
+				items:		this.convo
 			});
 			break;
 	}

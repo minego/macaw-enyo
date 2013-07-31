@@ -145,21 +145,25 @@ rendered: function()
 {
 	this.inherited(arguments);
 
-	this.results = [];
+	this.results		= [];
+	this.fullResults	= [];
 
 	/* Load cached messages */
 	var results;
+	var fullResults;
 
 	if (this.cache) {
-		results = prefs.get('cachedmsgs:' + this.user.id + ':' + this.resource) || [];
+		results		= prefs.get('cachedmsgs:' + this.user.id + ':' + this.resource) || [];
+		fullResults	= prefs.get('cachedfull:' + this.user.id + ':' + this.resource);
 	} else {
-		results = [];
+		results		= [];
+		fullResults	= null;
 	}
 
 	this.service.cleanupMessages(results);
+	this.service.cleanupMessages(fullResults);
 
-	/* Remove any blob urls */
-	for (var i = 0, item; item = results[i]; i++) {
+	var cleanupItem = function(item) {
 		if (item.media) {
 			for (var c = 0, m; m = item.media[i]; i++) {
 				if (m.blobthumbnail) {
@@ -174,13 +178,24 @@ rendered: function()
 		if (item.real && item.real.user && item.real.user.blobavatar) {
 			delete item.real.user.blobavatar;
 		}
+	};
+
+	/* Remove any blob urls */
+	for (var i = 0, item; item = results[i]; i++) {
+		cleanupItem(item);
+	}
+
+	if (fullResults) {
+		for (var i = 0, item; item = fullResults[i]; i++) {
+			cleanupItem(item);
+		}
 	}
 
 	if (results && results.length) {
 		this.loading = true;
 		this.doRefreshStart();
 
-		this.gotMessages(true, results, false);
+		this.gotMessages(true, results, fullResults, false);
 	} else {
 		this.refresh(false);
 	}
@@ -289,10 +304,10 @@ refresh: function(autorefresh, index)
 		}
 	}
 
-	this.service.getMessages(this.resource, enyo.bind(this, function(success, results) {
+	this.service.getMessages(this.resource, enyo.bind(this, function(success, results, fullResults) {
 		this.removeIndicators(index, autorefresh,
 			enyo.bind(this, function(insertIndex, newCountIndex, topIndex) {
-				this.gotMessages(success, results, autorefresh, insertIndex);
+				this.gotMessages(success, results, fullResults, autorefresh, insertIndex);
 			}
 		));
 	}), params);
@@ -372,12 +387,20 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 	}), 300);
 },
 
-gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
+gotMessages: function(success, results, fullResults, autorefresh, insertIndex, newCountIndex)
 {
 	var changed			= false;
 	var reverseScroll	= false;
 	var oldLength		= this.results.length;
 	var topIndex		= 0;
+
+	/*
+		Some columns return a set of all results that can be used for a convo
+		view instead of having to make another request.
+	*/
+	if (fullResults) {
+		this.fullResults = fullResults;
+	}
 
 	if (isNaN(topIndex)) {
 		try {
@@ -676,6 +699,7 @@ writeCache: function()
 	}
 
 	prefs.set('cachedmsgs:' + this.user.id + ':' + this.resource, cache);
+	prefs.set('cachedfull:' + this.user.id + ':' + this.resource, this.fullResults);
 },
 
 setTimer: function()
@@ -696,6 +720,7 @@ setTimer: function()
 itemTap: function(sender, event)
 {
 	var item	= this.results[event.index];
+	var convo	= null;
 
 	if (!item) {
 		return;
@@ -703,12 +728,38 @@ itemTap: function(sender, event)
 
 	this.doActivity({});
 
+	if (item.dm || this.fullResults) {
+		/*
+			Build a list of messages that should be used to render the convo
+			view.
+		*/
+		convo = [];
+
+		// TODO	Walk through this.fullResults and push any message with a sender
+		//		or recipient that matches item
+		if (this.fullResults) {
+			for (var i = 0, r; r = this.fullResults[i]; i++) {
+				if (r.recipient && r.recipient.screenname === item.user.screenname) {
+					/* This is a message we sent, show it in the list */
+					convo.push(r);
+				}
+
+				if (r.user && r.user.screenname == item.user.screenname) {
+					/* This is a message we received, show it in the list */
+					convo.push(r);
+				}
+			}
+		}
+this.log(convo);
+	}
+
 	if (item.id) {
 		this.doOpenToaster({
 			component: {
 				kind:				"MessageDetails",
 				item:				item,
 				user:				this.user,
+				convo:				convo,
 
 				onMessageAction:	"itemAction"
 			},

@@ -21,7 +21,10 @@ classes:								"conversation messagelist",
 
 published: {
 	item:								null,
-	user:								null
+	user:								null,
+
+	/* If provided then use these items instead of loading items */
+	items:								null
 },
 
 events: {
@@ -67,7 +70,11 @@ rendered: function()
 
 	this.results = [];
 
-	if (this.item) {
+	if (this.items) {
+		this.results = this.items;
+
+		this.gotMessage(true, null);
+	} else if (this.item) {
 		this.gotMessage(true, this.item);
 	}
 },
@@ -79,7 +86,10 @@ gotMessage: function(success, result)
 		return;
 	}
 
-	this.results.push(result);
+	if (result) {
+		this.results.push(result);
+	}
+
 	this.$.list.setCount(this.results.length);
 	this.$.list.refresh();
 
@@ -101,7 +111,7 @@ gotMessage: function(success, result)
 	}
 
 	/* Get the next item */
-	if (result.replyto) {
+	if (result && result.replyto) {
 		this.service.getMessages('show', this.gotMessage.bind(this), {
 			id:	result.replyto
 		});

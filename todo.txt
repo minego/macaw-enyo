@@ -15,15 +15,13 @@
 + Preview
 	- Implement options menu
 
-- Include sent DMs in the DM panel, or possibly load all DMS to or from a person
-into the conversation view when a DM is selected.
-
 - Implement DM support for ADN
 
 + Implement filters
 	- Display list of filters in options panel
 	- Hide tweets that match a filter. Can be applied in either the list kind or
 	  in the twitter helper.
+	- Allow per user filters
 
 - Implement notifications. (A "notify" boolean is set on each tab)
 
@@ -34,9 +32,6 @@ into the conversation view when a DM is selected.
 
 - Restyle options
 
-- Correct error handling for failed ADN requests. Currently enyo.Ajax does not
-  hit our callback on failure. This needs to be resolved.
-
-- Implement an xhr based loader for icons that figures out if a theme has an
-  icon? The current method blanks to a missing image view for a moment.
+- Rework logic used to prevent clearing the unread counter. Make it based on
+  time since refresh instead. Don't clear it within 3 seconds of a refresh.
 
