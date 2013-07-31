@@ -292,7 +292,7 @@ refresh: function(autorefresh, index)
 	this.service.getMessages(this.resource, enyo.bind(this, function(success, results) {
 		this.removeIndicators(index, autorefresh,
 			enyo.bind(this, function(insertIndex, newCountIndex, topIndex) {
-				this.gotMessages(success, results, autorefresh, insertIndex, 0, topIndex);
+				this.gotMessages(success, results, autorefresh, insertIndex);
 			}
 		));
 	}), params);
@@ -372,11 +372,12 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 	}), 300);
 },
 
-gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex, topIndex)
+gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 {
 	var changed			= false;
 	var reverseScroll	= false;
 	var oldLength		= this.results.length;
+	var topIndex		= 0;
 
 	if (isNaN(topIndex)) {
 		try {
@@ -403,9 +404,6 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex,
 			this.results.splice(insertIndex, 1);
 
 			changed = true;
-			if (insertIndex < topIndex) {
-				topIndex--;
-			}
 		}
 
 		if (insertIndex == this.results.length) {
@@ -551,6 +549,11 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex,
 		/* Insert a new newcount indicator */
 		changed = true;
 
+		if (isNaN(newCountIndex) || newCountIndex <= topIndex) {
+			topIndex += newcount + 1;
+		}
+else this.log('not adding to topIndex', topIndex, newCountIndex, newcount);
+
 		if (isNaN(newCountIndex)) {
 			newCountIndex = this.unseen;
 		} else {
@@ -561,19 +564,11 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex,
 			newcount:	newcount
 		});
 
-		if (newCountIndex < topIndex) {
-			topIndex++;
-		}
-
 		this.unseen = newcount;
 	}
 
 	if (results.length) {
 		changed = true;
-
-		if (isNaN(insertIndex) || insertIndex < topIndex) {
-			topIndex += results.length;
-		}
 
 		this.move(results.length, isNaN(insertIndex) ? 0 : insertIndex);
 
