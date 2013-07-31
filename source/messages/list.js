@@ -552,7 +552,8 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 		if (isNaN(newCountIndex) || newCountIndex <= topIndex) {
 			topIndex += newcount + 1;
 		}
-else this.log('not adding to topIndex', topIndex, newCountIndex, newcount);
+
+		this.move(newcount + 1, isNaN(newCountIndex) ? 0 : newCountIndex);
 
 		if (isNaN(newCountIndex)) {
 			newCountIndex = this.unseen;
@@ -569,8 +570,6 @@ else this.log('not adding to topIndex', topIndex, newCountIndex, newcount);
 
 	if (results.length) {
 		changed = true;
-
-		this.move(results.length, isNaN(insertIndex) ? 0 : insertIndex);
 
 		if (isNaN(insertIndex)) {
 			this.results = results.concat(this.results);
