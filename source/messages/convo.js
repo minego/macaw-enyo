@@ -70,7 +70,7 @@ rendered: function()
 
 	this.results = [];
 
-	if (this.items) {
+	if (this.items && this.items.length > 0) {
 		this.results = this.items;
 
 		this.gotMessage(true, null);

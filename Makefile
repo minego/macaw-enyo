@@ -16,6 +16,7 @@ ${DEPLOY}:
 	cp -r assets enyo lib source package.js *.png ${DEPLOY}
 	cp framework_config.json manifest.* *.html icon*.png ${DEPLOY}/
 	cp  chrome/* ${DEPLOY}/
+	(cd ${DEPLOY} && zip -r ../macaw-enyo.zip *)
 
 release:
 	rm -rf deploy build
