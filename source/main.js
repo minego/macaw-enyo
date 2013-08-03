@@ -843,13 +843,24 @@ indexChanged: function(was)
 		p.removeClass('selected');
 	}
 
-	/* Wrap if needed */
-	if (this.index < 0) {
-		this.index = this.tabs.length - 1;
+	if (false) {
+		/* Wrap if needed */
+		if (this.index < 0) {
+			this.index = this.tabs.length - 1;
+		}
+		if (this.index >= this.tabs.length) {
+			this.index = 0;
+		}
+	} else {
+		/* Enforce boundaries */
+		if (this.index < 0) {
+			this.index = 0;
+		}
+		if (this.index >= this.tabs.length) {
+			this.index = this.tabs.length - 1;
+		}
 	}
-	if (this.index >= this.tabs.length) {
-		this.index = 0;
-	}
+
 	if (!(panel = this.$['panel' + this.index])) {
 		return;
 	}
