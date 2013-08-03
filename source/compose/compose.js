@@ -203,7 +203,11 @@ create: function()
 	}
 
 	/* Update the display of the avatar and/or counters */
-	this.usersChanged();
+	if (this.user) {
+		this.userChanged();
+	} else {
+		this.usersChanged();
+	}
 
 	/* Don't allow attaching an image on a DM */
 	if (this.dm) {
@@ -378,9 +382,6 @@ userChanged: function()
 		this.service = this.user.service;
 		this.change();
 	}
-
-// TODO	Ensure that splitting is done before adding accounts to the queue if
-//		sending from multiple accounts.
 
 	if (!this.user2 && this.user && this.user.profile) {
 		this.$.avatar.applyStyle('display', 'block');
@@ -663,11 +664,12 @@ countChars: function(text)
 	return(count);
 },
 
-autocomplete: function(value)
+autocomplete: function()
 {
 	// TODO	Get the cursor position. For now we will assume the cursor is at the
 	//		end of the text, but this is not always valid.
-	var end		= value.length;
+	var value;
+	var end;
 	var start;
 	var word;
 	var node;
@@ -675,13 +677,14 @@ autocomplete: function(value)
 
 	if ((node = this.$.text.hasNode())) {
 		try {
-			this.text = node.innerText;
+			value = node.innerText;
 		} catch (e) {
-			this.text = node.textContent;
+			value = node.textContent;
 		}
 	} else {
-		this.text = '';
+		value = '';
 	}
+	end = value.length;
 
 	this.$.autocomplete.destroyClientControls();
 
@@ -856,7 +859,7 @@ change: function(sender, event)
 		}
 	}
 
-	this.autocomplete(this.text);
+	this.autocomplete();
 },
 
 send: function(splitConfirmed)

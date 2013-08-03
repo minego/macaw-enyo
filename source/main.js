@@ -906,12 +906,12 @@ compose: function(sender, options)
 	options = options || {};
 
 	options.kind		= "Compose";
-	options.user		= options.user || this.users[0];
+	options.user		= options.user;
 	options.users		= this.users;
 
 	options.images		= options.images || [];
 
-	if (!options.user) {
+	if (!options.user && !options.users) {
 		return;
 	}
 
