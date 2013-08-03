@@ -600,10 +600,6 @@ handleCommand: function(sender, event)
 			break;
 
 		case "crossPostSend":
-			// TODO	Remember what the last set of multiple accounts was and
-			//		allow selecting that in the list of accounts by tapping the
-			//		icon...
-
 			this.users		= sender.users;
 			this.user		= null;
 			this.service	= null;
@@ -973,7 +969,7 @@ split: function()
 			text = node.textContent.trim();
 		}
 	} else {
-		text		= '';
+		text = '';
 	}
 
 	words = text.split(/\s/);
@@ -1038,11 +1034,17 @@ split: function()
 		}
 	}
 
-	/* Include padding for the "x of y" and " //" text that must be added */
+	/*
+		Including padding for the "x of y: " prefix.
+
+		If there are less than 10 characters then add "x of y: ". Otherwise add
+		"#xx/yy: ". This will result in a consistent prefix length.
+	*/
+	padding += 8;
+
+	/* If there are extra mentions to add then padding is needed for " //" */
 	if (mentions.length) {
-		padding += 13;
-	} else {
-		padding += 10;
+		padding += 3;
 	}
 
 	while (words.length) {
@@ -1078,6 +1080,9 @@ split: function()
 
 		if (add.length) {
 			msg.push('// ' + add.join(' '));
+		} else if (mentions.length) {
+			/* Keep the padding correct, for the sake of the counter */
+			msg.push('   ');
 		}
 
 		parts.push(msg.join(' '));
@@ -1091,21 +1096,11 @@ split: function()
 	}
 
 	for (var i = 0; parts[i]; i++) {
-		parts[i] = totext + (i + 1) + ' of ' + parts.length + ': ' + parts[i];
-	}
-
-	/*
-		The part needs to use all the padding so the counter code will be right
-		so, pad...
-
-		This is only needed on the last part, and will be stripped before
-		being sent anyway since it is trailing whitespace.
-	*/
-	if (parts.length < 10) {
-		parts[parts.length - 1] += '  ';
-	}
-	if (!add.length) {
-		parts[parts.length - 1] += '   ';
+		if (parts.length < 10) {
+			parts[i] = totext + (i + 1) + ' of ' + parts.length + ': ' + parts[i];
+		} else {
+			parts[i] = totext + '#' + (i + 1) + '/' + parts.length + ': ' + parts[i];
+		}
 	}
 
 	/*
