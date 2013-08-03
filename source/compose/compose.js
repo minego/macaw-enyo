@@ -803,6 +803,7 @@ change: function(sender, event)
 	var node;
 	var count;
 	var parts;
+	var size;
 
 	if ((node = this.$.text.hasNode())) {
 		try {
@@ -838,6 +839,12 @@ change: function(sender, event)
 			});
 		}
 	}
+
+	/* Is the counter too large? */
+	size = 40;
+	do {
+		this.$.counter.applyStyle('font-size', size-- + 'px');
+	} while (this.$.counter.getBounds().width > 70);
 
 	this.autocomplete(this.text);
 },
