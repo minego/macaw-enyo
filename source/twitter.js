@@ -1012,43 +1012,49 @@ updateUsers: function(relationship, screen_name, users, cb)
 	url += '.json';
 
 	var resultsfunc = function(response) {
-		if (!response || !response.text || !response.text.length) {
+		var result	= null;
+
+		if (response && (!response.text || !response.text.length)) {
 			cb(false);
 			return;
 		}
 
-		var result = enyo.json.parse(response.text);
+		if (response && response.text) {
+			result = enyo.json.parse(response.text);
+		}
 
-		params.cursor = result.next_cursor_str;
+		if (result) {
+			params.cursor = result.next_cursor_str;
 
-		for (var i = 0, id; id = result.ids[i]; i++) {
-			var u = null;
+			for (var i = 0, id; id = result.ids[i]; i++) {
+				var u = null;
 
-			for (var x = 0; u = users[x]; x++) {
-				if (u.id == id) {
-					break;
+				for (var x = 0; u = users[x]; x++) {
+					if (u.id == id) {
+						break;
+					}
+				}
+
+				if (u) {
+					results.push(u);
+				} else {
+					results.push({
+						id:	id
+					});
 				}
 			}
 
-			if (u) {
-				results.push(u);
-			} else {
-				results.push({
-					id:	id
-				});
+			if (result.next_cursor == 0) {
+				/*
+					The results array now contains an entry for each user, with
+					an id and possibly a screen_name. We must now make another
+					request to obtain the screen_name for any missing users.
+
+					This must be done in chunks of up to 100.
+				*/
+				this.getScreenNames(results, cb);
+				return;
 			}
-		}
-
-		if (result.next_cursor == 0) {
-			/*
-				The results array now contains an entry for each user, with
-				an id and possibly a screen_name. We must now make another
-				request to obtain the screen_name for any missing users.
-
-				This must be done in chunks of up to 100.
-			*/
-			this.getScreenNames(results, cb);
-			return;
 		}
 
 		this.oauth.get(this.buildURL(url, params),

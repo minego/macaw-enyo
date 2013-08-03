@@ -725,6 +725,9 @@ autocomplete: function(value)
 		node.setAttribute("autocorrect", "off");
 	}
 
+	// TODO	Go through all accounts in this.users that are enabled for sending
+	//		right now...
+	// TODO	Call this.setUser() on the account that the user was selected in...
 	if (!word || word.length < 2 || !this.user || !this.user.friends) {
 		/* nothing to see here */
 		return;
@@ -735,14 +738,11 @@ autocomplete: function(value)
 
 	for (var i = 0, u; u = this.user.friends[i]; i++) {
 		if (-1 != u.screenname.toLowerCase().indexOf(word)) {
-			if (matches.length <= 10) {
+			if (matches.length <= 5) {
 				matches.push({
 					content: '@' + u.screenname
 				});
 			} else {
-				matches.push({
-					content: "..."
-				});
 				break;
 			}
 		}
