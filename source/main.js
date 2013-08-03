@@ -17,6 +17,10 @@ enyo.kind({
 
 name:										"net.minego.macaw.main",
 
+published: {
+	index:									0
+},
+
 handlers: {
 	onCloseToaster:							"closeToaster",
 	onOpenToaster:							"openToaster",
@@ -442,8 +446,7 @@ rendered: function()
 	this.handleResize();
 
 	this.index = 0;
-	this.moveIndicator();
-	this.selectPanel({ index: 0 });
+	this.setIndex(0);
 },
 
 clearError: function()
@@ -555,7 +558,7 @@ createTabs: function()
 		classes:							"panels",
 		arrangerKind:						"CarouselArranger",
 
-		onTransitionStart:					"moveIndicator",
+		onTransitionFinish:					"selectedTab",
 
 		components:							components
 	}, { owner: this });
@@ -600,7 +603,7 @@ createTabs: function()
 			classes:		"tab",
 
 			index:			t,
-			ontap:			"selectPanel",
+			ontap:			"tabTapped",
 
 			components: [{
 				kind:		enyo.Image,
@@ -628,28 +631,13 @@ panelActivity: function(sender, event)
 	var count	= this.$['tabcount'	+ sender.index];
 	var refresh	= this.$.refreshbtn;
 
-	if (sender.loading) {
-		/* Wait until the refresh is done */
-		return;
-	}
-
-	this.$['panel' + this.index].removeClass('selected');
-
 	/* Let the list know that all messages have been noticed */
 	sender.setUnseen(0);
-
-	// this.log(sender.index);
 	count.setContent('');
 
 	if (!this.isReady) {
 		this.isReady = true;
-	} else if (this.index != sender.index) {
-		this.index =  sender.index;
-
-		this.moveIndicator();
 	}
-
-	this.$['panel' + this.index].addClass('selected');
 },
 
 panelRefreshStart: function(sender, event)
@@ -722,7 +710,7 @@ optionsChanged: function(sender, event)
 	}
 
 	this.toolbarsChanged();
-	this.moveIndicator(null, { force: true });
+	this.adjustTabs(true);
 },
 
 toolbarsChanged: function()
@@ -803,7 +791,7 @@ handleResize: function()
 		this.$['panel' + t].container.applyStyle('width', w);
 	}
 
-	this.moveIndicator();
+	this.adjustTabs();
 },
 
 /*
@@ -845,18 +833,20 @@ isPanelVisible: function(index, selected)
 	return(0);
 },
 
-selectPanel: function(sender, event)
+tabTapped: function(sender, event)
 {
-	var was		= this.index;
-	var move;
+	this.setIndex(sender.index);
+},
+
+indexChanged: function(was)
+{
 	var distance;
 	var panel;
 
-	if ((panel = this.$['panel' + this.index])) {
-		panel.removeClass('selected');
+	/* Remove the selected class from all panels */
+	for (var i = 0, p; p = this.$['panel' + i]; i++) {
+		p.removeClass('selected');
 	}
-
-	this.index = sender.index;
 
 	/* Wrap if needed */
 	if (this.index < 0) {
@@ -868,18 +858,23 @@ selectPanel: function(sender, event)
 	if (!(panel = this.$['panel' + this.index])) {
 		return;
 	}
+
+	/* Add the class to the new panel */
 	panel.addClass('selected');
 
+
+	/* Do we need to make this panel visible? */
 	move = this.isPanelVisible(this.index);
 
 	if (0 == move) {
-		/* The panel is already visible, so just move the indicator */
-		if (event) {
+		/* If the panel was already selected then smart scroll */
+		if (event && this.index == was) {
 			panel.smartscroll();
 			this.panelActivity(panel, event);
 		}
 
-		this.moveIndicator();
+		/* The panel is already visible, so just move the indicator */
+		this.adjustTabs();
 		return;
 	}
 
@@ -892,12 +887,13 @@ selectPanel: function(sender, event)
 				Move the indicator directly to the selected panel, instead
 				of a relative moved based on how far we slid.
 			*/
-			this.ignoreMove = true;
-
 			this.$.panels.setIndex(current + (move * distance));
 			break;
 		}
 	}
+
+	/* Move the indicator, and adjust the tab widths */
+	this.adjustTabs();
 },
 
 smartscroll: function(sender, event)
@@ -1111,12 +1107,12 @@ keydown: function(sender, event)
 					return(true);
 
 				case 37: /* left */
-					this.selectPanel({ index: this.index - 1 });
+					this.setIndex(this.index - 1);
 					this.$['panel' + this.index].move(0);
 					break;
 
 				case 39: /* right */
-					this.selectPanel({ index: this.index + 1 });
+					this.setIndex(this.index + 1);
 					this.$['panel' + this.index].move(0);
 					break;
 
@@ -1203,14 +1199,14 @@ keydown: function(sender, event)
 				case 37: /* left */
 					this.addClass('manualIndex');
 
-					this.selectPanel({ index: this.index - 1 });
+					this.setIndex(this.index - 1);
 					this.$['panel' + this.index].move(0);
 					break;
 
 				case 39: /* right */
 					this.addClass('manualIndex');
 
-					this.selectPanel({ index: this.index + 1 });
+					this.setIndex(this.index + 1);
 					this.$['panel' + this.index].move(0);
 					break;
 
@@ -1324,7 +1320,25 @@ fixicon: function(sender, event)
 	sender.setSrc(src);
 },
 
-moveIndicator: function(sender, event)
+/* A panel was selected by sliding them left or right..  */
+selectedTab: function(sender, event)
+{
+	var move;
+
+	if (!event) {
+		return;
+	}
+
+	/*
+		If this.index is no longer visible then change the select the closest
+		panel that is.
+	*/
+	if (0 != (move = this.isPanelVisible(this.index))) {
+		this.setIndex(this.index - move);
+	}
+},
+
+adjustTabs: function(force)
 {
 	var first		= -1;
 	var last		= -1;
@@ -1332,8 +1346,10 @@ moveIndicator: function(sender, event)
 	var width;
 	var left;
 	var theme		= prefs.get('theme');
-	var haveactive	= (event && event.force) ? true : false;
+	var haveactive	= force || false;
 
+	// TODO	Switch back to background images, just give up on the spinning
+	//		bullshit. That will allow just working off of classes in css
 	/*
 		Only change the images for themes that use active images. Otherwise
 		there will be an annoying flicker.
@@ -1342,22 +1358,6 @@ moveIndicator: function(sender, event)
 		case 'ffos':
 			haveactive	= true;
 			break;
-	}
-
-	if (event && !this.ignoreMove) {
-		var difference = event.toIndex - event.fromIndex;
-
-		this.index += difference;
-		// this.log(event, this.index, event.toIndex, event.fromIndex);
-
-		this.index = event.toIndex;
-	} else {
-		// this.log(this.index);
-	}
-	this.ignoreMove = false;
-
-	if (this.index === undefined) {
-		this.index = 0;
 	}
 
 	/*

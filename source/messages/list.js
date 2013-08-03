@@ -98,7 +98,7 @@ create: function()
 {
 	this.inherited(arguments);
 
-	this.ignoreActivity = 0;
+	this.lastActivity = new Date();
 
 	if (this.user) {
 		this.service = this.user.service;
@@ -378,9 +378,7 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 
 	setTimeout(enyo.bind(this, function() {
 		/* Scroll to the oldest new messages */
-		this.ignoreActivity++;
-		console.log(this.resource, 'Scroll to: ' + topIndex);
-
+		this.lastActivity = new Date();
 		this.$.list.scrollToRow(topIndex);
 
 		if (cb) cb(insertIndex, index, topIndex);
@@ -622,7 +620,7 @@ gotMessages: function(success, results, fullResults, autorefresh, insertIndex, n
 
 		setTimeout(enyo.bind(this, function() {
 			/* Scroll to the oldest new messages */
-			this.ignoreActivity++;
+			this.lastActivity = new Date();
 			console.log(this.resource, 'Scroll to: ' + topIndex);
 
 			this.$.list.scrollToRow(topIndex);
@@ -674,6 +672,7 @@ gotMessages: function(success, results, fullResults, autorefresh, insertIndex, n
 	this.doRefreshStop({
 		count:		!isNaN(newCountIndex) ? newCountIndex : 0
 	});
+	this.lastActivity = new Date();
 
 	this.setTimer();
 },
@@ -960,11 +959,6 @@ handleActivity: function(sender, event)
 {
 	var top = this.$.list.getScrollTop();
 
-	if (this.ignoreActivity > 0) {
-		this.ignoreActivity--;
-		return;
-	}
-
 	/*
 		Hide the "pull to refresh" text during normal scrolling. It should only
 		be visible when the list is pulled down.
@@ -980,10 +974,12 @@ handleActivity: function(sender, event)
 	}
 
 	if (!this.loading && this.lastScrollTop != top) {
-		this.doActivity({});
-		this.lastScrollTop = top;
+		if (((new Date()) - this.lastActivity) > 1500) {
+			this.doActivity({});
+		}
 
-		this.userIsActive = true;
+		this.lastScrollTop	= top;
+		this.userIsActive	= true;
 	}
 }
 
