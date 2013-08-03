@@ -5,11 +5,17 @@
 		- Other share options (platform specific)
 
 + Compose
-	- Auto complete user names (implemented, but not complete)
+	+ Auto complete user names
+		- Search for users instead of filtering users you follow?
+		- Correctly find current word based on cursor position
 	+ Implement missing buttons
 		- Location
 		- Emoji
 		- Compose in new card/window?
+	+ Correct keyboard related issues on FFOS
+		- Reply inserts trailing space, which is rendered but removed as soon as
+		  you start typing.
+		- Keyboard does not always hide on cancel.
 
 + Preview
 	- Implement options menu
