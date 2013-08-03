@@ -679,19 +679,6 @@ panelRefreshStop: function(sender, event)
 		this.spincount--;
 	}
 
-	/* Allow refreshing up to 2 panels at once */
-	for (var i = 2 - this.spincount; i > 0; i--) {
-		var p;
-
-		/* Start refreshing the next panel */
-		if (this.refreshTodo && (p = this.refreshTodo.shift())) {
-			// this.log('Refreshing: ', p.name, p);
-			p.refresh();
-
-			return;
-		}
-	}
-
 	if (this.spincount == 0) {
 		refresh.removeClass("spin");
 		refresh.addClass("endspin");
@@ -1061,13 +1048,9 @@ handleButton: function(sender, event)
 			break;
 
 		case "refresh":
-			this.refreshTodo = [];
-			for (var t = 0, tab; tab = this.tabs[t]; t++) {
-				this.refreshTodo.push(this.$['panel' + t]);
+			for (var i = 0, p; p = this.$['panel' + i]; i++) {
+				p.refresh();
 			}
-
-			/* panelRefreshStop() will pop things off the todo list... */
-			this.panelRefreshStop();
 			break;
 
 		case "compose":
