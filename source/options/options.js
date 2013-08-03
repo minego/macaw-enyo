@@ -51,10 +51,6 @@ components: [
 						{
 							label:					"Enter to Submit",
 							key:					"submitOnEnter"
-						},
-						{
-							label:					"Always Cross Post",
-							key:					"alwaysCrossPost"
 						}
 					]
 				}

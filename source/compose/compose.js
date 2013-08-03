@@ -75,6 +75,10 @@ components: [
 		classes:						"counter"
 	},
 	{
+		name:							"counter2",
+		classes:						"counter counter2"
+	},
+	{
 		name:							"images",
 		classes:						"images",
 		ontap:							"removeImage"
@@ -159,7 +163,6 @@ create: function()
 	this.inherited(arguments);
 
 	this.textChanged();
-	this.userChanged();
 	this.imagesChanged();
 
 	this.$.send.setDisabled(false);
@@ -181,7 +184,26 @@ create: function()
 				this.users.splice(i, 1);
 			}
 		}
+	} else {
+		/* Select the users that where previously enabled */
+		var enabled;
+
+		if ((enabled = prefs.get('crosspostusers'))) {
+			for (var i = 0, u; u = this.users[i]; i++) {
+				u.enabled = false;
+
+				for (var c = 0, e; e = enabled[c]; c++) {
+					if (u.id == e.id && u.service.toString() == e.service) {
+						u.enabled = true;
+						break;
+					}
+				}
+			}
+		}
 	}
+
+	/* Update the display of the avatar and/or counters */
+	this.usersChanged();
 
 	/* Don't allow attaching an image on a DM */
 	if (this.dm) {
@@ -274,18 +296,20 @@ removeImage: function(sender, e)
 	}
 },
 
-getMaxLength: function()
+getMaxLength: function(service)
 {
 	var		ml, il;
 
+	service = service || this.service;
+
 	try {
-		ml = this.service.limits.maxLength || this.maxLength;
+		ml = service.limits.maxLength || this.maxLength;
 	} catch (e) {
 		ml = this.maxLength;
 	}
 
 	try {
-		il = this.service.limits.img_len || 0;
+		il = service.limits.img_len || 0;
 	} catch (e) {
 		il = 0;
 	}
@@ -297,15 +321,47 @@ getMaxLength: function()
 	return(ml);
 },
 
+usersChanged: function()
+{
+	this.service	= null;
+	this.user		= null;
+
+	/* The userChanged() callback will handle this ... */
+	this.userChanged();
+},
+
 userChanged: function()
 {
+	/*
+		Keep track of the first secondary user if multiple accounts are selected
+		so that multiple counters can be displayed.
+	*/
+	this.user2 = null;
+
 	if (!this.user) {
+		var tosave = [];
+
 		/* Select the first user */
 		for (var i = 0, u; u = this.users[i]; i++) {
 			if (u.enabled) {
-				this.user = u;
-				break;
+				if (!this.user) {
+					this.user = u;
+				} else if (!this.user2 ||
+					this.user2.service.toString() != this.user.service.toString()
+				) {
+					this.user2 = u;
+				}
+
+				tosave.push({
+					id:			u.id,
+					service:	u.service.toString()
+				});
 			}
+		}
+
+		/* Remember the users that where selected */
+		if (!this.dm && !this.replyto) {
+			prefs.set('crosspostusers', tosave);
 		}
 	} else {
 		/* Make sure only one user is selected */
@@ -323,10 +379,24 @@ userChanged: function()
 		this.change();
 	}
 
-	if (this.user && this.user.profile) {
+// TODO	Ensure that splitting is done before adding accounts to the queue if
+//		sending from multiple accounts.
+
+	if (!this.user2 && this.user && this.user.profile) {
+		this.$.avatar.applyStyle('display', 'block');
+		this.$.counter2.applyStyle('display', 'none');
+
 		xhrImages.load(this.user.profile.avatar, function(url, inline) {
 			this.$.avatar.applyStyle('background-image', 'url(' + url + ')');
 		}.bind(this));
+	} else {
+		this.$.avatar.applyStyle('display', 'none');
+
+		if (this.user2.service.toString() != this.user.service.toString()) {
+			this.$.counter2.applyStyle('display', 'block');
+		} else {
+			this.$.counter2.applyStyle('display', 'none');
+		}
 	}
 
 	/* The number of allowed images may be different... */
@@ -461,8 +531,8 @@ handleCommand: function(sender, event)
 			break;
 
 		case "split":
-			this.todo = this.split();
-			this.send();
+			/* Call send with splitConfirmed set to true */
+			this.send(true);
 			break;
 
 		// TODO	Other options? Tag location, etc...
@@ -506,75 +576,15 @@ handleCommand: function(sender, event)
 
 		case "chooseAccount":
 			/*
-				Display a list of accounts to let the user pick which one
+				Display a list of accounts to let the user pick which one(s)
 				they would like to send as.
 			*/
 			this.doOpenToaster({
 				component: {
 					kind:				"ChooseAccount",
-					title:				"Which account would you like to send as?",
+					title:				"Which account(s) would you like to send as?",
 					onChoose:			"handleCommand",
 					users:				this.users,
-					multi:				false,
-					command:			"selectAccount",
-
-					buttons: [
-					]
-
-				},
-
-				options:{
-					notitle:		true,
-					owner:			this
-				}
-			});
-			break;
-
-		case "selectAccount":
-			this.users		= sender.users;
-			this.user		= null;
-			this.service	= null;
-			this.userChanged();
-			break;
-
-		case "send":
-			if (this.users.length <= 1 ||
-				!prefs.get('alwaysCrossPost')
-			) {
-				this.send();
-				break;
-			}
-			/* fallthrough */
-
-		case "crossPost":
-			/*
-				Display a list of accounts and let the user choose one or more
-				that they would like to send as.
-
-				This action actually does the post.
-			*/
-			var users	= this.users.slice(0);
-			var enabled;
-
-			if ((enabled = prefs.get('crosspostusers'))) {
-				for (var i = 0, u; u = this.users[i]; i++) {
-					u.enabled = false;
-
-					for (var c = 0, e; e = enabled[c]; c++) {
-						if (u.id == e.id && u.service.toString() == e.service) {
-							u.enabled = true;
-							break;
-						}
-					}
-				}
-			}
-
-			this.doOpenToaster({
-				component: {
-					kind:				"ChooseAccount",
-					title:				"Which accounts would you like to send as?",
-					onChoose:			"handleCommand",
-					users:				users,
 					multi:				true,
 
 					buttons: [
@@ -584,8 +594,8 @@ handleCommand: function(sender, event)
 							classes:	"button onyx-negative"
 						},
 						{
-							content:	"Post",
-							command:	"crossPostSend",
+							content:	"Select",
+							command:	"selectAccounts",
 							classes:	"button onyx-affirmative",
 							onenter:	true
 						}
@@ -597,26 +607,14 @@ handleCommand: function(sender, event)
 					owner:			this
 				}
 			});
+
 			break;
 
-		case "crossPostSend":
-			this.users		= sender.users;
-			this.user		= null;
-			this.service	= null;
+		case "selectAccounts":
+			this.setUsers(sender.users.slice(0));
+			break;
 
-			/* Remember the users that where selected */
-			var tosave = [];
-			for (var i = 0, u; u = this.users[i]; i++) {
-				if (u.enabled) {
-					tosave.push({
-						id:			u.id,
-						service:	u.service.toString()
-					});
-				}
-			}
-			prefs.set('crosspostusers', tosave);
-
-			this.userChanged();
+		case "send":
 			this.send();
 			break;
 	}
@@ -802,8 +800,6 @@ change: function(sender, event)
 {
 	var node;
 	var count;
-	var parts;
-	var size;
 
 	if ((node = this.$.text.hasNode())) {
 		try {
@@ -817,13 +813,33 @@ change: function(sender, event)
 
 	count = this.countChars(this.text);
 
-	if (count <= this.getMaxLength()) {
-		this.$.counter.setContent(this.getMaxLength() - count);
-	} else {
-		parts = this.split();
+	var updateCounter = function updateCounter(count, counter, max)
+	{
+		var parts;
+		var size;
 
-		count = this.countChars(parts[parts.length - 1]);
-		this.$.counter.setContent((this.getMaxLength() - count) + 'x' + parts.length);
+		if (count <= max) {
+			counter.setContent(max - count);
+		} else {
+			parts = this.split(max);
+
+			count = this.countChars(parts[parts.length - 1]);
+			counter.setContent((max - count) + 'x' + parts.length);
+		}
+
+		/* Is the counter too large? */
+		size = 40;
+		do {
+			counter.applyStyle('font-size', size-- + 'px');
+		} while (counter.getBounds().width > 70);
+	}.bind(this);
+
+	if (this.user) {
+		updateCounter(count, this.$.counter, this.getMaxLength(this.user.service));
+	}
+
+	if (this.user2) {
+		updateCounter(count, this.$.counter2, this.getMaxLength(this.user2.service));
 	}
 
 	/*
@@ -840,65 +856,89 @@ change: function(sender, event)
 		}
 	}
 
-	/* Is the counter too large? */
-	size = 40;
-	do {
-		this.$.counter.applyStyle('font-size', size-- + 'px');
-	} while (this.$.counter.getBounds().width > 70);
-
 	this.autocomplete(this.text);
 },
 
-send: function()
+send: function(splitConfirmed)
 {
 	var resource		= 'update';
 	var params			= {};
+	var text			= null;
 	var node;
+	var enabled			= [];
+	var todo			= [];
 
 	if ((node = this.$.text.hasNode())) {
 		node.blur();
 	}
 
-	if (this.todo && this.todo.length > 0) {
-		params.status = this.todo.shift();
-	} else if ((node = this.$.text.hasNode())) {
+	if ((node = this.$.text.hasNode())) {
 		try {
-			params.status = node.innerText.trim();
+			text = node.innerText.trim();
 		} catch (e) {
-			params.status = node.textContent.trim();
+			text = node.textContent.trim();
 		}
 	} else {
-		params.status = '';
+		text = '';
 	}
 
 	/* Replace any non-breaking spaces with regular spaces */
-	params.status = params.status.replace(/\u00A0/g, " ");
+	text = text.replace(/\u00A0/g, " ");
 
-	if (this.countChars(params.status) > this.getMaxLength()) {
-		this.doOpenToaster({
-			component: {
-				kind:				"Confirm",
-				title:				"Your message is too long. Would you like to split it into multiple messages?",
-				onChoose:			"handleCommand",
-				options: [
-					{
-						classes:	"confirm",
-						command:	"split"
-					},
-					{
-						classes:	"cancel",
-						command:	"ignore"
-					}
-				]
-			},
+	/* Build a list of enabled users */
+	for (var i = 0, u; u = this.users[i]; i++) {
+		if (u.enabled) {
+			enabled.push(u);
+		}
+	}
 
-			options:{
-				notitle:		true,
-				owner:			this
+	/* Does the text need to be split for any of the enabled accounts? */
+	if (!splitConfirmed) {
+		var count	= this.countChars(text);
+
+		for (var i = 0, u; u = enabled[i]; i++) {
+			if (count <= this.getMaxLength(u.service)) {
+				continue;
 			}
-		});
 
-		return;
+			this.doOpenToaster({
+				component: {
+					kind:				"Confirm",
+					title:				"Your message is too long. Would you like to split it into multiple messages?",
+					onChoose:			"handleCommand",
+					options: [
+						{
+							classes:	"confirm",
+							command:	"split"
+						},
+						{
+							classes:	"cancel",
+							command:	"ignore"
+						}
+					]
+				},
+
+				options:{
+					notitle:		true,
+					owner:			this
+				}
+			});
+
+			return;
+		}
+	}
+
+	/* Build a list of messages to send */
+	for (var i = 0, u; u = enabled[i]; i++) {
+		var parts = this.split(this.getMaxLength(u.service));
+		var part;
+
+		while ((part = parts.shift())) {
+			todo.push({
+				status:		part,
+				user:		u
+			});
+		}
 	}
 
 	if (this.dm) {
@@ -925,39 +965,34 @@ send: function()
 		params.images = this.images;
 	}
 
-	/* Actually send it */
-	this.service.sendMessage(resource, function(success, response) {
-		if (success) {
-			if (this.todo && this.todo.length > 0) {
-				this.send();
-			} else {
-				/*
-					Send with any other accounts?
+	/* Actually send */
+	var sendFunc = function sendFunc(success, response) {
+		var details;
+		var p	= Object.create(params);
 
-					This user is no longer enabled. userChanged will set
-					this.user if there is another one that is enabled.
-				*/
-				this.user.enabled	= false;
-				this.user			= null;
-				this.service		= null;
-
-				this.userChanged();
-
-				if (this.user) {
-					this.send();
-				} else {
-					this.closing = true;
-					this.doCloseToaster();
-				}
-			}
-		} else {
+		if (!success) {
 			this.$.send.setDisabled(false);
 			this.$.cancel.setDisabled(false);
 		}
-	}.bind(this), params);
+
+		if (!(details = todo.shift())) {
+			/* All done */
+			this.closing = true;
+			this.doCloseToaster();
+
+			return;
+		}
+
+		p.status = details.status;
+		delete(details);
+
+		details.user.service.sendMessage(resource, sendFunc.bind(this), p);
+	};
+
+	sendFunc.bind(this)(true);
 },
 
-split: function()
+split: function(max)
 {
 	var node;
 	var text;
@@ -968,6 +1003,11 @@ split: function()
 	var length		= 0;
 	var padding		= 0;
 	var parts		= [];
+	var count;
+
+	if (isNaN(max)) {
+		max = this.getMaxLength();
+	}
 
 	if ((node = this.$.text.hasNode())) {
 		try {
@@ -978,6 +1018,13 @@ split: function()
 	} else {
 		text = '';
 	}
+
+	count = this.countChars(text);
+	if (count < max) {
+		/* No need to split anything */
+		return([ text ]);
+	}
+
 
 	words = text.split(/\s/);
 
@@ -1059,7 +1106,7 @@ split: function()
 			Include 1 extra character when counting the length since the check
 			below will assume a space.
 		*/
-		var left	= this.getMaxLength() - padding + 1;
+		var left	= max - padding + 1;
 		var msg		= [];
 
 		while (words.length && left > 0) {
