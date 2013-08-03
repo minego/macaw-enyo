@@ -822,6 +822,14 @@ isPanelVisible: function(index, selected)
 
 tabTapped: function(sender, event)
 {
+	if (sender.index == this.index) {
+		/* The panel was already selected; smart scroll */
+		var panel	= this.$['panel' + this.index];
+
+		panel.smartscroll();
+		this.panelActivity(panel, event);
+	}
+
 	this.setIndex(sender.index);
 },
 
@@ -854,12 +862,6 @@ indexChanged: function(was)
 	move = this.isPanelVisible(this.index);
 
 	if (0 == move) {
-		/* If the panel was already selected then smart scroll */
-		if (event && this.index == was) {
-			panel.smartscroll();
-			this.panelActivity(panel, event);
-		}
-
 		/* The panel is already visible, so just move the indicator */
 		this.adjustTabs();
 		return;
