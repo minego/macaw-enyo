@@ -8,14 +8,11 @@
 	- Auto complete user names (implemented, but not complete)
 	+ Implement missing buttons
 		- Location
-		- Link...?
 		- Emoji
 		- Compose in new card/window?
 
 + Preview
 	- Implement options menu
-
-- Implement DM support for ADN
 
 + Implement filters
 	- Display list of filters in options panel
@@ -23,15 +20,17 @@
 	  in the twitter helper.
 	- Allow per user filters
 
-- Implement notifications. (A "notify" boolean is set on each tab)
++ Notifications
+	- Implement native notifications whenever possible
+	- Implement actions on notifications where possible
+	- Disable refresh and notification options on FFOS until a solution for
+	  running in the background is found.
 
 + Missing panels
 	- Search
 	- List
 	- User tweets
+	- DM on ADN
 
 - Restyle options
-
-- Rework logic used to prevent clearing the unread counter. Make it based on
-  time since refresh instead. Don't clear it within 3 seconds of a refresh.
 
