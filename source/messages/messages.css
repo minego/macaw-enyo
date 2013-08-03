@@ -101,7 +101,7 @@
 	background-repeat:		no-repeat;
 }
 
-.selected .message.selected {
+.manualIndex .selected .message.selected {
 	background:				#bbb;
 }
 
