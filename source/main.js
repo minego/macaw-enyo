@@ -822,9 +822,9 @@ isPanelVisible: function(index, selected)
 
 tabTapped: function(sender, event)
 {
-	if (sender.index == this.index) {
+	if (0 == this.isPanelVisible(sender.index)) {
 		/* The panel was already selected; smart scroll */
-		var panel	= this.$['panel' + this.index];
+		var panel	= this.$['panel' + sender.index];
 
 		panel.smartscroll();
 		this.panelActivity(panel, event);
