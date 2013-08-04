@@ -213,7 +213,6 @@ create: function()
 	if (this.users.length <= 1) {
 		/* Hide multi account features */
 		this.$.chooseAccountItem.destroy();
-		this.$.crossPostItem.destroy();
 	} else {
 		showmenu = true;
 	}
@@ -852,12 +851,11 @@ change: function(sender, event)
 		Did the user press enter?
 
 		ctrl+enter			send
-		ctrl+shift+enter	cross post
 	*/
 	if (event && event.which == 13) {
 		if (event.ctrlKey || prefs.get('submitOnEnter')) {
 			this.handleCommand(this, {
-				command: event.shiftKey ? "crossPost" : "send"
+				command: "send"
 			});
 		}
 	}
