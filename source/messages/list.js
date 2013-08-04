@@ -705,6 +705,20 @@ setTimer: function()
 {
 	clearTimeout(this.timeout);
 
+	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
+			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
+	) {
+		/*
+			Auto-refresh and notifications are not currently supported on FFOS.
+
+			They work (pretty well) when the app is loaded but there is no way
+			right now to keep it loaded. Notifications on FFOS will probably
+			require a push server.
+		*/
+		return;
+	}
+
+
 	if (isNaN(this.refreshTime) || this.refreshTime < 1) {
 		return;
 	}
