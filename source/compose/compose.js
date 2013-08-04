@@ -1024,7 +1024,7 @@ split: function(max)
 	}
 
 	count = this.countChars(text);
-	if (count < max) {
+	if (count <= max) {
 		/* No need to split anything */
 		return([ text ]);
 	}
