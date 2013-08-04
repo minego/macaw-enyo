@@ -765,10 +765,10 @@ handleResize: function()
 		this.addClass('skinny');
 	} else {
 		/*
-			Multi column, minimum width of 250. Size the columns such that there
+			Multi column, minimum width of 300. Size the columns such that there
 			will not be a partial column displayed.
 		*/
-		w = (width / (Math.floor(width / 250))) + 'px';
+		w = (width / (Math.floor(width / 300))) + 'px';
 
 		this.removeClass('manualIndex');
 		this.removeClass('skinny');
