@@ -43,18 +43,30 @@ components: [
 
 
 		components: [
+/*
 			{
 				data: {
-					title:							"General Settings",
+					title:							"General",
 
 					items: [
 						{
 							label:					"Enter to Submit",
 							key:					"submitOnEnter"
+						},
+
+						{
+							label:					"Tabs",
+							ontap:					"manageTabs"
+						},
+
+						{
+							label:					"Accounts",
+							ontap:					"manageAccounts"
 						}
 					]
 				}
 			},
+*/
 			{
 				data: {
 					title:							"Appearance",
@@ -283,16 +295,18 @@ create: function()
 		});
 
 		for (var i = 0, item; item = panel.data.items[i]; i++) {
-			var components = [];
+			var components	= [];
+			var value		= item.key ? prefs.get(item.key) : null;
 
-			components.push({
-				content:			item.label || '',
-				classes:			"label"
-			});
+			if (!item.ontap) {
+				components.push({
+					content:			item.label || '',
+					classes:			"label"
+				});
+			}
 
 			if (item.options) {
 				var options = [];
-				var value	= prefs.get(item.key);
 
 				for (var o = 0, option; option = item.options[o]; o++) {
 					options.push({
@@ -319,19 +333,26 @@ create: function()
 						onSelect:	"itemSelected"
 					}]
 				});
-			} else {
+			} else if (item.key) {
 				components.push({
 					name:			item.key,
 					item:			item,
 
 					classes:		"value",
 					kind:			onyx.ToggleButton,
-					value:			item.negate ? !prefs.get(item.key) : prefs.get(item.key),
+					value:			item.negate ? !value : value,
 
 					onChange:		"toggleChanged",
 
 					onContent:		item.onContent  || "On",
 					offContent:		item.offContent || "Off"
+				});
+			} else if (item.ontap) {
+				components.push({
+					content:				item.label || '',
+					kind:					onyx.Button,
+					style:					"width: 100%;",
+					ontap:					item.ontap
 				});
 			}
 
@@ -414,6 +435,7 @@ accountAction: function(sender, event)
 	}
 },
 
+// TODO	Turn this into an actual enyo list, that is reorderable
 createTabList: function()
 {
 	var tabs = prefs.get('panels');

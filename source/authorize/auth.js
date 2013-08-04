@@ -109,14 +109,6 @@ components: [
 				ontap:			"step3done",
 
 				content:		"Done"
-			},
-			{
-				kind:			onyx.Button,
-				classes:		"button",
-
-				ontap:			"step3another",
-
-				content:		"Add Another Account"
 			}
 		]
 	},
@@ -320,13 +312,6 @@ step3done: function()
 	/* Done */
 	this.$.step3.hide();
 	this.doSuccess({ account: this.account });
-},
-
-step3another: function()
-{
-	/* Create another */
-	this.$.step3.hide();
-	this.doSuccess({ account: this.account, another: true });
 }
 
 });

@@ -79,12 +79,10 @@
 	line-height:		32px;
 
 	width:				100px;
-	margin-right:		10px;
 }
 
 .tabdetails .value,
-.tabdetails .label
- {
+.tabdetails .label {
 	margin:				10px 0px 10px 0px;
 }
 
