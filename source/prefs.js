@@ -124,6 +124,9 @@ set: function set(name, value, account)
 
 				restore[i].profile = a.profile;
 				delete a.profile;
+
+				restore[i].friends = a.friends;
+				delete a.friends;
 			}
 			break;
 
@@ -159,6 +162,7 @@ set: function set(name, value, account)
 			for (var i = 0, a; a = value[i]; i++) {
 				a.service = restore[i].service;
 				a.profile = restore[i].profile;
+				a.friends = restore[i].friends;
 			}
 
 			delete restore;

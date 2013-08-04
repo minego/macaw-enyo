@@ -143,12 +143,6 @@ components: [
 						content:		"Switch Account",
 						command:		"chooseAccount",
 						name:			"chooseAccountItem"
-					},
-
-					{
-						content:		"Cross Post",
-						command:		"crossPost",
-						name:			"crossPostItem"
 					}
 				]
 			}
@@ -188,7 +182,7 @@ create: function()
 		/* Select the users that where previously enabled */
 		var enabled;
 
-		if ((enabled = prefs.get('crosspostusers'))) {
+		if ((enabled = prefs.get('crosspostusers')) && enabled.length > 0) {
 			for (var i = 0, u; u = this.users[i]; i++) {
 				u.enabled = false;
 
@@ -346,7 +340,7 @@ userChanged: function()
 		var tosave = [];
 
 		/* Select the first user */
-		for (var i = 0, u; u = this.users[i]; i++) {
+		var userCB = function userCB(u) {
 			if (u.enabled) {
 				if (!this.user) {
 					this.user = u;
@@ -361,6 +355,17 @@ userChanged: function()
 					service:	u.service.toString()
 				});
 			}
+		};
+
+
+		for (var i = 0, u; u = this.users[i]; i++) {
+			userCB.bind(this)(u);
+		}
+
+		if (!this.user && this.users.length > 0) {
+			/* Gotta have at least one */
+			this.users[0].enabled = true;
+			userCB.bind(this)(this.users[0]);
 		}
 
 		/* Remember the users that where selected */
@@ -393,7 +398,7 @@ userChanged: function()
 	} else {
 		this.$.avatar.applyStyle('display', 'none');
 
-		if (this.user2.service.toString() != this.user.service.toString()) {
+		if (this.user2 && this.user2.service.toString() != this.user.service.toString()) {
 			this.$.counter2.applyStyle('display', 'block');
 		} else {
 			this.$.counter2.applyStyle('display', 'none');
@@ -676,9 +681,7 @@ autocomplete: function()
 	var c;
 
 	if ((node = this.$.text.hasNode())) {
-		try {
-			value = node.innerText;
-		} catch (e) {
+		if (!(value = node.innerText)) {
 			value = node.textContent;
 		}
 	} else {
