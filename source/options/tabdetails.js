@@ -153,7 +153,7 @@ create: function()
 			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
 	) {
 		/* Auto-refresh and notifications are not currently supported on FFOS */
-		this.$.refreshComponents.applyStyle('display', 'none');
+		this.$.refreshFields.applyStyle('display', 'none');
 		this.norefresh = true;
 	}
 
