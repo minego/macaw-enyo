@@ -101,7 +101,8 @@
 }
 
 .compose .counter2 {
-	margin-bottom:			60px;
+	margin-bottom:			60px !important;
+	margin-top:				-60px !important;
 }
 
 .compose.haveimages .counter {
