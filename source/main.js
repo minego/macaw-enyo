@@ -291,15 +291,6 @@ create: function()
 	*/
 	prefs.updateClasses(this);
 
-	/* Lock the orientation to portrait for most of the UI */
-	try {
-		window.screen.lockOrientation('portrait');
-	} catch (e) {
-		try {
-			window.screen.mozLockOrientation('portrait');
-		} catch (e) { }
-	}
-
 	this.users		= prefs.get('accounts') || [];
 	this.index		= 0;
 	this.tabs		= [];
