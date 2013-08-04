@@ -774,7 +774,7 @@ handleResize: function()
 		this.removeClass('skinny');
 	}
 
-	for (var t = 0, tab; tab = this.tabs[t]; t++) {
+	for (var t = 0, p; p = this.$['panel' + t]; t++) {
 		this.$['panel' + t].container.applyStyle('width', w);
 	}
 
@@ -988,13 +988,17 @@ accountCreated: function(sender, event)
 			type:		'timeline',
 			label:		'@' + account.screenname + ' home',
 			id:			account.id,
-			service:	account.servicename
+			service:	account.servicename,
+			refresh:	300,
+			notify:		true
 		});
 		this.tabs.push({
 			type:		'mentions',
 			label:		'@' + account.screenname + ' mentions',
 			id:			account.id,
-			service:	account.servicename
+			service:	account.servicename,
+			refresh:	300,
+			notify:		true
 		});
 
 		if (account.servicename != 'adn') {
@@ -1005,7 +1009,9 @@ accountCreated: function(sender, event)
 				type:		'messages',
 				label:		'@' + account.screenname + ' ' + account.service.terms.PMs,
 				id:			account.id,
-				service:	account.servicename
+				service:	account.servicename,
+				refresh:	300,
+				notify:		true
 			});
 		}
 		prefs.set('panels', this.tabs);

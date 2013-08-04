@@ -78,41 +78,46 @@ components: [
 				]
 			},
 			{
-				tag:								"br"
-			},
-
-			{
-				content:							"Refresh Every",
-				classes:							"label"
-			},
-			{
-				kind:								onyx.PickerDecorator,
-				classes:							"value picker",
+				name:								"refreshFields",
 				components: [
 					{
-						classes:					"button"
+						tag:						"br"
 					},
 
 					{
-						kind:						onyx.Picker,
-						name:						"refresh",
+						content:					"Refresh Every",
+						classes:					"label"
+					},
+					{
+						kind:						onyx.PickerDecorator,
+						classes:					"value picker",
 						components: [
+							{
+								classes:			"button"
+							},
+
+							{
+								kind:				onyx.Picker,
+								name:				"refresh",
+								components: [
+								]
+							}
 						]
+					},
+					{
+						tag:						"br"
+					},
+
+					{
+						content:					"Notifications",
+						classes:					"label"
+					},
+					{
+						kind:						onyx.ToggleButton,
+						name:						"notify",
+						classes:					"value"
 					}
 				]
-			},
-			{
-				tag:								"br"
-			},
-
-			{
-				content:							"Notifications",
-				classes:							"label"
-			},
-			{
-				kind:								onyx.ToggleButton,
-				name:								"notify",
-				classes:							"value"
 			},
 			{
 				tag:								"br"
@@ -142,6 +147,15 @@ create: function()
 	var	tab = null;
 
 	this.inherited(arguments);
+
+
+	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
+			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
+	) {
+		/* Auto-refresh and notifications are not currently supported on FFOS */
+		this.$.refreshComponents.applyStyle('display', 'none');
+		this.norefresh = true;
+	}
 
 	if (!this.tabs) {
 		this.tabs = prefs.get('panels');
@@ -219,6 +233,11 @@ save: function()
 		label:		'',
 		service:	'twitter'
 	};
+
+	if (this.norefresh) {
+		tab.refresh	= -1;
+		tab.notify	= false;
+	}
 
 	for (var i = 0, a; a = this.accounts[i]; i++) {
 		if (tab.id == a.id) {
