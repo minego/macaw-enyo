@@ -974,6 +974,19 @@ send: function(splitConfirmed)
 		var details;
 		var p	= Object.create(params);
 
+		if (response) {
+			/*
+				When sending a split message make each message a reply to the
+				previous one so that the entire thing can be viewed in the
+				conversation view easily.
+			*/
+			if (response.id_str) {
+				p.replyto = response.id_str;
+			} else if (response.id) {
+				p.replyto = response.id;
+			}
+		}
+
 		if (!success) {
 			this.$.send.setDisabled(false);
 			this.$.cancel.setDisabled(false);
