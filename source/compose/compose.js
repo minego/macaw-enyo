@@ -934,14 +934,19 @@ send: function(splitConfirmed)
 
 	/* Build a list of messages to send */
 	for (var i = 0, u; u = enabled[i]; i++) {
-		var parts = this.split(this.getMaxLength(u.service));
+		var parts	= this.split(this.getMaxLength(u.service));
 		var part;
+		var first	= true;
 
 		while ((part = parts.shift())) {
 			todo.push({
 				status:		part,
-				user:		u
+				user:		u,
+
+				first:		first
 			});
+
+			first = false;
 		}
 	}
 
@@ -974,19 +979,6 @@ send: function(splitConfirmed)
 		var details;
 		var p	= Object.create(params);
 
-		if (response) {
-			/*
-				When sending a split message make each message a reply to the
-				previous one so that the entire thing can be viewed in the
-				conversation view easily.
-			*/
-			if (response.id_str) {
-				p.replyto = response.id_str;
-			} else if (response.id) {
-				p.replyto = response.id;
-			}
-		}
-
 		if (!success) {
 			this.$.send.setDisabled(false);
 			this.$.cancel.setDisabled(false);
@@ -998,6 +990,19 @@ send: function(splitConfirmed)
 			this.doCloseToaster();
 
 			return;
+		}
+
+		if (!details.first && response) {
+			/*
+				When sending a split message make each message a reply to the
+				previous one so that the entire thing can be viewed in the
+				conversation view easily.
+			*/
+			if (response.id_str) {
+				p.replyto = response.id_str;
+			} else if (response.id) {
+				p.replyto = response.id;
+			}
 		}
 
 		p.status = details.status;
