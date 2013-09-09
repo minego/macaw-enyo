@@ -57,6 +57,9 @@
 	<access subdomains="true" uri="file:///SDCard" />
 	<!-- Expose access to all URIs, including the file and http protocols -->
 	<access subdomains="true" uri="https://twitter.com" />
+	<access subdomains="true" uri="https://api.twitter.com" />
+	<access subdomains="true" uri="http://twitter.com" />
+	<access subdomains="true" uri="http://api.twitter.com" />
 	<access subdomains="true" uri="http://phnx.ws" />
 	<access subdomains="true" uri="http://twimg.com" />
 	<access subdomains="true" uri="http://phnxapp.com" />
