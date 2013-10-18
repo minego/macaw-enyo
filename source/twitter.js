@@ -373,6 +373,7 @@ getMessages: function(resource, cb, params)
 
 			if (!results) {
 				cb(false);
+				return;
 			}
 
 			if (results.statuses) {
