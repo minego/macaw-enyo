@@ -451,6 +451,11 @@ getDMs: function(cb, params)
 					var resultsAll	= [];
 					var results		= [];
 
+					if (!resultsIn || !resultsOut) {
+						cb(false);
+						return;
+					}
+
 					resultsIn		= this.cleanupMessages(resultsIn);
 					resultsOut		= this.cleanupMessages(resultsOut);
 
