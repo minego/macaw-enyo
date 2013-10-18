@@ -371,6 +371,10 @@ getMessages: function(resource, cb, params)
 		function(response) {
 			var results = enyo.json.parse(response.text);
 
+			if (!results) {
+				cb(false);
+			}
+
 			if (results.statuses) {
 				results = results.statuses;
 			}
