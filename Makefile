@@ -49,7 +49,7 @@ init:
 	@git submodule update
 
 initrepo:
-	@git remote add upstream git://github.com/dkirker/macaw-enyo.git
+	@git remote add upstream git://github.com/minego/macaw-enyo.git
 
 initzip:
 	@mkdir -p lib
@@ -147,4 +147,3 @@ macaw-device.bar: bar
 bb10: bar
 
 .PHONY: clean webos install launch log test release apk ipk android bar
-
