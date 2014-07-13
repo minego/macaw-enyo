@@ -1,0 +1,57 @@
+<html>
+	<head>
+		<title>macaw</title>
+	</head>
+
+	<body>
+		Please wait...
+
+		<script>
+			var origin	= null;
+			var params	= {};
+			var p;
+			var w;
+
+			if (!(w = window.opener)) {
+				w = window.parent;
+			}
+
+			p = window.location.search.slice(1).split('&');
+			for (var i = 0, param; param = p[i]; i++) {
+				var pair = param.split('=');
+
+				if (pair.length != 2) {
+					continue;
+				}
+				params[pair[0]] = decodeURIComponent(pair[1]);
+			}
+
+			params.name = 'newtwitteraccount';
+
+			// w.postMessage(params, "*");
+
+			/*
+				Wait to get a message from the app so we know the origin to
+				reply to.
+			*/
+			var sent = false;
+			window.addEventListener('message', function(event) {
+				console.log('Got message from app', event);
+
+				switch (event.data.name) {
+					case 'authready':
+						if (!sent) {
+							event.source.postMessage(params, event.origin);
+							sent = true;
+						}
+						window.close();
+						break;
+
+					default:
+						console.log('Unknown message', event);
+						break;
+				}
+			});
+		</script>
+	</body>
+</html>
