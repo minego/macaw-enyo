@@ -226,6 +226,8 @@ destroy: function()
 {
 	var node;
 
+	this.closing = true;
+
 	/*
 		Attempt to avoid the case where a virtual keyboard does not get closed
 		because the input was still focused when it was destroyed.
@@ -498,6 +500,16 @@ rendered: function(sender, event)
 
 focus: function()
 {
+	if (enyo.platform.blackberry) {
+		return;
+	}
+
+	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
+			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
+	) {
+		return;
+	}
+
 	setTimeout(function() {
 		var node;
 

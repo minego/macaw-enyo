@@ -250,10 +250,13 @@ step1: function(skipwindow, servicename)
 		The call to twitter.authorize() will return the URL that we need to open
 		in the window to continue.
 
-		This isn't needed on webOS, or in a chrome app.
+		This isn't needed on webOS, BB10, or in a chrome app.
 	*/
-	if (!chromeapp && skipwindow !== true && !window.PalmSystem) {
-		// window.open("", "_auth");
+	if (!chromeapp && skipwindow !== true &&
+		!enyo.platform.webos &&
+		!enyo.platform.blackberry
+	) {
+		window.open("", "_auth");
 	}
 
 	switch (servicename) {

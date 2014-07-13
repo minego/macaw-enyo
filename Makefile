@@ -121,7 +121,7 @@ ${APK}: ${DEPLOY}/project.properties ${DEPLOY}/appinfo.json
 # Blackberry WebWorks 2.1 build
 ${DEPLOY_WW}/macaw/config.xml: ${DEPLOY} bb10/config.xml
 	@mkdir -p ${DEPLOY_WW}
-	@cd ${DEPLOY_WW} && (cd macaw || webworks create macaw)
+	@cd ${DEPLOY_WW} && (cd macaw 2>/dev/null || (webworks create macaw && cd macaw && webworks plugin add com.blackberry.app))
 	@cat bb10/config.xml | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY_WW}/macaw/config.xml
 
 debugbar: ${DEPLOY_WW}/macaw/config.xml

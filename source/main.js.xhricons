@@ -17,10 +17,6 @@ enyo.kind({
 
 name:										"net.minego.macaw.main",
 
-published: {
-	index:									0
-},
-
 handlers: {
 	onCloseToaster:							"closeToaster",
 	onOpenToaster:							"openToaster",
@@ -54,16 +50,14 @@ components: [
 				classes:					"imgbtn optsbutton",
 				iconname:					"opts",
 				name:						"options",
-				command:					"options",
-				onerror:					"fixicon"
+				command:					"options"
 			},
 			{
 				kind:						enyo.Image,
 				classes:					"imgbtn refreshbutton",
 				name:						"refreshbtn",
 				iconname:					"refresh",
-				command:					"refresh",
-				onerror:					"fixicon"
+				command:					"refresh"
 			},
 			{
 				content:					'',
@@ -76,8 +70,7 @@ components: [
 				classes:					"imgbtn composebutton",
 				name:						"composebtn",
 				iconname:					"compose",
-				command:					"compose",
-				onerror:					"fixicon"
+				command:					"compose"
 			}
 		]
 	},
@@ -191,25 +184,6 @@ create: function()
 {
 	this.inherited(arguments);
 
-	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
-			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
-	) {
-		/*
-			Firefox OS
-
-			The virtual keyboard on Firefox OS causes elements to move around a
-			great deal. Make compose full screen in this case.
-		*/
-		this.vkb = true;
-	}
-
-
-	// this.vkb = true;
-
-	if (this.vkb) {
-		this.addClass('vkb');
-	}
-
 	this.spincount = 0;
 
 	/* Monitor for Web Activity share requests */
@@ -292,6 +266,15 @@ create: function()
 		which is enough to handle many options.
 	*/
 	prefs.updateClasses(this);
+
+	/* Lock the orientation to portrait for most of the UI */
+	try {
+		window.screen.lockOrientation('portrait');
+	} catch (e) {
+		try {
+			window.screen.mozLockOrientation('portrait');
+		} catch (e) { }
+	}
 
 	this.users		= prefs.get('accounts') || [];
 	this.index		= 0;
@@ -439,7 +422,7 @@ rendered: function()
 	this.handleResize();
 
 	this.index = 0;
-	this.setIndex(0);
+	this.moveIndicator();
 },
 
 clearError: function()
@@ -551,7 +534,7 @@ createTabs: function()
 		classes:							"panels",
 		arrangerKind:						"CarouselArranger",
 
-		onTransitionFinish:					"selectedTab",
+		onTransitionStart:					"moveIndicator",
 
 		components:							components
 	}, { owner: this });
@@ -596,7 +579,7 @@ createTabs: function()
 			classes:		"tab",
 
 			index:			t,
-			ontap:			"tabTapped",
+			ontap:			"selectPanel",
 
 			components: [{
 				kind:		enyo.Image,
@@ -624,12 +607,23 @@ panelActivity: function(sender, event)
 	var count	= this.$['tabcount'	+ sender.index];
 	var refresh	= this.$.refreshbtn;
 
+	if (sender.loading) {
+		/* Wait until the refresh is done */
+		return;
+	}
+
 	/* Let the list know that all messages have been noticed */
 	sender.setUnseen(0);
+
+	// this.log(sender.index);
 	count.setContent('');
 
 	if (!this.isReady) {
 		this.isReady = true;
+	} else if (this.index != sender.index) {
+		this.index =  sender.index;
+
+		this.moveIndicator();
 	}
 },
 
@@ -672,6 +666,19 @@ panelRefreshStop: function(sender, event)
 		this.spincount--;
 	}
 
+	/* Allow refreshing up to 2 panels at once */
+	for (var i = 2 - this.spincount; i > 0; i--) {
+		var p;
+
+		/* Start refreshing the next panel */
+		if (this.refreshTodo && (p = this.refreshTodo.shift())) {
+			this.log('Refreshing: ', p.name, p);
+			p.refresh();
+
+			return;
+		}
+	}
+
 	if (this.spincount == 0) {
 		refresh.removeClass("spin");
 		refresh.addClass("endspin");
@@ -686,11 +693,13 @@ optionsChanged: function(sender, event)
 
 	/* Fix up the icons based on the current theme */
 	for (var i = 0, icon; icon = this.$[icons[i]]; i++) {
-		icon.setSrc('assets/' + prefs.get('theme') + '/icons/' + icon.iconname + '.png');
+		this.findIcon(icon.iconname, icon.parent.hasClass('active'), function(url) {
+			icon.setSrc(url);
+		});
 	}
 
 	this.toolbarsChanged();
-	this.adjustTabs(true);
+	this.moveIndicator(null, { force: true });
 },
 
 toolbarsChanged: function()
@@ -734,44 +743,33 @@ toolbarsChanged: function()
 handleResize: function()
 {
 	var width	= enyo.dom.getWindowWidth();
-	var w		= '320px';
+	var w		= 320;
 
 	/*
 		If the screen is not wide enough to display multiple columns then the
 		enyo.Panels kind will show a single column.
 	*/
 	if (enyo.Panels.isScreenNarrow()) {
-		if (this.hasClass('skinny')) {
-			/*
-				Already setup
-
-				The actual size isn't important here since it is set using a
-				percentage so there is no need to resize anything.
-			*/
-			return;
-		}
-
 		/* Single column, match the screen width */
-		w = '100%';
+		w = width;
 
 		this.addClass('manualIndex');
 		this.addClass('skinny');
 	} else {
 		/*
-			Multi column, minimum width of 300. Size the columns such that there
+			Multi column, minimum width of 250. Size the columns such that there
 			will not be a partial column displayed.
 		*/
-		w = (width / (Math.floor(width / 300))) + 'px';
-
+		w = width / (Math.floor(width / 250));
 		this.removeClass('manualIndex');
 		this.removeClass('skinny');
 	}
 
-	for (var t = 0, p; p = this.$['panel' + t]; t++) {
-		this.$['panel' + t].container.applyStyle('width', w);
+	for (var t = 0, tab; tab = this.tabs[t]; t++) {
+		this.$['panel' + t].container.applyStyle('width', w + 'px');
 	}
 
-	this.adjustTabs();
+	this.moveIndicator();
 },
 
 /*
@@ -813,61 +811,34 @@ isPanelVisible: function(index, selected)
 	return(0);
 },
 
-tabTapped: function(sender, event)
+selectPanel: function(sender, event)
 {
-	if (0 == this.isPanelVisible(sender.index)) {
-		/* The panel was already selected; smart scroll */
-		var panel	= this.$['panel' + sender.index];
-
-		panel.smartscroll();
-		this.panelActivity(panel, event);
-	}
-
-	this.setIndex(sender.index);
-},
-
-indexChanged: function(was)
-{
+	var was		= this.index;
+	var move;
 	var distance;
-	var panel;
 
-	/* Remove the selected class from all panels */
-	for (var i = 0, p; p = this.$['panel' + i]; i++) {
-		p.removeClass('selected');
+	this.index = sender.index;
+
+	/* Wrap if needed */
+	if (this.index < 0) {
+		this.index = this.tabs.length - 1;
+	}
+	if (this.index >= this.tabs.length) {
+		this.index = 0;
 	}
 
-	if (false) {
-		/* Wrap if needed */
-		if (this.index < 0) {
-			this.index = this.tabs.length - 1;
-		}
-		if (this.index >= this.tabs.length) {
-			this.index = 0;
-		}
-	} else {
-		/* Enforce boundaries */
-		if (this.index < 0) {
-			this.index = 0;
-		}
-		if (this.index >= this.tabs.length) {
-			this.index = this.tabs.length - 1;
-		}
-	}
-
-	if (!(panel = this.$['panel' + this.index])) {
-		return;
-	}
-
-	/* Add the class to the new panel */
-	panel.addClass('selected');
-
-
-	/* Do we need to make this panel visible? */
 	move = this.isPanelVisible(this.index);
 
 	if (0 == move) {
 		/* The panel is already visible, so just move the indicator */
-		this.adjustTabs();
+		if (event) {
+			var panel	= this.$['panel' + sender.index];
+
+			panel.smartscroll();
+			this.panelActivity(panel, event);
+		}
+
+		this.moveIndicator();
 		return;
 	}
 
@@ -880,13 +851,12 @@ indexChanged: function(was)
 				Move the indicator directly to the selected panel, instead
 				of a relative moved based on how far we slid.
 			*/
+			this.ignoreMove = true;
+
 			this.$.panels.setIndex(current + (move * distance));
 			break;
 		}
 	}
-
-	/* Move the indicator, and adjust the tab widths */
-	this.adjustTabs();
 },
 
 smartscroll: function(sender, event)
@@ -899,12 +869,12 @@ compose: function(sender, options)
 	options = options || {};
 
 	options.kind		= "Compose";
-	options.user		= options.user;
+	options.user		= options.user || this.users[0];
 	options.users		= this.users;
 
 	options.images		= options.images || [];
 
-	if (!options.user && !options.users) {
+	if (!options.user) {
 		return;
 	}
 
@@ -913,15 +883,7 @@ compose: function(sender, options)
 		noscrim:	true,
 		nobg:		true,
 		modal:		true,
-		notitle:	true,
-
-		/*
-			On devices with a virtual keyboard it can be annoying to move the
-			compose toaster around if it shows/hides. So, simply make it full
-			height to avoid this.
-		*/
-		tall:		this.vkb ? true : false,
-		instant:	this.vkb ? true : false
+		notitle:	true
 	});
 },
 
@@ -981,17 +943,13 @@ accountCreated: function(sender, event)
 			type:		'timeline',
 			label:		'@' + account.screenname + ' home',
 			id:			account.id,
-			service:	account.servicename,
-			refresh:	300,
-			notify:		true
+			service:	account.servicename
 		});
 		this.tabs.push({
 			type:		'mentions',
 			label:		'@' + account.screenname + ' mentions',
 			id:			account.id,
-			service:	account.servicename,
-			refresh:	300,
-			notify:		true
+			service:	account.servicename
 		});
 
 		if (account.servicename != 'adn') {
@@ -1002,9 +960,7 @@ accountCreated: function(sender, event)
 				type:		'messages',
 				label:		'@' + account.screenname + ' ' + account.service.terms.PMs,
 				id:			account.id,
-				service:	account.servicename,
-				refresh:	300,
-				notify:		true
+				service:	account.servicename
 			});
 		}
 		prefs.set('panels', this.tabs);
@@ -1060,9 +1016,13 @@ handleButton: function(sender, event)
 			break;
 
 		case "refresh":
-			for (var i = 0, p; p = this.$['panel' + i]; i++) {
-				p.refresh();
+			this.refreshTodo = [];
+			for (var t = 0, tab; tab = this.tabs[t]; t++) {
+				this.refreshTodo.push(this.$['panel' + t]);
 			}
+
+			/* panelRefreshStop() will pop things off the todo list... */
+			this.panelRefreshStop();
 			break;
 
 		case "compose":
@@ -1092,162 +1052,82 @@ back: function(sender, event)
 
 keydown: function(sender, event)
 {
-	var toaster		= this.$.toasters.getTop();
+	if (this.$.toasters.getLength() > 0) {
+		/*
+			Ignore key presses when a toaster is visible
 
-	switch (toaster ? toaster.type : "none") {
-		case "MessageDetails":
-			switch (event.keyCode) {
-				case 82: /* reply */
-					// TODO write me
-					return(true);
+			If it happens to be ctrl+r though, then we still want to prevent the
+			default behavior so that the user doesn't reload the browser window
+			without meaning to.
+		*/
+		if (event.keyCode == 82 && event.ctrlKey) {
+			event.preventDefault();
+			return(false);
+		}
 
-				case 37: /* left */
-					this.setIndex(this.index - 1);
-					this.$['panel' + this.index].move(0);
-					break;
+		return(true);
+	}
 
-				case 39: /* right */
-					this.setIndex(this.index + 1);
-					this.$['panel' + this.index].move(0);
-					break;
+	switch (event.keyCode) {
+		case 82: /* r */
+			if (event.ctrlKey) {
+				if (!event.shiftKey) {
+					/* Refresh all panels */
+					this.handleButton({ command: "refresh" });
+				} else {
+					/* Refresh the current panel */
+					var panel;
 
-				case 38: /* up */
-					this.$['panel' + this.index].move(-1);
-					break;
-
-				case 40: /* down */
-					this.$['panel' + this.index].move(1);
-					break;
-
-				case 33: /* page up */
-					this.$['panel' + this.index].move(-5);
-					break;
-
-				case 34: /* page down */
-					this.$['panel' + this.index].move(5);
-					break;
-
-				case 35: /* end */
-					this.$['panel' + this.index].select(1000000);
-					break;
-
-				case 36: /* home */
-					this.$['panel' + this.index].select(0);
-					break;
-
-				default:
-					// this.log(event.keyCode);
-					return(true);
+					if ((panel = this.$['panel' + this.index])) {
+						panel.refresh();
+					}
+				}
 			}
-
-			this.closeToaster(true);
-			if (this.$['panel' + this.index].open(NaN, true)) {
-				break;
-			}
-
 			break;
 
-		case "SubMessageDetails":
-		case "Conversation":
-			// TODO	Implement keyboard control for conversations
-			//		Fallthrough until written
+		case 188: /* comma (,) */
+			if (event.ctrlKey) {
+				this.handleButton({ command: "preferences" });
+			}
+			break;
+
+		case 37: /* left */
+			this.addClass('manualIndex');
+
+			this.selectPanel({ index: this.index - 1 });
+			break;
+
+		case 39: /* right */
+			this.addClass('manualIndex');
+
+			this.selectPanel({ index: this.index + 1 });
+			break;
+
+		case 38: /* up */
+			this.addClass('manualIndex');
+			this.$['panel' + this.index].scroll(-25);
+			break;
+
+		case 40: /* down */
+			this.addClass('manualIndex');
+			this.$['panel' + this.index].scroll(25);
+			break;
+
+		case 33: /* page up */
+			var bounds = this.$.panels.getPanels()[0].getBounds();
+
+			this.$['panel' + this.index].scroll(-(bounds.height - 25));
+			break;
+
+		case 34: /* page down */
+			var bounds = this.$.panels.getPanels()[0].getBounds();
+
+			this.$['panel' + this.index].scroll(bounds.height - 25);
+			break;
 
 		default:
-			/*
-				By default ignore key presses when a toaster is visible.
-
-				If it happens to be ctrl+r though, then we still want to prevent the
-				default behavior so that the user doesn't reload the browser window
-				without meaning to.
-			*/
-			if (event.keyCode == 82 && event.ctrlKey) {
-				event.preventDefault();
-				return(false);
-			}
-
+			// this.log(event.keyCode);
 			return(true);
-
-		case "none":
-			switch (event.keyCode) {
-				case 82: /* r */
-					if (event.ctrlKey) {
-						if (!event.shiftKey) {
-							/* Refresh all panels */
-							this.handleButton({ command: "refresh" });
-						} else {
-							/* Refresh the current panel */
-							var panel;
-
-							if ((panel = this.$['panel' + this.index])) {
-								panel.refresh();
-							}
-						}
-					}
-					break;
-
-				case 188: /* comma (,) */
-					if (event.ctrlKey) {
-						this.handleButton({ command: "preferences" });
-					}
-					break;
-
-				case 37: /* left */
-					this.addClass('manualIndex');
-
-					this.setIndex(this.index - 1);
-					this.$['panel' + this.index].move(0);
-					break;
-
-				case 39: /* right */
-					this.addClass('manualIndex');
-
-					this.setIndex(this.index + 1);
-					this.$['panel' + this.index].move(0);
-					break;
-
-				case 38: /* up */
-					this.addClass('manualIndex');
-					this.$['panel' + this.index].move(-1);
-					break;
-
-				case 40: /* down */
-					this.addClass('manualIndex');
-					this.$['panel' + this.index].move(1);
-					break;
-
-				case 33: /* page up */
-					this.addClass('manualIndex');
-					this.$['panel' + this.index].move(-5);
-					break;
-
-				case 34: /* page down */
-					this.addClass('manualIndex');
-					this.$['panel' + this.index].move(5);
-					break;
-
-				case 35: /* end */
-					this.addClass('manualIndex');
-					this.$['panel' + this.index].select(1000000);
-					break;
-
-				case 36: /* home */
-					this.addClass('manualIndex');
-					this.$['panel' + this.index].select(0);
-					break;
-
-				case 13: /* enter */
-					if (this.$['panel' + this.index].open()) {
-						break;
-					} else {
-						/* Fallthrough */
-					}
-
-				default:
-					this.log(event.keyCode);
-					return(true);
-			}
-
-			break;
 	}
 
 	event.preventDefault();
@@ -1291,49 +1171,46 @@ keypress: function(sender, event)
 },
 
 /*
-	By default we attempt to assign an image for the tabs from the theme, but
-	not all themes provide their own images. If a theme does not then fall back
-	to the default.
+	Use the xhr image loader to check for the existence of icons in the theme
+	and load the appropriate icon.
 */
-fixicon: function(sender, event)
+findIcon: function(name, active, cb)
 {
-	var src			= 'assets/icons/' + sender.iconname;
-	var active		= sender.parent.hasClass('active');
-	var was			= sender.getSrc();
-	var themed		= -1 == was.indexOf('assets/icons/');
-	var wasactive	= -1 != was.indexOf('-active');
+	var urls	= [];
+	var theme	= prefs.get('theme');
+	var origin	= window.location.protocol + '//' + window.location.hostname;
 
-	if (themed) {
-		wasactive = false;
+	if (active) {
+		urls.push(orign + '/assets/' + theme + '/icons/' + name + '-active.png');
 	}
+	urls.push(origin + '/assets/' + theme + '/icons/' + name + '.png');
 
-	if (active && !wasactive) {
-		src += '-active';
+	if (active) {
+		urls.push(origin + '/assets/icons/' + name + '-active.png');
 	}
-	src += '.png';
+	urls.push(origin + '/assets/icons/' + name + '.png');
 
-	sender.setSrc(src);
+	/* Try each of the urls in order */
+	var tryIcon = function tryIcon(url) {
+		var		nexturl;
+
+		if (url && url !== '#') {
+			cb(url);
+			return;
+		}
+
+		if ((nexturl = urls.shift())) {
+			xhrImages.load(nexturl, tryIcon, true);
+			return;
+		}
+
+		/* Could not find an icon */
+		console.log('Could not find an icon', name, active);
+	};
+	tryIcon(null);
 },
 
-/* A panel was selected by sliding them left or right..  */
-selectedTab: function(sender, event)
-{
-	var move;
-
-	if (!event) {
-		return;
-	}
-
-	/*
-		If this.index is no longer visible then change the select the closest
-		panel that is.
-	*/
-	if (0 != (move = this.isPanelVisible(this.index))) {
-		this.setIndex(this.index - move);
-	}
-},
-
-adjustTabs: function(force)
+moveIndicator: function(sender, event)
 {
 	var first		= -1;
 	var last		= -1;
@@ -1341,10 +1218,8 @@ adjustTabs: function(force)
 	var width;
 	var left;
 	var theme		= prefs.get('theme');
-	var haveactive	= force || false;
+	var haveactive	= (event && event.force) ? true : false;
 
-	// TODO	Switch back to background images, just give up on the spinning
-	//		bullshit. That will allow just working off of classes in css
 	/*
 		Only change the images for themes that use active images. Otherwise
 		there will be an annoying flicker.
@@ -1353,6 +1228,22 @@ adjustTabs: function(force)
 		case 'ffos':
 			haveactive	= true;
 			break;
+	}
+
+	if (event && !this.ignoreMove) {
+		var difference = event.toIndex - event.fromIndex;
+
+		this.index += difference;
+		this.log(event, this.index, event.toIndex, event.fromIndex);
+
+		this.index = event.toIndex;
+	} else {
+		this.log(this.index);
+	}
+	this.ignoreMove = false;
+
+	if (this.index === undefined) {
+		this.index = 0;
 	}
 
 	/*
@@ -1416,11 +1307,11 @@ adjustTabs: function(force)
 			tab.addRemoveClass('active', this.index == i);
 
 			if (haveactive) {
-				if (this.index == i && this.hasClass('manualIndex')) {
-					tabicon.setSrc('assets/' + theme + '/icons/' + tabicon.iconname + '-active.png');
-				} else {
-					tabicon.setSrc('assets/' + theme + '/icons/' + tabicon.iconname + '.png');
-				}
+				var active = (this.index == i) && this.hasClass('manualIndex');
+
+				this.findIcon(tabicon.iconname, active, function(url) {
+					tabicon.setSrc(url);
+				});
 			}
 		}
 	}
@@ -1428,7 +1319,7 @@ adjustTabs: function(force)
 	this.$.indicator.applyStyle('width', tabWidth + '%');
 	this.$.indicator.applyStyle('left', left + '%');
 
-	if (false && this.hasClass('skinny')) {
+	if (this.hasClass('skinny')) {
 		var panel	= this.$['panel' + this.index];
 
 		this.$.title.setContent(panel ? panel.label : '');
@@ -1454,15 +1345,6 @@ if (enyo.platform.webos) {
 		prefs.ready(function() {
 			new net.minego.macaw.main().renderInto(document.body);
 		});
-	}, false);
-}
-
-if (enyo.platform.blackberry) {
-	window.addEventListener('load', function(e) {
-		console.log('Keyboard trying to open');
-
-		e.preventDefault();
-		return(false);
 	}, false);
 }
 
