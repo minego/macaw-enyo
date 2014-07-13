@@ -60,8 +60,7 @@ Building requires gnu make. Minifying requires nodejs.
 ### Package for android
 	make android
 
-### Package for BB10 (Requires the bbwp tool from the BB10 Webworks SDK)
-	export BB10SDK=/path/to/bb10/sdk
+### Package for BB10 (Requires the webworks 2.1 SDK installed, and in your path)
 	make bar
 
 ### Package signed for BB10 (Requires the bbwp tool from the BB10 Webworks SDK)

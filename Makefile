@@ -4,39 +4,38 @@ APPID		:= $(VENDOR).$(APP)
 PKG			:= Macaw
 VERSION		:= 2.2.$(shell git log --pretty=format:'' | wc -l | sed 's/ *//')
 DEPLOY		:= deploy/macaw-enyo
+DEPLOY_WW	:= deploy/webworks
 APK			:= Macaw-debug.apk
 BAR			:= macaw-device.bar
 ZIP			:= macaw.zip
+BB10_ARGS	?=
 
 clean:
-	rm -rf *.ipk *.apk *.bar *.zip deploy build device simulator .tmp 2>/dev/null || true
+	@rm -rf *.ipk *.apk *.bar *.zip deploy build device simulator .tmp 2>/dev/null || true
 
 ${DEPLOY}:
-	mkdir -p ${DEPLOY}
-	cp -r assets enyo lib source package.js *.png ${DEPLOY}
-	cp framework_config.json manifest.* *.html icon*.png ${DEPLOY}/
-	cp  chrome/* ${DEPLOY}/
-	(cd ${DEPLOY} && zip -r ../macaw-enyo.zip *)
+	@mkdir -p ${DEPLOY}
+	@cp -r assets enyo lib source package.js *.png ${DEPLOY}
+	@cp framework_config.json manifest.* *.html icon*.png ${DEPLOY}/
+	@cp  chrome/* ${DEPLOY}/
+	@(cd ${DEPLOY} && zip -r ../macaw-enyo.zip *)
 
 release:
-	rm -rf deploy build
-	mkdir build
-	./tools/deploy.sh
-	cp  framework_config.json manifest.* *.html icon*.png ${DEPLOY}/
-	cp  chrome/* ${DEPLOY}/
-	rm -rf build
-	(cd ${DEPLOY} && zip -r ../macaw-enyo.zip *)
+	@rm -rf deploy build
+	@mkdir build
+	@./tools/deploy.sh
+	@cp  framework_config.json manifest.* *.html icon*.png ${DEPLOY}/
+	@cp  chrome/* ${DEPLOY}/
+	@rm -rf build
+	@(cd ${DEPLOY} && zip -r ../macaw-enyo.zip *)
 
 ${DEPLOY}/appinfo.json: ${DEPLOY} appinfo.json
-	cat appinfo.json | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/appinfo.json
-
-${DEPLOY}/config.xml: ${DEPLOY} bb10/config.xml
-	cat bb10/config.xml | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/config.xml
+	@cat appinfo.json | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/appinfo.json
 
 deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
-	cat webos-index.html | sed 's/device-width/320/' > ${DEPLOY}/index.html
-	cp macaw.png ${DEPLOY}
-	palm-package --exclude=assets/old-images ${DEPLOY}
+	@cat webos-index.html | sed 's/device-width/320/' > ${DEPLOY}/index.html
+	@cp macaw.png ${DEPLOY}
+	@palm-package --exclude=assets/old-images ${DEPLOY}
 
 all: ${DEPLOY}
 
@@ -80,11 +79,10 @@ openwebos: webos
 install:
 	@(ls *.ipk 2>/dev/null && palm-install *.ipk)		|| \
 	(ls *.apk 2>/dev/null && adb install -r *.apk)		|| \
-	(ls *.bar 2>/dev/null && ${BB10SDK}/dependencies/tools/bin/blackberry-deploy -installApp ${BB10DEVICE} macaw-${BB10TYPE}.bar -password ${BB10DEVICEPASS})
+	(cd ${DEPLOY_WW}/macaw && webworks run ${BB10_ARGS})
 
 launch: install
-	@(ls *.ipk 2>/dev/null && palm-launch -i ${APPID})		|| \
-	(ls *.bar 2>/dev/null && ${BB10SDK}/dependencies/tools/bin/blackberry-deploy -launchApp ${BB10DEVICE} macaw-${BB10TYPE}.bar)
+	@(ls *.ipk 2>/dev/null && palm-launch -i ${APPID})
 
 log:
 	@(																		\
@@ -119,7 +117,30 @@ ${APK}: ${DEPLOY}/project.properties ${DEPLOY}/appinfo.json
 	@(cd .tmp && ant debug)
 	@mv .tmp/bin/$(APK) .
 
-bar: ${DEPLOY}/config.xml
+
+# Blackberry WebWorks 2.1 build
+${DEPLOY_WW}/macaw/config.xml: ${DEPLOY} bb10/config.xml
+	@mkdir -p ${DEPLOY_WW}
+	@cd ${DEPLOY_WW} && (cd macaw || webworks create macaw)
+	@cat bb10/config.xml | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY_WW}/macaw/config.xml
+
+debugbar: ${DEPLOY_WW}/macaw/config.xml
+	@cp -r ${DEPLOY}/* ${DEPLOY_WW}/macaw/www/
+	@cp framework_config.json *.html icon*.png ${DEPLOY_WW}/macaw/www/
+	@echo "Building webworks bar"
+	@cd ${DEPLOY_WW}/macaw && webworks build --debug
+	@mv ${DEPLOY_WW}/macaw/platforms/blackberry10/build/simulator/bb10app.bar macaw-simulator.bar
+	@mv ${DEPLOY_WW}/macaw/platforms/blackberry10/build/device/bb10app.bar macaw-device.bar
+
+
+
+
+
+
+
+
+# Old stuff, intended for use with the playbook
+oldbar: ${DEPLOY}/config.xml
 	@cp framework_config.json *.html icon*.png ${DEPLOY}/
 	@(cd ${DEPLOY} && zip -r ../../${ZIP} *)
 	# TODO Allow signing with a real key
@@ -130,7 +151,7 @@ bar: ${DEPLOY}/config.xml
 	@rmdir simulator
 	@rmdir device
 
-barsigned: ${DEPLOY}/config.xml
+oldbarsigned: ${DEPLOY}/config.xml
 	@cp framework_config.json *.html icon*.png ${DEPLOY}/
 	@(cd ${DEPLOY} && zip -r ../../${ZIP} *)
 	@${BB10SDK}/bbwp -g ${BB10SIGNPASS} ${ZIP}
@@ -140,11 +161,15 @@ barsigned: ${DEPLOY}/config.xml
 	@rmdir simulator
 	@rmdir device
 
-macaw-simulator.bar: bar
 
-macaw-device.bar: bar
 
-bb10: bar
+macaw-simulator.bar: debugbar
 
-.PHONY: clean webos install launch log test release apk ipk android bar
+macaw-device.bar: debugbar
+
+bar: debugbar
+
+bb10: debugbar
+
+.PHONY: clean webos install launch log test release apk ipk android bar debugbar
 

@@ -253,7 +253,7 @@ step1: function(skipwindow, servicename)
 		This isn't needed on webOS, or in a chrome app.
 	*/
 	if (!chromeapp && skipwindow !== true && !window.PalmSystem) {
-		window.open("", "_auth");
+		// window.open("", "_auth");
 	}
 
 	switch (servicename) {
