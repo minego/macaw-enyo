@@ -48,7 +48,7 @@ init:
 	@git submodule update
 
 initrepo:
-	@git remote add upstream git://github.com/dkirker/macaw-enyo.git
+	@git remote add upstream git://github.com/minego/macaw-enyo.git
 
 initzip:
 	@mkdir -p lib
