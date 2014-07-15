@@ -50,6 +50,9 @@ init:
 initrepo:
 	@git remote add upstream git://github.com/minego/macaw-enyo.git
 
+publishredirects:
+	git subtree push --prefix redirectpages origin gh-pages
+
 initzip:
 	@mkdir -p lib
 	@curl -O https://codeload.github.com/enyojs/enyo/zip/master
