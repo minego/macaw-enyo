@@ -4,7 +4,7 @@
 
 .themeFfos @font-face {
 	font-family:			'MozTTLight';
-	src:					url(MozTT%20Light.ttf) format("truetype");
+	src:					url(MozTTLight.ttf) format("truetype");
 }
 
 body {
