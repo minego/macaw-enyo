@@ -67,7 +67,7 @@ destroy: function()
 {
 },
 
-showSection: function()
+showSection: function(sender, event)
 {
 	/* Find the real sender */
 	if (event && event.dispatchTarget) {
