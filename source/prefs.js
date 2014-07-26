@@ -69,7 +69,7 @@ ready: function(cb)
 get: function get(name, account)
 {
 	var key		= name;
-	var result	= null;
+	var result	= undefined;
 	var json	= null;
 
 	if (account) {

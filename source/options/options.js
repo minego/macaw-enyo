@@ -174,7 +174,6 @@ renderPanel: function(panel)
 itemSelected: function(sender, event)
 {
 	var key		= sender.key;
-	var keys	= [ key ];
 	var value	= event.selected.value;
 
 	switch (key) {
@@ -205,8 +204,6 @@ itemSelected: function(sender, event)
 			}
 
 			prefs.set(key, value);
-			keys.push(k);
-
 			break;
 
 		default:
@@ -214,7 +211,7 @@ itemSelected: function(sender, event)
 			break;
 	}
 
-	this.doOptionsChanged({ keys: keys });
+	this.doOptionsChanged({});
 	return(true);
 },
 

@@ -20,9 +20,7 @@ kind:										"options",
 classes:									"accounts",
 
 events: {
-	onOptionsChanged:						"",
 	onCreateAccount:						"",
-
 	oncloseToaster:							"",
 	onOpenToaster:							""
 },
