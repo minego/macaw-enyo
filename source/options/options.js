@@ -18,253 +18,37 @@ enyo.kind({
 name:												"options",
 classes:											"options",
 
-dirtytabs:											false,
-
 events: {
-	onOptionsChanged:								"",
-	onCreateAccount:								"",
-	onTabsChanged:									"",
-
 	oncloseToaster:									"",
-	onOpenToaster:									""
+	onOpenToaster:									"",
+	onCreateAccount:								"",
+	onOptionsChanged:								""
 },
 
 components: [
 	{
-		kind:										enyo.Panels,
-		name:										"panels",
-		arrangerKind:								"CarouselArranger",
-		narrowFit:									false,
-		wrap:										false,
-
-		classes:									"enyo-fit options",
-		controlClasses:								"enyo-fit section",
-		defaultKind:								enyo.Scroller,
-
+		classes:									"sectionButtons",
 
 		components: [
-/*
 			{
-				data: {
-					title:							"General",
-
-					items: [
-						{
-							label:					"Enter to Submit",
-							key:					"submitOnEnter"
-						},
-
-						{
-							label:					"Tabs",
-							ontap:					"manageTabs"
-						},
-
-						{
-							label:					"Accounts",
-							ontap:					"manageAccounts"
-						}
-					]
-				}
-			},
-*/
-			{
-				data: {
-					title:							"Appearance",
-
-					items: [
-						{
-							label:					"Theme",
-							key:					"theme",
-
-							options: [
-								{ label: "Light",		value: "light"				},
-								{ label: "Dark",		value: "dark"				},
-								{ label: "Holo Dark",	value: "holo-dark"			},
-								{ label: "Holo Red",	value: "holo-dark,holo-red"	},
-								{ label: "Firefox OS",	value: "ffos"				},
-								{ label: "Macaw Bros",	value: "macawbros"			}
-							]
-						},
-
-						{
-							label:					"Font Size",
-							key:					"fontSize",
-
-							options: [
-								{ label: "Tiny",	value: "tiny"	},
-								{ label: "Small",	value: "small"	},
-								{ label: "Medium",	value: "medium"	},
-								{ label: "Large",	value: "large"	}
-							]
-						},
-						{
-							label:					"Toolbar",
-							key:					"toolbar",
-
-							options: [
-								{ label: "Top",		value: "top"	},
-								{ label: "Bottom",	value: "bottom"	},
-								{ label: "Hidden",	value: "hide"	}
-							]
-						},
-						{
-							label:					"Tabs",
-							key:					"tabs",
-
-							options: [
-								{ label: "Top",		value: "top"	},
-								{ label: "Bottom",	value: "bottom"	},
-								{ label: "Hidden",	value: "hide"	}
-							]
-						},
-						{
-							label:					"Image Previews",
-							key:					"thumbnails",
-
-							options: [
-								{ label: "Off",		value: "off"	},
-								{ label: "Small",	value: "small"	},
-								{ label: "Large",	value: "large"	}
-							]
-						}
-					]
-				}
-			},
-
-			{
-				data: {
-					title:							"Timeline",
-
-					items: [
-						{
-							label:					"Avatar",
-							key:					"hideAvatar",
-
-							onContent:				"Show",
-							offContent:				"Hide",
-							negate:					true
-						},
-						{
-							label:					"Name",
-							key:					"showUserName",
-
-							onContent:				"Show",
-							offContent:				"Hide"
-						},
-						{
-							label:					"Handle",
-							key:					"showScreenName",
-
-							onContent:				"Show",
-							offContent:				"Hide"
-						},
-						{
-							label:					"Time",
-							key:					"showTime",
-
-							options: [
-								{ label: "Relative",value: "relative"	},
-								{ label: "Absolute",value: "absolute"	},
-								{ label: "Hidden",	value: "hidden"		}
-							]
-						},
-						{
-							label:					"Client Name",
-							key:					"showVia",
-
-							onContent:				"Show",
-							offContent:				"Hide"
-						}
-					]
-				}
+				content:							"Appearance",
+				command:							"UI",
+				ontap:								"showSection"
 			},
 			{
-				components: [
-					{
-						content:					"Tabs",
-						classes:					"title"
-					},
-
-					{
-						content:					"Add Tab",
-						kind:						onyx.Button,
-						style:						"width: 100%;",
-						ontap:						"createTab"
-					},
-
-					{
-						name:						"tablist"
-					},
-
-					{
-						kind:						onyx.MenuDecorator,
-
-						components: [
-							{
-								name:				"tabMenu",
-								onSelect:			"tabAction",
-								kind:				onyx.Menu,
-								components: [
-									{
-										content:	"Edit",
-										cmd:		"edit"
-									},
-									{
-										content:	"Move up",
-										cmd:		"left",
-										name:		"tableft"
-									},
-									{
-										content:	"Move down",
-										cmd:		"right",
-										name:		"tabright"
-									},
-									{
-										content:	"Delete",
-										cmd:		"delete"
-									}
-								]
-							}
-						]
-					}
-				]
+				content:							"Timeline",
+				command:							"timeline",
+				ontap:								"showSection"
 			},
 			{
-				components: [
-					{
-						content:					"Accounts",
-						classes:					"title"
-					},
-
-					{
-						content:					"New Account",
-						kind:						onyx.Button,
-						style:						"width: 100%;",
-						ontap:						"createAccount"
-					},
-
-					{
-						name:						"accounts"
-					},
-
-					{
-						kind:						onyx.MenuDecorator,
-
-						components: [
-							{
-								name:				"accountMenu",
-								onSelect:			"accountAction",
-								kind:				onyx.Menu,
-								components: [
-									{
-										content:	"Delete",
-										cmd:		"delete"
-									}
-								]
-							}
-						]
-					}
-				]
+				content:							"Columns",
+				command:							"columns",
+				ontap:								"showSection"
+			},
+			{
+				content:							"Accounts",
+				command:							"accounts",
+				ontap:								"showSection"
 			}
 		]
 	}
@@ -274,286 +58,116 @@ create: function()
 {
 	this.inherited(arguments);
 
-	/* Display the account list */
-	this.createAccountList();
-
-	/* Display the tab list */
-	this.createTabList();
-
-	/*
-		Setup each panel that has a data object. This object is a meant as a
-		simple way to setup preferences.
-	*/
-	for (var p = 0, panel; panel = this.$.panels.controls[p]; p++) {
-		if (!panel.data) {
-			continue;
-		}
-
-		panel.createComponent({
-			content:				panel.data.title || ' ',
-			classes:				"title"
-		});
-
-		for (var i = 0, item; item = panel.data.items[i]; i++) {
-			var components	= [];
-			var value		= item.key ? prefs.get(item.key) : null;
-
-			if (!item.ontap) {
-				components.push({
-					content:			item.label || '',
-					classes:			"label"
-				});
-			}
-
-			if (item.options) {
-				var options = [];
-
-				for (var o = 0, option; option = item.options[o]; o++) {
-					options.push({
-						name:			item.key + '_' + option.value,
-
-						content:		option.label || option.value,
-						value:			option.value || option.label,
-						active:			(value == option.value)
-					});
-				}
-
-				components.push({
-					classes:		"value",
-					kind:			onyx.PickerDecorator,
-
-					components: [{
-						classes:	"button"
-					}, {
-						name:		item.key,
-						key:		item.key,
-
-						kind:		"onyx.Picker",
-						components:	options,
-						onSelect:	"itemSelected"
-					}]
-				});
-			} else if (item.key) {
-				components.push({
-					name:			item.key,
-					item:			item,
-
-					classes:		"value",
-					kind:			onyx.ToggleButton,
-					value:			item.negate ? !value : value,
-
-					onChange:		"toggleChanged",
-
-					onContent:		item.onContent  || "On",
-					offContent:		item.offContent || "Off"
-				});
-			} else if (item.ontap) {
-				components.push({
-					content:				item.label || '',
-					kind:					onyx.Button,
-					style:					"width: 100%;",
-					ontap:					item.ontap
-				});
-			}
-
-			panel.createComponent({
-				classes:	"option",
-				components:	components
-			}, { owner: this });
-		}
+	if (this.$.panel && this.$.panel.data) {
+		this.renderPanel(this.$.panel);
 	}
 },
 
 destroy: function()
 {
-	if (this.dirtytabs) {
-		/* Let the main kind know it needs to re-render */
-		this.doTabsChanged();
-	}
 },
 
-createAccountList: function()
+showSection: function()
 {
-	var accounts = prefs.get('accounts');
-
-	this.$.accounts.destroyClientControls();
-	for (var i = 0, a; a = accounts[i]; i++) {
-		this.$.accounts.createComponent({
-			content:			'@' + a.screenname,
-			account:			a,
-			classes:			"account " + (a.servicename || 'twitter'),
-
-			ontap:				"accountOptions"
-		}, { owner: this });
+	/* Find the real sender */
+	if (event && event.dispatchTarget) {
+		sender = event.dispatchTarget;
 	}
 
-	this.$.accounts.render();
-},
+	var cmd = sender.command || event.command;
 
-createAccount: function(sender, event)
-{
-	/* The main kind knows how to do this, so just send an event */
-	this.doCreateAccount({});
-},
-
-accountOptions: function(sender, event)
-{
-	this.$.accountMenu.account = sender.account;
-
-	this.$.accountMenu.applyPosition(sender.getBounds);
-	this.$.accountMenu.show();
-},
-
-accountAction: function(sender, event)
-{
-	var account		= sender.account;
-	var accounts	= prefs.get('accounts');
-	var tabs		= prefs.get('panels');
-
-	switch (event.selected.cmd) {
-		case "delete":
-			/* Remove any tabs that are linked to this account */
-			for (var i = tabs.length - 1, t; t = tabs[i]; i--) {
-				if ("undefined" == typeof(t.id) || t.id === account.id) {
-					tabs.splice(i, 1);
-				}
-			}
-
-			/* Remove the account */
-			for (var i = 0, a; a = accounts[i]; i++) {
-				if (a.id === account.id) {
-					accounts.splice(i, 1);
-					break;
-				}
-			}
-
-			prefs.set('panels', tabs);
-			prefs.set('accounts', accounts);
-
-			this.tabsChanged();
-			break;
-	}
-},
-
-// TODO	Turn this into an actual enyo list, that is reorderable
-createTabList: function()
-{
-	var tabs = prefs.get('panels');
-
-	this.$.tablist.destroyClientControls();
-	for (var i = 0, t; t = tabs[i]; i++) {
-		this.$.tablist.createComponent({
-			content:			t.label || t.type,
-			tabIndex:			i,
-			classes:			"tab " + (t.service || 'twitter'),
-
-			ontap:				"tabOptions"
-		}, { owner: this });
-	}
-
-	this.$.tablist.render();
-},
-
-createTab: function(sender, event)
-{
 	this.doOpenToaster({
 		component: {
-			kind:			"TabDetails"
+			kind:				"options" + (cmd.charAt(0).toUpperCase() + cmd.slice(1)),
+			onCreateAccount:	"createAccount",
+			onOptionsChanged:	"optionsChanged"
 		},
+
 		options: {
-			notitle:		true
+			title:			sender.content
 		}
 	});
 },
 
-tabOptions: function(sender, event)
+renderPanel: function(panel)
 {
-	var tabs		= prefs.get('panels');
-
-	this.$.tabMenu.tabIndex = sender.tabIndex;
-
-	if (sender.tabIndex >= 1) {
-		this.$.tableft.removeClass('hide');
-	} else {
-		this.$.tableft.addClass('hide');
+	if (!panel || !panel.data) {
+		return;
 	}
 
-	if (sender.tabIndex < (tabs.length - 1)) {
-		this.$.tabright.removeClass('hide');
-	} else {
-		this.$.tabright.addClass('hide');
-	}
+	panel.addClass("tabdetails");
 
-	this.$.tabMenu.applyPosition(sender.getBounds);
-	this.$.tabMenu.show();
-},
+	panel.createComponent({
+		content:				panel.data.title || ' ',
+		classes:				"title"
+	}, { owner: this } );
 
-tabAction: function(sender, event)
-{
-	var tabIndex	= sender.tabIndex;
-	var tabs		= prefs.get('panels');
-	var tmp;
+	for (var i = 0, item; item = panel.data.items[i]; i++) {
+		var components	= [];
+		var value		= item.key ? prefs.get(item.key) : null;
 
-	switch (event.selected.cmd) {
-		case "edit":
-			// TODO	Show a toaster/popup for this tab to let the user edit the
-			//		following fields:
-			//			- label
-			//			- account (allow selecting from any configured account)
-			//			- type
-			//			- type specific data (search string, list name, etc)
-			//			- auto refresh time (or disabled)
-			//			- notification options
-			//
-			//		There is also the option of getting rid of the menu here
-			//		and moving the delete button to the tab details panel.
-
-			this.doOpenToaster({
-				component: {
-					kind:			"TabDetails",
-					tabs:			tabs,
-					tabIndex:		tabIndex
-				},
-
-				options: {
-					owner:	this
-				}
+		if (!item.ontap) {
+			components.push({
+				content:			item.label || '',
+				classes:			"label"
 			});
-			break;
+		}
 
-		// TODO	Allow the tabs to be dragged instead of using the menu?
-		case "left":
-			if (tabIndex > 0) {
-				tmp = tabs[tabIndex - 1];
-				tabs[tabIndex - 1] = tabs[tabIndex];
-				tabs[tabIndex] = tmp;
+		if (item.options) {
+			var options = [];
 
-				prefs.set('panels', tabs);
+			for (var o = 0, option; option = item.options[o]; o++) {
+				options.push({
+					name:			item.key + '_' + option.value,
 
-				/* Let the main kind know it needs to re-render */
-				this.tabsChanged();
+					content:		option.label || option.value,
+					value:			option.value || option.label,
+					active:			(value == option.value)
+				});
 			}
-			break;
 
-		case "right":
-			if (tabIndex < (tabs.length - 1)) {
-				tmp = tabs[tabIndex + 1];
-				tabs[tabIndex + 1] = tabs[tabIndex];
-				tabs[tabIndex] = tmp;
+			components.push({
+				classes:		"value",
+				kind:			onyx.PickerDecorator,
 
-				prefs.set('panels', tabs);
+				components: [{
+					classes:	"button"
+				}, {
+					name:		item.key,
+					key:		item.key,
 
-				this.tabsChanged();
-			}
-			break;
+					kind:		"onyx.Picker",
+					components:	options,
+					onSelect:	"itemSelected"
+				}]
+			});
+		} else if (item.key) {
+			components.push({
+				name:			item.key,
+				item:			item,
 
-		case "delete":
-			/* Remove any tabs that are linked to this account */
-			tabs.splice(tabIndex, 1);
-			prefs.set('panels', tabs);
+				classes:		"value",
+				kind:			onyx.ToggleButton,
+				value:			item.negate ? !value : value,
 
-			this.tabsChanged();
-			break;
+				onChange:		"toggleChanged",
+
+				onContent:		item.onContent  || "On",
+				offContent:		item.offContent || "Off"
+			});
+		} else if (item.ontap) {
+			components.push({
+				content:				item.label || '',
+				kind:					onyx.Button,
+				style:					"width: 100%;",
+				ontap:					item.ontap
+			});
+		}
+
+		panel.createComponent({
+			classes:	"option",
+			components:	components
+		}, { owner: this });
 	}
 },
 
@@ -610,20 +224,15 @@ toggleChanged: function(sender, event)
 	return(true);
 },
 
-tabsChanged: function(sender, event)
+createAccount: function(sender, event)
 {
-	this.createAccountList();
-	this.createTabList();
-
-	this.dirtytabs = true;
+	/* The main kind knows how to do this, so just send an event */
+	this.doCreateAccount({});
 },
 
-show: function()
+optionsChanged: function(sender, event)
 {
-	this.inherited(arguments);
-
-	this.createAccountList();
-	this.createTabList();
+	this.doOptionsChanged({});
 }
 
 });

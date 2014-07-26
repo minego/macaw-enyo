@@ -81,10 +81,6 @@ components: [
 				name:								"refreshFields",
 				components: [
 					{
-						tag:						"br"
-					},
-
-					{
 						content:					"Refresh Every",
 						classes:					"label"
 					},

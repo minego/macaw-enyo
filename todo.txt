@@ -16,6 +16,7 @@
 		- Reply inserts trailing space, which is rendered but removed as soon as
 		  you start typing.
 		- Keyboard does not always hide on cancel.
+		- Keyboard is slow to render
 
 + Preview
 	- Implement options menu
@@ -38,5 +39,10 @@
 	- User tweets
 	- DM on ADN
 
-- Restyle options
++ Restyle options
+	- Use full height page on mobile devices.
+
+
+- Wake to refresh on FFOS
+- Change style for showing refresh in progress
 

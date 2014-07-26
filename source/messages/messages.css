@@ -53,6 +53,10 @@
 }
 
 /* Allow customizing the size of text in the message list */
+.fontSizeMicro .messagelist,
+.fontSizeMicro .messagelist a {
+	font-size:				10px;
+}
 .fontSizeTiny .messagelist,
 .fontSizeTiny .messagelist a {
 	font-size:				12px;

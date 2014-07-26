@@ -1052,7 +1052,7 @@ handleButton: function(sender, event)
 		sender = event.dispatchTarget;
 	}
 
-	cmd = sender.command || event.command;
+	var cmd = sender.command || event.command;
 
 	switch (cmd) {
 		case "options":
@@ -1078,7 +1078,7 @@ handleButton: function(sender, event)
 				onCreateAccount:	"createAccount"
 			}, {
 				owner:				this,
-				wide:				true
+				title:				"Preferences"
 			});
 
 			break;

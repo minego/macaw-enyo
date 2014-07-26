@@ -89,7 +89,7 @@ get: function get(name, account)
 		json = enyo.getCookie(name);
 	}
 
-	if (!result) {
+	if (typeof(result) === "undefined") {
 		try {
 			if (json) {
 				result = enyo.json.parse(json);
