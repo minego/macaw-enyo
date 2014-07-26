@@ -1056,7 +1056,15 @@ handleButton: function(sender, event)
 
 	switch (cmd) {
 		case "options":
-			this.$.appmenu.toggle();
+			var toolbar		= prefs.get('toolbar');
+
+			if (!this.$.appmenu.getShowing()) {
+				if (toolbar != 'top') {
+					this.$.appmenu.showAtPosition({ left: 0, bottom: 42 });
+				} else {
+					this.$.appmenu.showAtPosition({ left: 0, top: 42 });
+				}
+			}
 			break;
 
 		case "refresh":

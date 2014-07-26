@@ -333,12 +333,17 @@ published: {
 
 components: [
 	{
-		name:					"title",
 		classes:				"title toastertitle",
+		name:					"titlebar",
 
 		components: [{
-			classes:			"back icon",
-			ontap:				"back"
+			name:				"title",
+			classes:			"text",
+			content:			""
+		}, {
+			classes:			"done",
+			ontap:				"back",
+			content:			"Done"
 		}]
 	}
 ],
@@ -347,12 +352,12 @@ create: function()
 {
 	this.inherited(arguments);
 
-	if (this.title) {
-		this.$.title.setContent(this.title);
-	}
+	this.$.title.setContent(this.title || '');
 
 	if (this.notitle) {
-		this.$.title.addClass('hide');
+		this.$.titlebar.addClass('hide');
+	} else {
+		this.$.titlebar.removeClass('hide');
 	}
 },
 

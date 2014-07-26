@@ -130,11 +130,15 @@
 	padding:				15px 0px;
 }
 
-.toaster .toastertitle {
+.toaster .toastertitle .text {
 	height:					32px;
 	font-size:				16px;
+
 	color:					#d2d2d2;
-	text-align:				center;
+	text-transform:			uppercase;
+	font-weight:			bold;
+	line-height:			32px;
+	margin-left:			10px;
 
 	background:				url('../../assets/title-bg.png') left 28px repeat-x;
 }
@@ -143,6 +147,15 @@
 	height:					32px;
 	width:					32px;
 	float:					right;
+}
+.toaster .toastertitle .done {
+	float:					right;
+	line-height:			32px;
+
+	font-size:				16px;
+	position:				absolute;
+	top:					0px;
+	right:					5px;
 }
 
 .scrim.opacity {
@@ -187,4 +200,5 @@
 .scrim.image.transparent {
 	display:				block;
 }
+
 
