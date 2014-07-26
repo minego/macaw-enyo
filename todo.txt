@@ -40,10 +40,6 @@
 	- DM on ADN
 
 
-+ Toasters
-	- Fix titles
-	- Remove small x, and replace with "Done" button that is easier to tap
-
 
 - Wake to refresh on FFOS
 - Change style for showing refresh in progress
