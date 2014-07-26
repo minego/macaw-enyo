@@ -683,10 +683,11 @@ panelRefreshStop: function(sender, event)
 optionsChanged: function(sender, event)
 {
 	var		icons = [ 'options', 'refreshbtn', 'composebtn' ];
+	var		theme = prefs.get('theme').split(',')[0];
 
 	/* Fix up the icons based on the current theme */
 	for (var i = 0, icon; icon = this.$[icons[i]]; i++) {
-		icon.setSrc('assets/' + prefs.get('theme') + '/icons/' + icon.iconname + '.png');
+		icon.setSrc('assets/' + theme + '/icons/' + icon.iconname + '.png');
 	}
 
 	this.toolbarsChanged();
@@ -1350,7 +1351,7 @@ adjustTabs: function(force)
 	var tabWidth;
 	var width;
 	var left;
-	var theme		= prefs.get('theme');
+	var theme		= prefs.get('theme').split(',')[0];
 	var haveactive	= force || false;
 
 	// TODO	Switch back to background images, just give up on the spinning
@@ -1361,6 +1362,7 @@ adjustTabs: function(force)
 	*/
 	switch (theme) {
 		case 'ffos':
+		case 'ffos-dark':
 			haveactive	= true;
 			break;
 	}

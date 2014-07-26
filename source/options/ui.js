@@ -42,6 +42,8 @@ components: [
 								{ label: "Holo Dark",	value: "holo-dark"			},
 								{ label: "Holo Red",	value: "holo-dark,holo-red"	},
 								{ label: "Firefox OS",	value: "ffos"				},
+								{ label: "Firefox OS Dark",
+														value: "ffos,ffos-dark"		},
 								{ label: "Macaw Bros",	value: "macawbros"			}
 							]
 						},

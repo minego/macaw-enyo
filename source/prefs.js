@@ -197,18 +197,26 @@ updateClasses: function(component)
 	}
 
 	for (var key in this.defaults) {
-		switch (typeof(this.defaults[key])) {
-			case "boolean":
-				if (this.get(key)) {
-					classes.push(key);
-				}
-				break;
+		if (key === "theme") {
+			value = this.get(key).split(',');
 
-			case "string":
-				if ((value = this.get(key))) {
-					classes.push(key + enyo.cap(value));
-				}
-				break;
+			for (var i = 0, v; v = value[i]; i++) {
+				classes.push(key + enyo.cap(v));
+			}
+		} else {
+			switch (typeof(this.defaults[key])) {
+				case "boolean":
+					if (this.get(key)) {
+						classes.push(key);
+					}
+					break;
+
+				case "string":
+					if ((value = this.get(key))) {
+						classes.push(key + enyo.cap(value));
+					}
+					break;
+			}
 		}
 	}
 
@@ -219,6 +227,11 @@ updateClasses: function(component)
 	if ((value = this.get('theme'))) {
 		var head	= document.getElementsByTagName("head")[0];
 
+		if (this.prevtheme && this.prevtheme === value) {
+			return;
+		}
+
+		this.prevtheme = value;
 		value = value.split(',');
 
 		if (this.themeElements) {
