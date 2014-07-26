@@ -1156,9 +1156,9 @@ keydown: function(sender, event)
 			/*
 				By default ignore key presses when a toaster is visible.
 
-				If it happens to be ctrl+r though, then we still want to prevent the
-				default behavior so that the user doesn't reload the browser window
-				without meaning to.
+				If it happens to be ctrl+r though, then we still want to prevent
+				the default behavior so that the user doesn't reload the browser
+				window without meaning to.
 			*/
 			if (event.keyCode == 82 && event.ctrlKey) {
 				event.preventDefault();
@@ -1170,17 +1170,19 @@ keydown: function(sender, event)
 		case "none":
 			switch (event.keyCode) {
 				case 82: /* r */
-					if (event.ctrlKey) {
-						if (!event.shiftKey) {
-							/* Refresh all panels */
-							this.handleButton({ command: "refresh" });
-						} else {
-							/* Refresh the current panel */
-							var panel;
+					if (!event.ctrlKey) {
+						return(true);
+					}
 
-							if ((panel = this.$['panel' + this.index])) {
-								panel.refresh();
-							}
+					if (!event.shiftKey) {
+						/* Refresh all panels */
+						this.handleButton({ command: "refresh" });
+					} else {
+						/* Refresh the current panel */
+						var panel;
+
+						if ((panel = this.$['panel' + this.index])) {
+							panel.refresh();
 						}
 					}
 					break;
