@@ -4,7 +4,6 @@
 	position:				fixed;
 
 	color:					#d2d2d2;
-	max-height:				1024px;
 }
 
 .toaster-chain.bottom .toaster {
@@ -128,6 +127,9 @@
 	width:					100%;
 	background:				url('../../assets/toaster-controls.png') left top repeat-x;
 	padding:				15px 0px;
+}
+
+.toaster .titlebar {
 }
 
 .toaster .title {

@@ -342,7 +342,7 @@ create: function()
 	if (!this.notitle) {
 		this.createComponent(
 		{
-			classes:					"controls",
+			classes:					"controls titlebar",
 			layoutKind:					"FittableColumnsLayout",
 
 			components: [

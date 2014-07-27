@@ -10,7 +10,8 @@
 	padding-left:		20px;
 }
 
-.options .wideitem {
+.options .wideitem,
+.tabdetails .wideitem {
 	width:				84%;
 	margin-left:		8%;
 }
@@ -85,16 +86,10 @@
 }
 
 .tabdetails .save,
+.tabdetails .delete,
 .tabdetails .cancel {
 	width:				150px !important;
-	margin:				10px 20px;
+	margin:				10px;
 }
 
-.tabdetails .save {
-	float:				right;
-}
-
-.tabdetails .cancel {
-	float:				left;
-}
 

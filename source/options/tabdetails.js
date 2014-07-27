@@ -119,20 +119,31 @@ components: [
 				tag:								"br"
 			},
 
-
 			{
-				kind:								onyx.Button,
-				name:								"cancel",
-				content:							"Cancel",
-				ontap:								"cancel",
-				classes:							"button onyx-negative cancel"
-			},
-			{
-				kind:								onyx.Button,
-				name:								"save",
-				content:							"Save",
-				ontap:								"save",
-				classes:							"button onyx-affirmative save"
+				classes:							"center",
+				components: [
+					{
+						kind:						onyx.Button,
+						name:						"cancel",
+						content:					"Cancel",
+						ontap:						"cancel",
+						classes:					"button onyx-negative cancel"
+					},
+					{
+						kind:						onyx.Button,
+						name:						"del",
+						content:					"Delete",
+						ontap:						"del",
+						classes:					"button onyx-negative delete"
+					},
+					{
+						kind:						onyx.Button,
+						name:						"save",
+						content:					"Save",
+						ontap:						"save",
+						classes:					"button onyx-affirmative save"
+					}
+				]
 			}
 		]
 	}
@@ -161,6 +172,7 @@ create: function()
 		tab = this.tabs[this.tabIndex];
 	} else {
 		tab = null;
+		this.$.del.hide();
 	}
 
 	if (tab) {
@@ -267,6 +279,15 @@ save: function()
 
 cancel: function()
 {
+	this.doCloseToaster();
+},
+
+del: function()
+{
+	this.tabs.splice(this.tabIndex, 1);
+	prefs.set('panels', this.tabs);
+
+	this.doTabsChanged();
 	this.doCloseToaster();
 }
 

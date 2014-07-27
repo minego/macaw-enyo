@@ -27,11 +27,12 @@ events: {
 	onOpenToaster:									""
 },
 
-// TODO	Move delete into the tab details
 // TODO	Don't worry about moving tabs for now
 components: [
 	{
 		kind:										enyo.Scroller,
+		style:										"min-height: 200px;",
+
 		components: [
 			{
 				name:								"tablist",
@@ -39,7 +40,7 @@ components: [
 			},
 
 			{
-				content:							"Add Tab",
+				content:							"Add Column",
 				kind:								onyx.Button,
 				classes:							"wideitem",
 				ontap:								"createTab"
@@ -91,6 +92,7 @@ createTab: function(sender, event)
 			kind:			"TabDetails"
 		},
 		options: {
+			owner:			this,
 			notitle:		true
 		}
 	});
@@ -109,7 +111,8 @@ tabOptions: function(sender, event)
 		},
 
 		options: {
-			owner:	this
+			owner:			this,
+			notitle:		true
 		}
 	});
 },

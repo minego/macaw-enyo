@@ -28,16 +28,10 @@ events: {
 components: [
 	{
 		kind:								enyo.Scroller,
+		style:								"min-height: 200px;",
 		components: [
 			{
 				name:						"accounts",
-				classes:					"wideitem"
-			},
-
-			{
-				content:					"New Account",
-				kind:						onyx.Button,
-				ontap:						"createAccount",
 				classes:					"wideitem"
 			},
 
@@ -57,6 +51,13 @@ components: [
 						]
 					}
 				]
+			},
+
+			{
+				content:					"New Account",
+				kind:						onyx.Button,
+				ontap:						"createAccount",
+				classes:					"wideitem"
 			}
 		]
 	}
@@ -101,8 +102,6 @@ createAccount: function(sender, event)
 accountOptions: function(sender, event)
 {
 	this.$.accountMenu.account = sender.account;
-
-	this.$.accountMenu.applyPosition(sender.getBounds);
 	this.$.accountMenu.show();
 },
 
