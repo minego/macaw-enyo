@@ -355,6 +355,7 @@ body.Pre3 {
 }
 
 .groupbox {
+	border:					9px solid transparent;
 	border-width:			9px;
 	-webkit-border-image:	url(../assets/groupbox.png) 9 stretch;
 	border-image:			url(../assets/groupbox.png) 9 9 fill stretch;
