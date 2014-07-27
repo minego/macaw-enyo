@@ -14,11 +14,14 @@
 	margin-right:			auto;
 }
 
-.profile .info > * > * > * {
+.profile .info .item * {
 	display:				inline-block;
 }
 
-.profile .info > * > * :last-child {
+.profile .info .item :first-child {
+	clear:					both;
+}
+.profile .info .item :last-child {
 	float:					right;
 }
 
@@ -34,9 +37,9 @@
 }
 
 .profile .avatar.large {
+	border:					2px solid white;
 	-webkit-border-radius:	5px;
 	border-radius:			5px;
-	border:					2px solid white;
 
 	margin:					0px auto 10px auto;
 

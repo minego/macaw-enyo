@@ -257,6 +257,8 @@ profileChanged: function()
 				component.name = item.name;
 			}
 
+			component.classes += ' item';
+
 			switch (typeof value) {
 				case 'number':
 				case 'string':
