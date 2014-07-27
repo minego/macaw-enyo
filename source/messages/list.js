@@ -763,7 +763,7 @@ itemTap: function(sender, event)
 				}
 			}
 		}
-this.log(convo);
+		// this.log(convo);
 	}
 
 	if (item.id) {

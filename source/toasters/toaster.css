@@ -130,7 +130,7 @@
 	padding:				15px 0px;
 }
 
-.toaster .toastertitle .text {
+.toaster .title {
 	height:					32px;
 	font-size:				16px;
 
@@ -139,23 +139,6 @@
 	font-weight:			bold;
 	line-height:			32px;
 	margin-left:			10px;
-
-	background:				url('../../assets/title-bg.png') left 28px repeat-x;
-}
-
-.toaster .toastertitle .icon {
-	height:					32px;
-	width:					32px;
-	float:					right;
-}
-.toaster .toastertitle .done {
-	float:					right;
-	line-height:			32px;
-
-	font-size:				16px;
-	position:				absolute;
-	top:					0px;
-	right:					5px;
 }
 
 .scrim.opacity {

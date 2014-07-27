@@ -332,32 +332,37 @@ published: {
 },
 
 components: [
-	{
-		classes:				"title toastertitle",
-		name:					"titlebar",
 
-		components: [{
-			name:				"title",
-			classes:			"text",
-			content:			""
-		}, {
-			classes:			"done",
-			ontap:				"back",
-			content:			"Done"
-		}]
-	}
 ],
 
 create: function()
 {
 	this.inherited(arguments);
 
-	this.$.title.setContent(this.title || '');
+	if (!this.notitle) {
+		this.createComponent(
+		{
+			classes:					"controls",
+			layoutKind:					"FittableColumnsLayout",
 
-	if (this.notitle) {
-		this.$.titlebar.addClass('hide');
-	} else {
-		this.$.titlebar.removeClass('hide');
+			components: [
+				{
+					name:				"title",
+					classes:			"title",
+					content:			this.title || ''
+				},
+
+				{
+					fit:				true
+				},
+
+				{
+					classes:			"back icon",
+					command:			"back",
+					ontap:				"back"
+				}
+			]
+		}, { owner: this });
 	}
 },
 
