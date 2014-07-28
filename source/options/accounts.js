@@ -21,36 +21,18 @@ classes:									"accounts",
 
 events: {
 	onCreateAccount:						"",
-	oncloseToaster:							"",
-	onOpenToaster:							""
+	onCloseToaster:							"",
+	onOpenToaster:							"",
+	onTabsChanged:							""
 },
 
 components: [
 	{
 		kind:								enyo.Scroller,
-		style:								"min-height: 200px;",
 		components: [
 			{
 				name:						"accounts",
 				classes:					"wideitem"
-			},
-
-			{
-				kind:						onyx.MenuDecorator,
-
-				components: [
-					{
-						name:				"accountMenu",
-						onSelect:			"accountAction",
-						kind:				onyx.Menu,
-						components: [
-							{
-								content:	"Delete",
-								cmd:		"delete"
-							}
-						]
-					}
-				]
 			},
 
 			{
@@ -101,18 +83,39 @@ createAccount: function(sender, event)
 
 accountOptions: function(sender, event)
 {
-	this.$.accountMenu.account = sender.account;
-	this.$.accountMenu.show();
+	this.selectedAccount = sender.account;
+
+	this.doOpenToaster({
+		component: {
+			kind:					"smart-menu",
+			title:					"Are you sure?",
+			items:					[ "Delete" ],
+			showing:				true,
+			onSelect:				"delAccount"
+		},
+
+		options: {
+			owner:					this,
+			notitle:				true
+		}
+	});
 },
 
 accountAction: function(sender, event)
 {
-	var account		= sender.account;
+	/* Find the real sender */
+	if (event && event.dispatchTarget) {
+		sender = event.dispatchTarget;
+	}
+
+	var index		= sender.index || event.index;
+
+	var account		= this.selectedAccount;
 	var accounts	= prefs.get('accounts');
 	var tabs		= prefs.get('panels');
 
-	switch (event.selected.cmd) {
-		case "delete":
+	switch (index) {
+		case 0: /* delete */
 			/* Remove any tabs that are linked to this account */
 			for (var i = tabs.length - 1, t; t = tabs[i]; i--) {
 				if ("undefined" == typeof(t.id) || t.id === account.id) {
@@ -131,7 +134,7 @@ accountAction: function(sender, event)
 			prefs.set('panels', tabs);
 			prefs.set('accounts', accounts);
 
-			this.tabsChanged();
+			this.doTabsChanged();
 			break;
 	}
 },

@@ -1,0 +1,16 @@
+.smart-menu .title {
+	margin:					10px 5% 10px 5%;
+}
+
+.smart-menu .button {
+	width:					90%;
+	margin:					10px 5% 10px 5%;
+	font-weight:			bold;
+}
+
+.smart-menu .menuitem {
+	color:					white;
+	background:				#888;
+	text-align:				left;
+}
+

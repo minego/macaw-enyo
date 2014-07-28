@@ -120,30 +120,11 @@ components: [
 			},
 
 			{
-				classes:							"center",
-				components: [
-					{
-						kind:						onyx.Button,
-						name:						"cancel",
-						content:					"Cancel",
-						ontap:						"cancel",
-						classes:					"button onyx-negative cancel"
-					},
-					{
-						kind:						onyx.Button,
-						name:						"del",
-						content:					"Delete",
-						ontap:						"del",
-						classes:					"button onyx-negative delete"
-					},
-					{
-						kind:						onyx.Button,
-						name:						"save",
-						content:					"Save",
-						ontap:						"save",
-						classes:					"button onyx-affirmative save"
-					}
-				]
+				name:								"menu",
+				kind:								"smart-menu",
+				items:								[ ],
+				showing:							true,
+				onSelect:							"handleButton"
 			}
 		]
 	}
@@ -170,13 +151,13 @@ create: function()
 
 	if (!isNaN(this.tabIndex)) {
 		tab = this.tabs[this.tabIndex];
-	} else {
-		tab = null;
-		this.$.del.hide();
 	}
 
 	if (tab) {
+		this.$.menu.setItems([ "Save", "Delete" ]);
 		this.$.notify.setValue(tab.notify);
+	} else {
+		this.$.menu.setItems([ "Save" ]);
 	}
 
 	this.accounts = prefs.get('accounts');
@@ -219,76 +200,72 @@ create: function()
 
 		this.$.refresh.createComponent(t, { owner: this });
 	}
-
-	if (this.savelabel) {
-		this.$.save.setContent(this.savelabel);
-	}
-
-	if (this.hidecancel) {
-		this.$.cancel.hide();
-	}
 },
 
-save: function()
+handleButton: function(sender, event)
 {
-	var account;
-
-	var tab = {
-		type:		this.$.types.getSelected().value,
-		id:			this.$.accounts.getSelected().value,
-		refresh:	this.$.refresh.getSelected().value,
-		notify:		this.$.notify.getValue(),
-		label:		'',
-		service:	'twitter'
-	};
-
-	if (this.norefresh) {
-		tab.refresh	= -1;
-		tab.notify	= false;
+	/* Find the real sender */
+	if (event && event.dispatchTarget) {
+		sender = event.dispatchTarget;
 	}
 
-	for (var i = 0, a; a = this.accounts[i]; i++) {
-		if (tab.id == a.id) {
-			account = a;
+	var index	= sender.index || event.index;
+	switch (index) {
+		case 0: /* Save */
+			var account;
+
+			var tab = {
+				type:		this.$.types.getSelected().value,
+				id:			this.$.accounts.getSelected().value,
+				refresh:	this.$.refresh.getSelected().value,
+				notify:		this.$.notify.getValue(),
+				label:		'',
+				service:	'twitter'
+			};
+
+			if (this.norefresh) {
+				tab.refresh	= -1;
+				tab.notify	= false;
+			}
+
+			for (var i = 0, a; a = this.accounts[i]; i++) {
+				if (tab.id == a.id) {
+					account = a;
+					break;
+				}
+			}
+
+			if (account) {
+				tab.label = '@' + account.screenname;
+				tab.service = account.servicename;
+			}
+
+			switch (tab.type) {
+				case "timeline":	tab.label += ' home';			break;
+				case "messages":	tab.label += ' DMs';			break;
+				default:			tab.label += ' ' + tab.type;	break;
+			}
+
+			if (isNaN(this.tabIndex) || !this.tabs[this.tabIndex]) {
+				this.tabs.push(tab);
+			} else {
+				this.tabs[this.tabIndex] = tab;
+			}
+
+			prefs.set('panels', this.tabs);
+
+			this.doTabsChanged();
+			this.doCloseToaster();
 			break;
-		}
+
+		case 1: /* Delete */
+			this.tabs.splice(this.tabIndex, 1);
+			prefs.set('panels', this.tabs);
+
+			this.doTabsChanged();
+			this.doCloseToaster();
+			break;
 	}
-
-	if (account) {
-		tab.label = '@' + account.screenname;
-		tab.service = account.servicename;
-	}
-
-	switch (tab.type) {
-		case "timeline":	tab.label += ' home';			break;
-		case "messages":	tab.label += ' DMs';			break;
-		default:			tab.label += ' ' + tab.type;	break;
-	}
-
-	if (isNaN(this.tabIndex) || !this.tabs[this.tabIndex]) {
-		this.tabs.push(tab);
-	} else {
-		this.tabs[this.tabIndex] = tab;
-	}
-
-	prefs.set('panels', this.tabs);
-
-	this.doTabsChanged();
-	this.doCloseToaster();
-},
-
-cancel: function()
-{
-	this.doCloseToaster();
-},
-
-del: function()
-{
-	this.tabs.splice(this.tabIndex, 1);
-	prefs.set('panels', this.tabs);
-
-	this.doTabsChanged();
-	this.doCloseToaster();
 }
 
 });

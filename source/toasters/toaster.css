@@ -133,7 +133,7 @@
 }
 
 .toaster .title {
-	height:					32px;
+	min-height:				32px;
 	font-size:				16px;
 
 	color:					#d2d2d2;

@@ -313,6 +313,8 @@ handleScrim: function()
 	if (!options.modal) {
 		this.pop(this.toasters.length);
 	}
+
+	return(true);
 }
 
 });

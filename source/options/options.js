@@ -27,30 +27,11 @@ events: {
 
 components: [
 	{
-		classes:									"sectionButtons",
-
-		components: [
-			{
-				content:							"Appearance",
-				command:							"UI",
-				ontap:								"showSection"
-			},
-			{
-				content:							"Timeline",
-				command:							"timeline",
-				ontap:								"showSection"
-			},
-			{
-				content:							"Columns",
-				command:							"columns",
-				ontap:								"showSection"
-			},
-			{
-				content:							"Accounts",
-				command:							"accounts",
-				ontap:								"showSection"
-			}
-		]
+		kind:										"smart-menu",
+		title:										"Preferences",
+		items:										[ "Appearance", "Timeline", "Columns", "Accounts" ],
+		showing:									true,
+		onSelect:									"showSection"
 	}
 ],
 
@@ -74,17 +55,29 @@ showSection: function(sender, event)
 		sender = event.dispatchTarget;
 	}
 
-	var cmd = sender.command || event.command;
+	var title	= null;
+	var cmd		= null;
+	var index	= sender.index || event.index;
+
+	switch (index) {
+		case 0:	cmd = 'UI';			title = 'Appearance';	break;
+		case 1:	cmd = 'Timeline';	title = 'Timeline';		break;
+		case 2:	cmd = 'Columns';	title = 'Columns';		break;
+		case 3:	cmd = 'Accounts';	title = 'Accounts';		break;
+	}
+	if (!cmd) {
+		return;
+	}
 
 	this.doOpenToaster({
 		component: {
-			kind:				"options" + (cmd.charAt(0).toUpperCase() + cmd.slice(1)),
+			kind:				"options" + cmd,
 			onCreateAccount:	"createAccount",
 			onOptionsChanged:	"optionsChanged"
 		},
 
 		options: {
-			title:			sender.content
+			title:				title
 		}
 	});
 },

@@ -27,11 +27,10 @@ events: {
 	onOpenToaster:									""
 },
 
-// TODO	Don't worry about moving tabs for now
+// TODO	It would be nice to allow reordering the columns
 components: [
 	{
 		kind:										enyo.Scroller,
-		style:										"min-height: 200px;",
 
 		components: [
 			{

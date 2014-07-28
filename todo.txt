@@ -44,3 +44,10 @@
 - Wake to refresh on FFOS
 - Change style for showing refresh in progress
 
++ Menus
+	- Use system specific menus when possible (like on FFOS)
+	- Use a common menu interface through the whole app
+
+- Correct events when clicking on an avatar on FFOS
+- Allow clicking on the URL in a profile
+

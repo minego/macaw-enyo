@@ -346,6 +346,10 @@ handleCommand: function(sender, event)
 
 	cmd = sender.command || event.command;
 
+	if (!cmd) {
+		return(true);
+	}
+
 	switch (cmd) {
 		case "back":
 			this.doCloseToaster();

@@ -318,15 +318,15 @@ handleTap: function(sender, event)
 				} else {
 					this.doTapLink({ url: event.target.innerText });
 				}
-				return;
+				return(true);
 
 			case "user":
 				this.doTapUser({ screenname: event.target.innerText });
-				return;
+				return(true);
 
 			case "hashtag":
 				this.doTapHashTag({ tag: event.target.innerText });
-				return;
+				return(true);
 		}
 	}
 
@@ -334,7 +334,7 @@ handleTap: function(sender, event)
 	try {
 		if (event.originator.link) {
 			this.doTapLink({ url: event.originator.link });
-			return;
+			return(true);
 		}
 
 		classes = event.originator.classes.split(' ');
@@ -354,6 +354,8 @@ handleTap: function(sender, event)
 			this.doTapUser({ user: this.item.user });
 		}
 	}
+
+	return(true);
 }
 
 });

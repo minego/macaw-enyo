@@ -35,23 +35,6 @@
 	padding-left:		30px;
 }
 
-.options .sectionButtons * {
-	border-bottom:		1px solid grey;
-	width:				84%;
-	margin-left:		auto;
-	margin-right:		auto;
-	padding-top:		10px;
-	padding-bottom:		10px;
-
-	font-size:			18px;
-	font-weight:		bold;
-
-	height:				25px;
-}
-.options .sectionButtons *:last-child {
-	border-bottom:		0px;
-}
-
 .options .label,
 .tabdetails .label {
 	display:			inline-block;
@@ -76,7 +59,7 @@
 	margin:				10px 20px;
 }
 
-.options .button,
+.options .panel .button,
 .tabdetails .button {
 	height:				32px;
 	line-height:		32px;

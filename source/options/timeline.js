@@ -30,6 +30,7 @@ components: [
 		components: [
 			{
 				name:								"panel",
+				classes:							"panel",
 				data: {
 					items: [
 						{

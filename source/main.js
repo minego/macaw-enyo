@@ -99,31 +99,11 @@ components: [
 	},
 
 	{
-		kind:								"enyo.AppMenu",
-		name:								"appmenu",
-
-		components: [
-			{
-				content:					$L("Refresh"),
-				command:					"refresh",
-				onSelect:					"handleButton"
-			},
-			{
-				content:					$L("Redraw"),
-				command:					"redraw",
-				onSelect:					"createTabs"
-			},
-			{
-				content:					$L("Compose"),
-				command:					"compose",
-				onSelect:					"handleButton"
-			},
-			{
-				content:					$L("Preferences"),
-				command:					"preferences",
-				onSelect:					"handleButton"
-			}
-		]
+		kind:								onyx.MenuDecorator,
+		components: [{
+			name:							"globalMenu",
+			kind:							onyx.Menu
+		}]
 	},
 
 	{
@@ -1046,6 +1026,41 @@ closeAllToasters: function()
 	this.$.toasters.pop(this.$.toasters.getLength());
 },
 
+showAppMenu: function(title, items)
+{
+	this.$.toasters.push({
+		kind:			"smart-menu",
+		title:			"Macaw",
+		items:			[ "Refresh", "Redraw", "Compose", "Preferences" ],
+		showing:		true,
+		onSelect:		"handleAppMenu"
+	}, {
+		owner:			this,
+
+		notitle:		true
+	});
+},
+
+handleAppMenu: function(sender, event)
+{
+	this.$.toasters.pop();
+
+	switch (event.index) {
+		case 0: /* Refresh */
+			this.handleButton({ command: "refresh" });
+			break;
+		case 1: /* Redraw */
+			this.createTabs();
+			break;
+		case 2: /* Compose */
+			this.handleButton({ command: "compose" });
+			break;
+		case 3: /* Preferences */
+			this.handleButton({ command: "preferences" });
+			break;
+	}
+},
+
 handleButton: function(sender, event)
 {
 	/* Find the real sender */
@@ -1057,15 +1072,7 @@ handleButton: function(sender, event)
 
 	switch (cmd) {
 		case "options":
-			var toolbar		= prefs.get('toolbar');
-
-			if (!this.$.appmenu.getShowing()) {
-				if (toolbar != 'top') {
-					this.$.appmenu.showAtPosition({ left: 0, bottom: 42 });
-				} else {
-					this.$.appmenu.showAtPosition({ left: 0, top: 42 });
-				}
-			}
+			this.showAppMenu();
 			break;
 
 		case "refresh":
@@ -1087,7 +1094,7 @@ handleButton: function(sender, event)
 				onCreateAccount:	"createAccount"
 			}, {
 				owner:				this,
-				title:				"Preferences"
+				notitle:			true
 			});
 
 			break;
