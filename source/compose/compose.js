@@ -152,8 +152,6 @@ components: [
 
 create: function()
 {
-	var		showmenu = false;
-
 	this.inherited(arguments);
 
 	this.textChanged();
@@ -203,21 +201,8 @@ create: function()
 		this.usersChanged();
 	}
 
-	/* Don't allow attaching an image on a DM */
-	if (this.dm) {
-		this.$.pickItem.destroy();
-	} else {
-		showmenu = true;
-	}
-
-	if (this.users.length <= 1) {
-		/* Hide multi account features */
-		this.$.chooseAccountItem.destroy();
-	} else {
-		showmenu = true;
-	}
-
-	if (!showmenu) {
+	/* Hide the options menu if there are no appropriate options */
+	if (this.dm && this.users.length <= 1) {
 		this.$.optionsButton.destroy();
 	}
 },
@@ -529,12 +514,22 @@ focus: function()
 
 handleCommand: function(sender, event)
 {
-	/* Find the real sender */
-	if (event && event.dispatchTarget) {
-		sender = event.dispatchTarget;
-	}
+	var cmd;
 
-	cmd = sender.command || event.command;
+	if (event && event.value) {
+		/* Handle the menu event */
+		cmd = event.value;
+
+		/* Close the menu toaster */
+		this.doCloseToaster();
+	} else {
+		/* Find the real sender */
+		if (event && event.dispatchTarget) {
+			sender = event.dispatchTarget;
+		}
+
+		cmd = sender.command || event.command;
+	}
 
 	switch (cmd) {
 		case "cancel":
@@ -543,8 +538,36 @@ handleCommand: function(sender, event)
 			break;
 
 		case "options":
-			this.$.optionsMenu.applyPosition(sender.getBounds);
-			this.$.optionsMenu.show();
+			var options = [];
+			var values	= [];
+
+			/* Don't allow attaching an image on a DM */
+			if (!this.dm) {
+				options.push("Attach Image");
+				values.push("pick");
+			}
+
+			if (this.users.length > 1) {
+				options.push("Switch Account");
+				values.push("chooseAccount");
+			}
+
+			this.doOpenToaster({
+				component: {
+					kind:					"smart-menu",
+					items:					options,
+					values:					values,
+					showing:				true,
+					onSelect:				"handleCommand"
+				},
+
+				options: {
+					owner:					this,
+					notitle:				true
+				}
+			});
+
+
 			break;
 
 		case "split":

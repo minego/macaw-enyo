@@ -90,8 +90,9 @@ accountOptions: function(sender, event)
 			kind:					"smart-menu",
 			title:					"Are you sure?",
 			items:					[ "Delete" ],
+			values:					[ "delete" ],
 			showing:				true,
-			onSelect:				"delAccount"
+			onSelect:				"accountAction"
 		},
 
 		options: {
@@ -103,19 +104,12 @@ accountOptions: function(sender, event)
 
 accountAction: function(sender, event)
 {
-	/* Find the real sender */
-	if (event && event.dispatchTarget) {
-		sender = event.dispatchTarget;
-	}
-
-	var index		= sender.index || event.index;
-
 	var account		= this.selectedAccount;
 	var accounts	= prefs.get('accounts');
 	var tabs		= prefs.get('panels');
 
-	switch (index) {
-		case 0: /* delete */
+	switch (event.value) {
+		case "delete":
 			/* Remove any tabs that are linked to this account */
 			for (var i = tabs.length - 1, t; t = tabs[i]; i--) {
 				if ("undefined" == typeof(t.id) || t.id === account.id) {
@@ -135,6 +129,7 @@ accountAction: function(sender, event)
 			prefs.set('accounts', accounts);
 
 			this.doTabsChanged();
+			this.doCloseToaster();
 			break;
 	}
 },

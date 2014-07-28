@@ -21,6 +21,7 @@ classes:					"smart-menu",
 published: {
 	title:					"",
 	items:					[],
+	values:					[],
 	showing:				false,
 	modal:					false
 },
@@ -56,6 +57,7 @@ create: function() {
 	this.setModal(this.modal);
 	this.setTitle(this.title);
 	this.setItems(this.items);
+	this.setValues(this.values);
 },
 
 setModal: function(modal) {
@@ -111,7 +113,8 @@ handleButton: function(sender, event)
 		this.doSelect({
 			index:		sender.index,
 			items:		this.items,
-			item:		this.items[sender.index]
+			item:		this.items[sender.index],
+			value:		this.values[sender.index]
 		});
 	}
 }

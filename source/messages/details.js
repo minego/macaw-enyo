@@ -108,51 +108,7 @@ components: [
 				command:			"back"
 			}
 		]
-	},
-
-	{
-		kind:						onyx.MenuDecorator,
-
-		components: [
-			{
-				name:				"optionsMenu",
-				onSelect:			"handleCommand",
-				kind:				onyx.Menu,
-				components: [
-					{
-						content:	"Public Mention",
-						command:	"mention"
-					},
-					{
-						content:	"Send Direct Message",
-						command:	"dm",
-						name:		"dmMenuItem"
-					},
-					{
-						content:	"Mute",
-						command:	"mute",
-						name:		"muteMenuItem"
-					},
-					{
-						content:	"Block",
-						command:	"block"
-					},
-					{
-						content:	"Report Spam",
-						command:	"spam",
-						name:		"spamMenuItem"
-					},
-					{
-						content:	"Hide",
-						command:	"hide"
-					}
-
-					// TODO	Add share options
-				]
-			}
-		]
 	}
-
 ],
 
 create: function()
@@ -161,18 +117,6 @@ create: function()
 
 	if (this.user) {
 		this.service = this.user.service;
-	}
-
-	if (!this.service.features.dm) {
-		this.$.dmMenuItem.destroy();
-	}
-
-	if (!this.service.features.mute) {
-		this.$.muteMenuItem.destroy();
-	}
-
-	if (!this.service.features.spam) {
-		this.$.spamMenuItem.destroy();
 	}
 
 	this.$.message.setUser(this.user);
@@ -339,12 +283,20 @@ handleCommand: function(sender, event)
 {
 	var cmd;
 
-	/* Find the real sender */
-	if (event.dispatchTarget) {
-		sender = event.dispatchTarget;
-	}
+	if (event && event.value) {
+		/* Handle the menu event */
+		cmd = event.value;
 
-	cmd = sender.command || event.command;
+		/* Close the menu toaster */
+		this.doCloseToaster();
+	} else {
+		/* Find the real sender */
+		if (event && event.dispatchTarget) {
+			sender = event.dispatchTarget;
+		}
+
+		cmd = sender.command || event.command;
+	}
 
 	if (!cmd) {
 		return(true);
@@ -356,8 +308,48 @@ handleCommand: function(sender, event)
 			break;
 
 		case "options":
-			this.$.optionsMenu.applyPosition(sender.getBounds);
-			this.$.optionsMenu.show();
+			var options = [];
+			var values	= [];
+
+			// options.push("Public Mention");
+			// values.push("mention");
+
+			if (this.service.features.dm) {
+				options.push("Send Direct Message");
+				values.push("dm");
+			}
+
+			if (this.service.features.mute) {
+				options.push("Mute");
+				values.push("mute");
+			}
+
+			options.push("Block");
+			values.push("block");
+
+			if (this.service.features.spam) {
+				options.push("Report Spam");
+				values.push("spam");
+			}
+
+			options.push("Hide Message");
+			values.push("hide");
+
+
+			this.doOpenToaster({
+				component: {
+					kind:					"smart-menu",
+					items:					options,
+					values:					values,
+					showing:				true,
+					onSelect:				"handleCommand"
+				},
+
+				options: {
+					owner:					this,
+					notitle:				true
+				}
+			});
 			break;
 
 		case "reply":
