@@ -194,22 +194,28 @@ create: function()
 
 	/* Monitor for Web Activity share requests */
 	try {
-		navigator.mozSetMessageHandler('activity', function(request) {
-			switch (request.source.name) {
+		navigator.mozSetMessageHandler('activity', function(activity) {
+			switch (activity.source.name) {
+				case 'view':
 				case 'share':
-					var		images = [];
+					if (activity.source.data.url) {
+						this.compose(this, {
+							text:		activity.source.data.url
+						});
+					} else if (activity.source.data.blobs) {
+						var		images = [];
 
-					for (var i = 0, b; b = request.source.data.blobs[i]; i++) {
-						/* Set the filename, it is needed for the upload */
-						b.fileName = request.source.data.filenames[i];
+						for (var i = 0, b; b = activity.source.data.blobs[i]; i++) {
+							/* Set the filename, it is needed for the upload */
+							b.fileName = activity.source.data.filenames[i];
 
-						images.push(b);
+							images.push(b);
+						}
+
+						this.compose(this, {
+							images:		images
+						});
 					}
-
-					this.compose(this, {
-						images:		images
-					});
-
 					break;
 			}
 		}.bind(this));
