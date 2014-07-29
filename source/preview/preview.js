@@ -25,7 +25,7 @@ published: {
 },
 
 handlers: {
-	ontap:								"handleTap"
+	ontap:								"handleCommand"
 },
 
 events: {
@@ -90,22 +90,54 @@ srcChanged: function()
 	}.bind(this));
 },
 
-handleTap: function(sender, event)
+handleCommand: function(sender, event)
 {
-	var	index = NaN;
+	var cmd;
 
-	/* Find the real sender */
-	if (event.dispatchTarget) {
-		sender = event.dispatchTarget;
+	if (event && event.value) {
+		/* Handle the menu event */
+		cmd = event.value;
+
+		/* Close the menu toaster */
+		this.doCloseToaster();
+	} else {
+		/* Find the real sender */
+		if (event && event.dispatchTarget) {
+			sender = event.dispatchTarget;
+		}
+
+		cmd = sender.command || event.command;
 	}
 
-	switch (sender.command || event.command) {
+	if (!cmd) {
+		return(true);
+	}
+
+	switch (cmd) {
 		case "back":
 			this.doCloseToaster();
 			break;
 
 		case "options":
-			// TODO	Write me!!!
+			// TODO	Add more options, like share etc
+			this.doOpenToaster({
+				component: {
+					kind:					"smart-menu",
+					items:					[ "Open in browser" ],
+					values:					[ "open" ],
+					showing:				true,
+					onSelect:				"handleCommand"
+				},
+
+				options: {
+					owner:					this,
+					notitle:				true
+				}
+			});
+			break;
+
+		case "open":
+			window.open(this.src, "_blank");
 			break;
 	}
 
