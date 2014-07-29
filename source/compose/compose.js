@@ -458,7 +458,7 @@ rendered: function(sender, event)
 			mentions.splice(i, 1);
 		}
 
-		this.$.text.setValue(mentions.join(' ') + ' ');
+		this.$.text.setValue(mentions.join(' ') + "\u00A0");
 		try {
 			this.$.text.moveCursorToEnd();
 		} catch (e) {
@@ -566,8 +566,6 @@ handleCommand: function(sender, event)
 					notitle:				true
 				}
 			});
-
-
 			break;
 
 		case "split":
