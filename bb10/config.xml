@@ -28,6 +28,7 @@
 	<rim:permissions>
 		<rim:permit>access_location_services</rim:permit>
 		<rim:permit>post_notifications</rim:permit>
+		<rim:permit>access_shared</rim:permit>
 	</rim:permissions>
 
 	<rim:splash src="splash-600x1024.png"/>
