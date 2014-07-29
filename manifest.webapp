@@ -2,6 +2,7 @@
 	"name":						"Macaw",
 	"description":				"An open source micro-blogging client",
 	"launch_path":				"/index.html",
+	"version":					"1.01",
 
 	"icons": {
 		"512":					"/icon512.png",
@@ -33,16 +34,6 @@
 
 	"activities": {
 		"share": {
-			"href":				"/index.html",
-			"disposition":		"window",
-			"returnValue":		false
-		},
-
-		"view": {
-			"filters": {
-				"type":			"url"
-			},
-
 			"href":				"/index.html",
 			"disposition":		"window",
 			"returnValue":		false

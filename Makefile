@@ -24,7 +24,7 @@ release:
 	@rm -rf deploy build
 	@mkdir build
 	@./tools/deploy.sh
-	@cp  framework_config.json manifest.* *.html icon*.png ${DEPLOY}/
+	@cp  framework_config.json manifest.* index.html icon*.png ${DEPLOY}/
 	@cp  chrome/* ${DEPLOY}/
 	@rm -rf build
 	@(cd ${DEPLOY} && zip -r ../macaw-enyo.zip *)
