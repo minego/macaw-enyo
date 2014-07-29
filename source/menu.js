@@ -45,7 +45,7 @@ components: [
 		components: [{
 			content:		"Cancel",
 			kind:			onyx.Button,
-			classes:		"button cancel",
+			classes:		"menu-item-button",
 			ontap:			"back"
 		}]
 	}
@@ -88,7 +88,7 @@ setItems: function(items)
 		components.push({
 			content:	item,
 			kind:		onyx.Button,
-			classes:	"button menuitem",
+			classes:	"menu-item-button menuitem",
 			ontap:		"handleButton",
 			index:		i
 		});

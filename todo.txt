@@ -12,11 +12,6 @@
 		- Location
 		- Emoji
 		- Compose in new card/window?
-	+ Correct keyboard related issues on FFOS
-		- Reply inserts trailing space, which is rendered but removed as soon as
-		  you start typing.
-		- Keyboard does not always hide on cancel.
-		- Keyboard is slow to render
 
 + Preview
 	- Implement options menu
@@ -43,11 +38,6 @@
 
 - Wake to refresh on FFOS
 - Change style for showing refresh in progress
-
-+ Menus
-	- Use system specific menus when possible (like on FFOS)
-	- Use a common menu interface through the whole app
-
 - Correct events when clicking on an avatar on FFOS
 - Allow clicking on the URL in a profile
 

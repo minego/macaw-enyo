@@ -46,7 +46,7 @@ components: [
 	{
 		name:								"toolbar",
 		classes:							"toolbar titlebar",
-		ontap:								"handleButton",
+		ontap:								"handleCommand",
 
 		components: [
 			{
@@ -426,6 +426,27 @@ rendered: function()
 
 	this.index = 0;
 	this.setIndex(0);
+
+	if(!this.installerChecked) {
+		this.installerChecked = true;
+
+		enyo.WebAppInstaller.check(enyo.bind(this, function(response) {
+			if (response.type != "unsupported" && !response.installed) {
+				this.$.toasters.push({
+					kind:			"smart-menu",
+					title:			"Would you like to install Macaw?",
+					items:			[ "Install" ],
+					values:			[ "install" ],
+					showing:		true,
+					onSelect:		"handleCommand"
+				}, {
+					owner:			this,
+
+					notitle:		true
+				});
+			}
+		}));
+	}
 },
 
 clearError: function()
@@ -1038,8 +1059,9 @@ showAppMenu: function(title, items)
 		kind:			"smart-menu",
 		title:			"Macaw",
 		items:			[ "Refresh", "Redraw", "Compose", "Preferences" ],
+		values:			[ "refresh", "redraw", "compose", "preferences" ],
 		showing:		true,
-		onSelect:		"handleAppMenu"
+		onSelect:		"handleCommand"
 	}, {
 		owner:			this,
 
@@ -1047,36 +1069,34 @@ showAppMenu: function(title, items)
 	});
 },
 
-handleAppMenu: function(sender, event)
+handleCommand: function(sender, event)
 {
-	this.$.toasters.pop();
+	var cmd;
 
-	switch (event.index) {
-		case 0: /* Refresh */
-			this.handleButton({ command: "refresh" });
-			break;
-		case 1: /* Redraw */
-			this.createTabs();
-			break;
-		case 2: /* Compose */
-			this.handleButton({ command: "compose" });
-			break;
-		case 3: /* Preferences */
-			this.handleButton({ command: "preferences" });
-			break;
+	if (event && event.value) {
+		/* Handle the menu event */
+		cmd = event.value;
+
+		/* Close the menu toaster */
+		this.closeToaster(true);
+	} else {
+		/* Find the real sender */
+		if (event && event.dispatchTarget) {
+			sender = event.dispatchTarget;
+		}
+
+		cmd = sender.command || event.command;
 	}
-},
-
-handleButton: function(sender, event)
-{
-	/* Find the real sender */
-	if (event && event.dispatchTarget) {
-		sender = event.dispatchTarget;
-	}
-
-	var cmd = sender.command || event.command;
 
 	switch (cmd) {
+		case "install":
+			enyo.WebAppInstaller.install(enyo.bind(this, function(response) {
+				// success
+			}), enyo.bind(this, function(err) {
+				// failed
+			}));
+			break;
+
 		case "options":
 			this.showAppMenu();
 			break;
@@ -1085,6 +1105,10 @@ handleButton: function(sender, event)
 			for (var i = 0, p; p = this.$['panel' + i]; i++) {
 				p.refresh();
 			}
+			break;
+
+		case "redraw":
+			this.createTabs();
 			break;
 
 		case "compose":
@@ -1198,7 +1222,7 @@ keydown: function(sender, event)
 
 					if (!event.shiftKey) {
 						/* Refresh all panels */
-						this.handleButton({ command: "refresh" });
+						this.handleCommand({ command: "refresh" });
 					} else {
 						/* Refresh the current panel */
 						var panel;
@@ -1211,7 +1235,7 @@ keydown: function(sender, event)
 
 				case 188: /* comma (,) */
 					if (event.ctrlKey) {
-						this.handleButton({ command: "preferences" });
+						this.handleCommand({ command: "preferences" });
 					}
 					break;
 

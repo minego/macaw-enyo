@@ -209,6 +209,9 @@
 
 .showTimeRelative	.time.relative,
 .showTimeAbsolute	.time.absolute,
+.showTimeBoth		.time.relative,
+.showTimeBoth		.time.absolute,
+.showTimeBoth		.time.both,
 .showUserName		.username,
 .showScreenName		.screenname,
 .showVia			.via {

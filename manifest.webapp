@@ -36,6 +36,16 @@
 			"href":				"/index.html",
 			"disposition":		"window",
 			"returnValue":		false
+		},
+
+		"view": {
+			"filters": {
+				"type":			"url"
+			},
+
+			"href":				"/index.html",
+			"disposition":		"window",
+			"returnValue":		false
 		}
 	},
 

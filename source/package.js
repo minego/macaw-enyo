@@ -4,6 +4,7 @@ enyo.depends(
 	"$lib/jsOAuth",
     "$lib/webos-ext",
 
+	"webappinstaller",
 	"webos",
 	"BackGesture.js",
 	"Date.js",

@@ -22,8 +22,7 @@ name:								"MessageDetails",
 classes: [
 	"messagedetails",
 
-	"showTimeRelative",
-	"showTimeAbsolute",
+	"showTimeBoth",
 	"showUserName",
 	"showScreenName",
 	"showVia"
