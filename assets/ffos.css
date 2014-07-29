@@ -95,7 +95,8 @@ body {
 }
 
 .themeFfos .indicator {
-	display:				none;
+	background:				none;
+	border-bottom:			2px solid #c66a00;
 }
 
 .themeFfos button,
