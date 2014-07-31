@@ -16,7 +16,7 @@
 enyo.kind({
 
 name:										"optionsAccounts",
-kind:										"options",
+kind:										"optionsmenu",
 classes:									"accounts",
 
 events: {

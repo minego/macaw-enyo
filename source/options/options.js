@@ -15,7 +15,7 @@
 */
 enyo.kind({
 
-name:												"options",
+name:												"optionsmenu",
 classes:											"options",
 
 events: {

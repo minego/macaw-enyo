@@ -16,7 +16,7 @@
 enyo.kind({
 
 name:												"optionsColumns",
-kind:												"options",
+kind:												"optionsmenu",
 classes:											"columns",
 
 dirtytabs:											false,

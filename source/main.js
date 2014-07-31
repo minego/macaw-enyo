@@ -1117,7 +1117,7 @@ handleCommand: function(sender, event)
 
 		case "preferences":
 			this.$.toasters.push({
-				kind:				"options",
+				kind:				"optionsmenu",
 
 				onClose:			"closeAllToasters",
 				onOptionsChanged:	"optionsChanged",

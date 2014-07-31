@@ -16,7 +16,7 @@
 enyo.kind({
 
 name:												"optionsTimeline",
-kind:												"options",
+kind:												"optionsmenu",
 classes:											"timeline",
 
 events: {
