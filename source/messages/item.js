@@ -31,8 +31,7 @@ events: {
 },
 
 handlers: {
-	ontap:							"handleTap",
-	onclick:						"preventClick"
+	ontap:							"handleTap"
 },
 
 components: [
@@ -296,12 +295,6 @@ setupMessage: function(item, service, changecb)
 	}
 },
 
-preventClick: function(sender, event)
-{
-	event.preventDefault();
-	return(true);
-},
-
 handleTap: function(sender, event)
 {
 	var classes;
@@ -355,7 +348,7 @@ handleTap: function(sender, event)
 		}
 	}
 
-	return(true);
+	return(false);
 }
 
 });
