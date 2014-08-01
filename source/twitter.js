@@ -18,16 +18,19 @@ var TwitterAPI = function(user, readycb) {
 	};
 
 	this.terms = {
-		message:			'tweet',
-		messages:			'tweets',
-		Messages:			'Tweets',
+		message:			$L("tweet"),
+		messages:			$L("tweets"),
+		Messages:			$L("Tweets"),
 
-		Repost:				'Retweet',
-		repost:				'retweet',
-		reposted:			'retweeted',
-		RP:					'RT',
-		PM:					'DM',
-		PMs:				'DMs'
+		Repost:				$L("Retweet"),
+		RepostQuestion:		$L.rb.getString("Retweet {screenname}'s status?"),
+		RepostFailed:		$L("Could not retweet"),
+		repost:				$L("retweet"),
+		reposted:			$L("retweeted"),
+		RP:					$L("RT"),
+		PM:					$L("DM"),
+		PMs:				$L("DMs"),
+		DeleteQuestion:		$L("Are you sure you want to delete this tweet?")
 	};
 
 	if (this.user && this.user.options) {

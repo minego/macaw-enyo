@@ -99,14 +99,6 @@ components: [
 	},
 
 	{
-		kind:								onyx.MenuDecorator,
-		components: [{
-			name:							"globalMenu",
-			kind:							onyx.Menu
-		}]
-	},
-
-	{
 		name:								"toasters",
 		kind:								"toaster-chain"
 	},
@@ -434,8 +426,8 @@ rendered: function()
 			if (response.type != "unsupported" && !response.installed) {
 				this.$.toasters.push({
 					kind:			"smart-menu",
-					title:			"Would you like to install Macaw?",
-					items:			[ "Install" ],
+					title:			$L("Would you like to install Macaw?"),
+					items:			[ $L("Install") ],
 					values:			[ "install" ],
 					showing:		true,
 					onSelect:		"handleCommand"
@@ -1057,8 +1049,9 @@ showAppMenu: function(title, items)
 {
 	this.$.toasters.push({
 		kind:			"smart-menu",
-		title:			"Macaw",
-		items:			[ "Refresh", "Redraw", "Compose", "Preferences" ],
+		title:			"Macaw",	/* The name of the app is NOT localized */
+
+		items:			[ $L("Refresh"), $L("Redraw"), $L("Compose"), $L("Preferences") ],
 		values:			[ "refresh", "redraw", "compose", "preferences" ],
 		showing:		true,
 		onSelect:		"handleCommand"

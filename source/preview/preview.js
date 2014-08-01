@@ -123,7 +123,7 @@ handleCommand: function(sender, event)
 			this.doOpenToaster({
 				component: {
 					kind:					"smart-menu",
-					items:					[ "Open in browser" ],
+					items:					[ $L("Open in browser") ],
 					values:					[ "open" ],
 					showing:				true,
 					onSelect:				"handleCommand"

@@ -15,85 +15,85 @@
 */
 enyo.kind({
 
-name:													"optionsUI",
-kind:													"optionsmenu",
-classes:												"ui",
+name:															"optionsUI",
+kind:															"optionsmenu",
+classes:														"ui",
 
 events: {
-	oncloseToaster:										"",
-	onOpenToaster:										""
+	oncloseToaster:												"",
+	onOpenToaster:												""
 },
 
 components: [
 	{
-		kind:											enyo.Scroller,
+		kind:													enyo.Scroller,
 		components: [
 			{
-				name:									"panel",
-				classes:								"panel",
+				name:											"panel",
+				classes:										"panel",
 				data: {
 					items: [
 						{
-							label:						"Theme",
-							key:						"theme",
+							label:								$L("Theme"),
+							key:								"theme",
 
 							options: [
-								{ label: "Light",		value: "light"				},
-								{ label: "Dark",		value: "dark"				},
-								{ label: "Holo Dark",	value: "holo-dark"			},
-								{ label: "Holo Red",	value: "holo-dark,holo-red"	},
-								{ label: "Firefox OS",	value: "ffos"				},
-								{ label: "Firefox OS Dark",
-														value: "ffos,ffos-dark"		},
-								{ label: "Macaw Bros",	value: "macawbros"			}
+								{ label: $L("Light"),			value: "light"				},
+								{ label: $L("Dark"),			value: "dark"				},
+								{ label: $L("Holo Dark"),		value: "holo-dark"			},
+								{ label: $L("Holo Red"),		value: "holo-dark,holo-red"	},
+								{ label: $L("Firefox OS"),		value: "ffos"				},
+								{ label: $L("Firefox OS Dark"),
+																value: "ffos,ffos-dark"		},
+								{ label: $L("Macaw Bros"),		value: "macawbros"			}
 							]
 						},
 
 						{
-							label:						"Font Size",
-							key:						"fontSize",
+							label:								$L("Font Size"),
+							key:								"fontSize",
 
 							options: [
-								{ label: "Microscopic",	value: "micro"	},
-								{ label: "Tiny",		value: "tiny"	},
-								{ label: "Small",		value: "small"	},
-								{ label: "Medium",		value: "medium"	},
-								{ label: "Large",		value: "large"	}
+								{ label: $L("Microscopic"),		value: "micro"	},
+								{ label: $L("Tiny"),			value: "tiny"	},
+								{ label: $L("Small"),			value: "small"	},
+								{ label: $L("Medium"),			value: "medium"	},
+								{ label: $L("Large"),			value: "large"	}
 							]
 						},
 						{
-							label:						"Toolbar",
-							key:						"toolbar",
+							label:								$L("Toolbar"),
+							key:								"toolbar",
 
 							options: [
-								{ label: "Top",			value: "top"	},
-								{ label: "Bottom",		value: "bottom"	},
-								{ label: "Hidden",		value: "hide"	}
+								{ label: $L("Top"),				value: "top"	},
+								{ label: $L("Bottom"),			value: "bottom"	}
+								// { label: $L("Hidden"),			value: "hide"	}
 							]
 						},
 						{
-							label:						"Tabs",
-							key:						"tabs",
+							label:								$L("Tabs"),
+							key:								"tabs",
 
 							options: [
-								{ label: "Top",			value: "top"	},
-								{ label: "Bottom",		value: "bottom"	},
-								{ label: "Hidden",		value: "hide"	}
+								{ label: $L("Top"),				value: "top"	},
+								{ label: $L("Bottom"),			value: "bottom"	},
+								{ label: $L("Hidden"),			value: "hide"	}
 							]
 						},
 						{
-							label:						"Image Previews",
-							key:						"thumbnails",
+							label:								$L("Image Previews"),
+							key:								"thumbnails",
 
 							options: [
-								{ label: "Off",			value: "off"	},
-								{ label: "Small",		value: "small"	},
-								{ label: "Large",		value: "large"	}
+								{ label: $L("Off"),				value: "off"	},
+								{ label: $L("Small"),			value: "small"	},
+								{ label: $L("Large"),			value: "large"	}
 							]
 						},
 						{
-							label:						"Enter to Submit",
-							key:						"submitOnEnter"
+							label:								$L("Enter to Submit"),
+							key:								"submitOnEnter"
 						}
 					]
 				}

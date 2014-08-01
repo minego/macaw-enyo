@@ -208,7 +208,7 @@ setupMessage: function(item, service, changecb)
 
 	if (item.source) {
 		this.$.via.setClasses('via');
-		this.$.via.setContent('via: ' + item.source);
+		this.$.via.setContent($L("via") + ': ' + item.source);
 	} else {
 		this.$.via.setClasses('hide');
 	}

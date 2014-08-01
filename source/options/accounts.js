@@ -36,7 +36,7 @@ components: [
 			},
 
 			{
-				content:					"New Account",
+				content:					$L("New Account"),
 				kind:						onyx.Button,
 				ontap:						"createAccount",
 				classes:					"wideitem"
@@ -88,7 +88,7 @@ accountOptions: function(sender, event)
 	this.doOpenToaster({
 		component: {
 			kind:					"smart-menu",
-			title:					"Are you sure?",
+			title:					$L("Are you sure?"),
 			items:					[ "Delete" ],
 			values:					[ "delete" ],
 			showing:				true,

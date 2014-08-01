@@ -22,7 +22,7 @@ name:								"Confirm",
 classes:							"confirm",
 
 published: {
-	title:							"Are you sure?",
+	title:							$L("Are you sure?"),
 
 	options: [
 		{

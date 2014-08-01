@@ -15,16 +15,19 @@ var ADNAPI = function(user, readycb) {
 	};
 
 	this.terms = {
-		message:		'post',
-		messages:		'posts',
-		Messages:		'Posts',
+		message:		$L("post"),
+		messages:		$L("posts"),
+		Messages:		$L("Posts"),
 
-		Repost:			'Repost',
-		repost:			'repost',
-		reposted:		'reposted',
-		RP:				'RP',
-		PM:				'PM',
-		PMs:			'PMs'
+		Repost:			$L("Repost"),
+		RepostQuestion:	$L.rb.getString("Repost {screenname}'s status?"),
+		RepostFailed:	$L("Could not repost"),
+		repost:			$L("repost"),
+		reposted:		$L("reposted"),
+		RP:				$L("RP"),
+		PM:				$L("PM"),
+		PMs:			$L("PMs"),
+		DeleteQuestion:	$L("Are you sure you want to delete this post?")
 	};
 
 	if (this.user) {

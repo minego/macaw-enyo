@@ -124,46 +124,7 @@ components: [
 				command:				"back"
 			}
 		]
-	},
-
-	{
-		kind:							onyx.MenuDecorator,
-
-		components: [
-			{
-				name:					"optionsMenu",
-				onSelect:				"handleCommand",
-				kind:					onyx.Menu,
-				components: [
-					{
-						content:		"Public Mention",
-						command:		"mention"
-					},
-					{
-						content:		"Send Direct Message",
-						command:		"dm",
-						name:			"dmMenuItem"
-					},
-					{
-						content:		"Mute",
-						command:		"mute",
-						name:			"muteMenuItem"
-					},
-					{
-						content:		"Block",
-						command:		"block",
-						name:			"blockMenuItem"
-					},
-					{
-						content:		"Follow",
-						command:		"follow",
-						name:			"followMenuItem"
-					}
-				]
-			}
-		]
 	}
-
 ],
 
 rendered: function()
@@ -177,14 +138,6 @@ create: function()
 
 	if (this.user) {
 		this.service = this.user.service;
-	}
-
-	if (!this.service.features.dm) {
-		this.$.dmMenuItem.destroy();
-	}
-
-	if (!this.service.features.mute) {
-		this.$.muteMenuItem.destroy();
 	}
 
 	if (this.profile && this.profile.created) {
@@ -220,19 +173,19 @@ profileChanged: function()
 
 	var fields = [
 		[
-			{ field:	'verified',			label:	'Verified Account'	},
-			{ field:	'private',			label:	'Private Account'	},
-			{ field:	'description'									},
-			{ field:	'url'											},
-			{ field:	'location'										},
-			{ field:	'relationship',		name:	'relationship'		}
+			{ field:	'verified',			label:	$L('Verified Account')	},
+			{ field:	'private',			label:	$L('Private Account')	},
+			{ field:	'description'										},
+			{ field:	'url'												},
+			{ field:	'location'											},
+			{ field:	'relationship',		name:	$L('relationship')		}
 		],
 
 		[
-			{ field:	'createdStr',		label:	'User Since'		},
+			{ field:	'createdStr',		label:	$L('User Since')		},
 			{ field:	'counts.posts',		label:	this.service.terms.Messages },
-			{ field:	'counts.following',	label:	'Following'			},
-			{ field:	'counts.followers',	label:	'Followers'			}
+			{ field:	'counts.following',	label:	$L('Following')			},
+			{ field:	'counts.followers',	label:	$L('Followers')			}
 		]
 	];
 
@@ -313,16 +266,6 @@ profileChanged: function()
 		case 2:	this.showList('mentions',	true);	break;
 		case 3:	this.showList('favorite',	true);	break;
 	}
-
-	if (undefined != this.profile.blocked) {
-		this.$.blockMenuItem.setContent(this.profile.blocked ? "Unblock" : "Block");
-		this.$.blockMenuItem.command = this.profile.blocked ? "unblock" : "block";
-	}
-
-	if (undefined != this.profile.muted) {
-		this.$.muteMenuItem.setContent(this.profile.muted ? "Unmute" : "Mute");
-		this.$.muteMenuItem.command = this.profile.muted ? "unmute" : "mute";
-	}
 },
 
 loadRelationship: function()
@@ -383,26 +326,27 @@ relationshipChanged: function()
 	}
 
 	this.$.relationship.setContent(disp);
-
-	if (this.following) {
-		this.$.followMenuItem.setContent("Unfollow");
-		this.$.followMenuItem.command = "unfollow";
-	} else {
-		this.$.followMenuItem.setContent("Follow");
-		this.$.followMenuItem.command = "follow";
-	}
 },
 
 handleCommand: function(sender, event)
 {
 	var	index = NaN;
+	var cmd;
 
-	/* Find the real sender */
-	if (event.dispatchTarget) {
-		sender = event.dispatchTarget;
+	if (event && event.value) {
+		/* Handle the menu event */
+		cmd = event.value;
+
+		/* Close the menu toaster */
+		this.doCloseToaster();
+	} else {
+		/* Find the real sender */
+		if (event && event.dispatchTarget) {
+			sender = event.dispatchTarget;
+		}
+
+		cmd = sender.command || event.command;
 	}
-
-	cmd = sender.command || event.command;
 
 	switch (cmd) {
 		case "back":
@@ -410,9 +354,60 @@ handleCommand: function(sender, event)
 			break;
 
 		case "options":
-			this.$.optionsMenu.applyPosition(sender.getBounds);
-			this.$.optionsMenu.show();
+			var options = [];
+			var values	= [];
+
+			// options.push($L("Public Mention"));
+			// values.push("mention");
+
+			if (this.service.features.dm) {
+				options.push($L("Send Direct Message"));
+				values.push("dm");
+			}
+
+			if (this.service.features.mute) {
+				if (undefined != this.profile.muted && this.profile.muted) {
+					options.push($L("Unmute"));
+					values.push("unmute");
+				} else {
+					options.push($L("Mute"));
+					values.push("mute");
+				}
+			}
+
+			if (undefined != this.profile.blocked && this.profile.blocked) {
+				options.push($L("Unblock"));
+				values.push("unblock");
+			} else {
+				options.push($L("Block"));
+				values.push("block");
+			}
+
+			if (this.following) {
+				options.push($L("Unfollow"));
+				values.push("unfollow");
+			} else {
+				options.push($L("Follow"));
+				values.push("follow");
+			}
+
+			this.doOpenToaster({
+				component: {
+					kind:					"smart-menu",
+					items:					options,
+					values:					values,
+					showing:				true,
+					onSelect:				"handleCommand"
+				},
+
+				options: {
+					owner:					this,
+					notitle:				true
+				}
+			});
 			break;
+
+
 
 		case "info":
 			index = 0;
@@ -467,10 +462,25 @@ handleCommand: function(sender, event)
 		case "mute":
 		case "block":
 			/* Ask for confirmation */
+			var tpl;
+			var msg;
+
+			switch (cmd) {
+				case "mute":
+					tpl = $L.rb.getString("Are you sure you want to mute {screenname}?");
+					msg = tpl.format({ screenname: '@' + this.item.user.screenname });
+					break;
+
+				case "block":
+					tpl = $L.rb.getString("Are you sure you want to block {screenname}?");
+					msg = tpl.format({ screenname: '@' + this.item.user.screenname });
+					break;
+			}
+
 			this.doOpenToaster({
 				component: {
 					kind:				"Confirm",
-					title:				"Are you sure you want to " + cmd + " @" + this.profile.screenname + "?",
+					title:				msg,
 					onChoose:			"handleCommand",
 					options: [
 						{
@@ -529,7 +539,14 @@ handleCommand: function(sender, event)
 						this.setRelationship(details.relationship);
 					}
 				} else {
-					ex('Could not ' + cmd + ' user');
+					switch (cmd) {
+						case "mute":	ex($L("Could not mute user"));		break;
+						case "unmute":	ex($L("Could not unmute user"));	break;
+						case "block":	ex($L("Could not block user"));		break;
+						case "unblock":	ex($L("Could not unblock user"));	break;
+						case "follow":	ex($L("Could not follow user"));	break;
+						case "unfollow":ex($L("Could not unfollow user"));	break;
+					}
 				}
 			}.bind(this), { user: '@' + this.profile.screenname });
 			break;

@@ -34,7 +34,7 @@ components: [
 				data: {
 					items: [
 						{
-							label:					"Avatar",
+							label:					$L("Avatar"),
 							key:					"hideAvatar",
 
 							onContent:				"Show",
@@ -42,34 +42,34 @@ components: [
 							negate:					true
 						},
 						{
-							label:					"Name",
+							label:					$L("Name"),
 							key:					"showUserName",
 
 							onContent:				"Show",
 							offContent:				"Hide"
 						},
 						{
-							label:					"Handle",
+							label:					$L("Handle"),
 							key:					"showScreenName",
 
 							onContent:				"Show",
 							offContent:				"Hide"
 						},
 						{
-							label:					"Client Name",
+							label:					$L("Client Name"),
 							key:					"showVia",
 
 							onContent:				"Show",
 							offContent:				"Hide"
 						},
 						{
-							label:					"Time",
+							label:					$L("Time"),
 							key:					"showTime",
 
 							options: [
-								{ label: "Relative",value: "relative"	},
-								{ label: "Absolute",value: "absolute"	},
-								{ label: "Hidden",	value: "hidden"		}
+								{ label: $L("Relative"),value: "relative"	},
+								{ label: $L("Absolute"),value: "absolute"	},
+								{ label: $L("Hidden"),	value: "hidden"		}
 							]
 						}
 					]

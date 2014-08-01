@@ -28,8 +28,8 @@ events: {
 components: [
 	{
 		kind:										"smart-menu",
-		title:										"Preferences",
-		items:										[ "Appearance", "Timeline", "Columns", "Accounts" ],
+		title:										$L("Preferences"),
+		items:										[ $L("Appearance"), $L("Timeline"), $L("Columns"), $L("Accounts") ],
 		showing:									true,
 		onSelect:									"showSection"
 	}
@@ -60,10 +60,10 @@ showSection: function(sender, event)
 	var index	= sender.index || event.index;
 
 	switch (index) {
-		case 0:	cmd = 'UI';			title = 'Appearance';	break;
-		case 1:	cmd = 'Timeline';	title = 'Timeline';		break;
-		case 2:	cmd = 'Columns';	title = 'Columns';		break;
-		case 3:	cmd = 'Accounts';	title = 'Accounts';		break;
+		case 0:	cmd = 'UI';			title = $L('Appearance');	break;
+		case 1:	cmd = 'Timeline';	title = $L('Timeline');		break;
+		case 2:	cmd = 'Columns';	title = $L('Columns');		break;
+		case 3:	cmd = 'Accounts';	title = $L('Accounts');		break;
 	}
 	if (!cmd) {
 		return;
@@ -145,8 +145,8 @@ renderPanel: function(panel)
 
 				onChange:		"toggleChanged",
 
-				onContent:		item.onContent  || "On",
-				offContent:		item.offContent || "Off"
+				onContent:		item.onContent  || $L("On"),
+				offContent:		item.offContent || $L("Off")
 			});
 		} else if (item.ontap) {
 			components.push({

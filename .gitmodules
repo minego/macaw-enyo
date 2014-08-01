@@ -7,3 +7,6 @@
 [submodule "lib/layout"]
 	path = lib/layout
 	url = git://github.com/enyojs/layout.git
+[submodule "lib/ilib"]
+	path = lib/ilib
+	url = https://github.com/enyojs/enyo-ilib.git

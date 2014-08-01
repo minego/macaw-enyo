@@ -22,7 +22,7 @@ name:								"ChooseAccount",
 classes:							"chooseaccount confirm",
 
 published: {
-	title:							"Select one or more account?",
+	title:							$L("Select one or more account?"),
 	command:						null,
 
 	users:							[],

@@ -39,7 +39,7 @@ components: [
 			},
 
 			{
-				content:							"Add Column",
+				content:							$L("Add Column"),
 				kind:								onyx.Button,
 				classes:							"wideitem",
 				ontap:								"createTab"

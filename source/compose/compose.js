@@ -108,7 +108,7 @@ components: [
 
 				kind:					onyx.Button,
 				classes:				"button onyx-negative",
-				content:				"Cancel",
+				content:				$L("Cancel"),
 
 				command:				"cancel"
 			},
@@ -117,34 +117,9 @@ components: [
 
 				kind:					onyx.Button,
 				classes:				"button onyx-affirmative",
-				content:				"Post",
+				content:				$L("Post"),
 
 				command:				"send"
-			}
-		]
-	},
-
-	{
-		kind:							onyx.MenuDecorator,
-
-		components: [
-			{
-				name:					"optionsMenu",
-				onSelect:				"handleCommand",
-				kind:					onyx.Menu,
-				components: [
-					{
-						content:		"Attach Image",
-						command:		"pick",
-						name:			"pickItem"
-					},
-
-					{
-						content:		"Switch Account",
-						command:		"chooseAccount",
-						name:			"chooseAccountItem"
-					}
-				]
 			}
 		]
 	}
@@ -415,7 +390,9 @@ rendered: function(sender, event)
 	}
 
 	if (this.dm) {
-		this.$.messageto.setContent('Message to: @' + this.dm.screenname);
+		var tpl = $L.rb.getString("Message to: {screenname}");
+
+		this.$.messageto.setContent(tpl.format({ screenname: '@' + this.dm.screenname }));
 	}
 
 	if (this.replyto && !this.replyto.dm) {
@@ -543,12 +520,12 @@ handleCommand: function(sender, event)
 
 			/* Don't allow attaching an image on a DM */
 			if (!this.dm) {
-				options.push("Attach Image");
+				options.push($L("Attach Image"));
 				values.push("pick");
 			}
 
 			if (this.users.length > 1) {
-				options.push("Switch Account");
+				options.push($L("Switch Account"));
 				values.push("chooseAccount");
 			}
 
@@ -620,19 +597,19 @@ handleCommand: function(sender, event)
 			this.doOpenToaster({
 				component: {
 					kind:				"ChooseAccount",
-					title:				"Which account(s) would you like to send as?",
+					title:				$L("Which account(s) would you like to send as?"),
 					onChoose:			"handleCommand",
 					users:				this.users,
 					multi:				true,
 
 					buttons: [
 						{
-							content:	"Cancel",
+							content:	$L("Cancel"),
 							command:	"ignore",
 							classes:	"button onyx-negative"
 						},
 						{
-							content:	"Select",
+							content:	$L("Select"),
 							command:	"selectAccounts",
 							classes:	"button onyx-affirmative",
 							onenter:	true
@@ -941,7 +918,7 @@ send: function(splitConfirmed)
 			this.doOpenToaster({
 				component: {
 					kind:				"Confirm",
-					title:				"Your message is too long. Would you like to split it into multiple messages?",
+					title:				$L("Your message is too long. Would you like to split it into multiple messages?"),
 					onChoose:			"handleCommand",
 					options: [
 						{

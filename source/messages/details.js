@@ -221,7 +221,7 @@ openLink: function(sender, event)
 		this.openYouTube('http://youtube.com/watch?v=' + url.substr(url.indexOf('.be/') + 4));
 	} else if (-1 != url.indexOf('://twitter.com/#!/' + this.twitterUsername + '/status/' + this.twitterId)) {
 		// TODO	Open a message details toaster for this url...
-
+		window.open(url, "_blank");
 	} else if (	 0 == url.indexOf('https://files.app.net') &&
 				-1 != url.indexOf('?image')
 	) {
@@ -310,28 +310,28 @@ handleCommand: function(sender, event)
 			var options = [];
 			var values	= [];
 
-			// options.push("Public Mention");
+			// options.push($L("Public Mention"));
 			// values.push("mention");
 
 			if (this.service.features.dm) {
-				options.push("Send Direct Message");
+				options.push($L("Send Direct Message"));
 				values.push("dm");
 			}
 
 			if (this.service.features.mute) {
-				options.push("Mute");
+				options.push($L("Mute"));
 				values.push("mute");
 			}
 
-			options.push("Block");
+			options.push($L("Block"));
 			values.push("block");
 
 			if (this.service.features.spam) {
-				options.push("Report Spam");
+				options.push($L("Report Spam"));
 				values.push("spam");
 			}
 
-			options.push("Hide Message");
+			options.push($L("Hide Message"));
 			values.push("hide");
 
 
@@ -374,40 +374,35 @@ handleCommand: function(sender, event)
 
 		case "mute":
 		case "block":
+		case "spam":
+			var tpl;
+			var msg;
+
+			switch (cmd) {
+				case "mute":
+					tpl = $L.rb.getString("Are you sure you want to mute {screenname}?");
+					msg = tpl.format({ screenname: '@' + this.item.user.screenname });
+					break;
+
+				case "block":
+					tpl = $L.rb.getString("Are you sure you want to block {screenname}?");
+					msg = tpl.format({ screenname: '@' + this.item.user.screenname });
+					break;
+
+				case "spam":
+					tpl = $L.rb.getString("Are you sure you want to report {screenname} for spamming?");
+					msg = tpl.format({ screenname: '@' + this.item.user.screenname });
+			}
+
 			this.doOpenToaster({
 				component: {
 					kind:				"Confirm",
-					title:				"Are you sure you want to " + cmd + " @" + this.item.user.screenname + "?",
+					title:				msg,
 					onChoose:			"handleCommand",
 					options: [
 						{
 							classes:	"confirm",
 							command:	cmd + "-confirmed"
-						},
-						{
-							classes:	"cancel",
-							command:	"ignore"
-						}
-					]
-				},
-
-				options:{
-					notitle:		true,
-					owner:			this
-				}
-			});
-			break;
-
-		case "spam":
-			this.doOpenToaster({
-				component: {
-					kind:				"Confirm",
-					title:				"Are you sure you want to report @" + this.item.user.screenname + " for spam?",
-					onChoose:			"handleCommand",
-					options: [
-						{
-							classes:	"confirm",
-							command:	"spam-confirmed"
 						},
 						{
 							classes:	"cancel",
@@ -435,6 +430,14 @@ handleCommand: function(sender, event)
 						item:		this.item
 					});
 				} else {
+					switch (cmd) {
+						case "mute":	ex($L("Could not mute user"));		break;
+						case "block":	ex($L("Could not block user"));		break;
+						case "spam":	ex($L("Could not report user"));	break;
+					}
+
+
+
 					if (cmd == "spam") {
 						cmd = "report";
 					}
@@ -451,11 +454,14 @@ handleCommand: function(sender, event)
 			break;
 
 		case "repost":
+			var msg	= this.service.terms.RepostQuestion.format({
+							screenname: '@' + this.item.user.screenname
+			});
+
 			this.doOpenToaster({
 				component: {
 					kind:				"Confirm",
-					title:				this.service.terms.Repost + " @" +
-											this.item.user.screenname + "'s status?",
+					title:				msg,
 					onChoose:			"handleCommand",
 					options: [
 						{
@@ -490,7 +496,7 @@ handleCommand: function(sender, event)
 						item:		this.item
 					});
 				} else {
-					ex('Could not ' + this.service.terms.repost);
+					ex(this.service.terms.RepostFailed);
 				}
 			}.bind(this), this.item.id);
 			break;
@@ -535,8 +541,7 @@ handleCommand: function(sender, event)
 			this.doOpenToaster({
 				component: {
 					kind:				"Confirm",
-					title:				"Are you sure you want to delete this " +
-											this.service.terms.message + "?",
+					title:				this.service.terms.DeleteQuestion,
 					onChoose:			"handleCommand",
 					options: [
 						{

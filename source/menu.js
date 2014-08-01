@@ -43,7 +43,7 @@ components: [
 		name:				"controls",
 		classes:			"controls",
 		components: [{
-			content:		"Cancel",
+			content:		$L("Cancel"),
 			kind:			onyx.Button,
 			classes:		"menu-item-button",
 			ontap:			"back"

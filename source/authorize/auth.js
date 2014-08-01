@@ -45,13 +45,13 @@ components: [
 				classes:		"instructions",
 
 				content: [
-					"Account authorization"
+					$L("Account authorization")
 				].join(' ')
 			},
 			{
 				classes:		"instructions",
 
-				content:		"Select an account type"
+				content:		$L("Select an account type")
 			},
 			{
 				kind:			onyx.Button,
@@ -59,7 +59,7 @@ components: [
 
 				ontap:			"step1twitter",
 
-				content:		"Twitter"
+				content:		$L("Twitter")
 			},
 			{
 				kind:			onyx.Button,
@@ -67,7 +67,7 @@ components: [
 
 				ontap:			"step1adn",
 
-				content:		"app.net"
+				content:		$L("app.net")
 			}
 		]
 	},
@@ -82,7 +82,7 @@ components: [
 				classes:		"instructions",
 
 				content: [
-					"Waiting for authorization"
+					$L("Waiting for authorization")
 				].join(' ')
 			}
 		]
@@ -98,8 +98,7 @@ components: [
 				classes:		"instructions",
 
 				content: [
-					"Your new account has been successfully authorized for use",
-					"in Macaw!"
+					$L("Your new account has been successfully authorized for use in Macaw!")
 				].join(' ')
 			},
 			{
@@ -108,7 +107,7 @@ components: [
 
 				ontap:			"step3done",
 
-				content:		"Done"
+				content:		$L("Done")
 			}
 		]
 	},
@@ -123,22 +122,21 @@ components: [
 				classes:		"instructions",
 
 				content: [
-					"Account authorization failed. Please verify the",
-					"following:"
+					$L("Account authorization failed. Please verify the following:")
 				].join(' ')
 			},
 			{
-				content:		"- Is your clock correct?"
+				content:		"- " + $L("Is your clock correct?")
 			},
 			{
-				content:		"- Did you enter the correct credentials?"
+				content:		"- " + $L("Did you enter the correct credentials?")
 			},
 			{
 				kind:			onyx.Button,
 				classes:		"button",
 
 				ontap:			"restart",
-				content:		"Restart"
+				content:		$L("Restart")
 			}
 		]
 	}

@@ -34,7 +34,7 @@ components: [
 
 		components: [
 			{
-				content:							"Account",
+				content:							$L("Account"),
 				classes:							"label"
 			},
 			{
@@ -58,7 +58,7 @@ components: [
 			},
 
 			{
-				content:							"Type",
+				content:							$L("Type"),
 				classes:							"label"
 			},
 			{
@@ -81,7 +81,7 @@ components: [
 				name:								"refreshFields",
 				components: [
 					{
-						content:					"Refresh Every",
+						content:					$L("Refresh Every"),
 						classes:					"label"
 					},
 					{
@@ -105,13 +105,16 @@ components: [
 					},
 
 					{
-						content:					"Notifications",
+						content:					$L("Notifications"),
 						classes:					"label"
 					},
 					{
 						kind:						onyx.ToggleButton,
 						name:						"notify",
-						classes:					"value"
+						classes:					"value",
+
+						onContent:					$L("On"),
+						offContent:					$L("Off")
 					}
 				]
 			},
@@ -154,10 +157,10 @@ create: function()
 	}
 
 	if (tab) {
-		this.$.menu.setItems([ "Save", "Delete" ]);
+		this.$.menu.setItems([ $L("Save"), $L("Delete") ]);
 		this.$.notify.setValue(tab.notify);
 	} else {
-		this.$.menu.setItems([ "Save" ]);
+		this.$.menu.setItems([ $L("Save") ]);
 	}
 
 	this.accounts = prefs.get('accounts');
@@ -170,10 +173,10 @@ create: function()
 	}
 
 	var types = [
-		{ content: "Home",			value: "timeline"	},
-		{ content: "Mentions",		value: "mentions"	},
-		{ content: "Messages",		value: "messages"	},
-		{ content: "Favorites",		value: "favorites"	}
+		{ content: $L("Home"),			value: "timeline"	},
+		{ content: $L("Mentions"),		value: "mentions"	},
+		{ content: $L("Messages"),		value: "messages"	},
+		{ content: $L("Favorites"),		value: "favorites"	}
 	];
 
 	for (var i = 0, t; t = types[i]; i++) {
@@ -187,12 +190,12 @@ create: function()
 	}
 
 	var times = [
-		{ content: "1 minute",		value: 60	},
-		{ content: "5 minutes",		value: 300	},
-		{ content: "15 minutes",	value: 900	},
-		{ content: "30 minutes",	value: 1800 },
-		{ content: "1 hour",		value: 3600 },
-		{ content: "Never",			value: -1	}
+		{ content: $L("1 minute"),		value: 60	},
+		{ content: $L("5 minutes"),		value: 300	},
+		{ content: $L("15 minutes"),	value: 900	},
+		{ content: $L("30 minutes"),	value: 1800 },
+		{ content: $L("1 hour"),		value: 3600 },
+		{ content: $L("Never"),			value: -1	}
 	];
 
 	for (var i = 0, t; t = times[i]; i++) {
