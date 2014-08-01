@@ -137,7 +137,7 @@ getRelativeTime: function(date, now_threshold)
 	}
 
 	if (delta <= now_threshold) {
-		return 'Just now';
+		return($L("Just now"));
 	}
 
 	var units = null;
@@ -163,11 +163,19 @@ getRelativeTime: function(date, now_threshold)
 	// pluralize a unit when the difference is greater than 1.
 	delta = Math.floor(delta);
 
-	if (delta !== 1 && (units == "day" || units == "mo" || units == "hr" || units == "yr")) {
-		units += "s";
+	var tpl;
+	switch (units) {
+		case "ms":	tpl = "1#1 ms ago|#{n} ms ago";			break;
+		case "sec":	tpl = "1#1 sec ago|#{n} sec ago";		break;
+		case "min":	tpl = "1#1 min ago|#{n} min ago";		break;
+		case "hr":	tpl = "1#1 hour ago|#{n} hours ago";	break;
+		case "day":	tpl = "1#1 day ago|#{n} days ago";		break;
+		case "mo":	tpl = "1#1 month ago|#{n} months ago";	break;
+		case "yr":	tpl = "1#1 year ago|#{n} years ago";	break;
+		default:	tpl = "Long ago";						break;
 	}
-
-	return [delta, units, "ago"].join(" ");
+	tpl = $L.rb.getString(tpl);
+	return(tpl.formatChoice(delta, { n: delta }));
 },
 
 setupMessage: function(item, service, changecb)
@@ -215,7 +223,7 @@ setupMessage: function(item, service, changecb)
 
 	/* Calculate the relative and absolute time */
 	this.$.relativeTime.setContent(this.getRelativeTime(item.created, 1500));
-	this.$.absoluteTime.setContent(item.createdStr);
+	this.$.absoluteTime.setContent(DateFormat.format(item.created));
 
 	if (item.real) {
 		/*

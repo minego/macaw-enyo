@@ -1,14 +1,13 @@
 enyo.depends(
 	"$lib/layout",
 	"$lib/onyx",
-	"$lib/ilib",
+	"$lib/enyo-ilib",
 	"$lib/jsOAuth",
     "$lib/webos-ext",
 
 	"webappinstaller",
 	"webos",
 	"BackGesture.js",
-	"Date.js",
 	"xhrimages.js",
 
 	"entities.js",

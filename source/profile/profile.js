@@ -197,9 +197,13 @@ profileChanged: function()
 			var component	= {};
 			var value		= this.profile;
 
-			for (var f = 0; fieldparts[f]; f++) {
-				value = value[fieldparts[f]];
-				component.classes = fieldparts[f];
+			if (item.field == 'createdStr') {
+				value = DateFormat.format(value['created']);
+			} else {
+				for (var f = 0; fieldparts[f]; f++) {
+					value = value[fieldparts[f]];
+					component.classes = fieldparts[f];
+				}
 			}
 
 			if (value == "") {

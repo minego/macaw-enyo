@@ -21,6 +21,10 @@ var TwitterAPI = function(user, readycb) {
 		message:			$L("tweet"),
 		messages:			$L("tweets"),
 		Messages:			$L("Tweets"),
+		NewMessages:		$L.rb.getString("0#No new tweets|1#1 new tweet|#{n} new tweets"),
+		NoMessages:			$L("No tweets"),
+		LoadMissing:		$L("Tap to load missing tweets"),
+		LoadMore:			$L("Tap to load more tweets"),
 
 		Repost:				$L("Retweet"),
 		RepostQuestion:		$L.rb.getString("Retweet {screenname}'s status?"),
@@ -645,10 +649,6 @@ cleanupMessage: function(tweet)
 			break;
 	}
 
-	if (tweet.created && !tweet.createdStr) {
-		tweet.createdStr = tweet.created.toLocaleString();
-	}
-
 	EntityAPI.text(tweet);
 	tweet.media = EntityAPI.media(tweet.entities.urls);
 
@@ -706,7 +706,6 @@ cleanupUser: function(user)
 		avatar:			avatar,
 		largeAvatar:	largeAvatar,
 		created:		created,
-		createdStr:		created ? created.toLocaleString() : null,
 		'protected':	user['protected'],
 		verified:		user.verified,
 		type:			'human',

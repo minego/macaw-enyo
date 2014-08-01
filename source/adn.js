@@ -18,6 +18,10 @@ var ADNAPI = function(user, readycb) {
 		message:		$L("post"),
 		messages:		$L("posts"),
 		Messages:		$L("Posts"),
+		NewMessages:	$L.rb.getString("0#No new posts|1#1 new post|#{n} new posts"),
+		NoMessages:		$L("No posts"),
+		LoadMissing:	$L("Tap to load missing posts"),
+		LoadMore:		$L("Tap to load more posts"),
 
 		Repost:			$L("Repost"),
 		RepostQuestion:	$L.rb.getString("Repost {screenname}'s status?"),
@@ -191,7 +195,6 @@ cleanupUser: function(user)
 		largeAvatar:	'https://alpha-api.app.net/stream/0/users/' + user.id + '/avatar',
 
 		created:		created,
-		createdStr:		created ? created.toLocaleString() : null,
 		type:			user.type,
 
 		counts: {
@@ -479,10 +482,6 @@ cleanupMessage: function(message)
 		default:
 			message.created = new Date(message.created_at);
 			break;
-	}
-
-	if (message.created && !message.createdStr) {
-		message.createdStr = message.created.toLocaleString();
 	}
 
 	if (message.user) {

@@ -848,21 +848,16 @@ setupItem: function(sender, event)
 		this.$.msg.setClasses('listmsg');
 
 		if (item.newcount) {
-			if (item.newcount > 1) {
-				this.$.msg.setContent(item.newcount + ' new ' + this.service.terms.message);
-			} else {
-				this.$.msg.setContent(item.newcount + ' new ' + this.service.terms.messages);
-			}
-
+			this.$.msg.setContent(this.service.terms.NewMessages.formatChoice(item.newcount, { n: item.newcount }));
 			this.$.msg.addClass('newcount');
 		} else if (item.gap) {
-			this.$.msg.setContent('Tap to load missing ' + this.service.terms.messages);
+			this.$.msg.setContent(this.service.terms.LoadMissing);
 			this.$.msg.addClass('gap');
 		} else if (item.empty) {
-			this.$.msg.setContent('No ' + this.service.terms.messages);
+			this.$.msg.setContent(this.service.terms.NoMessages);
 			this.$.msg.addClass('nomsgs');
 		} else if (item.loadmore) {
-			this.$.msg.setContent('Tap to load more ' + this.service.terms.messages);
+			this.$.msg.setContent(this.service.terms.LoadMore);
 			this.$.msg.addClass('loadmore');
 		}
 

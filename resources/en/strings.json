@@ -137,6 +137,23 @@
 	"Never":														"Never",
 	"Are you sure?":												"Are you sure?",
 	"New Account":													"New Account",
-	"via":															"via"
+	"via":															"via",
+	"Just Now":														"Just Now",
+	"1#1 ms ago|#{n} ms ago":										"1#1 ms ago|#{n} ms ago",
+	"1#1 sec ago|#{n} sec ago":										"1#1 sec ago|#{n} sec ago",
+	"1#1 min ago|#{n} min ago":										"1#1 min ago|#{n} min ago",
+	"1#1 hour ago|#{n} hours ago":									"1#1 hour ago|#{n} hours ago",
+	"1#1 day ago|#{n} days ago":									"1#1 day ago|#{n} days ago",
+	"1#1 month ago|#{n} months ago":								"1#1 month ago|#{n} months ago",
+	"1#1 year ago|#{n} years ago":									"1#1 year ago|#{n} years ago",
+	"Long ago":														"Long ago",
+	"0#No new tweets|1#1 new tweet|#{n} new tweets":				"0#No new tweets|1#1 new tweet|#{n} new tweets",
+	"0#No new posts|1#1 new post|#{n} new posts":					"0#No new posts|1#1 new post|#{n} new posts",
+	"No tweets":													"No tweets",
+	"No posts":														"No posts",
+	"Tap to load missing posts":									"Tap to load missing posts",
+	"Tap to load more posts":										"Tap to load more posts",
+	"Tap to load missing tweets":									"Tap to load missing tweets",
+	"Tap to load more tweets":										"Tap to load more tweets"
 }
 
