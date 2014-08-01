@@ -1483,7 +1483,9 @@ adjustTabs: function(force)
 
 var ex;
 var notify;
-var DateFormat;
+
+/* Set the language for the moment lib (and log the result) */
+console.log(moment.lang(window.navigator.language));
 
 if (enyo.platform.webos) {
 	var element = document.getElementById("webos"); //document.body;
@@ -1494,16 +1496,8 @@ if (enyo.platform.webos) {
 		so we need to initialize here instead of in the html.
 	*/
 	window.addEventListener('load', function() {
-		DateFormat = new ilib.DateFmt({
-			type:		"datetime",
-			length:		"short",
-			date:		"dmy",	/* Include day, month and year */
-			time:		"ahm"	/* Include hours, minutes and am/pm (if using a 12h clock) */,
-			onLoad: function() {
-				prefs.ready(function() {
-					new net.minego.macaw.main().renderInto(document.body);
-				});
-			}
+		prefs.ready(function() {
+			new net.minego.macaw.main().renderInto(document.body);
 		});
 	}, false);
 }

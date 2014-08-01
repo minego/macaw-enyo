@@ -21,13 +21,13 @@ var TwitterAPI = function(user, readycb) {
 		message:			$L("tweet"),
 		messages:			$L("tweets"),
 		Messages:			$L("Tweets"),
-		NewMessages:		$L.rb.getString("0#No new tweets|1#1 new tweet|#{n} new tweets"),
+		NewMessages:		$L("0#No new tweets|1#1 new tweet|#{n} new tweets"),
 		NoMessages:			$L("No tweets"),
 		LoadMissing:		$L("Tap to load missing tweets"),
 		LoadMore:			$L("Tap to load more tweets"),
 
 		Repost:				$L("Retweet"),
-		RepostQuestion:		$L.rb.getString("Retweet {screenname}'s status?"),
+		RepostQuestion:		$L("Retweet {screenname}'s status?"),
 		RepostFailed:		$L("Could not retweet"),
 		repost:				$L("retweet"),
 		reposted:			$L("retweeted"),
@@ -596,6 +596,8 @@ cleanupMessage: function(tweet)
 		/* Both messages need to be cleaned up */
 		tweet.real = this.cleanupMessage(real);
 	}
+
+	tweet.moment = moment(tweet.created);
 
 	/* Always use a string as the ID */
 	if (tweet.id_str) {

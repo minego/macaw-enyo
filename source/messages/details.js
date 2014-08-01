@@ -22,7 +22,7 @@ name:								"MessageDetails",
 classes: [
 	"messagedetails",
 
-	"showTimeBoth",
+	"showTimeAbsolute",
 	"showUserName",
 	"showScreenName",
 	"showVia"
@@ -375,23 +375,25 @@ handleCommand: function(sender, event)
 		case "mute":
 		case "block":
 		case "spam":
-			var tpl;
 			var msg;
 
 			switch (cmd) {
 				case "mute":
-					tpl = $L.rb.getString("Are you sure you want to mute {screenname}?");
-					msg = tpl.format({ screenname: '@' + this.item.user.screenname });
+					msg = $L("Are you sure you want to mute {screenname}?", {
+						screenname: '@' + this.item.user.screenname
+					});
 					break;
 
 				case "block":
-					tpl = $L.rb.getString("Are you sure you want to block {screenname}?");
-					msg = tpl.format({ screenname: '@' + this.item.user.screenname });
+					msg = $L("Are you sure you want to block {screenname}?", {
+						screenname: '@' + this.item.user.screenname
+					});
 					break;
 
 				case "spam":
-					tpl = $L.rb.getString("Are you sure you want to report {screenname} for spamming?");
-					msg = tpl.format({ screenname: '@' + this.item.user.screenname });
+					msg = $L("Are you sure you want to report {screenname} for spamming?", {
+						screenname: '@' + this.item.user.screenname
+					});
 			}
 
 			this.doOpenToaster({
@@ -454,7 +456,7 @@ handleCommand: function(sender, event)
 			break;
 
 		case "repost":
-			var msg	= this.service.terms.RepostQuestion.format({
+			var msg = $L.format(this.service.terms.RepostQuestion, {
 							screenname: '@' + this.item.user.screenname
 			});
 

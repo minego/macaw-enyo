@@ -390,9 +390,11 @@ rendered: function(sender, event)
 	}
 
 	if (this.dm) {
-		var tpl = $L.rb.getString("Message to: {screenname}");
+		var msg = $L("Message to: {screenname}", {
+			screenname: "@" + this.dm.screenname
+		});
 
-		this.$.messageto.setContent(tpl.format({ screenname: '@' + this.dm.screenname }));
+		this.$.messageto.setContent(msg);
 	}
 
 	if (this.replyto && !this.replyto.dm) {

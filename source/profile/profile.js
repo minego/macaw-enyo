@@ -198,7 +198,7 @@ profileChanged: function()
 			var value		= this.profile;
 
 			if (item.field == 'createdStr') {
-				value = DateFormat.format(value['created']);
+				value = moment(value['created']).format('lll');
 			} else {
 				for (var f = 0; fieldparts[f]; f++) {
 					value = value[fieldparts[f]];
@@ -466,18 +466,19 @@ handleCommand: function(sender, event)
 		case "mute":
 		case "block":
 			/* Ask for confirmation */
-			var tpl;
 			var msg;
 
 			switch (cmd) {
 				case "mute":
-					tpl = $L.rb.getString("Are you sure you want to mute {screenname}?");
-					msg = tpl.format({ screenname: '@' + this.item.user.screenname });
+					msg = $L("Are you sure you want to mute {screenname}?", {
+						screenname: '@' + this.item.user.screenname
+					});
 					break;
 
 				case "block":
-					tpl = $L.rb.getString("Are you sure you want to block {screenname}?");
-					msg = tpl.format({ screenname: '@' + this.item.user.screenname });
+					msg = $L("Are you sure you want to block {screenname}?", {
+						screenname: '@' + this.item.user.screenname
+					});
 					break;
 			}
 

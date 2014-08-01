@@ -1,7 +1,8 @@
 enyo.depends(
+    "$lib/simplelang",
+	"$lib/moment-with-langs.js",
 	"$lib/layout",
 	"$lib/onyx",
-	"$lib/enyo-ilib",
 	"$lib/jsOAuth",
     "$lib/webos-ext",
 

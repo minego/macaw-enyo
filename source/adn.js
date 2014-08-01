@@ -18,13 +18,13 @@ var ADNAPI = function(user, readycb) {
 		message:		$L("post"),
 		messages:		$L("posts"),
 		Messages:		$L("Posts"),
-		NewMessages:	$L.rb.getString("0#No new posts|1#1 new post|#{n} new posts"),
+		NewMessages:	$L("0#No new posts|1#1 new post|#{n} new posts"),
 		NoMessages:		$L("No posts"),
 		LoadMissing:	$L("Tap to load missing posts"),
 		LoadMore:		$L("Tap to load more posts"),
 
 		Repost:			$L("Repost"),
-		RepostQuestion:	$L.rb.getString("Repost {screenname}'s status?"),
+		RepostQuestion:	$L("Repost {screenname}'s status?"),
 		RepostFailed:	$L("Could not repost"),
 		repost:			$L("repost"),
 		reposted:		$L("reposted"),
@@ -483,6 +483,7 @@ cleanupMessage: function(message)
 			message.created = new Date(message.created_at);
 			break;
 	}
+	message.moment = moment(message.created);
 
 	if (message.user) {
 		message.user = this.cleanupUser(message.user);

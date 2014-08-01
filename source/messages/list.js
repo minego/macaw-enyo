@@ -848,7 +848,7 @@ setupItem: function(sender, event)
 		this.$.msg.setClasses('listmsg');
 
 		if (item.newcount) {
-			this.$.msg.setContent(this.service.terms.NewMessages.formatChoice(item.newcount, { n: item.newcount }));
+			this.$.msg.setContent($L.format(this.service.terms.NewMessages, { n: item.newcount }, item.newcount));
 			this.$.msg.addClass('newcount');
 		} else if (item.gap) {
 			this.$.msg.setContent(this.service.terms.LoadMissing);

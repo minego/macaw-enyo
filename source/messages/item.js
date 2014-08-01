@@ -126,58 +126,6 @@ itemChanged: function()
 	}
 },
 
-getRelativeTime: function(date, now_threshold)
-{
-	var delta = new Date() - date;
-
-	now_threshold = parseInt(now_threshold, 10);
-
-	if (isNaN(now_threshold)) {
-		now_threshold = 0;
-	}
-
-	if (delta <= now_threshold) {
-		return($L("Just now"));
-	}
-
-	var units = null;
-	var conversions = {
-		ms:		1,		// ms    -> ms
-		sec:	1000,   // ms    -> sec
-		min:	60,     // sec   -> min
-		hr:		60,     // min   -> hour
-		day:	24,     // hour  -> day
-		mo:		30,     // day   -> month (roughly)
-		yr:		12      // month -> year
-	};
-
-	for (var key in conversions) {
-		if (delta < conversions[key]) {
-			break;
-		} else {
-			units = key; // keeps track of the selected key over the iteration
-			delta = delta / conversions[key];
-		}
-	}
-
-	// pluralize a unit when the difference is greater than 1.
-	delta = Math.floor(delta);
-
-	var tpl;
-	switch (units) {
-		case "ms":	tpl = "1#1 ms ago|#{n} ms ago";			break;
-		case "sec":	tpl = "1#1 sec ago|#{n} sec ago";		break;
-		case "min":	tpl = "1#1 min ago|#{n} min ago";		break;
-		case "hr":	tpl = "1#1 hour ago|#{n} hours ago";	break;
-		case "day":	tpl = "1#1 day ago|#{n} days ago";		break;
-		case "mo":	tpl = "1#1 month ago|#{n} months ago";	break;
-		case "yr":	tpl = "1#1 year ago|#{n} years ago";	break;
-		default:	tpl = "Long ago";						break;
-	}
-	tpl = $L.rb.getString(tpl);
-	return(tpl.formatChoice(delta, { n: delta }));
-},
-
 setupMessage: function(item, service, changecb)
 {
 	var avatar;
@@ -222,8 +170,12 @@ setupMessage: function(item, service, changecb)
 	}
 
 	/* Calculate the relative and absolute time */
-	this.$.relativeTime.setContent(this.getRelativeTime(item.created, 1500));
-	this.$.absoluteTime.setContent(DateFormat.format(item.created));
+	if (!item.moment || !item.moment.format) {
+		item.moment = moment(item.created);
+	}
+
+	this.$.relativeTime.setContent(item.moment.fromNow());
+	this.$.absoluteTime.setContent(item.moment.format('lll'));
 
 	if (item.real) {
 		/*

@@ -57,12 +57,12 @@ ready: function(cb)
 			chrome.storage.sync.get(null, function(items) {
 				this.sync = items;
 
-				cb();
+				setTimeout(cb, 1);
 			}.bind(this));
 		}.bind(this));
 	} else {
 		/* Other storage mechanisms are already ready */
-		cb();
+		setTimeout(cb, 1);
 	}
 },
 
