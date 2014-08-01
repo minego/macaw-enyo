@@ -63,7 +63,6 @@ components: [
 				classes:					"title"
 			},
 			{
-				style:						"position: absolute; rigth: 0px;",
 				components: [
 					{
 						kind:				enyo.Image,
