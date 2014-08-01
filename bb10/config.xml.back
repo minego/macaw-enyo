@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="io.cordova.hellocordova" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:rim="http://www.blackberry.com/ns/widgets">
 	<name>Macaw</name>
+	<author>Micah N Gorrell</author>
 	<author href="http://github.com/minego/"
           rim:copyright="Copyright 2014 Micah N Gorrell">Micah N Gorrell</author>
 	<description>Macaw - A client for twitter and ADN</description>
@@ -27,26 +28,8 @@
 	<rim:permissions>
 		<rim:permit>access_location_services</rim:permit>
 		<rim:permit>post_notifications</rim:permit>
-		<rim:permit>access_shared</rim:permit>
 	</rim:permissions>
-    
-      <rim:invoke-target id="net.minego.macaw">
-	<type>APPLICATION</type>
-	<filter>
-	    <action>bb.action.SHARE</action>
-	        <mime-type>application/*</mime-type>
-	        <mime-type>text/*</mime-type>
-	        <mime-type>audio/*</mime-type>
-	        <mime-type>image/*</mime-type>
-	        <mime-type>message/*</mime-type>
-	        <mime-type>video/*</mime-type>
-	</filter>
-	<icon>
-		<image public="true"> icon81.png</image>
-		<image public="true"> icon358.png</image>
-	</icon>
-    </rim:invoke-target>
-    
+
 	<rim:splash src="splash-600x1024.png"/>
 	<rim:splash src="splash-1024x600.png"/>
 	<rim:splash src="splash-icon.png"/>
@@ -55,7 +38,5 @@
 	<feature id="blackberry.app" >
 		<param name="websecurity" value="disable" />
 	</feature>
-	  <feature id="blackberry.invoke"/>
-	  <feature id="blackberry.invoked" version="1.0.0" required="true" />
 </widget>
 
