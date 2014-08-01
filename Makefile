@@ -24,8 +24,8 @@ release:
 	@rm -rf deploy build
 	@mkdir build
 	@./tools/deploy.sh
-	@cp  framework_config.json manifest.* index.html icon*.png ${DEPLOY}/
-	@cp  chrome/* ${DEPLOY}/
+	@cp framework_config.json manifest.* index.html icon*.png ${DEPLOY}/
+	@cp chrome/* ${DEPLOY}/
 	@rm -rf build
 	@(cd ${DEPLOY} && zip -r ../macaw-enyo.zip *)
 
@@ -67,6 +67,8 @@ initzip:
 	@unzip master
 	@rm -rf lib/layout
 	@mv layout-master lib/layout
+	@rm -rf lib/enyo-ilib
+	@mv layout-master lib/enyo-ilib
 
 update:
 	@git fetch upstream
