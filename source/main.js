@@ -1498,7 +1498,7 @@ if (enyo.platform.webos) {
 			type:		"datetime",
 			length:		"short",
 			date:		"dmy",	/* Include day, month and year */
-			time:		"ahms"	/* Include hours, minutes, seconds and am/pm (if using a 12h clock) */,
+			time:		"ahm"	/* Include hours, minutes and am/pm (if using a 12h clock) */,
 			onLoad: function() {
 				prefs.ready(function() {
 					new net.minego.macaw.main().renderInto(document.body);
