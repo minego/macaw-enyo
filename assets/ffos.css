@@ -12,22 +12,15 @@ body {
 }
 
 .themeFfos .toolbar {
-	background:				linear-gradient(		top, #c66a00, #b54d17);
-	background:				-o-linear-gradient(		top, #c66a00, #b54d17);
-	background:				-ms-linear-gradient(	top, #c66a00, #b54d17);
-	background:				-moz-linear-gradient(	top, #c66a00, #b54d17);
-	background:				-webkit-linear-gradient(top, #c66a00, #b54d17);
-	box-shadow:				0 1px 2px -1px rgba(0, 0, 0, 0.7);
-	-o-box-shadow:			0 1px 2px -1px rgba(0, 0, 0, 0.7);
-	-ms-box-shadow:			0 1px 2px -1px rgba(0, 0, 0, 0.7);
-	-webkit-box-shadow:		0 1px 5px -1px rgba(0, 0, 0, 0.7);
-	-moz-box-shadow:		0 1px 2px -1px rgba(0, 0, 0, 0.7);
+	background:				none;
+	background-color:		black;
+	border:					none;
 	color:					white;
 }
 
 .themeFfos .toolbar.topbar {
 	padding-bottom:			0px;
-	border-bottom:			1px solid #933212;
+	border:					none;
 }
 
 .themeFfos .toolbar.bottombar {
@@ -35,34 +28,33 @@ body {
 	padding-top:			0px;
 }
 
-.themeFfos .toolbar.titlebar * {
-	position:				relative;
-	left:					-27px;
-	background:				url(ffos/separator.png) left center no-repeat;
-}
-.themeFfos .toolbar.titlebar .imgbtn:nth-child(2) {
-	background:				url(ffos/separator-large.png) left center no-repeat;
+.themeFfos .toolbar.titlebar {
+	background-color:		#dc6a0e !important;
 }
 
-.themeFfos .toolbar.titlebar .imgbtn:last-child {
-	left:					auto;
-}
-
-.themeFfos .toolbar.titlebar .imgbtn:first-child {
-	background:				url(ffos/shadow.png) repeat-x;
-	background-size:		auto 100%;
-	padding-right:			5px;
+/* move the buttons to the right */
+.themeFfos .toolbar.titlebar div:last-child {
+	position:				absolute;
+	right:					0px;
 }
 
 .themeFfos .titlebar .imgbtn {
 	height:					30px;
+	width:					30px;
 	padding:				9px 15px;
+	background-size:		auto 100%;
+}
+
+.themeFfos .toolbar.titlebar .optsbutton {
+	padding-left:			0px;
 }
 
 /* This is causing wrapping... grumble */
+/*
 .themeFfos .titlebar .title {
 	display:				none;
 }
+*/
 
 
 .themeFfos .listitem {

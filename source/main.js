@@ -58,26 +58,30 @@ components: [
 				onerror:					"fixicon"
 			},
 			{
-				kind:						enyo.Image,
-				classes:					"imgbtn refreshbutton",
-				name:						"refreshbtn",
-				iconname:					"refresh",
-				command:					"refresh",
-				onerror:					"fixicon"
-			},
-			{
 				content:					'',
 				name:						"title",
-				classes:					"title",
-				fit:						true
+				classes:					"title"
 			},
 			{
-				kind:						enyo.Image,
-				classes:					"imgbtn composebutton",
-				name:						"composebtn",
-				iconname:					"compose",
-				command:					"compose",
-				onerror:					"fixicon"
+				style:						"position: absolute; rigth: 0px;",
+				components: [
+					{
+						kind:				enyo.Image,
+						classes:			"imgbtn refreshbutton",
+						name:				"refreshbtn",
+						iconname:			"refresh",
+						command:			"refresh",
+						onerror:			"fixicon"
+					},
+					{
+						kind:				enyo.Image,
+						classes:			"imgbtn composebutton",
+						name:				"composebtn",
+						iconname:			"compose",
+						command:			"compose",
+						onerror:			"fixicon"
+					}
+				]
 			}
 		]
 	},
