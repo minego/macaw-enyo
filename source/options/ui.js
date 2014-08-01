@@ -68,6 +68,8 @@ components: [
 							options: [
 								{ label: $L("Top"),				value: "top"	},
 								{ label: $L("Bottom"),			value: "bottom"	}
+								// TODO	Allow this to be hidden on webOS. It
+								//		doesn't make sense on other platforms
 								// { label: $L("Hidden"),			value: "hide"	}
 							]
 						},

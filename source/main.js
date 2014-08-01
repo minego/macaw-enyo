@@ -58,26 +58,29 @@ components: [
 				onerror:					"fixicon"
 			},
 			{
-				kind:						enyo.Image,
-				classes:					"imgbtn refreshbutton",
-				name:						"refreshbtn",
-				iconname:					"refresh",
-				command:					"refresh",
-				onerror:					"fixicon"
-			},
-			{
 				content:					'',
 				name:						"title",
-				classes:					"title",
-				fit:						true
+				classes:					"title"
 			},
 			{
-				kind:						enyo.Image,
-				classes:					"imgbtn composebutton",
-				name:						"composebtn",
-				iconname:					"compose",
-				command:					"compose",
-				onerror:					"fixicon"
+				components: [
+					{
+						kind:				enyo.Image,
+						classes:			"imgbtn refreshbutton",
+						name:				"refreshbtn",
+						iconname:			"refresh",
+						command:			"refresh",
+						onerror:			"fixicon"
+					},
+					{
+						kind:				enyo.Image,
+						classes:			"imgbtn composebutton",
+						name:				"composebtn",
+						iconname:			"compose",
+						command:			"compose",
+						onerror:			"fixicon"
+					}
+				]
 			}
 		]
 	},
@@ -698,6 +701,28 @@ toolbarsChanged: function()
 	var classes		= [ 'topbar', 'bottombar' ];
 	var toolbar		= prefs.get('toolbar');
 	var tabs		= prefs.get('tabs');
+
+	/* Don't allow them to both be set the same */
+	if (toolbar == tabs) {
+		prefs.set('toolbar', 'top');
+		prefs.set('tabs', 'bottom');
+
+		prefs.get('toolbar');
+		prefs.get('tabs');
+	}
+
+	/*
+		Hiding the toolbar only makes sense on webOS. On other platforms it
+		will mean you can't get to the options dialogs.
+	*/
+	if (!enyo.platform.webos && "hide" == toolbar) {
+		if (tabs == "top") {
+			prefs.set('toolbar', 'bottom');
+		} else {
+			prefs.set('toolbar', 'top');
+		}
+		toolbar = prefs.get('toolbar');
+	}
 
 	/* Reset */
 	for (var i = 0, c; c = classes[i]; i++) {

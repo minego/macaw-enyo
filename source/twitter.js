@@ -597,8 +597,6 @@ cleanupMessage: function(tweet)
 		tweet.real = this.cleanupMessage(real);
 	}
 
-	tweet.moment = moment(tweet.created);
-
 	/* Always use a string as the ID */
 	if (tweet.id_str) {
 		tweet.id = tweet.id_str;

@@ -82,8 +82,10 @@ body.Pre3 {
 	vertical-align:			top;
 }
 
-.toolbar .composebutton {
-	float:					right;
+/* move the buttons to the right */
+.toolbar.titlebar div:last-child {
+	position:				absolute;
+	right:					0px;
 }
 
 .toolbar.topbar {

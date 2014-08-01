@@ -181,12 +181,10 @@ setupMessage: function(item, service, changecb)
 	}
 
 	/* Calculate the relative and absolute time */
-	if (!item.moment || !item.moment.format) {
-		item.moment = moment(item.created);
-	}
+	var m = moment(item.created);
 
-	this.$.relativeTime.setContent(item.moment.fromNow());
-	this.$.absoluteTime.setContent(item.moment.format('lll'));
+	this.$.relativeTime.setContent(m.fromNow());
+	this.$.absoluteTime.setContent(m.format('lll'));
 
 	if (item.real) {
 		/*

@@ -483,7 +483,6 @@ cleanupMessage: function(message)
 			message.created = new Date(message.created_at);
 			break;
 	}
-	message.moment = moment(message.created);
 
 	if (message.user) {
 		message.user = this.cleanupUser(message.user);
