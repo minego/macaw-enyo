@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="io.cordova.hellocordova" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:rim="http://www.blackberry.com/ns/widgets">
+	<name>Macaw</name>
+	<author>Micah N Gorrell</author>
+	<description>Macaw - A client for twitter and ADN</description>
+
+    <content src="index.html" />
+    <preference name="AutoHideSplashScreen"			value="true"		/>
+    <preference name="ChildBrowser"					value="enable"		/>
+    <preference name="DiskCache"					value="disable"		/>
+    <preference name="HideKeyboardFormAccessoryBar"	value="disable"		/>
+    <preference name="Orientation"					value="default"		/>
+    <preference name="PopupBlocker"					value="disable"		/>
+	<preference name="websecurity"					value="disable" gap:platform="blackberry10" />
+
+	<access uri="*"									subdomains="true"	/>
+	<access origin="*"													/>
+
+	<access uri="http://twitter.com"				subdomains="true"	/>
+	<access uri="https://twitter.com"				subdomains="true"	/>
+	<access uri="http://app.net"					subdomains="true"	/>
+	<access uri="https://app.net"					subdomains="true"	/>
+	<access uri="http://alpha-api.app.net"			subdomains="true"	/>
+	<access uri="https://alpha-api.app.net"			subdomains="true"	/>
+
+	<rim:permissions>
+		<rim:permit>access_location_services</rim:permit>
+		<rim:permit>post_notifications</rim:permit>
+		<rim:permit>access_shared</rim:permit>
+	</rim:permissions>
+    <rim:invoke-target id="net.minego.macaw">
+	<type>APPLICATION</type>
+	<filter>
+	    <action>bb.action.SHARE</action>
+	    <mime-type>text/plain</mime-type>
+	</filter>
+
+    </rim:invoke-target>
+	<rim:splash src="splash-600x1024.png"/>
+	<rim:splash src="splash-1024x600.png"/>
+	<rim:splash src="splash-icon.png"/>
+	<icon src="icon512.png"/>
+
+	<feature id="blackberry.app" >
+		<param name="websecurity" value="disable" />
+	</feature>
+	  <feature id="blackberry.invoke"/>
+	  <feature id="blackberry.invoked" version="1.0.0" required="true" />
+</widget>
+
