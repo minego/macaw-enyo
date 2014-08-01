@@ -238,10 +238,15 @@ body.Pre3 {
 */
 
 .toolbar .title {
-	padding-left:			10px;
-	text-align:				center;
-
 	color:					white;
+
+	overflow:				hidden;
+	text-overflow:			ellipsis;
+	white-space:			nowrap;
+
+	position:				absolute;
+	left:					50px;
+	right:					100px;
 }
 
 .compose.icon {

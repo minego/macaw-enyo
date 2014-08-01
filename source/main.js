@@ -1495,7 +1495,7 @@ adjustTabs: function(force)
 	this.$.indicator.applyStyle('width', tabWidth + '%');
 	this.$.indicator.applyStyle('left', left + '%');
 
-	if (false && this.hasClass('skinny')) {
+	if (this.hasClass('skinny')) {
 		var panel	= this.$['panel' + this.index];
 
 		this.$.title.setContent(panel ? panel.label : '');
