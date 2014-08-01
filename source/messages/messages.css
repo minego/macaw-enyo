@@ -227,6 +227,11 @@
 	content:				")";
 }
 
+/* Override for the details view */
+.messagedetails .time.relative {
+	display:				none;
+}
+
 .thumbnails * {
 	min-width:				64px;
 	height:					64px;
