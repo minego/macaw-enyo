@@ -163,6 +163,17 @@ setupMessage: function(item, service, changecb)
 	this.$.text.setContent(item.text);
 
 	if (item.source) {
+		var i;
+
+		/* Rip of the html... */
+		if (-1 != (i = item.source.indexOf('>'))) {
+			item.source = item.source.slice(i + 1);
+		}
+
+		if (-1 != (i = item.source.indexOf('<'))) {
+			item.source = item.source.slice(0, i);
+		}
+
 		this.$.via.setClasses('via');
 		this.$.via.setContent($L("via") + ': ' + item.source);
 	} else {
