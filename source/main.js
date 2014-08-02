@@ -1498,7 +1498,31 @@ adjustTabs: function(force)
 	if (this.hasClass('skinny')) {
 		var panel	= this.$['panel' + this.index];
 
-		this.$.title.setContent(panel ? panel.label : '');
+		switch (panel ? panel.resource : '') {
+			case 'timeline':
+				this.$.title.setContent($L("Timeline"));
+				break;
+
+			case 'mentions':
+				this.$.title.setContent($L("Mentions"));
+				break;
+
+			case 'messages':
+				this.$.title.setContent(panel.service.terms.PMs);
+				return;
+
+			case 'favorites':
+				this.$.title.setContent($L("Favorites"));
+				break;
+
+			case 'search':
+				this.$.title.setContent($L("Search"));
+				break;
+
+			default:
+				this.$.title.setContent(panel ? panel.label : '');
+				break;
+		}
 	} else {
 		this.$.title.setContent('');
 	}
