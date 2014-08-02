@@ -31,6 +31,7 @@ events: {
 },
 
 handlers: {
+	onclick:						"handleClick",
 	ontap:							"handleTap"
 },
 
@@ -264,9 +265,21 @@ setupMessage: function(item, service, changecb)
 	}
 },
 
+handleClick: function(sender, event)
+{
+	/*
+		Let the event through to other kinds, but don't let the browser work on
+		it or it will open links.
+	*/
+	event.preventDefault();
+	return(false);
+},
+
 handleTap: function(sender, event)
 {
 	var classes;
+
+	event.preventDefault();
 
 	/*
 		An ID is set on links, mentions and hashtags to allow them to be

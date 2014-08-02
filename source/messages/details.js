@@ -234,6 +234,8 @@ openLink: function(sender, event)
 	} else {
 		window.open(url, "_blank");
 	}
+
+	return(true);
 },
 
 openProfile: function(sender, event)
