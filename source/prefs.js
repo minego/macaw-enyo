@@ -49,6 +49,9 @@ defaults: {
 
 ready: function(cb)
 {
+	/* Set the language for the moment lib, and our lang lib */
+	moment.lang($L.getLocale().join('-'));
+
 	if (typeof(chrome) !== "undefined" && chrome.storage) {
 		/* Load all local and remote settings before continuing */
 		chrome.storage.local.get(null, function(items) {

@@ -1509,9 +1509,6 @@ adjustTabs: function(force)
 var ex;
 var notify;
 
-/* Set the language for the moment lib (and log the result) */
-console.log(moment.lang(window.navigator.language));
-
 if (enyo.platform.webos) {
 	var element = document.getElementById("webos"); //document.body;
 	new net.minego.macaw.main().renderInto(element);

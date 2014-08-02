@@ -42,6 +42,15 @@
 
 	"type":						"privileged",
 
-	"default_locale":			"en"
+	"default_locale":			"en",
+	"locales": {
+		"fr": {
+			"launch_path":		"/index.html?lang=fr"
+		},
+
+		"nl": {
+			"launch_path":		"/index.html?lang=nl"
+		}
+	}
 }
 
