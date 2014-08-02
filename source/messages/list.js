@@ -331,33 +331,33 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 		return;
 	}
 
-	for (var i = 0, t; t = this.results[i]; i++) {
-		if (t.newcount) {
-			index = i;
-			break;
+	for (var t, i = this.results.length - 1; t = this.results[i]; i--) {
+		if (!t.loadFailed && isNaN(t.newcount)) {
+			continue;
 		}
-	}
 
-	if (!isNaN(index)) {
-		if (index < insertIndex) {
+		/* Keep track of where the new count indicator was */
+		if (!isNaN(t.newcount)) {
+			index = i;
+		}
+
+		/* Adjust other indexes if needed */
+		if (i < insertIndex) {
 			insertIndex--;
 		}
-
-		this.results.splice(index, 1);
-		changed = true;
-
-		if (index < topIndex) {
-			index--;
+		if (i < topIndex) {
+			topIndex--;
 		}
 
-		this.move(-1, index);
+		/* Remove this indicator item */
+		this.results.splice(i, 1);
+		changed = true;
 	}
 
 	/*
 		If the user triggered the refresh, or has scrolled since the last
 		refresh then the position of the new count indicator is reset.
 	*/
-
 	if (!autorefresh || this.userIsActive) {
 		index = NaN;
 	}
@@ -417,6 +417,31 @@ gotMessages: function(success, results, fullResults, autorefresh, insertIndex, n
 		return;
 	}
 
+	if (!success) {
+		/*
+			Failed
+
+			Insert an indicator show that we failed to load new messages
+		*/
+		this.results.splice(insertIndex || 0, 0, {
+			loadFailed: true
+		});
+
+
+		this.$.list.refresh();
+		this.$.list.completePull();
+		this.loading = false;
+
+		this.doRefreshStop({
+			count:		0,
+			failed:		true
+		});
+
+		this.setTimer();
+
+		return;
+	}
+
 	/* Keep track of when we last loaded */
 	this.loaded = new Date();
 
@@ -433,21 +458,6 @@ gotMessages: function(success, results, fullResults, autorefresh, insertIndex, n
 		}
 	} else {
 		insertIndex = NaN;
-	}
-
-	if (!success) {
-		/* Failed */
-		this.$.list.refresh();
-		this.$.list.completePull();
-		this.loading = false;
-
-		this.doRefreshStop({
-			count:		0,
-			failed:		true
-		});
-
-		this.setTimer();
-		return;
 	}
 
 	/*
@@ -847,7 +857,7 @@ setupItem: function(sender, event)
 		this.$.message.setClasses('hide');
 		this.$.msg.setClasses('listmsg');
 
-		if (item.newcount) {
+		if (!isNaN(item.newcount)) {
 			this.$.msg.setContent($L.format(this.service.terms.NewMessages, { n: item.newcount }, item.newcount));
 			this.$.msg.addClass('newcount');
 		} else if (item.gap) {
@@ -859,6 +869,9 @@ setupItem: function(sender, event)
 		} else if (item.loadmore) {
 			this.$.msg.setContent(this.service.terms.LoadMore);
 			this.$.msg.addClass('loadmore');
+		} else if (item.loadFailed) {
+			this.$.msg.setContent(this.service.terms.LoadFailed);
+			this.$.msg.addClass('loadfailed');
 		}
 
 		return;

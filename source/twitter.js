@@ -25,6 +25,7 @@ var TwitterAPI = function(user, readycb) {
 		NoMessages:			$L("No tweets"),
 		LoadMissing:		$L("Tap to load missing tweets"),
 		LoadMore:			$L("Tap to load more tweets"),
+		LoadFailed:			$L("Failed to load new tweets"),
 
 		Repost:				$L("Retweet"),
 		RepostQuestion:		$L("Retweet {screenname}'s status?"),
