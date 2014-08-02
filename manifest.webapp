@@ -1,6 +1,7 @@
 {
 	"name":						"Macaw",
-	"description":				"An open source micro-blogging client",
+	"description":				"An open source micro-blogging client, with support for ADN (app.net) and Twitter (twitter.com)."
+
 	"launch_path":				"/index.html",
 	"version":					"1.01",
 
@@ -49,7 +50,8 @@
 		},
 
 		"nl": {
-			"launch_path":		"/index.html?lang=nl"
+			"launch_path":		"/index.html?lang=nl",
+			"description":		"Een open source micro-blogging client met ondersteuning voor ADN (app.net) en Twitter (twitter.com)."
 		}
 	}
 }
