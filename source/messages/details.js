@@ -335,9 +335,6 @@ handleCommand: function(sender, event)
 					}));
 					values.push("resendAs:" + a.id);
 				}
-
-				options.push(this.service.terms.Edit);
-				values.push("edit");
 			} else if (this.service.features.dm) {
 				options.push($L("Send Direct Message"));
 				values.push("dm");
@@ -585,26 +582,30 @@ handleCommand: function(sender, event)
 
 		case "edit":
 		case "delete":
+			var options	= [];
+			var values	= [];
+
+			options.push($L("Delete"));
+			values.push("delete-confirmed");
+
+			if (!this.item.dm) {
+				options.push($L("Delete and Edit"));
+				values.push("edit-confirmed");
+			}
+
 			this.doOpenToaster({
 				component: {
-					kind:				"Confirm",
-					title:				this.service.terms.DeleteQuestion,
-					onChoose:			"handleCommand",
-					options: [
-						{
-							classes:	"confirm",
-							command:	cmd + "-confirmed"
-						},
-						{
-							classes:	"cancel",
-							command:	"ignore"
-						}
-					]
+					kind:					"smart-menu",
+					items:					options,
+					values:					values,
+					title:					this.service.terms.DeleteQuestion,
+					showing:				true,
+					onSelect:				"handleCommand"
 				},
 
-				options:{
-					notitle:		true,
-					owner:			this
+				options: {
+					owner:					this,
+					notitle:				true
 				}
 			});
 			break;

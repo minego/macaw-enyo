@@ -60,11 +60,11 @@ body {
 
 .themeFfos .message .screenname,
 .themeFfos .message .username,
-.themeFfos .message .time {
+.themeFfos .message .time,
+.themeFfos .newcount {
 	color:					#777;
 }
 
-.themeFfos .newcount,
 .themeFfos .compose .counter {
 	color:					#eaeae7;
 	font-weight:			bold;
