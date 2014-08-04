@@ -46,7 +46,8 @@
 	"default_locale":			"en",
 	"locales": {
 		"fr": {
-			"launch_path":		"/index.html?lang=fr"
+			"launch_path":		"/index.html?lang=fr",
+			"description":													"Un client open source de micro-blogging, compatible ADN (app.net) et Twitter (twitter.com)."
 		},
 
 		"nl": {
