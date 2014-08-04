@@ -29,7 +29,7 @@ body {
 }
 
 .themeFfos .toolbar.titlebar {
-	background-color:		#dc6a0e !important;
+	background-color:		#cd6723 !important;
 }
 
 /* move the buttons to the right */
@@ -54,16 +54,19 @@ body {
 	left:					30px !important;
 }
 
-
-
 .themeFfos .listitem {
 	border-bottom:			1px solid #ddd;
 }
 
-.themeFfos .message .time,
+.themeFfos .message .screenname,
+.themeFfos .message .username,
+.themeFfos .message .time {
+	color:					#777;
+}
+
 .themeFfos .newcount,
 .themeFfos .compose .counter {
-	color:					#99bbdd;
+	color:					#eaeae7;
 	font-weight:			bold;
 }
 
@@ -87,7 +90,7 @@ body {
 
 .themeFfos .indicator {
 	background:				none;
-	border-bottom:			2px solid #c66a00;
+	border-bottom:			2px solid #cd6723;
 }
 
 .themeFfos button,
@@ -100,34 +103,78 @@ body {
 
 	background:				#fafafa url(ffos/button-bg.png) repeat-x left bottom / auto 100%;
 	border:					0.1rem solid #a6a6a6;
-	border-radius:			0.2rem;
+	border-radius:			0.1rem;
 }
 
 .themeFfos button:active {
-	border-color:			#008aaa;
-	background:				#008aaa;
+	border-color:			#00aacc;
+	background:				#00aacc;
 	background-size:		auto 100%;
 	color:					#333;
 }
 
 .themeFfos button.onyx-affirmative {
-	background-color:		#00caf2;
-	border-color:			#008eab;
+	background-color:		#00aacc;
+	border-color:			#00aacc;
 	color:					#333;
+}
+
+.themeFfos .smart-menu .menu-item-button {
+	background:				#4e4e4e;
+	border:					0.1rem solid #2d2d2d;
+}
+
+.themeFfos .smart-menu .menu-cancel-button,
+.themeFfos .smart-menu .menu-item-button {
+	border-radius:			0.1rem;
+	height:					3rem;
 }
 
 /* Toasters */
 .themeFfos .toaster.bg,
 .themeFfos .compose {
-	background:				url(ffos/gradient.png) no-repeat left top / 100% 100%;
+	background:				#2c393b;
 }
 
 .themeFfos .toaster .controls {
-	background:				url(ffos/pattern.png) repeat scroll left top #2D2D2D;
+	background:				black;
+}
+
+.themeFfos .smart-menu {
+	background:				#373737;
+}
+
+.themeFfos .smart-menu .controls {
+	background:				#2d2d2d;
 }
 
 .themeFfos .compose {
 	padding-top:			10px;
 }
 
+.themeFfos .back.icon {
+	background:				url(ffos/icons/back.png)		center center no-repeat;
+}
+.themeFfos .delete.icon {
+	background:				url(ffos/icons/delete.png)		center center no-repeat;
+}
+.themeFfos .favorite.icon {
+	background:				url(ffos/icons/favorite.png)	center center no-repeat;
+}
+.themeFfos .favorite.icon.active {
+	background:				url(ffos/icons/favorite-active.png)
+															center center no-repeat;
+}
+.themeFfos .reply.icon {
+	background:				url(ffos/icons/reply.png)		center center no-repeat;
+}
+.themeFfos .repost.icon {
+	background:				url(ffos/icons/repost.png)		center center no-repeat;
+}
+.themeFfos .convo.icon {
+	background:				url(ffos/icons/convo.png)		center center no-repeat;
+}
+.themeFfos .options.icon {
+	background:				url(ffos/icons/menu.png)		center center no-repeat;
+}
 

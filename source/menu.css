@@ -2,10 +2,20 @@
 	margin:					10px 5% 10px 5%;
 }
 
+.smart-menu .menu-cancel-button,
 .smart-menu .menu-item-button {
 	width:					90%;
-	margin:					10px 5% 10px 5%;
+	margin:					5px 5%;
 	font-weight:			bold;
+}
+
+.smart-menu .menu-cancel-button {
+	margin-top:				0px;
+	margin-bottom:			0px;
+}
+
+.smart-menu .controls {
+	height:					45px;
 }
 
 .smart-menu .menuitem {
@@ -13,4 +23,3 @@
 	background:				#888;
 	text-align:				left;
 }
-

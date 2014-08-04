@@ -1,13 +1,9 @@
 #main {
-	background:				#222;
+	background:				#2c393b;
 }
 
 .panel {
 	color:					white;
-}
-
-.manualIndex .selected .message.selected {
-	background:				#222;
 }
 
 .themeFfos .listitem {
@@ -21,3 +17,4 @@
 .themeFfos .tabbar.topbar {
 	border-bottom:			1px solid #333 !!important;
 }
+

@@ -83,10 +83,6 @@
 	background-repeat:		no-repeat;
 }
 
-.manualIndex .selected .message.selected {
-	background:				#bbb;
-}
-
 .message .avatar {
 	-webkit-border-radius:	5px;
 	border-radius:			5px;
@@ -139,20 +135,20 @@
 	line-height:			12px;
 	font-size:				12px;
 
-	padding:				3px 0px 0px 5px;
-
 	text-overflow:			ellipsis;
 	overflow:				hidden;
 	white-space:			nowrap;
 }
 
-.message .screenname {
+.message .screenname,
+.message .time {
 	float:					left;
 	color:					#777;
 	font-weight:			normal;
 }
 
-.message .username {
+.message .username,
+.message .via {
 	float:					right;
 	color:					#777;
 	font-weight:			normal;
@@ -161,14 +157,6 @@
 .message .rt,
 .message .text {
 	clear:					both;
-}
-
-.message .time {
-	padding-right:			5px;
-}
-
-.message .via {
-	color:					#777;
 }
 
 /*
