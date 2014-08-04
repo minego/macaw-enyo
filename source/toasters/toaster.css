@@ -20,7 +20,7 @@
 	-o-transform:           rotate3d(0, 0, 1, 0deg);
 	-ms-transform:          rotate3d(0, 0, 1, 0deg);
 }
-.toaster-chain.bottom .toaster.show {
+.toaster-chain.bottom .toaster.visible {
 	bottom:					0;
 }
 
@@ -74,7 +74,7 @@
 	-o-transform:           rotate3d(0, 0, 1, 0deg);
 	-ms-transform:          rotate3d(0, 0, 1, 0deg);
 }
-.toaster-chain.top .toaster.show {
+.toaster-chain.top .toaster.visible {
 	top:					0;
 }
 
@@ -92,7 +92,7 @@
 	-o-transform:           rotate3d(0, 0, 1, 0deg);
 	-ms-transform:          rotate3d(0, 0, 1, 0deg);
 }
-.toaster-chain.left .toaster.show {
+.toaster-chain.left .toaster.visible {
 	left:					0;
 }
 
@@ -110,7 +110,7 @@
 	-o-transform:           rotate3d(0, 0, 1, 0deg);
 	-ms-transform:          rotate3d(0, 0, 1, 0deg);
 }
-.toaster-chain.right .toaster.show {
+.toaster-chain.right .toaster.visible {
 	right:					0;
 }
 
@@ -118,7 +118,7 @@
 	background:				url('../../assets/toaster-bg.png') left top repeat-x;
 }
 
-.toaster.show {
+.toaster.visible {
 	display:				block !important;
 }
 

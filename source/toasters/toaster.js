@@ -155,7 +155,7 @@ push: function(component, options)
 		last = this.toasters[this.toasters.length - 1];
 
 		if (!last.options.alwaysshow) {
-			last.removeClass('show');
+			last.removeClass('visible');
 			last.hide();
 		}
 	}
@@ -273,7 +273,7 @@ pop: function(count, backevent, instant)
 					destroy the others immediately since they aren't showing
 					anyway.
 				*/
-				toaster.removeClass('show');
+				toaster.removeClass('visible');
 
 				if (instant) {
 					toaster.hide();
@@ -300,15 +300,13 @@ showTopToaster: function()
 	if (this.toasters.length) {
 		var		toaster	= this.toasters[this.toasters.length - 1];
 
-		toaster.show();
-		toaster.addClass('show');
+		setTimeout(function() {
+			toaster.addClass('visible');
+			toaster.show();
+		}.bind(this), 50);
 
 		if (!toaster.options.nobg) {
 			toaster.addClass('bg');
-		}
-
-		if (toaster.scrim) {
-			toaster.scrim.show();
 		}
 	}
 },
