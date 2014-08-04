@@ -118,6 +118,11 @@
 	background-repeat:		no-repeat;
 }
 
+/* All pointer events should go to the list, not the item */
+.messagelist .message {
+	pointer-events:			none;
+}
+
 .hideAvatar .messagelist,
 .hideAvatar .messagelist .rt {
 	margin-left:			0px;
