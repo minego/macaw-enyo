@@ -162,12 +162,16 @@
 }
 
 .scrim.opacity.translucent {
+	pointer-events:			auto;
+
 	opacity:				0.5;
 	filter:					alpha(opacity=50);
 	z-index:				auto;
 }
 
 .scrim.opacity.transparent {
+	pointer-events:			auto;
+
 	opacity:				0.0;
 	filter:					alpha(opacity=0);
 	z-index:				auto;

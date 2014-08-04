@@ -202,6 +202,7 @@ push: function(component, options)
 		scrim = this.createComponent({
 			kind:					"toasterscrim",
 			ontap:					"handleScrim",
+			onclick:				"handleScrim",
 			transparent:			options.transparent
 		}, { owner: this });
 
