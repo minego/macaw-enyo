@@ -69,8 +69,6 @@
 		wide:			If true then the toaster will use the full screen width.
 
 		tall:			If true then the toaster will use the full screen height.
-
-		instant:		Disable animations
 */
 
 enyo.kind({
@@ -156,7 +154,6 @@ push: function(component, options)
 
 		if (!last.options.alwaysshow) {
 			last.removeClass('visible');
-			last.hide();
 		}
 	}
 
@@ -177,10 +174,6 @@ push: function(component, options)
 
 	if (options.tall) {
 		classes.push('full-height');
-	}
-
-	if (options.instant) {
-		classes.push('instant');
 	}
 
 	if (!options.noscrim) {
@@ -242,7 +235,7 @@ push: function(component, options)
 	}), 10);
 },
 
-pop: function(count, backevent, instant)
+pop: function(count, backevent, ignored)
 {
 	var toaster;
 
@@ -263,35 +256,21 @@ pop: function(count, backevent, instant)
 
 		if ((toaster = this.toasters.pop())) {
 			if (toaster.scrim) {
-				toaster.scrim.hide();
-				toaster.scrim.destroy();
+				toaster.scrim.deactivate();
+				setTimeout(function() {
+					toaster.scrim.destroy();
+				}, 333);
 			}
 
-			if (i == 0) {
-				/*
-					Let the first one animate being closed first, and simply
-					destroy the others immediately since they aren't showing
-					anyway.
-				*/
-				toaster.removeClass('visible');
-
-				if (instant) {
-					toaster.hide();
-					toaster.destroy();
-				} else {
-					setTimeout(enyo.bind(this, function() {
-						toaster.hide();
-						toaster.destroy();
-					}), 500);
-				}
-			} else {
-				toaster.destroy();
-			}
+			toaster.removeClass('visible');
+			toaster.destroy();
 		}
 	}
 
 	if (this.toasters.length) {
-		this.showTopToaster();
+		setTimeout(enyo.bind(this, function() {
+			this.showTopToaster();
+		}.bind(this)), 10);
 	}
 },
 
@@ -457,10 +436,10 @@ create: function()
 rendered: function()
 {
 	this.inherited(arguments);
-	this.show();
+	this.activate();
 },
 
-show: function()
+activate: function()
 {
 	setTimeout(function() {
 		if (!this.transparent) {
@@ -471,7 +450,7 @@ show: function()
 	}.bind(this), 10);
 },
 
-hide: function()
+deactivate: function()
 {
 	if (!this.transparent) {
 		this.removeClass('translucent');

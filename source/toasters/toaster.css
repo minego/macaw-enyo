@@ -150,6 +150,12 @@
 
 	-webkit-transition:		opacity 0.35s;
 	transition:				opacity 0.35s;
+
+	transform:              rotate3d(0, 0, 1, 0deg);
+	-webkit-transform:      rotate3d(0, 0, 1, 0deg);
+	-moz-transform:         rotate3d(0, 0, 1, 0deg);
+	-o-transform:           rotate3d(0, 0, 1, 0deg);
+	-ms-transform:          rotate3d(0, 0, 1, 0deg);
 }
 
 .scrim.opacity {
