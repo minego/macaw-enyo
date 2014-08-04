@@ -87,12 +87,6 @@ published: {
 },
 
 components: [
-	{
-		name:					"scrim",
-
-		classes:				"scrim enyo-fit",
-		ontap:					"handleScrim"
-	}
 ],
 
 create: function()
@@ -100,17 +94,6 @@ create: function()
 	this.inherited(arguments);
 
 	this.slideInFromChanged();
-
-	if (window.android) {
-		/*
-			The standard scrim method uses opacity, but on android with hardware
-			acceleration enabled this often causes a large black block to be
-			displayed.
-		*/
-		this.$.scrim.addClass('image');
-	} else {
-		this.$.scrim.addClass('opacity');
-	}
 },
 
 rendered: function()
@@ -159,25 +142,10 @@ getTop: function()
 	return(this.toasters[this.toasters.length - 1]);
 },
 
-showScrim: function(visible)
-{
-	this.hideScrim();
-	if (visible) {
-		this.$.scrim.addClass('translucent');
-	} else {
-		this.$.scrim.addClass('transparent');
-	}
-},
-
-hideScrim: function()
-{
-	this.$.scrim.removeClass('translucent');
-	this.$.scrim.removeClass('transparent');
-},
-
 push: function(component, options)
 {
 	var toaster;
+	var scrim;
 	var last;
 	var classes	= [];
 
@@ -215,6 +183,40 @@ push: function(component, options)
 		classes.push('instant');
 	}
 
+	if (!options.noscrim) {
+		/*
+			Do we need to create a scrim here?
+
+			A scrim only needs to be created if one hasn't been created since
+			the last alwaysshow toaster.
+		*/
+		for (var i = this.toasters.length - 1, t; t = this.toasters[i]; i--) {
+			if (t.scrim) {
+				/* A scrim was found */
+				options.noscrim = true;
+				break;
+			}
+
+			if (t.options.alwaysshow) {
+				/* We found an alwaysshow toaster, so stop looking */
+				break;
+			}
+		}
+	}
+
+	if (!options.noscrim) {
+		/* If there is not already a scrim in place them create one */
+		scrim = this.createComponent({
+			kind:					"toasterscrim",
+			ontap:					"handleScrim",
+			transparent:			options.transparent
+		}, { owner: this });
+
+		scrim.render();
+	} else {
+		scrim = null;
+	}
+
 	toaster = this.createComponent({
 		kind:					"toaster",
 
@@ -225,6 +227,11 @@ push: function(component, options)
 		components:				[ component ]
 	}, { owner: options.owner });
 
+	if (scrim) {
+		scrim.toaster = toaster;
+	}
+
+	toaster.scrim = scrim;
 	toaster.options = options;
 	toaster.render();
 
@@ -239,7 +246,6 @@ pop: function(count, backevent, instant)
 {
 	var toaster;
 
-	this.hideScrim();
 	if (isNaN(count)) {
 		count = 1;
 	}
@@ -256,6 +262,11 @@ pop: function(count, backevent, instant)
 		}
 
 		if ((toaster = this.toasters.pop())) {
+			if (toaster.scrim) {
+				toaster.scrim.hide();
+				toaster.scrim.destroy();
+			}
+
 			if (i == 0) {
 				/*
 					Let the first one animate being closed first, and simply
@@ -281,21 +292,13 @@ pop: function(count, backevent, instant)
 
 	if (this.toasters.length) {
 		this.showTopToaster();
-	} else {
-		this.hideScrim();
 	}
 },
 
 showTopToaster: function()
 {
-	this.hideScrim();
-
 	if (this.toasters.length) {
 		var		toaster	= this.toasters[this.toasters.length - 1];
-
-		if (!toaster.options.noscrim) {
-			this.showScrim(!toaster.options.transparent);
-		}
 
 		toaster.show();
 		toaster.addClass('show');
@@ -303,22 +306,35 @@ showTopToaster: function()
 		if (!toaster.options.nobg) {
 			toaster.addClass('bg');
 		}
+
+		if (toaster.scrim) {
+			toaster.scrim.show();
+		}
 	}
 },
 
-handleScrim: function()
+handleScrim: function(sender, event)
 {
-	var	options;
-
-	if (this.toasters.length) {
-		options = this.toasters[this.toasters.length - 1].options;
-	}
-	options = options || {};
-
-	if (!options.modal) {
-		this.pop(this.toasters.length);
+	if (sender.toaster && sender.toaster.options &&
+		sender.toaster.options.modal
+	) {
+		/* The toaster is modal, don't allow closing by tapping on the scrim */
+		return(true);
 	}
 
+	/*
+		Find the index (from the end) of the toaster that this scrim belongs to
+		and pop off that many items.
+	*/
+	for (var i = this.toasters.length - 1, t; t = this.toasters[t]; i--) {
+		if (t == sender.toaster) {
+			this.pop(this.toasters.length - i);
+			return(true);
+		}
+	}
+
+	/* Shouldn't happen, but if it does, close all of em */
+	this.pop(this.toasters.length);
 	return(true);
 }
 
@@ -411,6 +427,59 @@ hide: function()
 getBubbleTarget: function()
 {
 	return this.owner || this.parent;
+}
+
+});
+
+enyo.kind({
+
+name:							"toasterscrim",
+classes:						"scrim enyo-fit",
+
+published: {
+	transparent:				false
+},
+
+create: function()
+{
+	this.inherited(arguments);
+
+	if (window.android) {
+		/*
+			The standard scrim method uses opacity, but on android with hardware
+			acceleration enabled this often causes a large black block to be
+			displayed.
+		*/
+		this.addClass('image');
+	} else {
+		this.addClass('opacity');
+	}
+},
+
+rendered: function()
+{
+	this.inherited(arguments);
+	this.show();
+},
+
+show: function()
+{
+	setTimeout(function() {
+		if (!this.transparent) {
+			this.addClass('translucent');
+		} else {
+			this.addClass('transparent');
+		}
+	}.bind(this), 10);
+},
+
+hide: function()
+{
+	if (!this.transparent) {
+		this.removeClass('translucent');
+	} else {
+		this.removeClass('transparent');
+	}
 }
 
 });

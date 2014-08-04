@@ -416,49 +416,52 @@ handleCommand: function(sender, event)
 		case "mute":
 		case "block":
 		case "spam":
-			var msg;
+			var title;
 
 			switch (cmd) {
 				case "mute":
-					msg = $L("Are you sure you want to mute {screenname}?", {
+					title = $L("Are you sure you want to mute {screenname}?", {
+						screenname: '@' + this.item.user.screenname
+					});
+					msg = $L("Mute {screenname}", {
 						screenname: '@' + this.item.user.screenname
 					});
 					break;
 
 				case "block":
-					msg = $L("Are you sure you want to block {screenname}?", {
+					title = $L("Are you sure you want to block {screenname}?", {
+						screenname: '@' + this.item.user.screenname
+					});
+					msg = $L("Block {screenname}", {
 						screenname: '@' + this.item.user.screenname
 					});
 					break;
 
 				case "spam":
-					msg = $L("Are you sure you want to report {screenname} for spamming?", {
+					title = $L("Are you sure you want to report {screenname} for spamming?", {
+						screenname: '@' + this.item.user.screenname
+					});
+					msg = $L("Report {screenname} for spamming", {
 						screenname: '@' + this.item.user.screenname
 					});
 			}
 
 			this.doOpenToaster({
 				component: {
-					kind:				"Confirm",
-					title:				msg,
-					onChoose:			"handleCommand",
-					options: [
-						{
-							classes:	"confirm",
-							command:	cmd + "-confirmed"
-						},
-						{
-							classes:	"cancel",
-							command:	"ignore"
-						}
-					]
+					kind:				"smart-menu",
+					title:				title,
+					items:				[ msg ],
+					values:				[ cmd + "-confirmed" ],
+					showing:			true,
+					onSelect:			"handleCommand"
 				},
 
-				options:{
-					notitle:		true,
-					owner:			this
+				options: {
+					owner:				this,
+					notitle:			true
 				}
 			});
+
 			break;
 
 		case "mute-confirmed":
@@ -497,34 +500,23 @@ handleCommand: function(sender, event)
 			break;
 
 		case "repost":
-			var msg = $L.format(this.service.terms.RepostQuestion, {
+			var title = $L.format(this.service.terms.RepostQuestion, {
 							screenname: '@' + this.item.user.screenname
 			});
 
 			this.doOpenToaster({
 				component: {
-					kind:				"Confirm",
-					title:				msg,
-					onChoose:			"handleCommand",
-					options: [
-						{
-							classes:	"confirm",
-							command:	"repost-confirmed"
-						},
-						{
-							classes:	"edit",
-							command:	"repost-edit"
-						},
-						{
-							classes:	"cancel",
-							command:	"ignore"
-						}
-					]
+					kind:				"smart-menu",
+					title:				title,
+					items:				[ this.service.terms.Repost, $L("Edit") ],
+					values:				[ "repost-confirmed", "repost-edit" ],
+					showing:			true,
+					onSelect:			"handleCommand"
 				},
 
-				options:{
-					notitle:		true,
-					owner:			this
+				options: {
+					owner:				this,
+					notitle:			true
 				}
 			});
 			break;

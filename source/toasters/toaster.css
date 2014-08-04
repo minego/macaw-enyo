@@ -142,30 +142,26 @@
 	margin-left:			10px;
 }
 
-.scrim.opacity {
-	background:				black;
-
+.scrim {
 	pointer-events:			none;
-	opacity:				0.0;
-	-webkit-transition:		opacity .25s;
-	transition:				opacity .25s;
 
-	transform:              rotate3d(0, 0, 1, 0deg);
-	-webkit-transform:      rotate3d(0, 0, 1, 0deg);
-	-moz-transform:         rotate3d(0, 0, 1, 0deg);
-	-o-transform:           rotate3d(0, 0, 1, 0deg);
-	-ms-transform:          rotate3d(0, 0, 1, 0deg);
+	background:				black;
+	opacity:				0.0;
+
+	-webkit-transition:		opacity 0.35s;
+	transition:				opacity 0.35s;
+}
+
+.scrim.opacity {
 }
 
 .scrim.opacity.translucent {
-	pointer-events:			auto;
 	opacity:				0.5;
 	filter:					alpha(opacity=50);
 	z-index:				auto;
 }
 
 .scrim.opacity.transparent {
-	pointer-events:			auto;
 	opacity:				0.0;
 	filter:					alpha(opacity=0);
 	z-index:				auto;
