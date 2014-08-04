@@ -933,6 +933,10 @@ compose: function(sender, options)
 		return;
 	}
 
+	if (options.replaceToaster) {
+		this.$.toasters.pop(1, true, true);
+	}
+
 	this.$.toasters.push(options, {
 		owner:		this,
 		noscrim:	true,
@@ -1356,6 +1360,8 @@ keypress: function(sender, event)
 	}
 },
 
+// TODO	Move this to it's own kind, and only make the image visible when a load
+//		is successful.
 /*
 	By default we attempt to assign an image for the tabs from the theme, but
 	not all themes provide their own images. If a theme does not then fall back
@@ -1498,7 +1504,31 @@ adjustTabs: function(force)
 	if (this.hasClass('skinny')) {
 		var panel	= this.$['panel' + this.index];
 
-		this.$.title.setContent(panel ? panel.label : '');
+		switch (panel ? panel.resource : '') {
+			case 'timeline':
+				this.$.title.setContent($L("Timeline"));
+				break;
+
+			case 'mentions':
+				this.$.title.setContent($L("Mentions"));
+				break;
+
+			case 'messages':
+				this.$.title.setContent(panel.service.terms.PMs);
+				return;
+
+			case 'favorites':
+				this.$.title.setContent($L("Favorites"));
+				break;
+
+			case 'search':
+				this.$.title.setContent($L("Search"));
+				break;
+
+			default:
+				this.$.title.setContent(panel ? panel.label : '');
+				break;
+		}
 	} else {
 		this.$.title.setContent('');
 	}

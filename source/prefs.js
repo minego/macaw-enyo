@@ -184,7 +184,7 @@ set: function set(name, value, account)
 /* Add a class based on the name of each boolean option if enabled */
 updateClasses: function(component)
 {
-	var value;
+	var value, theme;
 	var classes	= [];
 
 	if (component) {
@@ -227,15 +227,15 @@ updateClasses: function(component)
 	console.log('User option classes: ' + component.getClasses());
 
 	/* Ensure that the correct theme stylesheet is loaded */
-	if ((value = this.get('theme'))) {
+	if ((theme = this.get('theme'))) {
 		var head	= document.getElementsByTagName("head")[0];
 
-		if (this.prevtheme && this.prevtheme === value) {
+		if (this.prevtheme && this.prevtheme === theme) {
 			return;
 		}
 
-		this.prevtheme = value;
-		value = value.split(',');
+		this.prevtheme = theme;
+		value = theme.split(',');
 
 		if (this.themeElements) {
 			var e;
@@ -247,15 +247,41 @@ updateClasses: function(component)
 		}
 		this.themeElements = [];
 
-		for (var i = 0, theme; theme = value[i]; i++) {
+		for (var i = 0, name; name = value[i]; i++) {
 			var e = document.createElement("link");
 
 			e.setAttribute("rel",	"stylesheet");
 			e.setAttribute("type",	"text/css");
-			e.setAttribute("href",	"assets/" + theme + ".css");
+			e.setAttribute("href",	"assets/" + name + ".css");
 
 			head.appendChild(e);
 			this.themeElements.push(e);
+		}
+
+		/*
+			Set the status bar color in Firefox OS to match the color of the
+			top bar based on the theme.
+		*/
+		if (!(this.themeColorMeta)) {
+			this.themeColorMeta = document.createElement('meta');
+			document.getElementsByTagName('head')[0].appendChild(this.themeColorMeta);
+			this.themeColorMeta.setAttribute('name', 'theme-color');
+		}
+
+		if ("top" !== this.get("toolbar")) {
+			/* Don't change the color if the title bar isn't visible */
+			theme = null;
+		}
+
+		switch (theme) {
+			case 'ffos':
+			case 'ffos,ffos-dark':
+				this.themeColorMeta.setAttribute('content', '#dc6a0e');
+				break;
+
+			default:
+				this.themeColorMeta.setAttribute('content', '#000000');
+				break;
 		}
 	}
 }

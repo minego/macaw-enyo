@@ -34,6 +34,8 @@ published: {
 	text:								"",		/* Text of the message */
 	dm:									null,	/* User to send a DM to */
 	replyto:							null,	/* Message object to reply to */
+	instant:							false,	/* If true message will be sent without allowing user interaction */
+	message:							null,	/* A message to display */
 	user:								null,
 	users:								[],
 
@@ -42,8 +44,8 @@ published: {
 
 components: [
 	{
-		name:							"messageto",
-		classes:						"messageto"
+		name:							"info",
+		classes:						"info"
 	},
 	{
 		name:							"autocomplete",
@@ -394,7 +396,11 @@ rendered: function(sender, event)
 			screenname: "@" + this.dm.screenname
 		});
 
-		this.$.messageto.setContent(msg);
+		this.$.info.setContent(msg);
+	}
+
+	if (this.message && this.message.length > 0) {
+		this.$.info.setContent(this.message);
 	}
 
 	if (this.replyto && !this.replyto.dm) {
@@ -873,6 +879,12 @@ change: function(sender, event)
 	}
 
 	this.autocomplete();
+	if (this.instant) {
+		this.$.send.setDisabled(true);
+		this.$.cancel.setDisabled(true);
+
+		this.send(true);
+	}
 },
 
 send: function(splitConfirmed)
@@ -883,6 +895,12 @@ send: function(splitConfirmed)
 	var node;
 	var enabled			= [];
 	var todo			= [];
+
+	if (this.sendstate && this.sendstate.todo && this.sendstate.todo.length > 0) {
+		/* Retry */
+		this.sendParts();
+		return;
+	}
 
 	if ((node = this.$.text.hasNode())) {
 		node.blur();
@@ -979,51 +997,91 @@ send: function(splitConfirmed)
 		}
 	}
 
-	this.$.send.setDisabled(true);
-	this.$.cancel.setDisabled(true);
-
 	if (this.images && this.images.length > 0) {
 		params.images = this.images;
 	}
 
 	/* Actually send */
-	var sendFunc = function sendFunc(success, response) {
-		var details;
-		var p	= Object.create(params);
+	this.sendstate = {
+		resource:		resource,
+		todo:			todo,
+		params:			params
+	};
+	this.sendParts();
+},
 
+sendParts: function(success, response)
+{
+	var details	= null;
+	var p		= Object.create(this.sendstate.params);
+
+	if ('undefined' != typeof(success)) {
 		if (!success) {
+			this.$.info.setContent($L("Send failed"));
+			this.$.send.setContent($L("Retry"));
+
 			this.$.send.setDisabled(false);
 			this.$.cancel.setDisabled(false);
-		}
 
-		if (!(details = todo.shift())) {
-			/* All done */
-			this.closing = true;
-			this.doCloseToaster();
-
-			return;
-		}
-
-		if (!details.first && response) {
-			/*
-				When sending a split message make each message a reply to the
-				previous one so that the entire thing can be viewed in the
-				conversation view easily.
-			*/
-			if (response.id_str) {
-				p.replyto = response.id_str;
-			} else if (response.id) {
-				p.replyto = response.id;
+			if (this.sendcount == 0) {
+				/*
+					Nothing has been sent so the user can change the message
+					before retrying.
+				*/
+				this.$.text.setDisabled(true);
+				delete this.sendstate;
 			}
+			return;
+		} else {
+			/* We have successfully sent that one */
+			this.sentcount++;
+			this.sendstate.todo.shift();
 		}
+	} else {
+		this.sentcount = 0;
 
-		p.status = details.status;
-		delete(details);
+		this.$.text.setDisabled(true);
+		this.$.send.setDisabled(true);
+		this.$.cancel.setDisabled(true);
+	}
 
-		details.user.service.sendMessage(resource, sendFunc.bind(this), p);
-	};
+	/*
+		Send the first item in the todo list, and remove it from the list after
+		it has been successfully sent. This allows retrying each part if needed.
+	*/
+	if (!(details = this.sendstate.todo[0])) {
+		/* All done */
+		this.closing = true;
 
-	sendFunc.bind(this)(true);
+		this.$.send.setDisabled(true);
+		this.$.cancel.setDisabled(true);
+
+		this.$.info.setContent($L("Sent"));
+
+		setTimeout(function() {
+			this.doCloseToaster();
+		}.bind(this), 500);
+		return;
+	}
+
+	if (!details.first && response) {
+		/*
+			When sending a split message make each message a reply to the
+			previous one so that the entire thing can be viewed in the
+			conversation view easily.
+		*/
+		if (response.id_str) {
+			p.replyto = response.id_str;
+		} else if (response.id) {
+			p.replyto = response.id;
+		}
+	}
+
+	p.status = details.status;
+	delete(details);
+
+	details.user.service.sendMessage(this.sendstate.resource,
+										this.sendParts.bind(this), p);
 },
 
 split: function(max)
