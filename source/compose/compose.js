@@ -34,6 +34,8 @@ published: {
 	text:								"",		/* Text of the message */
 	dm:									null,	/* User to send a DM to */
 	replyto:							null,	/* Message object to reply to */
+	instant:							false,	/* If true message will be sent without allowing user interaction */
+	message:							null,	/* A message to display */
 	user:								null,
 	users:								[],
 
@@ -395,6 +397,10 @@ rendered: function(sender, event)
 		});
 
 		this.$.info.setContent(msg);
+	}
+
+	if (this.message && this.message.length > 0) {
+		this.$.info.setContent(this.message);
 	}
 
 	if (this.replyto && !this.replyto.dm) {
@@ -873,6 +879,12 @@ change: function(sender, event)
 	}
 
 	this.autocomplete();
+	if (this.instant) {
+		this.$.send.setDisabled(true);
+		this.$.cancel.setDisabled(true);
+
+		this.send(true);
+	}
 },
 
 send: function(splitConfirmed)
@@ -1040,8 +1052,15 @@ sendParts: function(success, response)
 	if (!(details = this.sendstate.todo[0])) {
 		/* All done */
 		this.closing = true;
-		this.doCloseToaster();
 
+		this.$.send.setDisabled(true);
+		this.$.cancel.setDisabled(true);
+
+		this.$.info.setContent($L("Sent"));
+
+		setTimeout(function() {
+			this.doCloseToaster();
+		}.bind(this), 500);
 		return;
 	}
 

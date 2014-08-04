@@ -235,7 +235,7 @@ push: function(component, options)
 	}), 10);
 },
 
-pop: function(count, backevent)
+pop: function(count, backevent, instant)
 {
 	var toaster;
 
@@ -264,10 +264,15 @@ pop: function(count, backevent)
 				*/
 				toaster.removeClass('show');
 
-				setTimeout(enyo.bind(this, function() {
+				if (instant) {
 					toaster.hide();
 					toaster.destroy();
-				}), 500);
+				} else {
+					setTimeout(enyo.bind(this, function() {
+						toaster.hide();
+						toaster.destroy();
+					}), 500);
+				}
 			} else {
 				toaster.destroy();
 			}

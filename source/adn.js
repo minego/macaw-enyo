@@ -24,6 +24,7 @@ var ADNAPI = function(user, readycb) {
 		LoadMore:		$L("Tap to load more posts"),
 		LoadFailed:		$L("Failed to load new posts"),
 
+		Edit:			$L("Edit Post"),
 		Repost:			$L("Repost"),
 		RepostQuestion:	$L("Repost {screenname}'s status?"),
 		RepostFailed:	$L("Could not repost"),

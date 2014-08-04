@@ -52,28 +52,6 @@
 	opacity:				0;
 }
 
-/* Allow customizing the size of text in the message list */
-.fontSizeMicro .messagelist,
-.fontSizeMicro .messagelist a {
-	font-size:				10px;
-}
-.fontSizeTiny .messagelist,
-.fontSizeTiny .messagelist a {
-	font-size:				12px;
-}
-.fontSizeSmall .messagelist,
-.fontSizeSmall .messagelist a {
-	font-size:				14px;
-}
-.fontSizeMedium .messagelist,
-.fontSizeMedium .messagelist a {
-	font-size:				16px;
-}
-.fontSizeLarge .messagelist,
-.fontSizeLarge .messagelist a {
-	font-size:				18px;
-}
-
 .conversation {
 	/* Ensure the child is fit properly */
 	position:				relative;
@@ -153,8 +131,6 @@
 .hideAvatar .messagelist .message .avatar {
 	display:				none;
 }
-
-
 
 .message .details,
 .message .rt .byline {
@@ -273,4 +249,32 @@
 	-moz-user-select:		text;
 	-webkit-user-select:	text;
 }
+
+
+/* Allow customizing the size of text in the message list */
+.fontSizeMicro .messagelist,
+.fontSizeMicro .messagelist a {
+	font-size:				10px;
+}
+.fontSizeMicro .message .details,
+.fontSizeMicro .message .rt .byline {
+	font-size:				9px;
+}
+.fontSizeTiny .messagelist,
+.fontSizeTiny .messagelist a {
+	font-size:				12px;
+}
+.fontSizeSmall .messagelist,
+.fontSizeSmall .messagelist a {
+	font-size:				14px;
+}
+.fontSizeMedium .messagelist,
+.fontSizeMedium .messagelist a {
+	font-size:				16px;
+}
+.fontSizeLarge .messagelist,
+.fontSizeLarge .messagelist a {
+	font-size:				18px;
+}
+
 

@@ -283,6 +283,7 @@ openHashTag: function(sender, event)
 handleCommand: function(sender, event)
 {
 	var cmd;
+	var arg;
 
 	if (event && event.value) {
 		/* Handle the menu event */
@@ -303,7 +304,8 @@ handleCommand: function(sender, event)
 		return(true);
 	}
 
-	switch (cmd) {
+	/* Some commands include extra args, they can parse them */
+	switch (cmd.split(':')[0]) {
 		case "back":
 			this.doCloseToaster();
 			break;
@@ -315,7 +317,28 @@ handleCommand: function(sender, event)
 			// options.push($L("Public Mention"));
 			// values.push("mention");
 
-			if (this.service.features.dm) {
+
+			/* Some options only apply if this user was the sender */
+			if (!this.item.dm && this.user && this.item.user &&
+				this.user.id === this.item.user.id
+			) {
+				/* Add an option for each account other than this */
+				var accounts = prefs.get('accounts');
+
+				for (var i = 0, a; a = accounts[i]; i++) {
+					if (this.item.user.id == a.id) {
+						continue;
+					}
+
+					options.push($L("Resend as {screenname}", {
+						screenname: '@' + a.screenname
+					}));
+					values.push("resendAs:" + a.id);
+				}
+
+				options.push(this.service.terms.Edit);
+				values.push("edit");
+			} else if (this.service.features.dm) {
 				options.push($L("Send Direct Message"));
 				values.push("dm");
 			}
@@ -357,6 +380,25 @@ handleCommand: function(sender, event)
 			this.doCompose({
 				replyto:	this.item,
 				user:		this.user
+			});
+			break;
+
+		/* Resend the same message using another account */
+		case "resendAs":
+			var id			= cmd.slice(cmd.indexOf(':') + 1);
+			var accounts	= prefs.get('accounts');
+			var a;
+
+			for (var i = 0; a = accounts[i]; i++) {
+				if (a.id === id) {
+					break;
+				}
+			}
+
+			this.doCompose({
+				user:		a,
+				instant:	true,
+				text:		this.item.stripped
 			});
 			break;
 
@@ -474,7 +516,7 @@ handleCommand: function(sender, event)
 						},
 						{
 							classes:	"edit",
-							command:	"edit"
+							command:	"repost-edit"
 						},
 						{
 							classes:	"cancel",
@@ -505,7 +547,7 @@ handleCommand: function(sender, event)
 			}.bind(this), this.item.id);
 			break;
 
-		case "edit":
+		case "repost-edit":
 			this.doCompose({
 				user:		this.user,
 				text:		this.service.terms.RP + ' @' +
@@ -541,6 +583,7 @@ handleCommand: function(sender, event)
 			}.bind(this), this.item.id);
 			break;
 
+		case "edit":
 		case "delete":
 			this.doOpenToaster({
 				component: {
@@ -550,7 +593,7 @@ handleCommand: function(sender, event)
 					options: [
 						{
 							classes:	"confirm",
-							command:	"delete-confirmed"
+							command:	cmd + "-confirmed"
 						},
 						{
 							classes:	"cancel",
@@ -566,6 +609,7 @@ handleCommand: function(sender, event)
 			});
 			break;
 
+		case "edit-confirmed":
 		case "delete-confirmed":
 			this.service.changeMessage(this.item.dm ? 'deldm' : 'del', function(success) {
 				if (success) {
@@ -574,10 +618,18 @@ handleCommand: function(sender, event)
 						item:		this.item
 					});
 
-					// TODO	Display a message... "no one will ever know"
-					this.doCloseToaster({});
+					if (cmd === "edit-confirmed") {
+						this.doCompose({
+							text:			this.item.stripped,
+							user:			this.user,
+							replaceToaster:	true
+						});
+					} else {
+						this.doCloseToaster({});
+					}
 				}
 			}.bind(this), this.item.id);
+
 			break;
 
 		case "convo":
