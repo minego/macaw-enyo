@@ -937,24 +937,17 @@ send: function(splitConfirmed)
 
 			this.doOpenToaster({
 				component: {
-					kind:				"Confirm",
+					kind:				"smart-menu",
 					title:				$L("Your message is too long. Would you like to split it into multiple messages?"),
-					onChoose:			"handleCommand",
-					options: [
-						{
-							classes:	"confirm",
-							command:	"split"
-						},
-						{
-							classes:	"cancel",
-							command:	"ignore"
-						}
-					]
+					items:				[ $L("Split Message") ],
+					values:				[ "split" ],
+					showing:			true,
+					onSelect:			"handleCommand"
 				},
 
-				options:{
-					notitle:		true,
-					owner:			this
+				options: {
+					owner:				this,
+					notitle:			true
 				}
 			});
 

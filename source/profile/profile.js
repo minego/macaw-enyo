@@ -466,42 +466,42 @@ handleCommand: function(sender, event)
 		case "mute":
 		case "block":
 			/* Ask for confirmation */
+			var title;
 			var msg;
 
 			switch (cmd) {
 				case "mute":
-					msg = $L("Are you sure you want to mute {screenname}?", {
-						screenname: '@' + this.item.user.screenname
+					title = $L("Are you sure you want to mute {screenname}?", {
+						screenname: '@' + this.screenname
+					});
+					msg = $L("Mute {screenname}", {
+						screenname: '@' + this.screenname
 					});
 					break;
 
 				case "block":
-					msg = $L("Are you sure you want to block {screenname}?", {
-						screenname: '@' + this.item.user.screenname
+					title = $L("Are you sure you want to block {screenname}?", {
+						screenname: '@' + this.screenname
+					});
+					msg = $L("Block {screenname}", {
+						screenname: '@' + this.screenname
 					});
 					break;
 			}
 
 			this.doOpenToaster({
 				component: {
-					kind:				"Confirm",
-					title:				msg,
-					onChoose:			"handleCommand",
-					options: [
-						{
-							classes:	"confirm",
-							command:	cmd + "-confirmed"
-						},
-						{
-							classes:	"cancel",
-							command:	"ignore"
-						}
-					]
+					kind:				"smart-menu",
+					title:				title,
+					items:				[ msg ],
+					values:				[ cmd + "-confirmed" ],
+					showing:			true,
+					onSelect:			"handleCommand"
 				},
 
-				options:{
-					notitle:		true,
-					owner:			this
+				options: {
+					owner:				this,
+					notitle:			true
 				}
 			});
 			break;

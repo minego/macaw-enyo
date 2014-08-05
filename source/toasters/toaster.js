@@ -69,8 +69,6 @@
 		wide:			If true then the toaster will use the full screen width.
 
 		tall:			If true then the toaster will use the full screen height.
-
-		instant:		Disable animations
 */
 
 enyo.kind({
@@ -87,12 +85,6 @@ published: {
 },
 
 components: [
-	{
-		name:					"scrim",
-
-		classes:				"scrim enyo-fit",
-		ontap:					"handleScrim"
-	}
 ],
 
 create: function()
@@ -100,17 +92,6 @@ create: function()
 	this.inherited(arguments);
 
 	this.slideInFromChanged();
-
-	if (window.android) {
-		/*
-			The standard scrim method uses opacity, but on android with hardware
-			acceleration enabled this often causes a large black block to be
-			displayed.
-		*/
-		this.$.scrim.addClass('image');
-	} else {
-		this.$.scrim.addClass('opacity');
-	}
 },
 
 rendered: function()
@@ -159,25 +140,10 @@ getTop: function()
 	return(this.toasters[this.toasters.length - 1]);
 },
 
-showScrim: function(visible)
-{
-	this.hideScrim();
-	if (visible) {
-		this.$.scrim.addClass('translucent');
-	} else {
-		this.$.scrim.addClass('transparent');
-	}
-},
-
-hideScrim: function()
-{
-	this.$.scrim.removeClass('translucent');
-	this.$.scrim.removeClass('transparent');
-},
-
 push: function(component, options)
 {
 	var toaster;
+	var scrim;
 	var last;
 	var classes	= [];
 
@@ -187,8 +153,7 @@ push: function(component, options)
 		last = this.toasters[this.toasters.length - 1];
 
 		if (!last.options.alwaysshow) {
-			last.removeClass('show');
-			last.hide();
+			last.removeClass('visible');
 		}
 	}
 
@@ -211,8 +176,38 @@ push: function(component, options)
 		classes.push('full-height');
 	}
 
-	if (options.instant) {
-		classes.push('instant');
+	if (!options.noscrim) {
+		/*
+			Do we need to create a scrim here?
+
+			A scrim only needs to be created if one hasn't been created since
+			the last alwaysshow toaster.
+		*/
+		for (var i = this.toasters.length - 1, t; t = this.toasters[i]; i--) {
+			if (t.scrim) {
+				/* A scrim was found */
+				options.noscrim = true;
+				break;
+			}
+
+			if (t.options.alwaysshow) {
+				/* We found an alwaysshow toaster, so stop looking */
+				break;
+			}
+		}
+	}
+
+	if (!options.noscrim) {
+		/* If there is not already a scrim in place them create one */
+		scrim = this.createComponent({
+			kind:					"toasterscrim",
+			ontap:					"handleScrim",
+			transparent:			options.transparent
+		}, { owner: this });
+
+		scrim.render();
+	} else {
+		scrim = null;
 	}
 
 	toaster = this.createComponent({
@@ -225,6 +220,11 @@ push: function(component, options)
 		components:				[ component ]
 	}, { owner: options.owner });
 
+	if (scrim) {
+		scrim.toaster = toaster;
+	}
+
+	toaster.scrim = scrim;
 	toaster.options = options;
 	toaster.render();
 
@@ -235,11 +235,10 @@ push: function(component, options)
 	}), 10);
 },
 
-pop: function(count, backevent, instant)
+pop: function(count, backevent, ignored)
 {
 	var toaster;
 
-	this.hideScrim();
 	if (isNaN(count)) {
 		count = 1;
 	}
@@ -256,49 +255,34 @@ pop: function(count, backevent, instant)
 		}
 
 		if ((toaster = this.toasters.pop())) {
-			if (i == 0) {
-				/*
-					Let the first one animate being closed first, and simply
-					destroy the others immediately since they aren't showing
-					anyway.
-				*/
-				toaster.removeClass('show');
-
-				if (instant) {
-					toaster.hide();
-					toaster.destroy();
-				} else {
-					setTimeout(enyo.bind(this, function() {
-						toaster.hide();
-						toaster.destroy();
-					}), 500);
-				}
-			} else {
-				toaster.destroy();
+			if (toaster.scrim) {
+				toaster.scrim.deactivate();
+				setTimeout(function() {
+					toaster.scrim.destroy();
+				}, 333);
 			}
+
+			toaster.removeClass('visible');
+			toaster.destroy();
 		}
 	}
 
 	if (this.toasters.length) {
-		this.showTopToaster();
-	} else {
-		this.hideScrim();
+		setTimeout(enyo.bind(this, function() {
+			this.showTopToaster();
+		}.bind(this)), 10);
 	}
 },
 
 showTopToaster: function()
 {
-	this.hideScrim();
-
 	if (this.toasters.length) {
 		var		toaster	= this.toasters[this.toasters.length - 1];
 
-		if (!toaster.options.noscrim) {
-			this.showScrim(!toaster.options.transparent);
-		}
-
-		toaster.show();
-		toaster.addClass('show');
+		setTimeout(function() {
+			toaster.addClass('visible');
+			toaster.show();
+		}.bind(this), 50);
 
 		if (!toaster.options.nobg) {
 			toaster.addClass('bg');
@@ -306,19 +290,28 @@ showTopToaster: function()
 	}
 },
 
-handleScrim: function()
+handleScrim: function(sender, event)
 {
-	var	options;
-
-	if (this.toasters.length) {
-		options = this.toasters[this.toasters.length - 1].options;
-	}
-	options = options || {};
-
-	if (!options.modal) {
-		this.pop(this.toasters.length);
+	if (sender.toaster && sender.toaster.options &&
+		sender.toaster.options.modal
+	) {
+		/* The toaster is modal, don't allow closing by tapping on the scrim */
+		return(true);
 	}
 
+	/*
+		Find the index (from the end) of the toaster that this scrim belongs to
+		and pop off that many items.
+	*/
+	for (var i = this.toasters.length - 1, t; t = this.toasters[t]; i--) {
+		if (t == sender.toaster) {
+			this.pop(this.toasters.length - i);
+			return(true);
+		}
+	}
+
+	/* Shouldn't happen, but if it does, close all of em */
+	this.pop(this.toasters.length);
 	return(true);
 }
 
@@ -411,6 +404,59 @@ hide: function()
 getBubbleTarget: function()
 {
 	return this.owner || this.parent;
+}
+
+});
+
+enyo.kind({
+
+name:							"toasterscrim",
+classes:						"scrim enyo-fit",
+
+published: {
+	transparent:				false
+},
+
+create: function()
+{
+	this.inherited(arguments);
+
+	if (window.android) {
+		/*
+			The standard scrim method uses opacity, but on android with hardware
+			acceleration enabled this often causes a large black block to be
+			displayed.
+		*/
+		this.addClass('image');
+	} else {
+		this.addClass('opacity');
+	}
+},
+
+rendered: function()
+{
+	this.inherited(arguments);
+	this.activate();
+},
+
+activate: function()
+{
+	setTimeout(function() {
+		if (!this.transparent) {
+			this.addClass('translucent');
+		} else {
+			this.addClass('transparent');
+		}
+	}.bind(this), 10);
+},
+
+deactivate: function()
+{
+	if (!this.transparent) {
+		this.removeClass('translucent');
+	} else {
+		this.removeClass('transparent');
+	}
 }
 
 });

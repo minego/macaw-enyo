@@ -335,9 +335,6 @@ handleCommand: function(sender, event)
 					}));
 					values.push("resendAs:" + a.id);
 				}
-
-				options.push(this.service.terms.Edit);
-				values.push("edit");
 			} else if (this.service.features.dm) {
 				options.push($L("Send Direct Message"));
 				values.push("dm");
@@ -419,49 +416,52 @@ handleCommand: function(sender, event)
 		case "mute":
 		case "block":
 		case "spam":
-			var msg;
+			var title;
 
 			switch (cmd) {
 				case "mute":
-					msg = $L("Are you sure you want to mute {screenname}?", {
+					title = $L("Are you sure you want to mute {screenname}?", {
+						screenname: '@' + this.item.user.screenname
+					});
+					msg = $L("Mute {screenname}", {
 						screenname: '@' + this.item.user.screenname
 					});
 					break;
 
 				case "block":
-					msg = $L("Are you sure you want to block {screenname}?", {
+					title = $L("Are you sure you want to block {screenname}?", {
+						screenname: '@' + this.item.user.screenname
+					});
+					msg = $L("Block {screenname}", {
 						screenname: '@' + this.item.user.screenname
 					});
 					break;
 
 				case "spam":
-					msg = $L("Are you sure you want to report {screenname} for spamming?", {
+					title = $L("Are you sure you want to report {screenname} for spamming?", {
+						screenname: '@' + this.item.user.screenname
+					});
+					msg = $L("Report {screenname} for spamming", {
 						screenname: '@' + this.item.user.screenname
 					});
 			}
 
 			this.doOpenToaster({
 				component: {
-					kind:				"Confirm",
-					title:				msg,
-					onChoose:			"handleCommand",
-					options: [
-						{
-							classes:	"confirm",
-							command:	cmd + "-confirmed"
-						},
-						{
-							classes:	"cancel",
-							command:	"ignore"
-						}
-					]
+					kind:				"smart-menu",
+					title:				title,
+					items:				[ msg ],
+					values:				[ cmd + "-confirmed" ],
+					showing:			true,
+					onSelect:			"handleCommand"
 				},
 
-				options:{
-					notitle:		true,
-					owner:			this
+				options: {
+					owner:				this,
+					notitle:			true
 				}
 			});
+
 			break;
 
 		case "mute-confirmed":
@@ -500,34 +500,23 @@ handleCommand: function(sender, event)
 			break;
 
 		case "repost":
-			var msg = $L.format(this.service.terms.RepostQuestion, {
+			var title = $L.format(this.service.terms.RepostQuestion, {
 							screenname: '@' + this.item.user.screenname
 			});
 
 			this.doOpenToaster({
 				component: {
-					kind:				"Confirm",
-					title:				msg,
-					onChoose:			"handleCommand",
-					options: [
-						{
-							classes:	"confirm",
-							command:	"repost-confirmed"
-						},
-						{
-							classes:	"edit",
-							command:	"repost-edit"
-						},
-						{
-							classes:	"cancel",
-							command:	"ignore"
-						}
-					]
+					kind:				"smart-menu",
+					title:				title,
+					items:				[ this.service.terms.Repost, $L("Edit") ],
+					values:				[ "repost-confirmed", "repost-edit" ],
+					showing:			true,
+					onSelect:			"handleCommand"
 				},
 
-				options:{
-					notitle:		true,
-					owner:			this
+				options: {
+					owner:				this,
+					notitle:			true
 				}
 			});
 			break;
@@ -585,26 +574,30 @@ handleCommand: function(sender, event)
 
 		case "edit":
 		case "delete":
+			var options	= [];
+			var values	= [];
+
+			options.push($L("Delete"));
+			values.push("delete-confirmed");
+
+			if (!this.item.dm) {
+				options.push($L("Delete and Edit"));
+				values.push("edit-confirmed");
+			}
+
 			this.doOpenToaster({
 				component: {
-					kind:				"Confirm",
-					title:				this.service.terms.DeleteQuestion,
-					onChoose:			"handleCommand",
-					options: [
-						{
-							classes:	"confirm",
-							command:	cmd + "-confirmed"
-						},
-						{
-							classes:	"cancel",
-							command:	"ignore"
-						}
-					]
+					kind:					"smart-menu",
+					items:					options,
+					values:					values,
+					title:					this.service.terms.DeleteQuestion,
+					showing:				true,
+					onSelect:				"handleCommand"
 				},
 
-				options:{
-					notitle:		true,
-					owner:			this
+				options: {
+					owner:					this,
+					notitle:				true
 				}
 			});
 			break;

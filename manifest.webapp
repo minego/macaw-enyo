@@ -3,7 +3,7 @@
 	"description":				"An open source micro-blogging client, with support for ADN (app.net) and Twitter (twitter.com).",
 
 	"launch_path":				"/index.html",
-	"version":					"1.01",
+	"version":					"1.2",
 
 	"icons": {
 		"512":					"/icon512.png",
@@ -46,7 +46,8 @@
 	"default_locale":			"en",
 	"locales": {
 		"fr": {
-			"launch_path":		"/index.html?lang=fr"
+			"launch_path":		"/index.html?lang=fr",
+			"description":													"Un client open source de micro-blogging, compatible ADN (app.net) et Twitter (twitter.com)."
 		},
 
 		"nl": {

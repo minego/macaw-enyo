@@ -24,8 +24,9 @@ enyo.depends(
 	"preview",
 
 	"prefs.js",
-	"confirm.js",
 	"chooseaccount.js",
+
+	"themedbutton.js",
 
 	"menu.css",
 	"menu.js",

@@ -50,12 +50,11 @@ components: [
 
 		components: [
 			{
-				kind:						enyo.Image,
+				kind:						"themedbutton",
 				classes:					"imgbtn optsbutton",
 				iconname:					"opts",
 				name:						"options",
-				command:					"options",
-				onerror:					"fixicon"
+				command:					"options"
 			},
 			{
 				content:					'',
@@ -65,20 +64,18 @@ components: [
 			{
 				components: [
 					{
-						kind:				enyo.Image,
+						kind:				"themedbutton",
 						classes:			"imgbtn refreshbutton",
 						name:				"refreshbtn",
 						iconname:			"refresh",
-						command:			"refresh",
-						onerror:			"fixicon"
+						command:			"refresh"
 					},
 					{
-						kind:				enyo.Image,
+						kind:				"themedbutton",
 						classes:			"imgbtn composebutton",
 						name:				"composebtn",
 						iconname:			"compose",
-						command:			"compose",
-						onerror:			"fixicon"
+						command:			"compose"
 					}
 				]
 			}
@@ -601,12 +598,11 @@ createTabs: function()
 			ontap:			"tabTapped",
 
 			components: [{
-				kind:		enyo.Image,
+				kind:		"themedbutton",
 				name:		"tabicon" + t,
 				classes:	"imgbtn tab-" + tab.type.toLowerCase(),
 				src:		'assets/' + prefs.get('theme') + '/icons/' + iconname + '.png',
-				iconname:	iconname,
-				onerror:	"fixicon"
+				iconname:	iconname
 			}, {
 				name:		"tabcount" + t,
 				classes:	"count"
@@ -689,7 +685,7 @@ optionsChanged: function(sender, event)
 
 	/* Fix up the icons based on the current theme */
 	for (var i = 0, icon; icon = this.$[icons[i]]; i++) {
-		icon.setSrc('assets/' + theme + '/icons/' + icon.iconname + '.png');
+		icon.setTheme(theme);
 	}
 
 	this.toolbarsChanged();
@@ -1358,33 +1354,6 @@ keypress: function(sender, event)
 			event.preventDefault();
 		}
 	}
-},
-
-// TODO	Move this to it's own kind, and only make the image visible when a load
-//		is successful.
-/*
-	By default we attempt to assign an image for the tabs from the theme, but
-	not all themes provide their own images. If a theme does not then fall back
-	to the default.
-*/
-fixicon: function(sender, event)
-{
-	var src			= 'assets/icons/' + sender.iconname;
-	var active		= sender.parent.hasClass('active');
-	var was			= sender.getSrc();
-	var themed		= -1 == was.indexOf('assets/icons/');
-	var wasactive	= -1 != was.indexOf('-active');
-
-	if (themed) {
-		wasactive = false;
-	}
-
-	if (active && !wasactive) {
-		src += '-active';
-	}
-	src += '.png';
-
-	sender.setSrc(src);
 },
 
 /* A panel was selected by sliding them left or right..  */
