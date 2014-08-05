@@ -1475,7 +1475,7 @@ adjustTabs: function(force)
 
 		switch (panel ? panel.resource : '') {
 			case 'timeline':
-				this.$.title.setContent($L("Timeline"));
+				this.$.title.setContent($L("Home"));
 				break;
 
 			case 'mentions':
