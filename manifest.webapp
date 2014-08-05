@@ -3,7 +3,7 @@
 	"description":				"An open source micro-blogging client, with support for ADN (app.net) and Twitter (twitter.com).",
 
 	"launch_path":				"/index.html",
-	"version":					"1.01",
+	"version":					"1.1",
 
 	"icons": {
 		"512":					"/icon512.png",
