@@ -72,6 +72,10 @@ body {
 	background:				white;
 }
 
+.themeFfos .tabbar .count {
+	color:					#5F5F5F;
+}
+
 .themeFfos .tabbar.bottombar {
 	border-top:				0.1rem solid #e7e7e7;
 }
