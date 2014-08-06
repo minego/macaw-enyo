@@ -146,22 +146,26 @@ rendered: function()
 	this.inherited(arguments);
 
 	this.results		= [];
-	this.fullResults	= [];
 
 	/* Load cached messages */
 	var results;
-	var fullResults;
 
 	if (this.cache) {
-		results		= prefs.get('cachedmsgs:' + this.user.id + ':' + this.resource) || [];
-		fullResults	= prefs.get('cachedfull:' + this.user.id + ':' + this.resource);
+		/*
+			Previous versions stored 2 copies of the messages in some cases. If
+			cachedfull is there then use it and remove it from the cache.
+		*/
+		if ((results = prefs.get('cachedfull:' + this.user.id + ':' + this.resource))) {
+			prefs.set('cachedfull:' + this.user.id + ':' + this.resource, null);
+			prefs.set('cachedmsgs:' + this.user.id + ':' + this.resource, results);
+		}
+
+		results = prefs.get('cachedmsgs:' + this.user.id + ':' + this.resource) || [];
 	} else {
-		results		= [];
-		fullResults	= null;
+		results = [];
 	}
 
 	this.service.cleanupMessages(results);
-	this.service.cleanupMessages(fullResults);
 
 	var cleanupItem = function(item) {
 		if (item.media) {
@@ -185,17 +189,11 @@ rendered: function()
 		cleanupItem(item);
 	}
 
-	if (fullResults) {
-		for (var i = 0, item; item = fullResults[i]; i++) {
-			cleanupItem(item);
-		}
-	}
-
 	if (results && results.length) {
 		this.loading = true;
 		this.doRefreshStart();
 
-		this.gotMessages(true, results, fullResults, false);
+		this.gotMessages(true, results, false);
 	} else {
 		this.refresh(false);
 	}
@@ -304,10 +302,10 @@ refresh: function(autorefresh, index)
 		}
 	}
 
-	this.service.getMessages(this.resource, enyo.bind(this, function(success, results, fullResults) {
+	this.service.getMessages(this.resource, enyo.bind(this, function(success, results) {
 		this.removeIndicators(index, autorefresh,
 			enyo.bind(this, function(insertIndex, newCountIndex, topIndex) {
-				this.gotMessages(success, results, fullResults, autorefresh, insertIndex);
+				this.gotMessages(success, results, autorefresh, insertIndex);
 			}
 		));
 	}), params);
@@ -385,20 +383,12 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 	}), 300);
 },
 
-gotMessages: function(success, results, fullResults, autorefresh, insertIndex, newCountIndex)
+gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 {
 	var changed			= false;
 	var reverseScroll	= false;
 	var oldLength		= this.results.length;
 	var topIndex		= 0;
-
-	/*
-		Some columns return a set of all results that can be used for a convo
-		view instead of having to make another request.
-	*/
-	if (fullResults) {
-		this.fullResults = fullResults;
-	}
 
 	if (isNaN(topIndex)) {
 		try {
@@ -708,7 +698,6 @@ writeCache: function()
 	}
 
 	prefs.set('cachedmsgs:' + this.user.id + ':' + this.resource, cache);
-	prefs.set('cachedfull:' + this.user.id + ':' + this.resource, this.fullResults);
 },
 
 setTimer: function()
@@ -751,29 +740,31 @@ itemTap: function(sender, event)
 
 	this.doActivity({});
 
-	if (item.dm || this.fullResults) {
+	if (item.dm) {
 		/*
-			Build a list of messages that should be used to render the convo
-			view.
+			All of the relevant messages are already in this.results, so filter
+			them and build a conversation list.
 		*/
+		var senderid;
 		convo = [];
 
-		// TODO	Walk through this.fullResults and push any message with a sender
-		//		or recipient that matches item
-		if (this.fullResults) {
-			for (var i = 0, r; r = this.fullResults[i]; i++) {
-				if (r.recipient && r.recipient.screenname === item.user.screenname) {
-					/* This is a message we sent, show it in the list */
-					convo.push(r);
-				}
+		if (item.user.id !== this.user.id) {
+			senderid = item.user.id;
+		} else {
+			senderid = item.recipient.id;
+		}
 
-				if (r.user && r.user.screenname == item.user.screenname) {
-					/* This is a message we received, show it in the list */
-					convo.push(r);
-				}
+		for (var i = 0, r; r = this.results[i]; i++) {
+			if (!r.user || !r.recipient) {
+				continue;
+			}
+
+			if (senderid === r.user.id ||
+				senderid === r.recipient.id
+			) {
+				convo.push(r);
 			}
 		}
-		// this.log(convo);
 	}
 
 	if (item.id) {
