@@ -27,7 +27,8 @@ handlers: {
 
 published: {
 	iconname:				null,
-	theme:					null
+	theme:					null,
+	active:					false
 },
 
 /*
@@ -37,17 +38,21 @@ published: {
 */
 fixicon: function()
 {
-	var src			= 'assets/icons/' + this.iconname;
-	var active		= this.parent.hasClass('active');
-	var was			= this.getSrc();
-	var themed		= -1 == was.indexOf('assets/icons/');
-	var wasactive	= -1 != was.indexOf('-active');
+	if (this.activeTheme && this.theme && this.theme.length) {
+		/* Have we tried all of the themes? */
+		var index = this.theme.indexOf(this.activeTheme);
 
-	if (themed) {
-		wasactive = false;
+		if (index >= 1) {
+			this.applyTheme(this.theme[index - 1]);
+			return;
+		}
 	}
 
-	if (active && !wasactive) {
+	var src			= 'assets/icons/' + this.iconname;
+	var was			= this.getSrc();
+	var wasactive	= was && (-1 != was.indexOf('-active'));
+
+	if (this.active && !wasactive) {
 		src += '-active';
 	}
 	src += '.png';
@@ -65,9 +70,37 @@ themeChanged: function()
 	/* The image will be set to showing once it has successfully loaded */
 	this.setShowing(false);
 
+	delete this.activeTheme;
+
+	if (!this.theme || !this.theme.length) {
+		return;
+	}
+
+	this.applyTheme(this.theme[this.theme.length - 1]);
+},
+
+activeChanged: function()
+{
+	if (this.active !== this.wasactive) {
+		this.themeChanged();
+	}
+
+	this.wasactive = this.active;
+},
+
+applyTheme: function(theme) {
+	var active	= false;
+
+	this.activeTheme = theme;
+
+	/* Only the ffos theme uses a different icon for active tabs right now */
+	if (-1 != this.theme.indexOf('ffos')) {
+		active = this.active;
+	}
+
 	/* Try the theme's image first */
-	if (this.iconname && this.theme) {
-		this.setSrc('assets/' + this.theme + '/icons/' + this.iconname + '.png');
+	if (this.iconname && theme) {
+		this.setSrc('assets/' + theme + '/icons/' + this.iconname + (active ? '-active.png' : '.png'));
 		return;
 	}
 

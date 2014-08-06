@@ -681,7 +681,7 @@ panelRefreshStop: function(sender, event)
 optionsChanged: function(sender, event)
 {
 	var		icons = [ 'options', 'refreshbtn', 'composebtn' ];
-	var		theme = prefs.get('theme').split(',')[0];
+	var		theme = prefs.get('theme').split(',');
 
 	/* Fix up the icons based on the current theme */
 	for (var i = 0, icon; icon = this.$[icons[i]]; i++) {
@@ -1381,20 +1381,11 @@ adjustTabs: function(force)
 	var tabWidth;
 	var width;
 	var left;
-	var theme		= prefs.get('theme').split(',')[0];
+	var theme		= prefs.get('theme').split(',');
 	var haveactive	= force || false;
 
-	// TODO	Switch back to background images, just give up on the spinning
-	//		bullshit. That will allow just working off of classes in css
-	/*
-		Only change the images for themes that use active images. Otherwise
-		there will be an annoying flicker.
-	*/
-	switch (theme) {
-		case 'ffos':
-		case 'ffos-dark':
-			haveactive	= true;
-			break;
+	if (-1 != theme.indexOf('ffos')) {
+		haveactive = true;
 	}
 
 	/*
@@ -1459,10 +1450,14 @@ adjustTabs: function(force)
 
 			if (haveactive) {
 				if (this.index == i && this.hasClass('manualIndex')) {
-					tabicon.setSrc('assets/' + theme + '/icons/' + tabicon.iconname + '-active.png');
+					tabicon.setActive(true);
 				} else {
-					tabicon.setSrc('assets/' + theme + '/icons/' + tabicon.iconname + '.png');
+					tabicon.setActive(false);
 				}
+			}
+
+			if (force) {
+				tabicon.setTheme(theme);
 			}
 		}
 	}

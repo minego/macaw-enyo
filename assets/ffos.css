@@ -13,9 +13,7 @@ body {
 
 .themeFfos .toolbar {
 	background:				none;
-	background-color:		black;
 	border:					none;
-	color:					white;
 }
 
 .themeFfos .toolbar.topbar {
@@ -24,12 +22,12 @@ body {
 }
 
 .themeFfos .toolbar.bottombar {
-	border-top:				1px solid #933212;
 	padding-top:			0px;
 }
 
 .themeFfos .toolbar.titlebar {
 	background-color:		#f97c17 !important;
+	color:					white;
 }
 
 /* move the buttons to the right */
@@ -62,7 +60,7 @@ body {
 .themeFfos .message .username,
 .themeFfos .message .time,
 .themeFfos .newcount {
-	color:					#777;
+	color:					#5F5F5F;
 }
 
 .themeFfos .compose .counter {
@@ -71,9 +69,14 @@ body {
 }
 
 .themeFfos .tabbar {
-	background:				#000;
-	color:					#fff;
-	border:					none !important;
+	background:				white;
+}
+
+.themeFfos .tabbar.bottombar {
+	border-top:				0.1rem solid #e7e7e7;
+}
+.themeFfos .tabbar.topbar {
+	border-bottom:			0.1rem solid #e7e7e7;
 }
 
 .themeFfos .tabbar .tab {
