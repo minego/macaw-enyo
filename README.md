@@ -87,12 +87,20 @@ Macaw License
 You may do whatever you want with this source code with the following conditions:
  1.	You may not use reproductions, distributions, modifications, or any part of
 	this source code or included images, graphics, or other media for commercial
-	purposes
+	purposes without written permission.
 
  2.	You may not use the name "Macaw" or the name of any contributor in a manner
 	that implies endorsement or "official" involvement.
 
  3.	You must retain this license notice.
+
+ 4.	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
 
 Email license@minego.net if you need an exception made to the license.
 
