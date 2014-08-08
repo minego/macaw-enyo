@@ -11,10 +11,18 @@
 }
 
 .themeFfos .tabbar.bottombar {
-	border-top:				1px solid #333 !!important;
+	border-top:				0.1rem solid #333;
 }
 
 .themeFfos .tabbar.topbar {
-	border-bottom:			1px solid #333 !!important;
+	border-bottom:			0.1rem solid #333;
+}
+
+.themeFfos .tabbar {
+	background:				black !important;
+}
+
+.themeFfos .tabbar .count {
+	color:					white;
 }
 

@@ -202,6 +202,26 @@ toString: function()
 	return('twitter');
 },
 
+getCurrentTime: function(cb)
+{
+	var xhr		= OAuth.Request();
+
+	/*
+		This will result in a 404, but that doesn't matter since it will have a
+		"Date" header field.
+	*/
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState !== 4) {
+			return;
+		}
+
+		cb(xhr.getResponseHeader("Date"));
+	}.bind(this);
+
+	xhr.open("HEAD", this.apibase, true);
+	xhr.send();
+},
+
 authorize: function(cb, verifier)
 {
 	if (!cb || !verifier) {
@@ -310,9 +330,11 @@ oldauthorize: function(cb, params, pin)
 
 	// TODO	Add lists, user timeline, etc. Those will require other args
 
-	The provided callback will be called when the request is complete. The
-	first argument is a boolean indicating success, and the second is an
-	array of tweets.
+	The provided callback will be called when the request is complete with the
+	following arguments:
+		success			true if the request was successful
+		tweets			An array of tweets
+		headers			The response headers
 */
 getMessages: function(resource, cb, params)
 {
@@ -395,7 +417,7 @@ getMessages: function(resource, cb, params)
 			}
 
 			if (results) {
-				cb(true, results);
+				cb(true, results, response.responseHeaders);
 			} else {
 				cb(false);
 			}
@@ -456,7 +478,6 @@ getDMs: function(cb, params)
 				function(responseOut) {
 					var resultsIn	= enyo.json.parse(responseIn.text);
 					var resultsOut	= enyo.json.parse(responseOut.text);
-					var resultsAll	= [];
 					var results		= [];
 
 					if (!resultsIn || !resultsOut) {
@@ -468,29 +489,13 @@ getDMs: function(cb, params)
 					resultsOut		= this.cleanupMessages(resultsOut);
 
 					/* Merge the results, and sort by date... Newest first */
-					resultsAll		= resultsIn.concat(resultsOut).sort(function(a, b) {
+					results			= resultsIn.concat(resultsOut).sort(function(a, b) {
 						return(b.created - a.created);
 					});
 
-					/* Filter results, keeping a single message per sender */
-					for (var i = 0, a; a = resultsIn[i]; i++) {
-						var b = null;
-
-						for (var x = 0; b = results[x]; x++) {
-							if (a.user.screenname === b.user.screenname) {
-								break;
-							}
-						}
-
-						if (!b) {
-							results.push(a);
-						}
-					}
-
-					results = this.cleanupMessages(results);
-
 					if (results) {
-						cb(true, results, resultsAll);
+						results = this.cleanupMessages(results);
+						cb(true, results, responseOut.responseHeaders);
 					} else {
 						cb(false);
 					}

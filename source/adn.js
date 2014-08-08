@@ -96,6 +96,26 @@ toString: function()
 	return('adn');
 },
 
+getCurrentTime: function(cb)
+{
+	var xhr		= OAuth.Request();
+
+	/*
+		This will result in a 404, but that doesn't matter since it will have a
+		"Date" header field.
+	*/
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState !== 4) {
+			return;
+		}
+
+		cb(xhr.getResponseHeader("Date"));
+	}.bind(this);
+
+	xhr.open("HEAD", this.apibase, true);
+	xhr.send();
+},
+
 buildURL: function(url, params)
 {
 	var p = [];
@@ -374,7 +394,7 @@ getMessages: function(resource, cb, params)
 				results = this.cleanupMessage(response.data);
 			}
 
-			cb(true, results);
+			cb(true, results, response.responseHeaders);
 		} else {
 			cb(false, []);
 		}
