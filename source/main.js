@@ -1488,7 +1488,10 @@ var notify = function(title, options) {
 		/* Fallback */
 		alert(title + ": " + options.body);
 
-		n = { cancel: function() {} };
+		n = {
+			close:	function() {},
+			cancel:	function() {}
+		};
 	}
 
 	return(n);
