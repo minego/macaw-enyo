@@ -30,6 +30,7 @@ body {
 	color:					white;
 	font-weight:			200;
 	font-style:				italic;
+	font-size:				1.3rem;
 }
 
 /* move the buttons to the right */
@@ -46,13 +47,13 @@ body {
 }
 
 .themeFfos .toolbar.titlebar .optsbutton {
-	padding-left:			2px;
-	padding-right:			2px;
+	padding-left:			6px;
+	padding-right:			6px;
 }
 
 .themeFfos .titlebar .title {
+	left:					44px !important;
 	text-align:				center;
-	left:					38px !important;
 }
 
 .themeFfos .listitem {
@@ -100,7 +101,7 @@ body {
 
 .themeFfos .indicator {
 	background:				none;
-	border-bottom:			2px solid #cd6723;
+	border-bottom:			2px solid #00aacc;
 }
 
 .themeFfos button,
