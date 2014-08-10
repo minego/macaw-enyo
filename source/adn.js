@@ -77,7 +77,7 @@ var ADNAPI = function(user, readycb) {
 				this.user.id			= profile.id;
 				this.user.screenname	= profile.screenname;
 
-				console.log(this.user);
+				// console.log(this.user);
 			}
 
 			if (readycb) readycb();

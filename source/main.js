@@ -24,6 +24,7 @@ published: {
 handlers: {
 	onCloseToaster:							"closeToaster",
 	onOpenToaster:							"openToaster",
+	onShowPanel:							"showPanel",
 
 	onCompose:								"compose",
 	onConversation:							"conversation",
@@ -184,36 +185,6 @@ create: function()
 
 	this.spincount = 0;
 
-	/* Monitor for Web Activity share requests */
-	try {
-		navigator.mozSetMessageHandler('activity', function(activity) {
-			switch (activity.source.name) {
-				case 'view':
-				case 'share':
-					if (activity.source.data.url) {
-						this.compose(this, {
-							text:		activity.source.data.url
-						});
-					} else if (activity.source.data.blobs) {
-						var		images = [];
-
-						for (var i = 0, b; b = activity.source.data.blobs[i]; i++) {
-							/* Set the filename, it is needed for the upload */
-							b.fileName = activity.source.data.filenames[i];
-
-							images.push(b);
-						}
-
-						this.compose(this, {
-							images:		images
-						});
-					}
-					break;
-			}
-		}.bind(this));
-	} catch (e) {
-	}
-
 	/* Monitor for messages posted from the authorization windows */
 	window.addEventListener('message', function(e) {
 		console.log(e.origin);
@@ -292,6 +263,58 @@ create: function()
 
 	this.addClass('font-tiny');
 
+	try {
+		/* Monitor for Web Activity share requests */
+		navigator.mozSetMessageHandler('activity', function(activity) {
+			switch (activity.source.name) {
+				case 'view':
+				case 'share':
+					if (activity.source.data.url) {
+						this.compose(this, {
+							text:		activity.source.data.url
+						});
+					} else if (activity.source.data.blobs) {
+						var		images = [];
+
+						for (var i = 0, b; b = activity.source.data.blobs[i]; i++) {
+							/* Set the filename, it is needed for the upload */
+							b.fileName = activity.source.data.filenames[i];
+
+							images.push(b);
+						}
+
+						this.compose(this, {
+							images:		images
+						});
+					}
+					break;
+			}
+		}.bind(this));
+
+		/*
+			Monitor for alarms
+
+			This must happen after the panels are created
+		*/
+		navigator.mozSetMessageHandler('alarm', function(alarm) {
+			// TODO	Would it be better to have a different page load a small
+			//		part of the app to check for new messages instead of the
+			//		whole thing?
+
+			console.log('Alarm hit', alarm);
+			switch (alarm.data.action) {
+				case "refresh":
+					if (this.$[alarm.data.name]) {
+						this.$[alarm.data.name].refresh(true);
+					} else {
+						notify('Could not find panel to refresh: ' + alarm.data.name);
+					}
+					break;
+			}
+		}.bind(this));
+	} catch (e) {
+	}
+
 	if (window.PalmSystem) {
 		/*
 			Hide the options button on webOS devices since they have the app
@@ -299,89 +322,6 @@ create: function()
 		*/
 		this.$.options.hide();
 	}
-
-
-	/*
-		Create a global error notification function
-
-		Calling ex("oh noes, something happened); from anywhere in the app will
-		display a small bar at the top of the screen, with an error icon and the
-		specified text.
-
-		This should be used throughout the app to display errors to the user.
-
-		This currently uses the notification toaster. Ideally this should tie
-		into the native notification system for each OS. The notification
-		toaster is meant to act as a fallback when an OS mechanism does not
-		exist or can't be used.
-	*/
-	// TODO	Tie into platform specific notification systems when possible
-	// TODO	Allow actions in the notifications
-
-	notify = function(image, title, message) {
-		var n = null;
-
-		image	= image || '/icon48.png';
-		title	= title || 'macaw';
-
-		try {
-			/* webkit */
-			n = webkitNotifications.createNotification(image, title, message);
-			n.show();
-			return(n);
-		} catch (e) {
-		}
-
-		try {
-			/* mozilla */
-			// TODO	Add support for onclick? It could select the right panel
-			//		and select the tweet in question.
-
-			n = navigator.mozNotification.createNotification(title, message, image);
-			n.show();
-			return(n);
-		} catch (e) {
-		}
-
-
-		this.$.notifications.pop(this.$.notifications.length);
-		this.$.notifications.push({
-			classes:		"error",
-			content:		message,
-
-			ontap:			"clearError"
-		}, {
-			owner:			this,
-
-			noscrim:		true,
-			modal:			true,
-			ignoreback:		true,
-			notitle:		true
-		});
-
-		clearTimeout(this.$.notifications.timeout);
-
-		this.$.notifications.timeout = setTimeout(function() {
-			this.$.notifications.pop(1);
-		}.bind(this), 3000);
-
-		n = {
-			cancel: function() {
-				this.$.notifications.pop(1);
-			}.bind(this)
-		};
-
-		return(n);
-	}.bind(this);
-
-	ex = function(error) {
-		var origin = window.location.protocol + '//' + window.location.hostname;
-
-		console.log('ex:', error);
-
-		return(notify(origin + '/assets/error.png', 'Error', error));
-	}.bind(this);
-
     this.render();
 },
 
@@ -494,7 +434,6 @@ createTabs: function()
 	var components = [];
 
 	for (var t = 0, tab; tab = this.tabs[t]; t++) {
-		var kind	= "panel";
 		var user	= null;
 
 		/* Cleanup from older builds */
@@ -845,6 +784,19 @@ tabTapped: function(sender, event)
 	}
 
 	this.setIndex(sender.index);
+},
+
+/* Something (not the user, probably a notification) wants to show a panel */
+showPanel: function(sender, event)
+{
+	if (event.name) {
+		for (var i = 0, p; p = this.$['panel' + i]; i++) {
+			if (p.name === event.name) {
+				this.setIndex(i);
+				return;
+			}
+		}
+	}
 },
 
 indexChanged: function(was)
@@ -1500,8 +1452,59 @@ adjustTabs: function(force)
 
 });
 
-var ex;
-var notify;
+/*
+	Create a global error notification function
+
+	Calling ex("oh noes, something happened); from anywhere in the app will
+	display a small bar at the top of the screen, with an error icon and the
+	specified text.
+
+	This should be used throughout the app to display errors to the user.
+
+	This currently uses the notification toaster. Ideally this should tie
+	into the native notification system for each OS. The notification
+	toaster is meant to act as a fallback when an OS mechanism does not
+	exist or can't be used.
+*/
+// TODO	Tie into platform specific notification systems when possible
+var notify = function(title, options) {
+	var n = null;
+
+	options = options || {};
+	title = title || 'macaw';
+
+	if (!options.icon) {
+		options.icon = '/icon48.png';
+	}
+
+	if ("Notification" in window) {
+		n = new Notification(title, options);
+	} else if ("mozNotification" in navigator) {
+		/* Gecko < 22 */
+		n = navigator.mozNotification.createNotification(title,
+								options.body, options.icon);
+		n.show();
+	} else {
+		/* Fallback */
+		alert(title + ": " + options.body);
+
+		n = { cancel: function() {} };
+	}
+
+	return(n);
+};
+
+var ex = function(error) {
+	var origin = window.location.protocol + '//' + window.location.hostname;
+
+	console.log('ex:', error);
+
+	return(notify('Error', {
+		body:		error,
+		icon:		origin + '/assets/error.png',
+		tag:		"error"
+	}));
+};
 
 if (enyo.platform.webos) {
 	var element = document.getElementById("webos"); //document.body;

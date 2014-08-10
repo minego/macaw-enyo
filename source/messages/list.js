@@ -223,16 +223,17 @@ refresh: function(autorefresh, index)
 	this.setTimer();
 
 	if (this.loading) {
+		setTimeout(this.refresh.bind(this), 1000);
 		return;
 	}
+	// console.log('refreshing ' + this.name);
 
-	if (autorefresh && this.loaded) {
-		var now		= new Date();
-		var elapsed	= now - this.loaded;
+	if (autorefresh) {
+		var at	= new Date(prefs.get('refreshAt:' + this.name));
+		var now	= new Date();
 
-		if ((elapsed / 1000) < this.refreshTime) {
-			this.log('Auto refresh tried to run too soon...', elapsed, now, this.loaded);
-
+		if (now < at) {
+			this.log('Auto refresh tried to run too soon...', at, now, this.loaded);
 			return;
 		}
 	}
@@ -323,7 +324,7 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 	var changed			= false;
 	var topIndex		= this.$.list.getRowIndexFromCoordinate(48);
 
-	this.log(this.resource, 'topIndex is', topIndex);
+	// this.log(this.resource, 'topIndex is', topIndex);
 
 	if (this.destroyed) {
 		return;
@@ -513,13 +514,12 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 
 	/* Display a notification for the most recent message */
 	if (this.notify) {
-		var max = 3;
-
 		if (autorefresh && newcount > 0) {
 			for (var i = Math.min(3, newcount), item; item = results[--i]; ) {
 				var label	= null;
 				var text	= null;
 				var icon	= null;
+				var n;
 
 				switch (this.resource.toLowerCase()) {
 					case 'mentions':
@@ -544,24 +544,35 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 
 						/* No need to continue, one notification will do */
 						i			= 0;
-						max			= 1;
 						break;
 				}
 
-				if (!this.notifications) {
-					this.notifications = [];
-				}
+				n = notify(label, {
+					icon:		icon,
+					body:		text,
+					tag:		"newmessages:" + this.name
+				});
 
-				this.notifications.unshift(notify(icon, label, text));
-			}
-		}
+				n.onclick = function() {
+					// TODO	On a notification or DM should we show the details
+					//		when the notification is clicked?
 
-		/* Never display more than 3 notifications per panel */
-		if (this.notifications) {
-			while (this.notifications.length > max) {
-				var n = this.notifications.pop();
+					if (enyo.platform.firefoxOS) {
+						/* Launch the application in case it isn't visible */
+						var req = window.navigator.mozApps.getSelf();
+						req.onsuccess = function() {
+							if (req.result) {
+								console.log(req.result);
+								req.result.launch();
+							}
+						};
+					}
 
-				n.cancel();
+					/* Ask the 'main' kind to show the column */
+					this.doShowPanel({
+						name: this.name
+					});
+				};
 			}
 		}
 	}
@@ -621,7 +632,7 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 		setTimeout(enyo.bind(this, function() {
 			/* Scroll to the oldest new messages */
 			this.lastActivity = new Date();
-			console.log(this.resource, 'Scroll to: ' + topIndex);
+			// console.log(this.resource, 'Scroll to: ' + topIndex);
 
 			this.$.list.scrollToRow(topIndex);
 
@@ -702,31 +713,53 @@ writeCache: function()
 
 setTimer: function()
 {
-	clearTimeout(this.timeout);
+	if (enyo.platform.firefoxOS) {
+		/* Clear all alarms scheduled for this column */
+		var req = navigator.mozAlarms.getAll();
 
-	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
-			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
-	) {
+		req.onsuccess = function() {
+			for (var i = 0, alarm; alarm = req.result[i]; i++) {
+				if (alarm.data.name === this.name) {
+					navigator.mozAlarms.remove(alarm.id);
+				}
+			}
+			this._setTimer();
+		}.bind(this);
+	} else {
+		clearTimeout(this.timeout);
+		this._setTimer();
+	}
+},
+
+_setTimer: function()
+{
+	var time	= this.refreshTime;
+	var at;
+
+	if (isNaN(time) || time < 1) {
+		return;
+	}
+
+	/* Save a timestamp of the expected time to refresh */
+	at = new Date((+new Date()) + (time * 1000));
+	prefs.set('refreshAt:' + this.name, at.toString());
+
+	// console.log(this.resource, 'Refresh ' + this.name + ' in ' + time + ' seconds');
+	if (enyo.platform.firefoxOS) {
 		/*
-			Auto-refresh and notifications are not currently supported on FFOS.
-
-			They work (pretty well) when the app is loaded but there is no way
-			right now to keep it loaded. Notifications on FFOS will probably
-			require a push server.
+			On firefox OS alarms are used, so that we can check for new messages
+			even if the app isn't loaded.
 		*/
-		return;
+		navigator.mozAlarms.add(at, 'honorTimezone', {
+			name:	this.name,
+			action:	"refresh"
+		});
+	} else {
+		this.timeout = setTimeout(function() {
+			this.log(this.resource, 'Refreshing...');
+			this.refresh(true);
+		}.bind(this), time * 1000);
 	}
-
-
-	if (isNaN(this.refreshTime) || this.refreshTime < 1) {
-		return;
-	}
-
-	this.log(this.resource, 'Setting timer to refresh ' + this.refreshTime + ' from now');
-	this.timeout = setTimeout(function() {
-		this.log(this.resource, 'Refreshing...');
-		this.refresh(true);
-	}.bind(this), this.refreshTime * 1000);
 },
 
 itemTap: function(sender, event)

@@ -746,6 +746,9 @@ autocomplete: function()
 		node.setAttribute("autocorrect", "off");
 	}
 
+	// TODO	There are issues with autocomplete now, so turn it off
+	return;
+
 	// TODO	Go through all accounts in this.users that are enabled for sending
 	//		right now...
 	// TODO	Call this.setUser() on the account that the user was selected in...
@@ -758,14 +761,20 @@ autocomplete: function()
 	var matches = [];
 
 	for (var i = 0, u; u = this.user.friends[i]; i++) {
-		if (-1 != u.screenname.toLowerCase().indexOf(word)) {
-			if (matches.length <= 5) {
-				matches.push({
-					content: '@' + u.screenname
-				});
-			} else {
-				break;
-			}
+		if (!u.screenname) {
+			continue;
+		}
+
+		if (-1 == u.screenname.toLowerCase().indexOf(word)) {
+			continue;
+		}
+
+		if (matches.length <= 5) {
+			matches.push({
+				content: '@' + u.screenname
+			});
+		} else {
+			break;
 		}
 	}
 
@@ -774,6 +783,7 @@ autocomplete: function()
 		end:	end
 	};
 
+	// TODO	Change the style for auto complete... it looks terrible now
 	if (matches.length > 0) {
 		this.$.autocomplete.createComponents(matches, { owner: this });
 		this.$.autocomplete.render();

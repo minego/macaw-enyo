@@ -139,15 +139,6 @@ create: function()
 
 	this.inherited(arguments);
 
-
-	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
-			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
-	) {
-		/* Auto-refresh and notifications are not currently supported on FFOS */
-		this.$.refreshFields.applyStyle('display', 'none');
-		this.norefresh = true;
-	}
-
 	if (!this.tabs) {
 		this.tabs = prefs.get('panels');
 	}
