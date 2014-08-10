@@ -30,6 +30,9 @@
 		},
 		"desktop-notification":	{
 			"description":		"Required to post notifications of new messages"
+		},
+		"alarms": {
+			"description":		"Allow waking to check for new messages"
 		}
 	},
 
@@ -40,6 +43,10 @@
 			"returnValue":		false
 		}
 	},
+
+	"messages": [
+		{ "alarm":				"/index.html" }
+	],
 
 	"type":						"privileged",
 

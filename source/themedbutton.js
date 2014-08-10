@@ -18,7 +18,6 @@ enyo.kind({
 name:						"themedbutton",
 classes:					"themedbutton enyo-image",
 kind:						enyo.Image,
-showing:					false,
 
 handlers: {
 	onerror:				"fixicon",
@@ -28,7 +27,8 @@ handlers: {
 published: {
 	iconname:				null,
 	theme:					null,
-	active:					false
+	active:					false,
+	showing:				false
 },
 
 /*
@@ -38,6 +38,9 @@ published: {
 */
 fixicon: function()
 {
+	/* The image will be set to showing once it has successfully loaded */
+	this.setShowing(false);
+
 	if (this.activeTheme && this.theme && this.theme.length) {
 		/* Have we tried all of the themes? */
 		var index = this.theme.indexOf(this.activeTheme);
@@ -67,9 +70,6 @@ showicon: function()
 
 themeChanged: function()
 {
-	/* The image will be set to showing once it has successfully loaded */
-	this.setShowing(false);
-
 	delete this.activeTheme;
 
 	if (!this.theme || !this.theme.length) {
