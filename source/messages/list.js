@@ -557,6 +557,17 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 					// TODO	On a notification or DM should we show the details
 					//		when the notification is clicked?
 
+					if (enyo.platform.firefoxOS) {
+						/* Launch the application in case it isn't visible */
+						var req = window.navigator.mozApps.getSelf();
+						req.onsuccess = function() {
+							if (req.result) {
+								console.log(req.result);
+								req.result.launch();
+							}
+						};
+					}
+
 					/* Ask the 'main' kind to show the column */
 					this.doShowPanel({
 						name: this.name
