@@ -104,9 +104,6 @@ accountAction: function(sender, event)
 	var accounts	= prefs.get('accounts');
 	var tabs		= prefs.get('panels');
 
-	/* Close the action menu */
-	this.doCloseToaster();
-
 	switch (event.value) {
 		case "delete":
 			/* Remove any tabs that are linked to this account */
@@ -129,6 +126,9 @@ accountAction: function(sender, event)
 			this.doTabsChanged();
 			break;
 	}
+
+	/* Close the action menu */
+	this.doCloseToaster();
 },
 
 show: function()

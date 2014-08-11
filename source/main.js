@@ -898,7 +898,7 @@ compose: function(sender, options)
 			height to avoid this.
 		*/
 		tall:		this.vkb ? true : false,
-		instant:	this.vkb ? true : false
+		alwaysshow:	this.vkb ? true : false
 	});
 },
 

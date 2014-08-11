@@ -606,7 +606,7 @@ handleCommand: function(sender, event)
 				component: {
 					kind:				"ChooseAccount",
 					title:				$L("Which account(s) would you like to send as?"),
-					onChoose:			"handleCommand",
+					onSelect:			"handleCommand",
 					users:				this.users,
 					multi:				true,
 
@@ -626,8 +626,8 @@ handleCommand: function(sender, event)
 				},
 
 				options:{
-					notitle:		true,
-					owner:			this
+					owner:			this,
+					notitle:		true
 				}
 			});
 
