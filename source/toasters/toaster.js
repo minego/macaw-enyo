@@ -417,6 +417,11 @@ published: {
 	transparent:				false
 },
 
+events: {
+	onCloseToaster:				"",
+	onOpenToaster:				""
+},
+
 create: function()
 {
 	this.inherited(arguments);

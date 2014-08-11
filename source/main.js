@@ -307,7 +307,7 @@ create: function()
 					if (this.$[alarm.data.name]) {
 						this.$[alarm.data.name].refresh(true);
 					} else {
-						notify('Could not find panel to refresh: ' + alarm.data.name);
+						console.log('Could not find panel to refresh: ' + alarm.data.name);
 					}
 					break;
 			}
@@ -1474,7 +1474,9 @@ var notify = function(title, options) {
 	title = title || 'macaw';
 
 	if (!options.icon) {
-		options.icon = '/icon48.png';
+		var origin = window.location.protocol + '//' + window.location.hostname;
+
+		options.icon = orign + '/icon48.png';
 	}
 
 	if ("Notification" in window) {

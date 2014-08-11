@@ -20,7 +20,7 @@ kind:															"optionsmenu",
 classes:														"ui",
 
 events: {
-	oncloseToaster:												"",
+	onCloseToaster:												"",
 	onOpenToaster:												""
 },
 

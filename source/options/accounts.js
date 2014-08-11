@@ -53,10 +53,6 @@ create: function()
 	this.createAccountList();
 },
 
-destroy: function()
-{
-},
-
 createAccountList: function()
 {
 	var accounts = prefs.get('accounts');
@@ -108,6 +104,9 @@ accountAction: function(sender, event)
 	var accounts	= prefs.get('accounts');
 	var tabs		= prefs.get('panels');
 
+	/* Close the action menu */
+	this.doCloseToaster();
+
 	switch (event.value) {
 		case "delete":
 			/* Remove any tabs that are linked to this account */
@@ -118,10 +117,9 @@ accountAction: function(sender, event)
 			}
 
 			/* Remove the account */
-			for (var i = 0, a; a = accounts[i]; i++) {
+			for (var i = accounts.length - 1; a = accounts[i]; i--) {
 				if (a.id === account.id) {
 					accounts.splice(i, 1);
-					break;
 				}
 			}
 
@@ -129,7 +127,6 @@ accountAction: function(sender, event)
 			prefs.set('accounts', accounts);
 
 			this.doTabsChanged();
-			this.doCloseToaster();
 			break;
 	}
 },

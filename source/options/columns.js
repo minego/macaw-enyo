@@ -23,7 +23,7 @@ dirtytabs:											false,
 
 events: {
 	onTabsChanged:									"",
-	oncloseToaster:									"",
+	onCloseToaster:									"",
 	onOpenToaster:									""
 },
 
