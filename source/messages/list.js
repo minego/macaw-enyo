@@ -165,7 +165,13 @@ rendered: function()
 		results = [];
 	}
 
-	this.service.cleanupMessages(results);
+	try {
+		this.service.cleanupMessages(results);
+	} catch (e) {
+		/* Throw away the cached items if cleaning them fails */
+		console.log('Throwing away cached messages that can not be cleaned', e);
+		results = [];
+	}
 
 	var cleanupItem = function(item) {
 		if (item.media) {
