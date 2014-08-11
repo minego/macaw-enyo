@@ -514,7 +514,7 @@ createTabs: function()
 				break;
 
 			case 'favorites':
-				iconname = 'favorite';
+				iconname = 'favorites';
 				break;
 
 			case 'list':
@@ -950,6 +950,18 @@ accountCreated: function(sender, event)
 	this.prepareAccount(account, function() {
 		this.closeAllToasters();
 
+		/* Make sure this account isn't already here */
+		for (var i = this.tabs.length - 1, t; t = this.tabs[i]; i--) {
+			if ("undefined" == typeof(t.id) || t.id === account.id) {
+				this.tabs.splice(i, 1);
+			}
+		}
+		for (var i = this.users.length - 1, a; a = this.users[i]; i--) {
+			if (a.id === account.id) {
+				this.users.splice(i, 1);
+			}
+		}
+
 		this.users.push(account);
 		prefs.set('accounts', this.users);
 
@@ -959,12 +971,20 @@ accountCreated: function(sender, event)
 			label:		'@' + account.screenname + ' home',
 			id:			account.id,
 			service:	account.servicename,
-			refresh:	300,
-			notify:		true
+			refresh:	-1,
+			notify:		false
 		});
 		this.tabs.push({
 			type:		'mentions',
 			label:		'@' + account.screenname + ' mentions',
+			id:			account.id,
+			service:	account.servicename,
+			refresh:	300,
+			notify:		true
+		});
+		this.tabs.push({
+			type:		'favorites',
+			label:		'@' + account.screenname + ' favorites',
 			id:			account.id,
 			service:	account.servicename,
 			refresh:	300,

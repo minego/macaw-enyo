@@ -117,7 +117,7 @@ accountAction: function(sender, event)
 			}
 
 			/* Remove the account */
-			for (var i = accounts.length - 1; a = accounts[i]; i--) {
+			for (var i = accounts.length - 1, a; a = accounts[i]; i--) {
 				if (a.id === account.id) {
 					accounts.splice(i, 1);
 				}
