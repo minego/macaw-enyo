@@ -36,7 +36,7 @@ handlers: {
 
 events: {
 	onCloseToaster:					"",
-	onChoose:						""
+	onSelect:						""
 },
 
 components: [
@@ -169,12 +169,11 @@ handleCommand: function(sender, event)
 			/* fallthrough */
 
 		case "done":
-			this.doCloseToaster();
-
-			this.doChoose({
+			this.doSelect({
 				command:		sender.usercommand || this.command,
 				users:			this.users
 			});
+			this.doCloseToaster();
 			break;
 
 		case "toggle":

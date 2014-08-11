@@ -307,7 +307,7 @@ create: function()
 					if (this.$[alarm.data.name]) {
 						this.$[alarm.data.name].refresh(true);
 					} else {
-						notify('Could not find panel to refresh: ' + alarm.data.name);
+						console.log('Could not find panel to refresh: ' + alarm.data.name);
 					}
 					break;
 			}
@@ -514,7 +514,7 @@ createTabs: function()
 				break;
 
 			case 'favorites':
-				iconname = 'favorite';
+				iconname = 'favorites';
 				break;
 
 			case 'list':
@@ -898,7 +898,7 @@ compose: function(sender, options)
 			height to avoid this.
 		*/
 		tall:		this.vkb ? true : false,
-		instant:	this.vkb ? true : false
+		alwaysshow:	this.vkb ? true : false
 	});
 },
 
@@ -950,6 +950,18 @@ accountCreated: function(sender, event)
 	this.prepareAccount(account, function() {
 		this.closeAllToasters();
 
+		/* Make sure this account isn't already here */
+		for (var i = this.tabs.length - 1, t; t = this.tabs[i]; i--) {
+			if ("undefined" == typeof(t.id) || t.id === account.id) {
+				this.tabs.splice(i, 1);
+			}
+		}
+		for (var i = this.users.length - 1, a; a = this.users[i]; i--) {
+			if (a.id === account.id) {
+				this.users.splice(i, 1);
+			}
+		}
+
 		this.users.push(account);
 		prefs.set('accounts', this.users);
 
@@ -959,12 +971,20 @@ accountCreated: function(sender, event)
 			label:		'@' + account.screenname + ' home',
 			id:			account.id,
 			service:	account.servicename,
-			refresh:	300,
-			notify:		true
+			refresh:	-1,
+			notify:		false
 		});
 		this.tabs.push({
 			type:		'mentions',
 			label:		'@' + account.screenname + ' mentions',
+			id:			account.id,
+			service:	account.servicename,
+			refresh:	300,
+			notify:		true
+		});
+		this.tabs.push({
+			type:		'favorites',
+			label:		'@' + account.screenname + ' favorites',
 			id:			account.id,
 			service:	account.servicename,
 			refresh:	300,
@@ -1474,7 +1494,9 @@ var notify = function(title, options) {
 	title = title || 'macaw';
 
 	if (!options.icon) {
-		options.icon = '/icon48.png';
+		var origin = window.location.protocol + '//' + window.location.hostname;
+
+		options.icon = orign + '/icon48.png';
 	}
 
 	if ("Notification" in window) {

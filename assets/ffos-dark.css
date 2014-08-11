@@ -1,13 +1,17 @@
 #main {
-	background:				#2c393b;
+	background:				#0E1214;
 }
 
 .panel {
 	color:					white;
 }
 
+.themeFfos .toolbar.titlebar {
+	background-color:		#242D33 !important;
+}
+
 .themeFfos .listitem {
-	border-bottom:			1px solid #333;
+	border-bottom:			1px solid #444;
 }
 
 .themeFfos .tabbar.bottombar {
@@ -26,3 +30,7 @@
 	color:					white;
 }
 
+.themeFfos .indicator {
+	background:				none;
+	border-bottom:			2px solid #00aacc;
+}

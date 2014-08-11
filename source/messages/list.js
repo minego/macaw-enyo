@@ -165,7 +165,13 @@ rendered: function()
 		results = [];
 	}
 
-	this.service.cleanupMessages(results);
+	try {
+		this.service.cleanupMessages(results);
+	} catch (e) {
+		/* Throw away the cached items if cleaning them fails */
+		console.log('Throwing away cached messages that can not be cleaned', e);
+		results = [];
+	}
 
 	var cleanupItem = function(item) {
 		if (item.media) {
@@ -575,6 +581,112 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 						name: this.name
 					});
 				};
+			}
+		}
+	}
+
+	/*
+		Merge split messages?
+
+		If a new message is a reply to another message in the list  from the
+		same sender then merge them into one.
+
+		The assumption being that they are one message that has been split to
+		get around character limits.
+
+		For now this only works if all of the messages arrive in one refresh.
+	*/
+	for (var y = results.length - 1, first; first = results[y]; y--) {
+		var original	= null;
+		var lastIndex	= NaN;
+		var matchid, user;
+
+		if (!first.user || !first.user.id) {
+			continue;
+		}
+
+		matchid = first.id;
+		user = first.user.id;
+
+		for (var x = y - 1, next; next = results[x]; x--) {
+			if (!next.replyto || next.replyto !== matchid) {
+				/* Each part should be a reply to the previous part */
+				continue;
+			}
+
+			if (!next.user || next.user.id !== user) {
+				/* Each part should be from the same user */
+				continue;
+			}
+
+			/* Find and strip the "x of y:" prefixes */
+			var ni	= next.text.search(/[0-9]+\s*\w*\s*[0-9]+:/);
+			var fi	= first.text.search(/[0-9]+\s*\w*\s*[0-9]+:/);
+
+			if (-1 == ni || -1 == fi) {
+				/* No prefix... */
+				continue;
+			}
+
+			if (next.text.slice(0, ni) !== first.text.slice(0, fi)) {
+				/*
+					The value before the prefixes don't match, which
+					means this likely isn't the same message.
+				*/
+				continue;
+			}
+
+			/* The next part needs to match the ID of this one */
+			matchid = next.id;
+
+			/*
+				Leave the "x of y" on the start of the merged message
+				for now because there may be more than just 2 parts to
+				this message. It needs that to match the next one.
+			*/
+			first.text = [
+				first.text,
+				next.text.replace(/.*[0-9]+\s*\w*\s*[0-9]+:/, '')
+			].join(' ');
+
+			/*
+				Cleanup the stripped text too.
+			*/
+			first.stripped = [
+				first.stripped,
+				next.stripped.replace(/.*[0-9]+\s*\w*\s*[0-9]+:/, '')
+			].join(' ');
+
+			/*
+				Use the newer message's ID so that the next refresh
+				will get things newer than it.
+			*/
+			first.id = next.id;
+
+			/* Replace first with a dummy message */
+			results.splice(isNaN(lastIndex) ? y : lastIndex, 1, { junk: true });
+
+			/* Put the combined message in the spot of the new one */
+			results.splice(x, 1, first);
+			lastIndex = x;
+
+			/* Adjust the newcount too */
+			newcount--;
+		}
+
+		if (!isNaN(lastIndex)) {
+			/*
+				Now that we are done searching for matches strip the
+				"x of y" text from the merged message.
+			*/
+			results[lastIndex].text = results[lastIndex].text.replace(/[0-9]+\s*\w*\s*[0-9]+:/, '');
+			results[lastIndex].stripped = results[lastIndex].stripped.replace(/[0-9]+\s*\w*\s*[0-9]+:/, '');
+		}
+
+		/* Cleanup */
+		for (var i = results.length - 1, msg; msg = results[i]; i--) {
+			if (msg.junk) {
+				results.splice(i, 1);
 			}
 		}
 	}

@@ -19,7 +19,7 @@ name:												"optionsmenu",
 classes:											"options",
 
 events: {
-	oncloseToaster:									"",
+	onCloseToaster:									"",
 	onOpenToaster:									"",
 	onCreateAccount:								"",
 	onOptionsChanged:								""

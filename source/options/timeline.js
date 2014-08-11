@@ -20,7 +20,7 @@ kind:												"optionsmenu",
 classes:											"timeline",
 
 events: {
-	oncloseToaster:									"",
+	onCloseToaster:									"",
 	onOpenToaster:									""
 },
 
