@@ -45,7 +45,7 @@
 	clear:				both;
 }
 
-.options .value,
+.options .panel .value,
 .tabdetails .value {
 	display:			inline-block;
 	float:				right;
@@ -54,6 +54,8 @@
 	line-height:		32px;
 }
 
+.options .panel .value,
+.options .panel .label,
 .tabdetails .value,
 .tabdetails .label {
 	margin:				10px 20px;

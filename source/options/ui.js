@@ -21,7 +21,8 @@ classes:														"ui",
 
 events: {
 	onCloseToaster:												"",
-	onOpenToaster:												""
+	onOpenToaster:												"",
+	onOptionsChanged:											""
 },
 
 components: [
@@ -29,26 +30,41 @@ components: [
 		kind:													enyo.Scroller,
 		components: [
 			{
+				classes:										"panel",
+				components: [
+					{
+						content:								"Theme",
+						classes:								"label"
+					}, {
+						kind:									"smart-select",
+						classes:								"value button",
+						name:									"themetype",
+						onSelect:								"themeTypeChanged",
+						options: [
+							{ content: $L("Original"),			value: "original"	},
+							{ content: $L("Holo"),				value: "holo"		},
+							{ content: $L("Firefox OS"),		value: "ffos"		}
+						]
+					}, {
+						tag:									"br"
+					}, {
+						content:								"",
+						classes:								"label"
+					}, {
+						kind:									"smart-select",
+						classes:								"value button",
+						name:									"theme",
+						key:									"theme",
+						onSelect:								"themeChanged",
+						options: [
+						]
+					}
+				]
+			}, {
 				name:											"panel",
 				classes:										"panel",
 				data: {
 					items: [
-						{
-							label:								$L("Theme"),
-							key:								"theme",
-
-							options: [
-								{ label: $L("Light"),			value: "light"				},
-								{ label: $L("Dark"),			value: "dark"				},
-								{ label: $L("Holo Dark"),		value: "holo-dark"			},
-								{ label: $L("Holo Red"),		value: "holo-dark,holo-red"	},
-								{ label: $L("Firefox OS"),		value: "ffos"				},
-								{ label: $L("Firefox OS Dark"),
-																value: "ffos,ffos-dark"		},
-								{ label: $L("Macaw Bros"),		value: "macawbros"			}
-							]
-						},
-
 						{
 							label:								$L("Font Size"),
 							key:								"fontSize",
@@ -107,10 +123,64 @@ components: [
 create: function()
 {
 	this.inherited(arguments);
+
+	switch (prefs.get("theme").split(',')[0]) {
+		case "light":
+		case "dark":
+			this.$.themetype.setSelected("original");
+			break;
+
+		case "holo-dark":
+			this.$.themetype.setSelected("holo");
+			break;
+
+		case "ffos":
+			this.$.themetype.setSelected("ffos");
+			break;
+	}
+	this.themeTypeChanged();
 },
 
-destroy: function()
+themeTypeChanged: function()
 {
+	var		type = this.$.themetype.getSelected().value;
+
+	switch (type) {
+		case "original":
+			this.$.theme.setOptions([
+				{ content: $L("Light"),		value: "light"					},
+				{ content: $L("Dark"),		value: "dark"					}
+			]);
+			break;
+
+		case "holo":
+			this.$.theme.setOptions([
+				{ content: $L("Dark"),		value: "holo-dark"				},
+				{ content: $L("Red"),		value: "holo-dark,holo-red"		}
+			]);
+			break;
+
+		case "ffos":
+			// TODO	Add other ffos color options
+			this.$.theme.setOptions([
+				{ content: $L("Orange"),	value: "ffos"					},
+				{ content: $L("Blue"),		value: "ffos,ffos-blue"			},
+				{ content: $L("Light Blue"),value: "ffos,ffos-light-blue"			},
+				{ content: $L("Red"),		value: "ffos,ffos-red"			},
+				{ content: $L("Green"),		value: "ffos,ffos-green"		},
+				{ content: $L("Dark"),		value: "ffos,ffos-dark"			}
+			]);
+			break;
+	}
+
+	this.$.theme.setSelected(0);
+	this.$.theme.setSelected(prefs.get("theme"));
+},
+
+themeChanged: function()
+{
+	prefs.set("theme", this.$.theme.getSelected().value);
+	this.doOptionsChanged({});
 }
 
 });
