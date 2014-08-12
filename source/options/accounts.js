@@ -85,8 +85,11 @@ accountOptions: function(sender, event)
 		component: {
 			kind:					"smart-menu",
 			title:					$L("Are you sure?"),
-			items:					[ "Delete" ],
-			values:					[ "delete" ],
+
+			options: [{
+				content:			$L("Delete"),
+				menucmd:			"delete"
+			}],
 			showing:				true,
 			onSelect:				"accountAction"
 		},
@@ -104,7 +107,7 @@ accountAction: function(sender, event)
 	var accounts	= prefs.get('accounts');
 	var tabs		= prefs.get('panels');
 
-	switch (event.value) {
+	switch (event.menucmd) {
 		case "delete":
 			/* Remove any tabs that are linked to this account */
 			for (var i = tabs.length - 1, t; t = tabs[i]; i--) {

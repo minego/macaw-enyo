@@ -285,9 +285,9 @@ handleCommand: function(sender, event)
 	var cmd;
 	var arg;
 
-	if (event && event.value) {
+	if (event && event.menucmd) {
 		/* Handle the menu event */
-		cmd = event.value;
+		cmd = event.menucmd;
 
 		/* Close the menu toaster */
 		this.doCloseToaster();
@@ -312,11 +312,6 @@ handleCommand: function(sender, event)
 
 		case "options":
 			var options = [];
-			var values	= [];
-
-			// options.push($L("Public Mention"));
-			// values.push("mention");
-
 
 			/* Some options only apply if this user was the sender */
 			if (!this.item.dm && this.user && this.item.user &&
@@ -330,38 +325,47 @@ handleCommand: function(sender, event)
 						continue;
 					}
 
-					options.push($L("Resend as {screenname}", {
-						screenname: '@' + a.screenname
-					}));
-					values.push("resendAs:" + a.id);
+					options.push({
+						content: $L("Resend as {screenname}",
+										{ screenname: '@' + a.screenname }),
+						menucmd: "resendAs:" + a.id
+					});
 				}
 			} else if (this.service.features.dm) {
-				options.push($L("Send Direct Message"));
-				values.push("dm");
+				options.push({
+					content:	$L("Send Direct Message"),
+					menucmd:	"dm"
+				});
 			}
 
 			if (this.service.features.mute) {
-				options.push($L("Mute"));
-				values.push("mute");
+				options.push({
+					content:	$L("Mute"),
+					menucmd:	"mute"
+				});
 			}
 
-			options.push($L("Block"));
-			values.push("block");
+			options.push({
+				content:		$L("Block"),
+				menucmd:		"block"
+			});
 
 			if (this.service.features.spam) {
-				options.push($L("Report Spam"));
-				values.push("spam");
+				options.push({
+					content:	$L("Report Spam"),
+					menucmd:	"spam"
+				});
 			}
 
-			options.push($L("Hide Message"));
-			values.push("hide");
-
+			options.push({
+				content:		$L("Hide Message"),
+				menucmd:		"hide"
+			});
 
 			this.doOpenToaster({
 				component: {
 					kind:					"smart-menu",
-					items:					options,
-					values:					values,
+					options:				options,
 					showing:				true,
 					onSelect:				"handleCommand"
 				},
@@ -450,8 +454,10 @@ handleCommand: function(sender, event)
 				component: {
 					kind:				"smart-menu",
 					title:				title,
-					items:				[ msg ],
-					values:				[ cmd + "-confirmed" ],
+					options: [{
+						content:		msg,
+						menucmd:		cmd + "-confirmed"
+					}],
 					showing:			true,
 					onSelect:			"handleCommand"
 				},
@@ -508,8 +514,14 @@ handleCommand: function(sender, event)
 				component: {
 					kind:				"smart-menu",
 					title:				title,
-					items:				[ this.service.terms.Repost, $L("Edit") ],
-					values:				[ "repost-confirmed", "repost-edit" ],
+					options: [{
+						content:		this.service.terms.Repost,
+						menucmd:		"repost-confirmed"
+					}, {
+						content:		$L("Edit"),
+						menucmd:		"repost-edit"
+					}],
+
 					showing:			true,
 					onSelect:			"handleCommand"
 				},

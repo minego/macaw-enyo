@@ -358,27 +358,6 @@ rendered: function()
 
 	this.index = 0;
 	this.setIndex(0);
-
-	if(!this.installerChecked) {
-		this.installerChecked = true;
-
-		enyo.WebAppInstaller.check(enyo.bind(this, function(response) {
-			if (response.type != "unsupported" && !response.installed) {
-				this.$.toasters.push({
-					kind:			"smart-menu",
-					title:			$L("Would you like to install Macaw?"),
-					items:			[ $L("Install") ],
-					values:			[ "install" ],
-					showing:		true,
-					onSelect:		"handleCommand"
-				}, {
-					owner:			this,
-
-					notitle:		true
-				});
-			}
-		}));
-	}
 },
 
 clearError: function()
@@ -1048,8 +1027,17 @@ showAppMenu: function(title, items)
 		kind:			"smart-menu",
 		title:			"Macaw",	/* The name of the app is NOT localized */
 
-		items:			[ $L("Refresh"), $L("Redraw"), $L("Compose"), $L("Preferences") ],
-		values:			[ "refresh", "redraw", "compose", "preferences" ],
+		options: [{
+			content:	$L("Refresh"),
+			menucmd:	"refresh"
+		}, {
+			content:	$L("Compose"),
+			menucmd:	"compose"
+		}, {
+			content:	$L("Preferences"),
+			menucmd:	"preferences"
+		}],
+
 		showing:		true,
 		onSelect:		"handleCommand"
 	}, {
@@ -1063,9 +1051,9 @@ handleCommand: function(sender, event)
 {
 	var cmd;
 
-	if (event && event.value) {
+	if (event && event.menucmd) {
 		/* Handle the menu event */
-		cmd = event.value;
+		cmd = event.menucmd;
 
 		/* Close the menu toaster */
 		this.closeToaster(true);

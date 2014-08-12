@@ -54,11 +54,11 @@ components: [
 							key:								"fontSize",
 
 							options: [
-								{ label: $L("Microscopic"),		value: "micro"	},
-								{ label: $L("Tiny"),			value: "tiny"	},
-								{ label: $L("Small"),			value: "small"	},
-								{ label: $L("Medium"),			value: "medium"	},
-								{ label: $L("Large"),			value: "large"	}
+								{ label: $L("Microscopic"),		value: "micro",		style: "10px;" 	},
+								{ label: $L("Tiny"),			value: "tiny",		style: "12px;"	},
+								{ label: $L("Small"),			value: "small"	,	style: "14px;"	},
+								{ label: $L("Medium"),			value: "medium"	,	style: "16px;"	},
+								{ label: $L("Large"),			value: "large"	,	style: "18px;"	}
 							]
 						},
 						{

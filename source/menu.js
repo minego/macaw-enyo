@@ -20,8 +20,7 @@ classes:					"smart-menu",
 
 published: {
 	title:					"",
-	items:					[],
-	values:					[],
+	options:				[],
 	showing:				false,
 	modal:					false
 },
@@ -54,42 +53,41 @@ components: [
 create: function() {
 	this.inherited(arguments);
 
-	this.setModal(this.modal);
-	this.setTitle(this.title);
-	this.setItems(this.items);
-	this.setValues(this.values);
+	this.modalChanged();
+	this.titleChanged();
+	this.optionsChanged();
 },
 
-setModal: function(modal) {
-	if (modal) {
+modalChanged: function() {
+	if (this.modal) {
 		this.$.controls.hide();
 	} else {
 		this.$.controls.show();
 	}
 },
 
-setTitle: function(title)
+titleChanged: function()
 {
-	if (title && title.length > 0) {
-		this.$.title.setContent(title || '');
+	if (this.title && this.title.length > 0) {
+		this.$.title.setContent(this.title || '');
 		this.$.title.show();
 	} else {
 		this.$.title.hide();
 	}
 },
 
-setItems: function(items)
+optionsChanged: function()
 {
 	this.$.menu.destroyClientControls();
 
 	var components = [];
 
-	for (var i = 0, item; item = items[i]; i++) {
+	for (var i = 0, option; option = this.options[i]; i++) {
 		components.push({
-			content:	item,
+			content:	option.content,
 			kind:		onyx.Button,
 			classes:	"menu-item-button menuitem",
-			ontap:		"handleButton",
+			ontap:		"handleSelect",
 			index:		i
 		});
 	}
@@ -102,7 +100,7 @@ back: function(sender, event)
 	this.doCloseToaster();
 },
 
-handleButton: function(sender, event)
+handleSelect: function(sender, event)
 {
 	/* Find the real sender */
 	if (event && event.dispatchTarget) {
@@ -110,15 +108,167 @@ handleButton: function(sender, event)
 	}
 
 	if (sender && !isNaN(sender.index)) {
-		this.doSelect({
-			index:		sender.index,
-			items:		this.items,
-			item:		this.items[sender.index],
-			value:		this.values[sender.index]
-		});
+		this.options[sender.index].index = sender.index;
+
+		this.doSelect(this.options[sender.index]);
 	}
 }
 
 });
 
+
+
+/*
+	Show either a native select option, or a smart-menu when that isn't
+	possible, like in a webOS application.
+*/
+enyo.kind({
+
+name:						"smart-select",
+
+published: {
+	title:					"",
+	options:				[],
+	selected:				null
+},
+
+events: {
+	onOpenToaster:			"",
+	onCloseToaster:			"",
+	onSelect:				""
+},
+
+components: [{
+	name:					"button",
+	kind:					onyx.Button,
+	content:				'',
+	ontap:					"showOptions",
+
+	style: [
+		"width:				100%;",
+		"height:			100%;"
+	].join('')
+}],
+
+create: function()
+{
+	this.inherited(arguments);
+
+	if (!enyo.platform.webos) {
+		/*
+			Create a native <select>
+
+			The select is the same size as this element, but has opacity set to
+			0, so it will get the click.
+		*/
+		this.createComponent({
+			kind:			"Select",
+			name:			"select",
+			onchange:		"handleSelect",
+
+			style:			[
+				"position:	relative;",
+				"top:		-100%;",
+				"width:		100%;",
+				"height:	100%;",
+				"opacity:	0;"
+			].join(''),
+
+			components:		[]
+		});
+	}
+
+	this.optionsChanged();
+},
+
+optionsChanged: function()
+{
+	for (var i = 0, option; option = this.options[i]; i++) {
+		if (option.selected) {
+			this.$.button.setContent(option.content);
+			this.selectedIndex = i;
+		}
+
+		option.index = i;
+	}
+
+	/*
+		If we are using a select then create the options now. If we are using a
+		"smart-menu" then they will be set when it is rendered (in showOptions),
+		so we don't need to do anything here.
+	*/
+	if (this.$.select) {
+		this.$.select.destroyClientControls();
+		this.$.select.createComponents(this.options);
+		this.$.select.setSelected(this.selectedIndex);
+		this.$.select.render();
+	}
+},
+
+showOptions: function()
+{
+	/* If using a native select it will get the event and open */
+	if (!this.$.select) {
+		this.doOpenToaster({
+			component: {
+				kind:		"smart-menu",
+				options:	this.options,
+				showing:	true,
+				onSelect:	"handleMenu"
+			},
+
+			options: {
+				owner:		this,
+				notitle:	true
+			}
+		});
+	}
+},
+
+handleMenu: function(sender, event)
+{
+	this.doCloseToaster();
+
+	this.$.button.setContent(event.content);
+
+	this.selectedIndex = event.index;
+	this.doSelect(event);
+},
+
+handleSelect: function(sender, event)
+{
+	var index	= sender.getSelected();
+
+	this.$.button.setContent(this.options[index].content);
+
+	this.selectedIndex = index;
+	this.doSelect(this.options[index]);
+},
+
+setSelected: function(sel)
+{
+	if (isNaN(sel)) {
+		for (var i = 0, option; option = this.options[i]; i++) {
+			if (sel === option || sel === option.value) {
+				this.selectedIndex = i;
+				this.$.button.setContent(option.content);
+				return;
+			}
+		}
+	} else {
+		this.selectedIndex = sel;
+		if (this.options[sel]) {
+			this.$.button.setContent(this.options[sel].content);
+		} else {
+			this.$.button.setContent('');
+		}
+	}
+},
+
+getSelected: function()
+{
+	return(this.options[this.selectedIndex]);
+}
+
+});
 

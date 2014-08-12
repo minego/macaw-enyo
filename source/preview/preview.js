@@ -94,9 +94,9 @@ handleCommand: function(sender, event)
 {
 	var cmd;
 
-	if (event && event.value) {
+	if (event && event.menucmd) {
 		/* Handle the menu event */
-		cmd = event.value;
+		cmd = event.menucmd;
 
 		/* Close the menu toaster */
 		this.doCloseToaster();
@@ -123,8 +123,10 @@ handleCommand: function(sender, event)
 			this.doOpenToaster({
 				component: {
 					kind:					"smart-menu",
-					items:					[ $L("Open in browser") ],
-					values:					[ "open" ],
+					options: [{
+						content:			$L("Open in browser"),
+						menucmd:			"open"
+					}],
 					showing:				true,
 					onSelect:				"handleCommand"
 				},

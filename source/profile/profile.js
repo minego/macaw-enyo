@@ -337,9 +337,9 @@ handleCommand: function(sender, event)
 	var	index = NaN;
 	var cmd;
 
-	if (event && event.value) {
+	if (event && event.menucmd) {
 		/* Handle the menu event */
-		cmd = event.value;
+		cmd = event.menucmd;
 
 		/* Close the menu toaster */
 		this.doCloseToaster();
@@ -359,47 +359,57 @@ handleCommand: function(sender, event)
 
 		case "options":
 			var options = [];
-			var values	= [];
-
-			// options.push($L("Public Mention"));
-			// values.push("mention");
 
 			if (this.service.features.dm) {
-				options.push($L("Send Direct Message"));
-				values.push("dm");
+				options.push({
+					content:		$L("Send Direct Message"),
+					menucmd:		"dm"
+				});
 			}
 
 			if (this.service.features.mute) {
 				if (undefined != this.profile.muted && this.profile.muted) {
-					options.push($L("Unmute"));
-					values.push("unmute");
+					options.push({
+						content:	$L("Unmute"),
+						menucmd:	"unmute"
+					});
+
 				} else {
-					options.push($L("Mute"));
-					values.push("mute");
+					options.push({
+						content:	$L("Mute"),
+						menucmd:	"mute"
+					});
 				}
 			}
 
 			if (undefined != this.profile.blocked && this.profile.blocked) {
-				options.push($L("Unblock"));
-				values.push("unblock");
+				options.push({
+					content:		$L("Unblock"),
+					menucmd:		"unblock"
+				});
 			} else {
-				options.push($L("Block"));
-				values.push("block");
+				options.push({
+					content:		$L("Block"),
+					menucmd:		"block"
+				});
 			}
 
 			if (this.following) {
-				options.push($L("Unfollow"));
-				values.push("unfollow");
+				options.push({
+					content:		$L("Unfollow"),
+					menucmd:		"unfollow"
+				});
 			} else {
-				options.push($L("Follow"));
-				values.push("follow");
+				options.push({
+					content:		$L("Follow"),
+					menucmd:		"follow"
+				});
 			}
 
 			this.doOpenToaster({
 				component: {
 					kind:					"smart-menu",
-					items:					options,
-					values:					values,
+					options:				options,
 					showing:				true,
 					onSelect:				"handleCommand"
 				},
@@ -410,8 +420,6 @@ handleCommand: function(sender, event)
 				}
 			});
 			break;
-
-
 
 		case "info":
 			index = 0;
@@ -493,8 +501,10 @@ handleCommand: function(sender, event)
 				component: {
 					kind:				"smart-menu",
 					title:				title,
-					items:				[ msg ],
-					values:				[ cmd + "-confirmed" ],
+					options: [{
+						content:		msg,
+						menucmd:		cmd + "-confirmed"
+					}],
 					showing:			true,
 					onSelect:			"handleCommand"
 				},

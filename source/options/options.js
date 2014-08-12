@@ -13,6 +13,9 @@
 	OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+// TODO	Replace the main options menu with one that looks more like the options
+//		app... A list of items, with a > on the end of the line.
+
 enyo.kind({
 
 name:												"optionsmenu",
@@ -29,7 +32,20 @@ components: [
 	{
 		kind:										"smart-menu",
 		title:										$L("Preferences"),
-		items:										[ $L("Appearance"), $L("Timeline"), $L("Columns"), $L("Accounts") ],
+
+		options: [{
+			content:								$L("Appearance"),
+			menucmd:								"UI"
+		}, {
+			content:								$L("Timeline"),
+			menucmd:								"Timeline"
+		}, {
+			content:								$L("Columns"),
+			menucmd:								"Columns"
+		}, {
+			content:								$L("Accounts"),
+			menucmd:								"Accounts"
+		}],
 		showing:									true,
 		onSelect:									"showSection"
 	}
@@ -44,10 +60,6 @@ create: function()
 	}
 },
 
-destroy: function()
-{
-},
-
 showSection: function(sender, event)
 {
 	/* Find the real sender */
@@ -56,28 +68,21 @@ showSection: function(sender, event)
 	}
 
 	var title	= null;
-	var cmd		= null;
-	var index	= sender.index || event.index;
+	var cmd		= event.menucmd;
 
-	switch (index) {
-		case 0:	cmd = 'UI';			title = $L('Appearance');	break;
-		case 1:	cmd = 'Timeline';	title = $L('Timeline');		break;
-		case 2:	cmd = 'Columns';	title = $L('Columns');		break;
-		case 3:	cmd = 'Accounts';	title = $L('Accounts');		break;
-	}
 	if (!cmd) {
 		return;
 	}
 
 	this.doOpenToaster({
 		component: {
-			kind:				"options" + cmd,
-			onCreateAccount:	"createAccount",
-			onOptionsChanged:	"optionsChanged"
+			kind:					"options" + cmd,
+			onCreateAccount:		"createAccount",
+			onOptionsChanged:		"optionsChanged"
 		},
 
 		options: {
-			title:				title
+			title:					title
 		}
 	});
 },
@@ -91,8 +96,8 @@ renderPanel: function(panel)
 	panel.addClass("tabdetails");
 
 	panel.createComponent({
-		content:				panel.data.title || ' ',
-		classes:				"title"
+		content:					panel.data.title || ' ',
+		classes:					"title"
 	}, { owner: this } );
 
 	for (var i = 0, item; item = panel.data.items[i]; i++) {
@@ -107,67 +112,59 @@ renderPanel: function(panel)
 		}
 
 		if (item.options) {
-			var options = [];
+			var options		= [];
 
 			for (var o = 0, option; option = item.options[o]; o++) {
 				options.push({
-					name:			item.key + '_' + option.value,
-
-					content:		option.label || option.value,
-					value:			option.value || option.label,
-					active:			(value == option.value)
+					content:			option.label || option.value,
+					value:				option.value || option.label,
+					style:				option.style,
+					selected:			value === option.value
 				});
 			}
 
 			components.push({
-				classes:		"value",
-				kind:			onyx.PickerDecorator,
-
-				components: [{
-					classes:	"button"
-				}, {
-					name:		item.key,
-					key:		item.key,
-
-					kind:		"onyx.Picker",
-					components:	options,
-					onSelect:	"itemSelected"
-				}]
+				kind:				"smart-select",
+				classes:			"value button",
+				name:				item.key,
+				key:				item.key,
+				options:			options,
+				onSelect:			"itemSelected"
 			});
 		} else if (item.key) {
 			components.push({
-				name:			item.key,
-				item:			item,
+				name:				item.key,
+				item:				item,
 
-				classes:		"value",
-				kind:			onyx.ToggleButton,
-				value:			item.negate ? !value : value,
+				classes:			"value",
+				kind:				onyx.ToggleButton,
+				value:				item.negate ? !value : value,
 
-				onChange:		"toggleChanged",
+				onChange:			"toggleChanged",
 
-				onContent:		item.onContent  || $L("On"),
-				offContent:		item.offContent || $L("Off")
+				onContent:			item.onContent  || $L("On"),
+				offContent:			item.offContent || $L("Off")
 			});
 		} else if (item.ontap) {
 			components.push({
-				content:				item.label || '',
-				kind:					onyx.Button,
-				style:					"width: 100%;",
-				ontap:					item.ontap
+				content:			item.label || '',
+				kind:				onyx.Button,
+				style:				"width: 100%;",
+				ontap:				item.ontap
 			});
 		}
 
 		panel.createComponent({
-			classes:	"option",
-			components:	components
+			classes:				"option",
+			components:				components
 		}, { owner: this });
 	}
 },
 
 itemSelected: function(sender, event)
 {
-	var key		= sender.key;
-	var value	= event.selected.value;
+	var key		= event.key || sender.key;
+	var value	= event.value;
 
 	switch (key) {
 		case "toolbar":

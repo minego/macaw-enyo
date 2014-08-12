@@ -501,9 +501,9 @@ handleCommand: function(sender, event)
 {
 	var cmd;
 
-	if (event && event.value) {
+	if (event && event.menucmd) {
 		/* Handle the menu event */
-		cmd = event.value;
+		cmd = event.menucmd;
 
 		/* Close the menu toaster */
 		this.doCloseToaster();
@@ -524,24 +524,26 @@ handleCommand: function(sender, event)
 
 		case "options":
 			var options = [];
-			var values	= [];
 
 			/* Don't allow attaching an image on a DM */
 			if (!this.dm) {
-				options.push($L("Attach Image"));
-				values.push("pick");
+				options.push({
+					content:		$L("Attach Image"),
+					menucmd:		"pick"
+				});
 			}
 
 			if (this.users.length > 1) {
-				options.push($L("Switch Account"));
-				values.push("chooseAccount");
+				options.push({
+					content:		$L("Switch Account"),
+					menucmd:		"chooseAccount"
+				});
 			}
 
 			this.doOpenToaster({
 				component: {
 					kind:					"smart-menu",
-					items:					options,
-					values:					values,
+					options:				options,
 					showing:				true,
 					onSelect:				"handleCommand"
 				},
@@ -747,7 +749,7 @@ autocomplete: function()
 	}
 
 	// TODO	There are issues with autocomplete now, so turn it off
-	return;
+	if (true) return;
 
 	// TODO	Go through all accounts in this.users that are enabled for sending
 	//		right now...
@@ -949,8 +951,10 @@ send: function(splitConfirmed)
 				component: {
 					kind:				"smart-menu",
 					title:				$L("Your message is too long. Would you like to split it into multiple messages?"),
-					items:				[ $L("Split Message") ],
-					values:				[ "split" ],
+					options: [{
+						content:		$L("Split Message"),
+						menucmd:		"split"
+					}],
 					showing:			true,
 					onSelect:			"handleCommand"
 				},
