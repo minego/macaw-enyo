@@ -1475,7 +1475,8 @@ adjustTabs: function(force)
 	exist or can't be used.
 */
 // TODO	Tie into platform specific notification systems when possible
-var notify = function(title, options) {
+var notify = function(title, options)
+{
 	var n = null;
 
 	options = options || {};
@@ -1507,16 +1508,21 @@ var notify = function(title, options) {
 	return(n);
 };
 
-var ex = function(error) {
+var ex = function(error)
+{
 	var origin = window.location.protocol + '//' + window.location.hostname;
 
 	console.log('ex:', error);
 
-	return(notify('Error', {
+	if (ex.n) {
+		ex.n.close();
+	}
+
+	return((ex.n = notify('Error', {
 		body:		error,
 		icon:		origin + '/assets/error.png',
 		tag:		"error"
-	}));
+	})));
 };
 
 if (enyo.platform.webos) {
