@@ -586,22 +586,22 @@ handleCommand: function(sender, event)
 
 		case "edit":
 		case "delete":
-			var options	= [];
-			var values	= [];
-
-			options.push($L("Delete"));
-			values.push("delete-confirmed");
+			var options	= [{
+				content:					$L("Delete"),
+				menucmd:					"delete-confirmed"
+			}];
 
 			if (!this.item.dm) {
-				options.push($L("Delete and Edit"));
-				values.push("edit-confirmed");
+				options.push({
+					content:				$L("Delete and Edit"),
+					menucmd:				"edit-confirmed"
+				});
 			}
 
 			this.doOpenToaster({
 				component: {
 					kind:					"smart-menu",
-					items:					options,
-					values:					values,
+					options:				options,
 					title:					this.service.terms.DeleteQuestion,
 					showing:				true,
 					onSelect:				"handleCommand"
