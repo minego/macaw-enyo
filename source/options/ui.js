@@ -175,6 +175,8 @@ themeTypeChanged: function()
 
 	this.$.theme.setSelected(0);
 	this.$.theme.setSelected(prefs.get("theme"));
+
+	this.themeChanged();
 },
 
 themeChanged: function()
