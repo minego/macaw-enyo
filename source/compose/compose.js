@@ -1094,11 +1094,13 @@ sendParts: function(success, response)
 		this.$.cancel.setDisabled(true);
 		}
 
-		this.$.info.setContent($L("Sent"));
+		this.$.empty.setContent($L("Message Sent"));
+		this.$.empty.show();
+		this.$.text.applyStyle('opacity', '0');
 
 		setTimeout(function() {
 			this.doCloseToaster();
-		}.bind(this), 500);
+		}.bind(this), 1000);
 		return;
 	}
 
