@@ -141,7 +141,7 @@ create: function()
 	this.themeTypeChanged();
 },
 
-themeTypeChanged: function()
+themeTypeChanged: function(sender, event)
 {
 	var		type = this.$.themetype.getSelected().value;
 
@@ -176,10 +176,12 @@ themeTypeChanged: function()
 	this.$.theme.setSelected(0);
 	this.$.theme.setSelected(prefs.get("theme"));
 
-	this.themeChanged();
+	if (sender && event) {
+		this.themeChanged(sender, event);
+	}
 },
 
-themeChanged: function()
+themeChanged: function(sender, event)
 {
 	prefs.set("theme", this.$.theme.getSelected().value);
 	this.doOptionsChanged({});
