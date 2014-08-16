@@ -95,10 +95,12 @@ renderPanel: function(panel)
 
 	panel.addClass("tabdetails");
 
-	panel.createComponent({
-		content:					panel.data.title || ' ',
-		classes:					"title"
-	}, { owner: this } );
+	if (panel.data.title) {
+		panel.createComponent({
+			content:					panel.data.title,
+			classes:					"title"
+		}, { owner: this } );
+	}
 
 	for (var i = 0, item; item = panel.data.items[i]; i++) {
 		var components	= [];
