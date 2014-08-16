@@ -53,7 +53,7 @@ body {
 
 .themeFfos .titlebar .title {
 	left:					44px !important;
-	text-align:				center;
+	/* text-align:				center; */
 }
 
 .themeFfos .listitem {
