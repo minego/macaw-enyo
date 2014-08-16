@@ -1,69 +1,111 @@
-.compose {
+.compose
+{
 	position:				relative;
 
 	width:					100%;
-
-	background:				url('../../assets/compose-bg.png') left top repeat-x;
-	padding-top:			60px;
+	background:				grey;
 }
 
 /*
 	Tweak the display when the compose dialog is full-height which is the
-	default on some systems like Firefox OS.
+	default on some systems with a virtual keyboard.
 */
-.full-height .compose {
-	background:				url('../../assets/toaster-bg.png') left top repeat-x;
-	padding-top:			10px;
+.full-height .compose
+{
 	height:					100%;
 }
 
-.full-height .compose .counter {
-	top:					75px;
+.full-height .compose .counter
+{
+	position:				absolute;
+	top:					0px;
+	right:					0px;
 }
 
-.compose .avatar {
+.compose .counter2,
+.compose .avatar
+{
 	position:				absolute;
-	right:					0px;
+	left:					0px;
+	top:					0px;
+}
 
+.compose .avatar
+{
 	-webkit-border-radius:	5px;
 	border-radius:			5px;
 
-	margin:					15px 15px 0px 0px;
+	margin:					10px;
 
-	height:					48px;
-	width:					48px;
-	background-size:		48px;
+	height:					45px;
+	width:					45px;
+	background-size:		45px;
 }
 
-.compose .text {
-	color:					#fff;
-	border-width:			12px;
-	border:					12px solid transparent;
-	border-image:			url('../../assets/compose-border.png') 12 12 fill stretch;
-	-webkit-border-image:	url('../../assets/compose-border.png') 12 stretch;
-
-	min-height:				80px;
-	max-height:				120px;
-
-	overflow:				hidden;
-
-	margin:					5px;
-	padding:				0 58px 0 0;
+.compose .text
+{
+	min-height:				85px;
 }
 
-.compose.haveimages .text {
-	min-height:				130px !important;
+.compose .text,
+.compose .empty,
+.compose .images,
+.compose .info
+{
+	color:					white;
+
+	width:					100%;
+
+	padding:				10px 3em 10px 65px;
+	box-sizing:				border-box;
 }
 
-.compose .images {
+.compose .empty
+{
 	position:				absolute;
-	right:					15px;
-	top:					120px;
+	font-style:				italic !important;
+	color:					#4d5154;
+
+	pointer-events:			none;
 }
 
-.compose .images * {
-	width:					32px;
-	height:					32px;
+.compose .info
+{
+	font-size:				14px;
+	font-weight:			bold;
+	padding-top:			5px;
+	padding-bottom:			5px;
+}
+
+.compose .icons
+{
+	position:				absolute;
+	width:					100%;
+	bottom:					0px;
+
+	pointer-events:			none;
+}
+
+.compose .icon
+{
+	height:					49px;
+	pointer-events:			auto;
+}
+
+
+/*
+	Prevent showing an annoying border when the field is selected. Of course it
+	is selected... It is the only field.
+*/
+.compose .text:focus
+{
+	outline:				none !important;
+}
+
+.compose .images *
+{
+	width:					48px;
+	height:					48px;
 	background-size:		contain !important;
 	background-position:	center center !important;
 	margin:					5px;
@@ -71,51 +113,22 @@
 	display:				inline-block;
 }
 
-.compose .info {
-	margin:					3px 0px 3px 7px;
-	font-size:				14px;
-	font-weight:			bold;
-}
-
-.compose .autocomplete button {
+.compose .autocomplete button
+{
 	margin:					0px 3px 3px 6px;
 }
 
-/*
-	Prevent showing an annoying border when the field is selected. Of course it
-	is selected... It is the only field.
-*/
-.compose .text:focus {
-	outline:				none !important;
-}
-
-.compose .counter {
+.compose .counter
+{
 	position:				absolute;
-	right:					10px;
+	top:					0px;
+	right:					0px;
+	margin:					10px;
+
+	font-weight:			bold;
+	font-size:				1.3rem;
 
 	color:					#4d5154;
-	font-weight:			bold;
-	bottom:					50px;
-	font-size:				40px;
-	font-family:			Prelude, Arial, Helvetica, sans-serif;
 }
 
-.compose .counter2 {
-	margin-bottom:			60px !important;
-	margin-top:				-60px !important;
-}
 
-.compose.haveimages .counter {
-	bottom:					100px;
-}
-
-.compose .button {
-	width:					125px;
-	margin:					7px !important;
-
-	font-weight:			bold;
-}
-
-.compose .icon {
-	height:					49px;
-}

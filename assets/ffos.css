@@ -67,11 +67,6 @@ body {
 	color:					#5F5F5F;
 }
 
-.themeFfos .compose .counter {
-	color:					#eaeae7;
-	font-weight:			bold;
-}
-
 .themeFfos .tabbar {
 	background:				white;
 }
@@ -142,9 +137,14 @@ body {
 }
 
 /* Toasters */
-.themeFfos .toaster.bg,
+.themeFfos .toaster.bg {
+	background:				#2c393b;
+}
+
 .themeFfos .compose {
 	background:				#2c393b;
+}
+.themeFfos .compose .text {
 }
 
 .themeFfos .toaster .controls {
@@ -160,7 +160,6 @@ body {
 }
 
 .themeFfos .compose {
-	padding-top:			10px;
 }
 
 .themeFfos .back.icon {

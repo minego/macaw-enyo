@@ -164,20 +164,15 @@ create: function()
 {
 	this.inherited(arguments);
 
-	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
-			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
-	) {
+	if (enyo.platform.firefoxOS) {
 		/*
 			Firefox OS
 
 			The virtual keyboard on Firefox OS causes elements to move around a
 			great deal. Make compose full screen in this case.
 		*/
-		this.vkb = true;
+		// this.vkb = true;
 	}
-
-
-	// this.vkb = true;
 
 	if (this.vkb) {
 		this.addClass('vkb');
