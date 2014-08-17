@@ -39,7 +39,7 @@ components: [
 				content:					$L("New Account"),
 				kind:						onyx.Button,
 				ontap:						"createAccount",
-				classes:					"wideitem"
+				classes:					"add-button wideitem"
 			}
 		]
 	}

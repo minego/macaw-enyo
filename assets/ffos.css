@@ -87,7 +87,7 @@ body {
 }
 
 .themeFfos .tab:active,
-.themeFfos .imgbtn:active {
+.themeFfos .titlebar .imgbtn:active {
 	background:				rgba(0,0,0,0.1) !important;
 }
 .themeFfos .imgbtn.spin {
@@ -134,7 +134,9 @@ body {
 	font-weight:			normal;
 }
 
-.themeFfos .smart-menu .menu-cancel-button {
+.themeFfos .smart-menu .menu-cancel-button,
+.themeFfos .add-button
+ {
 	border-radius:			2rem;
 	height:					2.5rem;
 	font-weight:			normal;
