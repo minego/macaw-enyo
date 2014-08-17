@@ -901,6 +901,7 @@ createAccount: function(options, force)
 
 	options.kind			= 'authorize';
 	options.onSuccess		= 'accountCreated';
+	options.modal			= force === true;
 
 	if (!options.onCancel) {
 		options.onCancel	= 'closeToaster';
@@ -908,7 +909,6 @@ createAccount: function(options, force)
 
 	this.$.toasters.push(options, {
 		owner:		this,
-		wide:		true,
 		notitle:	true,
 
 		modal:		force === true ? true : false,

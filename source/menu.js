@@ -20,6 +20,7 @@ classes:					"smart-menu",
 
 published: {
 	title:					"",
+	cancelLabel:			$L("Cancel"),
 	options:				[],
 	showing:				false,
 	modal:					false
@@ -27,13 +28,15 @@ published: {
 
 events: {
 	onCloseToaster:			"",
-	onSelect:				""
+	onSelect:				"",
+	onCancel:				""
 },
 
 components: [
 	{
 		name:				"title",
-		classes:			"title"
+		classes:			"title",
+		allowHtml:			true
 	},
 	{
 		name:				"menu"
@@ -42,7 +45,7 @@ components: [
 		name:				"controls",
 		classes:			"controls",
 		components: [{
-			content:		$L("Cancel"),
+			name:			"cancel",
 			kind:			onyx.Button,
 			classes:		"menu-cancel-button",
 			ontap:			"back"
@@ -55,6 +58,7 @@ create: function() {
 
 	this.modalChanged();
 	this.titleChanged();
+	this.cancelLabelChanged();
 	this.optionsChanged();
 },
 
@@ -74,6 +78,11 @@ titleChanged: function()
 	} else {
 		this.$.title.hide();
 	}
+},
+
+cancelLabelChanged: function()
+{
+	this.$.cancel.setContent(this.cancelLabel || $L("Cancel"));
 },
 
 optionsChanged: function()
@@ -97,6 +106,7 @@ optionsChanged: function()
 
 back: function(sender, event)
 {
+	this.doCancel();
 	this.doCloseToaster();
 },
 

@@ -1,12 +1,6 @@
 .authorize {
 }
 
-.authorize .step {
-	width:					300px;
-	margin-left:			auto;
-	margin-right:			auto;
-}
-
 .authorize .instructions {
 	margin:					10px 0 10px 0;
 }
