@@ -134,11 +134,8 @@ create: function()
 	this.textChanged();
 	this.imagesChanged();
 
-	// TODO	fix
-	if (false) {
-	this.$.send.setDisabled(false);
-	this.$.cancel.setDisabled(false);
-	}
+	this.$.send.show();
+	// this.$.cancel.setDisabled(false);
 
 	/*
 		Ensure we have a fresh copy of the users array, since it may be modified
@@ -911,11 +908,8 @@ if (false) {
 
 	this.autocomplete();
 	if (this.instant) {
-		// TODO	Fix
-		if (false) {
-		this.$.send.setDisabled(true);
-		this.$.cancel.setDisabled(true);
-		}
+		this.$.send.hide();
+		// this.$.cancel.setDisabled(true);
 
 		this.send(true);
 	}
@@ -1049,11 +1043,8 @@ sendParts: function(success, response)
 			this.$.info.setContent($L("Send failed"));
 			this.$.send.setContent($L("Retry"));
 
-			// TODO fix
-			if (false) {
-			this.$.send.setDisabled(false);
-			this.$.cancel.setDisabled(false);
-			}
+			this.$.send.show();
+			// this.$.cancel.setDisabled(false);
 
 			if (this.sendcount == 0) {
 				/*
@@ -1073,11 +1064,9 @@ sendParts: function(success, response)
 		this.sentcount = 0;
 
 		this.$.text.setDisabled(true);
-		// TODO fix
-		if (false) {
-		this.$.send.setDisabled(true);
-		this.$.cancel.setDisabled(true);
-		}
+
+		this.$.send.hide();
+		// this.$.cancel.setDisabled(true);
 	}
 
 	/*
@@ -1088,11 +1077,8 @@ sendParts: function(success, response)
 		/* All done */
 		this.closing = true;
 
-		// TODO fix
-		if (false) {
-		this.$.send.setDisabled(true);
-		this.$.cancel.setDisabled(true);
-		}
+		this.$.send.hide();
+		// this.$.cancel.setDisabled(true);
 
 		this.$.empty.setContent($L("Message Sent"));
 		this.$.empty.show();
