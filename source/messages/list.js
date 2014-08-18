@@ -378,7 +378,7 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 
 	if (changed) {
 		this.$.list.setCount(this.results.length);
-		this.$.list.refresh();
+		// this.$.list.refresh();
 	}
 
 	setTimeout(enyo.bind(this, function() {

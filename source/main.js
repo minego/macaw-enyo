@@ -164,20 +164,15 @@ create: function()
 {
 	this.inherited(arguments);
 
-	if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
-			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
-	) {
+	if (enyo.platform.firefoxOS) {
 		/*
 			Firefox OS
 
 			The virtual keyboard on Firefox OS causes elements to move around a
 			great deal. Make compose full screen in this case.
 		*/
-		this.vkb = true;
+		// this.vkb = true;
 	}
-
-
-	// this.vkb = true;
 
 	if (this.vkb) {
 		this.addClass('vkb');
@@ -358,27 +353,6 @@ rendered: function()
 
 	this.index = 0;
 	this.setIndex(0);
-
-	if(!this.installerChecked) {
-		this.installerChecked = true;
-
-		enyo.WebAppInstaller.check(enyo.bind(this, function(response) {
-			if (response.type != "unsupported" && !response.installed) {
-				this.$.toasters.push({
-					kind:			"smart-menu",
-					title:			$L("Would you like to install Macaw?"),
-					items:			[ $L("Install") ],
-					values:			[ "install" ],
-					showing:		true,
-					onSelect:		"handleCommand"
-				}, {
-					owner:			this,
-
-					notitle:		true
-				});
-			}
-		}));
-	}
 },
 
 clearError: function()
@@ -927,6 +901,7 @@ createAccount: function(options, force)
 
 	options.kind			= 'authorize';
 	options.onSuccess		= 'accountCreated';
+	options.modal			= force === true;
 
 	if (!options.onCancel) {
 		options.onCancel	= 'closeToaster';
@@ -934,7 +909,6 @@ createAccount: function(options, force)
 
 	this.$.toasters.push(options, {
 		owner:		this,
-		wide:		true,
 		notitle:	true,
 
 		modal:		force === true ? true : false,
@@ -1048,8 +1022,17 @@ showAppMenu: function(title, items)
 		kind:			"smart-menu",
 		title:			"Macaw",	/* The name of the app is NOT localized */
 
-		items:			[ $L("Refresh"), $L("Redraw"), $L("Compose"), $L("Preferences") ],
-		values:			[ "refresh", "redraw", "compose", "preferences" ],
+		options: [{
+			content:	$L("Refresh"),
+			menucmd:	"refresh"
+		}, {
+			content:	$L("Compose"),
+			menucmd:	"compose"
+		}, {
+			content:	$L("Preferences"),
+			menucmd:	"preferences"
+		}],
+
 		showing:		true,
 		onSelect:		"handleCommand"
 	}, {
@@ -1063,9 +1046,9 @@ handleCommand: function(sender, event)
 {
 	var cmd;
 
-	if (event && event.value) {
+	if (event && event.menucmd) {
 		/* Handle the menu event */
-		cmd = event.value;
+		cmd = event.menucmd;
 
 		/* Close the menu toaster */
 		this.closeToaster(true);
@@ -1487,7 +1470,8 @@ adjustTabs: function(force)
 	exist or can't be used.
 */
 // TODO	Tie into platform specific notification systems when possible
-var notify = function(title, options) {
+var notify = function(title, options)
+{
 	var n = null;
 
 	options = options || {};
@@ -1519,16 +1503,21 @@ var notify = function(title, options) {
 	return(n);
 };
 
-var ex = function(error) {
+var ex = function(error)
+{
 	var origin = window.location.protocol + '//' + window.location.hostname;
 
 	console.log('ex:', error);
 
-	return(notify('Error', {
+	if (ex.n) {
+		ex.n.close();
+	}
+
+	return((ex.n = notify('Error', {
 		body:		error,
 		icon:		origin + '/assets/error.png',
 		tag:		"error"
-	}));
+	})));
 };
 
 if (enyo.platform.webos) {

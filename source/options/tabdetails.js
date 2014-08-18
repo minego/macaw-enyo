@@ -36,96 +36,60 @@ components: [
 			{
 				content:							$L("Account"),
 				classes:							"label"
-			},
-			{
-				kind:								onyx.PickerDecorator,
-				classes:							"value picker",
-				components: [
-					{
-						classes:					"button"
-					},
-
-					{
-						kind:						onyx.Picker,
-						name:						"accounts",
-						components: [
-						]
-					}
-				]
-			},
-			{
+			}, {
+				kind:								"smart-select",
+				classes:							"value button",
+				name:								"accounts"
+			}, {
 				tag:								"br"
-			},
-
-			{
+			}, {
 				content:							$L("Type"),
 				classes:							"label"
-			},
-			{
-				kind:								onyx.PickerDecorator,
-				classes:							"value picker",
-				components: [
-					{
-						classes:					"button"
-					},
-
-					{
-						kind:						onyx.Picker,
-						name:						"types",
-						components: [
-						]
-					}
+			}, {
+				kind:								"smart-select",
+				classes:							"value button",
+				name:								"types",
+				options: [
+					{ content: $L("Home"),			value: "timeline"	},
+					{ content: $L("Mentions"),		value: "mentions"	},
+					{ content: $L("Messages"),		value: "messages"	},
+					{ content: $L("Favorites"),		value: "favorites"	}
 				]
-			},
-			{
-				name:								"refreshFields",
-				components: [
-					{
-						content:					$L("Refresh Every"),
-						classes:					"label"
-					},
-					{
-						kind:						onyx.PickerDecorator,
-						classes:					"value picker",
-						components: [
-							{
-								classes:			"button"
-							},
-
-							{
-								kind:				onyx.Picker,
-								name:				"refresh",
-								components: [
-								]
-							}
-						]
-					},
-					{
-						tag:						"br"
-					},
-
-					{
-						content:					$L("Notifications"),
-						classes:					"label"
-					},
-					{
-						kind:						onyx.ToggleButton,
-						name:						"notify",
-						classes:					"value",
-
-						onContent:					$L("On"),
-						offContent:					$L("Off")
-					}
-				]
-			},
-			{
+			}, {
 				tag:								"br"
-			},
+			}, {
+				content:							$L("Refresh"),
+				classes:							"label"
+			}, {
+				kind:								"smart-select",
+				classes:							"value button",
+				name:								"refresh",
+				options: [
+					{ content: $L("1 minute"),		value: 60	},
+					{ content: $L("5 minutes"),		value: 300	},
+					{ content: $L("15 minutes"),	value: 900	},
+					{ content: $L("30 minutes"),	value: 1800 },
+					{ content: $L("1 hour"),		value: 3600 },
+					{ content: $L("Never"),			value: -1	}
+				]
+			}, {
+				tag:								"br"
+			}, {
+				content:							$L("Notifications"),
+				classes:							"label"
+			}, {
+				kind:								onyx.ToggleButton,
+				name:								"notify",
+				classes:							"value",
 
-			{
+				onContent:							$L("On"),
+				offContent:							$L("Off")
+			}, {
+				tag:								"br"
+			}, {
 				name:								"menu",
 				kind:								"smart-menu",
-				items:								[ ],
+				options:							[ ],
 				showing:							true,
 				onSelect:							"handleButton"
 			}
@@ -147,52 +111,38 @@ create: function()
 		tab = this.tabs[this.tabIndex];
 	}
 
+	var options = [{
+		content:			$L("Save"),
+		menucmd:			"save"
+	}];
+
 	if (tab) {
-		this.$.menu.setItems([ $L("Save"), $L("Delete") ]);
-		this.$.notify.setValue(tab.notify);
-	} else {
-		this.$.menu.setItems([ $L("Save") ]);
+		options.push({
+			content:		$L("Delete"),
+			menucmd:		"delete"
+		});
 	}
+	this.$.menu.setOptions(options);
 
-	this.accounts = prefs.get('accounts');
+	this.accounts	= prefs.get('accounts');
+	var options		= [];
+
 	for (var i = 0, a; a = this.accounts[i]; i++) {
-		this.$.accounts.createComponent({
-			content:			'@' + a.screenname,
-			value:				a.id,
-			active:				!tab ? (i == 0) : (a.id == tab.id)
-		}, { owner: this });
+		options.push({
+			content:		'@' + a.screenname,
+			value:			a.id,
+			selected:		(tab && a.id === tab.id)
+		});
 	}
+	this.$.accounts.setOptions(options);
 
-	var types = [
-		{ content: $L("Home"),			value: "timeline"	},
-		{ content: $L("Mentions"),		value: "mentions"	},
-		{ content: $L("Messages"),		value: "messages"	},
-		{ content: $L("Favorites"),		value: "favorites"	}
-	];
-
-	for (var i = 0, t; t = types[i]; i++) {
-		if (tab) {
-			t.active = t.value == tab.type;
-		} else {
-			t.active = i == 0;
-		}
-
-		this.$.types.createComponent(t, { owner: this });
-	}
-
-	var times = [
-		{ content: $L("1 minute"),		value: 60	},
-		{ content: $L("5 minutes"),		value: 300	},
-		{ content: $L("15 minutes"),	value: 900	},
-		{ content: $L("30 minutes"),	value: 1800 },
-		{ content: $L("1 hour"),		value: 3600 },
-		{ content: $L("Never"),			value: -1	}
-	];
-
-	for (var i = 0, t; t = times[i]; i++) {
-		t.active = t.value == (tab ? tab.refresh : -1);
-
-		this.$.refresh.createComponent(t, { owner: this });
+	if (tab) {
+		this.$.types.setSelected(tab.type);
+		this.$.refresh.setSelected(tab.refresh);
+	} else {
+		this.$.types.setSelected(0);
+		this.$.refresh.setSelected(0);
+		this.$.accounts.setSelected(0);
 	}
 },
 
@@ -203,9 +153,10 @@ handleButton: function(sender, event)
 		sender = event.dispatchTarget;
 	}
 
-	var index	= sender.index || event.index;
-	switch (index) {
-		case 0: /* Save */
+	var cmd		= event.menucmd;
+
+	switch (cmd) {
+		case "save":
 			var account;
 
 			var tab = {
@@ -252,7 +203,7 @@ handleButton: function(sender, event)
 			this.doCloseToaster();
 			break;
 
-		case 1: /* Delete */
+		case "delete":
 			this.tabs.splice(this.tabIndex, 1);
 			prefs.set('panels', this.tabs);
 

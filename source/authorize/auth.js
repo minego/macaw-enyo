@@ -21,6 +21,7 @@ classes:						"authorize",
 
 published: {
 	servicename:				null,
+	modal:						false,
 
 	/* Used for ADN */
 	accesstoken:				null,
@@ -37,108 +38,57 @@ events: {
 
 components: [
 	{
+		kind:					"smart-menu",
 		name:					"step1",
 		classes:				"step step1",
-
-		components: [
-			{
-				classes:		"instructions",
-
-				content: [
-					$L("Account authorization")
-				].join(' ')
-			},
-			{
-				classes:		"instructions",
-
-				content:		$L("Select an account type")
-			},
-			{
-				kind:			onyx.Button,
-				classes:		"button",
-
-				ontap:			"step1twitter",
-
-				content:		$L("Twitter")
-			},
-			{
-				kind:			onyx.Button,
-				classes:		"button",
-
-				ontap:			"step1adn",
-
-				content:		$L("app.net")
-			}
-		]
+		title:					$L("Select an account type"),
+		options: [{
+			content:			$L("Twitter"),
+			nextstep:			"step1twitter"
+		}, {
+			content:			$L("app.net"),
+			nextstep:			"step1adn"
+		}],
+		showing:				true,
+		onSelect:				"selectStep"
 	},
-
 	{
 		name:					"step2",
 		classes:				"step step2",
 		showing:				false,
 
-		components: [
-			{
-				classes:		"instructions",
-
-				content: [
-					$L("Waiting for authorization")
-				].join(' ')
-			}
-		]
+		kind:					"smart-menu",
+		title:					$L("Waiting for authorization"),
+		options:				[],
+		modal:					true
 	},
-
 	{
 		name:					"step3",
 		classes:				"step step3",
 		showing:				false,
 
-		components: [
-			{
-				classes:		"instructions",
-
-				content: [
-					$L("Your new account has been successfully authorized for use in Macaw!")
-				].join(' ')
-			},
-			{
-				kind:			onyx.Button,
-				classes:		"button",
-
-				ontap:			"step3done",
-
-				content:		$L("Done")
-			}
-		]
+		kind:					"smart-menu",
+		title:					$L("Your new account has been successfully authorized for use in Macaw!"),
+		cancelLabel:			$L("Done"),
+		options:				[],
+		onCancel:				"step3done",
+		modal:					false
 	},
-
 	{
 		name:					"failed",
 		classes:				"step failed",
 		showing:				false,
 
-		components: [
-			{
-				classes:		"instructions",
-
-				content: [
-					$L("Account authorization failed. Please verify the following:")
-				].join(' ')
-			},
-			{
-				content:		"- " + $L("Is your clock correct?")
-			},
-			{
-				content:		"- " + $L("Did you enter the correct credentials?")
-			},
-			{
-				kind:			onyx.Button,
-				classes:		"button",
-
-				ontap:			"restart",
-				content:		$L("Restart")
-			}
-		]
+		kind:					"smart-menu",
+		title: [
+			$L("Account authorization failed. Please verify the following:"),
+			"<br/>- " + $L("Is your clock correct?"),
+			"<br/>- " + $L("Did you enter the correct credentials?")
+		].join('\n'),
+		cancelLabel:			$L("Restart"),
+		options:				[],
+		onCancel:				"restart",
+		modal:					false
 	}
 ],
 
@@ -146,15 +96,15 @@ create: function()
 {
 	this.inherited(arguments);
 
+	if (this.modal) {
+		this.$.step1.setModal(true);
+	}
+
 	switch (this.servicename) {
 		case 'adn':
-			/* Move on to step 2 */
-			this.step1adn(true);
-			break;
-
 		case 'twitter':
 			/* Move on to step 2 */
-			this.step1twitter(true);
+			this.step1(true, this.servicename);
 			break;
 
 		default:
@@ -313,6 +263,16 @@ step3done: function()
 	/* Done */
 	this.$.step3.hide();
 	this.doSuccess({ account: this.account });
+},
+
+selectStep: function(sender, event)
+{
+	var cmd;
+	var arg;
+
+	if (event && event.nextstep && this[event.nextstep]) {
+		this[event.nextstep]();
+	}
 }
 
 });

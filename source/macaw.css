@@ -249,6 +249,9 @@ body.Pre3 {
 	right:					100px;
 }
 
+.send.icon {
+	background:				url(../assets/icons/send.png)		center center no-repeat;
+}
 .compose.icon {
 	background:				url(../assets/icons/compose.png)	center center no-repeat;
 }

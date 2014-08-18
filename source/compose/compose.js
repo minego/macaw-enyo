@@ -61,6 +61,11 @@ components: [
 		ontap:							"handleCommand"
 	},
 	{
+		name:							"empty",
+		classes:						"empty",
+		content:						$L("Message")
+	},
+	{
 		name:							"text",
 		classes:						"text",
 
@@ -73,17 +78,18 @@ components: [
 		onkeyup:						"change"
 	},
 	{
+		name:							"images",
+		classes:						"images"
+	},
+	{
 		name:							"counter",
-		classes:						"counter"
+		classes:						"counter",
+		allowHtml:						true
 	},
 	{
 		name:							"counter2",
-		classes:						"counter counter2"
-	},
-	{
-		name:							"images",
-		classes:						"images",
-		ontap:							"removeImage"
+		classes:						"counter counter2",
+		allowHtml:						true
 	},
 	{
 		allowHtml:						true,
@@ -96,6 +102,7 @@ components: [
 
 	{
 		layoutKind:						"FittableColumnsLayout",
+		classes:						"icons",
 		components: [
 			{
 				classes:				"options icon",
@@ -106,21 +113,14 @@ components: [
 				fit:					true
 			},
 			{
+				showing:				false,
 				name:					"cancel",
-
-				kind:					onyx.Button,
-				classes:				"button onyx-negative",
-				content:				$L("Cancel"),
-
+				classes:				"back icon",
 				command:				"cancel"
 			},
 			{
 				name:					"send",
-
-				kind:					onyx.Button,
-				classes:				"button onyx-affirmative",
-				content:				$L("Post"),
-
+				classes:				"send icon",
 				command:				"send"
 			}
 		]
@@ -134,8 +134,8 @@ create: function()
 	this.textChanged();
 	this.imagesChanged();
 
-	this.$.send.setDisabled(false);
-	this.$.cancel.setDisabled(false);
+	this.$.send.show();
+	// this.$.cancel.setDisabled(false);
 
 	/*
 		Ensure we have a fresh copy of the users array, since it may be modified
@@ -230,8 +230,9 @@ imagesChanged: function()
 
 		for (var i = 0, img; img = this.images[i]; i++) {
 			this.$.images.createComponent({
-				name:	"image" + i,
-				style:	"background: url(" + URL.createObjectURL(img) + ");"
+				name:		"image" + i,
+				style:		"background: url(" + URL.createObjectURL(img) + ");",
+				command:	"removeimage"
 			}, { owner: this });
 		}
 	} else {
@@ -239,22 +240,6 @@ imagesChanged: function()
 	}
 	this.$.images.render();
 	this.change();
-},
-
-removeImage: function(sender, e)
-{
-	if (!event.dispatchTarget) {
-		return;
-	}
-
-	for (var i = 0, c; c = sender.children[i]; i++) {
-		if (c == event.dispatchTarget) {
-			this.images.splice(i, 1);
-			this.imagesChanged();
-
-			return;
-		}
-	}
 },
 
 getMaxLength: function(service)
@@ -352,19 +337,19 @@ userChanged: function()
 	}
 
 	if (!this.user2 && this.user && this.user.profile) {
-		this.$.avatar.applyStyle('display', 'block');
-		this.$.counter2.applyStyle('display', 'none');
+		this.$.avatar.show();
+		this.$.counter2.hide();
 
 		xhrImages.load(this.user.profile.avatar, function(url, inline) {
 			this.$.avatar.applyStyle('background-image', 'url(' + url + ')');
 		}.bind(this));
 	} else {
-		this.$.avatar.applyStyle('display', 'none');
+		this.$.avatar.hide();
 
 		if (this.user2 && this.user2.service.toString() != this.user.service.toString()) {
-			this.$.counter2.applyStyle('display', 'block');
+			this.$.counter2.show();
 		} else {
-			this.$.counter2.applyStyle('display', 'none');
+			this.$.counter2.hide();
 		}
 	}
 
@@ -374,7 +359,10 @@ userChanged: function()
 
 textChanged: function()
 {
-	this.$.text.setValue(this.text);
+	var text = this.text.trim();
+
+	this.$.text.setValue(text);
+
 	try {
 		this.$.text.moveCursorToEnd();
 	} catch (e) {
@@ -443,6 +431,10 @@ rendered: function(sender, event)
 			mentions.splice(i, 1);
 		}
 
+		/*
+			Use a non-blocking space to work around a bug on FFOS that causes
+			the space to be removed when you start typing.
+		*/
 		this.$.text.setValue(mentions.join(' ') + "\u00A0");
 		try {
 			this.$.text.moveCursorToEnd();
@@ -501,9 +493,9 @@ handleCommand: function(sender, event)
 {
 	var cmd;
 
-	if (event && event.value) {
+	if (event && event.menucmd) {
 		/* Handle the menu event */
-		cmd = event.value;
+		cmd = event.menucmd;
 
 		/* Close the menu toaster */
 		this.doCloseToaster();
@@ -522,26 +514,44 @@ handleCommand: function(sender, event)
 			this.doCloseToaster();
 			break;
 
+		case "removeimage":
+			console.log(sender, event);
+			var t;
+
+			if ((t = event.dispatchTarget)) {
+				this.images.splice(t.parent.indexOfChild(t), 1);
+				this.imagesChanged();
+			}
+
+			break;
+
 		case "options":
 			var options = [];
-			var values	= [];
 
 			/* Don't allow attaching an image on a DM */
 			if (!this.dm) {
-				options.push($L("Attach Image"));
-				values.push("pick");
+				options.push({
+					content:				$L("Attach Image"),
+					menucmd:				"pick"
+				});
 			}
 
 			if (this.users.length > 1) {
-				options.push($L("Switch Account"));
-				values.push("chooseAccount");
+				options.push({
+					content:				$L("Switch Account"),
+					menucmd:				"chooseAccount"
+				});
 			}
+
+			options.push({
+				content:					$L("Discard Message"),
+				menucmd:					"cancel"
+			});
 
 			this.doOpenToaster({
 				component: {
 					kind:					"smart-menu",
-					items:					options,
-					values:					values,
+					options:				options,
 					showing:				true,
 					onSelect:				"handleCommand"
 				},
@@ -747,7 +757,7 @@ autocomplete: function()
 	}
 
 	// TODO	There are issues with autocomplete now, so turn it off
-	return;
+	if (true) return;
 
 	// TODO	Go through all accounts in this.users that are enabled for sending
 	//		right now...
@@ -846,6 +856,12 @@ change: function(sender, event)
 
 	count = this.countChars(this.text);
 
+	if (count > 0) {
+		this.$.empty.hide();
+	} else {
+		this.$.empty.show();
+	}
+
 	var updateCounter = function updateCounter(count, counter, max)
 	{
 		var parts;
@@ -857,14 +873,16 @@ change: function(sender, event)
 			parts = this.split(max);
 
 			count = this.countChars(parts[parts.length - 1]);
-			counter.setContent((max - count) + 'x' + parts.length);
+			counter.setContent((max - count) + '<br/>x' + parts.length);
 		}
 
 		/* Is the counter too large? */
+if (false) {
 		size = 40;
 		do {
 			counter.applyStyle('font-size', size-- + 'px');
 		} while (counter.getBounds().width > 70);
+}
 	}.bind(this);
 
 	if (this.user) {
@@ -890,8 +908,8 @@ change: function(sender, event)
 
 	this.autocomplete();
 	if (this.instant) {
-		this.$.send.setDisabled(true);
-		this.$.cancel.setDisabled(true);
+		this.$.send.hide();
+		// this.$.cancel.setDisabled(true);
 
 		this.send(true);
 	}
@@ -916,7 +934,7 @@ send: function(splitConfirmed)
 		node.blur();
 	}
 
-	if ((node = this.$.text.hasNode())) {
+	if ((node = this.$.text.hasNode()) && !this.$.text.hasClass('empty')) {
 		try {
 			text = node.innerText.trim();
 		} catch (e) {
@@ -949,8 +967,10 @@ send: function(splitConfirmed)
 				component: {
 					kind:				"smart-menu",
 					title:				$L("Your message is too long. Would you like to split it into multiple messages?"),
-					items:				[ $L("Split Message") ],
-					values:				[ "split" ],
+					options: [{
+						content:		$L("Split Message"),
+						menucmd:		"split"
+					}],
 					showing:			true,
 					onSelect:			"handleCommand"
 				},
@@ -1023,8 +1043,8 @@ sendParts: function(success, response)
 			this.$.info.setContent($L("Send failed"));
 			this.$.send.setContent($L("Retry"));
 
-			this.$.send.setDisabled(false);
-			this.$.cancel.setDisabled(false);
+			this.$.send.show();
+			// this.$.cancel.setDisabled(false);
 
 			if (this.sendcount == 0) {
 				/*
@@ -1044,8 +1064,9 @@ sendParts: function(success, response)
 		this.sentcount = 0;
 
 		this.$.text.setDisabled(true);
-		this.$.send.setDisabled(true);
-		this.$.cancel.setDisabled(true);
+
+		this.$.send.hide();
+		// this.$.cancel.setDisabled(true);
 	}
 
 	/*
@@ -1056,14 +1077,16 @@ sendParts: function(success, response)
 		/* All done */
 		this.closing = true;
 
-		this.$.send.setDisabled(true);
-		this.$.cancel.setDisabled(true);
+		this.$.send.hide();
+		// this.$.cancel.setDisabled(true);
 
-		this.$.info.setContent($L("Sent"));
+		this.$.empty.setContent($L("Message Sent"));
+		this.$.empty.show();
+		this.$.text.applyStyle('opacity', '0');
 
 		setTimeout(function() {
 			this.doCloseToaster();
-		}.bind(this), 500);
+		}.bind(this), 1000);
 		return;
 	}
 

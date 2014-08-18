@@ -47,13 +47,13 @@ body {
 }
 
 .themeFfos .toolbar.titlebar .optsbutton {
-	padding-left:			6px;
-	padding-right:			6px;
+	padding-left:			10px;
+	padding-right:			10px;
 }
 
 .themeFfos .titlebar .title {
-	left:					44px !important;
-	text-align:				center;
+	left:					52px !important;
+	/* text-align:				center; */
 }
 
 .themeFfos .listitem {
@@ -65,11 +65,6 @@ body {
 .themeFfos .message .time,
 .themeFfos .newcount {
 	color:					#5F5F5F;
-}
-
-.themeFfos .compose .counter {
-	color:					#eaeae7;
-	font-weight:			bold;
 }
 
 .themeFfos .tabbar {
@@ -92,8 +87,8 @@ body {
 }
 
 .themeFfos .tab:active,
-.themeFfos .imgbtn:active {
-	background:				#008aaa !important;
+.themeFfos .titlebar .imgbtn:active {
+	background:				rgba(0,0,0,0.1) !important;
 }
 .themeFfos .imgbtn.spin {
 	background:				none !important;
@@ -101,50 +96,66 @@ body {
 
 .themeFfos .indicator {
 	background:				none;
-	border-bottom:			2px solid #00aacc;
+	border-bottom:			3px solid #00aacc;
 }
 
 .themeFfos button,
 .themeFfos button.onyx-negative {
 	box-shadow:				none;
 
+	font-weight:			normal;
+	font-style:				italic;
+
 	color:					#333;
 	border-radius:			0px;
 
 
-	background:				#fafafa url(ffos/button-bg.png) repeat-x left bottom / auto 100%;
-	border:					0.1rem solid #a6a6a6;
-	border-radius:			0.1rem;
+	background:				#D8D8D8;
+	border:					none;
 }
 
 .themeFfos button:active {
-	border-color:			#00aacc;
+	border:					none;
 	background:				#00aacc;
 	background-size:		auto 100%;
-	color:					#333;
+	color:					#fff;
 }
 
 .themeFfos button.onyx-affirmative {
 	background-color:		#00aacc;
-	border-color:			#00aacc;
+	border:					none;
 	color:					#333;
+	font-weight:			normal;
 }
 
 .themeFfos .smart-menu .menu-item-button {
 	background:				#4e4e4e;
-	border:					0.1rem solid #2d2d2d;
+	border:					none;
+	font-weight:			normal;
 }
 
 .themeFfos .smart-menu .menu-cancel-button,
+.themeFfos .add-button
+ {
+	border-radius:			2rem;
+	height:					2.5rem;
+	font-weight:			normal;
+	font-style:				italic;
+}
+
 .themeFfos .smart-menu .menu-item-button {
-	border-radius:			0.1rem;
-	height:					3rem;
+	height:					2.5rem;
 }
 
 /* Toasters */
-.themeFfos .toaster.bg,
+.themeFfos .toaster.bg {
+	background:				#2c393b;
+}
+
 .themeFfos .compose {
 	background:				#2c393b;
+}
+.themeFfos .compose .text {
 }
 
 .themeFfos .toaster .controls {
@@ -160,7 +171,15 @@ body {
 }
 
 .themeFfos .compose {
-	padding-top:			10px;
+}
+
+.smart-menu .controls {
+	height:					40px;
+}
+
+.options .panel .button,
+.tabdetails .button {
+	width:					128px;
 }
 
 .themeFfos .back.icon {
@@ -188,4 +207,3 @@ body {
 .themeFfos .options.icon {
 	background:				url(ffos/icons/menu.png)		center center no-repeat;
 }
-
