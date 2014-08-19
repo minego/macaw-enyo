@@ -948,8 +948,8 @@ accountCreated: function(sender, event)
 			label:		'@' + account.screenname + ' favorites',
 			id:			account.id,
 			service:	account.servicename,
-			refresh:	300,
-			notify:		true
+			refresh:	-1,
+			notify:		false
 		});
 
 		if (account.servicename != 'adn') {

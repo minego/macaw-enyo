@@ -257,15 +257,16 @@ handleSelect: function(sender, event)
 
 setSelected: function(sel)
 {
-	if (isNaN(sel)) {
-		for (var i = 0, option; option = this.options[i]; i++) {
-			if (sel === option || sel === option.value) {
-				this.selectedIndex = i;
-				this.$.button.setContent(option.content);
-				return;
-			}
+	for (var i = 0, option; option = this.options[i]; i++) {
+		if (sel === option || sel === option.value) {
+			this.selectedIndex = i;
+			this.$.button.setContent(option.content);
+			return;
 		}
-	} else {
+	}
+
+	/* Maybe they meant it as an index? */
+	if (!isNaN(sel)) {
 		this.selectedIndex = sel;
 		if (this.options[sel]) {
 			this.$.button.setContent(this.options[sel].content);
