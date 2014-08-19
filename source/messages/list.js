@@ -145,6 +145,7 @@ rendered: function()
 {
 	this.inherited(arguments);
 
+	this.renderDone		= true;
 	this.results		= [];
 
 	/* Load cached messages */
@@ -1141,6 +1142,29 @@ handleActivity: function(sender, event)
 		this.lastScrollTop	= top;
 		this.userIsActive	= true;
 	}
+},
+
+resizeHandler: function(sender, event)
+{
+	/*
+		Disable resizing handling for message lists on platforms that use a
+		virtual keyboard after the initial render. This assumes that the screen
+		size will not actually change on these platforms.
+
+		This is needed because the resize handling for a message list is very
+		slow. Showing a virtual keyboard in some cases can cause a very long
+		delay.
+	*/
+	if ((enyo.platform.blackberry || enyo.platform.firefoxOS) &&
+		!this.renderDone
+	) {
+		return(false);
+	}
+
+	this.inherited(arguments);
+
+	// console.log(sender, event);
+	return(true);
 }
 
 });

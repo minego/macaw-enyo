@@ -1080,13 +1080,8 @@ sendParts: function(success, response)
 		this.$.send.hide();
 		// this.$.cancel.setDisabled(true);
 
-		this.$.empty.setContent($L("Message Sent"));
-		this.$.empty.show();
-		this.$.text.applyStyle('opacity', '0');
-
-		setTimeout(function() {
-			this.doCloseToaster();
-		}.bind(this), 1000);
+		this.doCloseToaster();
+		ex($L("Message Sent"), 2000);
 		return;
 	}
 

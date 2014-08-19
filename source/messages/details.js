@@ -538,6 +538,7 @@ handleCommand: function(sender, event)
 				if (success) {
 					this.item.reposted = !this.item.reposted;
 
+					ex(this.service.terms.Reposted, 2000);
 					this.doMessageAction({
 						action:		'rt',
 						item:		this.item
@@ -572,14 +573,18 @@ handleCommand: function(sender, event)
 
 					if (this.item.favorited) {
 						this.$['favorite'].addClass("active");
+						ex($L("Favorited"), 2000);
 					} else {
 						this.$['favorite'].removeClass("active");
+						ex($L("Unfavorited"), 2000);
 					}
 
 					this.doMessageAction({
 						action:		action,
 						item:		this.item
 					});
+				} else {
+					ex($L("Failed"));
 				}
 			}.bind(this), this.item.id);
 			break;

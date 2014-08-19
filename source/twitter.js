@@ -28,6 +28,7 @@ var TwitterAPI = function(user, readycb) {
 		LoadFailed:			$L("Failed to load new tweets"),
 
 		Repost:				$L("Retweet"),
+		Reposted:			$L("Retweeted"),
 		RepostQuestion:		$L("Retweet {screenname}'s status?"),
 		RepostFailed:		$L("Could not retweet"),
 		repost:				$L("retweet"),
