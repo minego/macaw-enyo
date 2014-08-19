@@ -243,10 +243,30 @@ refresh: function(autorefresh, index)
 			this.log('Auto refresh tried to run too soon...', at, now, this.loaded);
 			return;
 		}
-	}
+	} else {
+		/* Remove the indicators before even starting the request */
+		var changed	= false;
 
-	if (!autorefresh) {
 		this.unseen = 0;
+
+		for (var t, i = this.results.length - 1; t = this.results[i]; i--) {
+			if (!t.loadFailed && isNaN(t.newcount)) {
+				continue;
+			}
+
+			if (!isNaN(index) && i < index) {
+				index--;
+			}
+
+			/* Remove this indicator item */
+			this.results.splice(i, 1);
+			changed = true;
+		}
+
+		if (changed) {
+			this.$.list.setCount(this.results.length);
+			this.$.list.refresh();
+		}
 	}
 
 	this.loading = true;
