@@ -163,21 +163,6 @@ prepareAccount: function(user, cb)
 create: function()
 {
 	this.inherited(arguments);
-
-	if (enyo.platform.firefoxOS) {
-		/*
-			Firefox OS
-
-			The virtual keyboard on Firefox OS causes elements to move around a
-			great deal. Make compose full screen in this case.
-		*/
-		// this.vkb = true;
-	}
-
-	if (this.vkb) {
-		this.addClass('vkb');
-	}
-
 	this.spincount = 0;
 
 	/* Monitor for messages posted from the authorization windows */
@@ -318,6 +303,8 @@ create: function()
 		this.$.options.hide();
 	}
     this.render();
+
+	ex = this.ex.bind(this);
 },
 
 /* webOS relaunch */
@@ -961,8 +948,8 @@ accountCreated: function(sender, event)
 			label:		'@' + account.screenname + ' favorites',
 			id:			account.id,
 			service:	account.servicename,
-			refresh:	300,
-			notify:		true
+			refresh:	-1,
+			notify:		false
 		});
 
 		if (account.servicename != 'adn') {
@@ -1009,6 +996,23 @@ openToaster: function(sender, event)
 	}
 
 	this.$.toasters.push(event.component, event.options);
+},
+
+ex: function(error, timeout)
+{
+	this.$.toasters.push({
+		kind:			"smart-menu",
+		title:			error,
+
+		options:		[],
+		showing:		true,
+		modal:			true
+	}, {
+		owner:			this,
+		notitle:		true,
+		noscrim:		true,
+		timeout:		timeout || 3000
+	});
 },
 
 closeAllToasters: function()

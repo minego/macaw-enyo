@@ -69,6 +69,10 @@
 		wide:			If true then the toaster will use the full screen width.
 
 		tall:			If true then the toaster will use the full screen height.
+
+		timeout:		If specified then the toaster will be removed after the
+						specified number of milliseconds or if another toaster
+						is added.
 */
 
 enyo.kind({
@@ -146,6 +150,11 @@ push: function(component, options)
 	var scrim;
 	var last;
 	var classes	= [];
+
+	if (this.timeout) {
+		/* The top toaster has a timeout to pop it off, trigger it now */
+		this.pop();
+	}
 
 	options = options || {};
 
@@ -233,11 +242,22 @@ push: function(component, options)
 	setTimeout(enyo.bind(this, function() {
 		this.showTopToaster();
 	}), 10);
+
+	if (!isNaN(options.timeout)) {
+		this.timeout = setTimeout(enyo.bind(this, function() {
+			this.pop();
+		}), options.timeout);
+	}
 },
 
 pop: function(count, backevent, ignored)
 {
 	var toaster;
+
+	if (this.timeout) {
+		clearTimeout(this.timeout);
+		delete this.timeout;
+	}
 
 	if (isNaN(count)) {
 		count = 1;

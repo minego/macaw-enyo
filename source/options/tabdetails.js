@@ -65,7 +65,6 @@ components: [
 				classes:							"value button",
 				name:								"refresh",
 				options: [
-					{ content: $L("1 minute"),		value: 60	},
 					{ content: $L("5 minutes"),		value: 300	},
 					{ content: $L("15 minutes"),	value: 900	},
 					{ content: $L("30 minutes"),	value: 1800 },
@@ -139,6 +138,7 @@ create: function()
 	if (tab) {
 		this.$.types.setSelected(tab.type);
 		this.$.refresh.setSelected(tab.refresh);
+		this.$.notify.setValue(tab.notify);
 	} else {
 		this.$.types.setSelected(0);
 		this.$.refresh.setSelected(0);
