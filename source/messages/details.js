@@ -233,9 +233,19 @@ openLink: function(sender, event)
 		this.showPreview(url);
 	} else {
 		if (-1 != navigator.userAgent.toLowerCase().indexOf("bb10")) {
+			//Blackberry 10
 			blackberry.invoke.invoke({
 			    target: "sys.browser",
 			    uri: url
+			});
+		} else if (navigator.userAgent.indexOf("Gecko") > -1) {
+			//Firefox OS
+			var openURL = new MozActivity({
+			name: "view",
+			    data: {
+				type: "url", // Possibly text/html in future versions
+				url: url
+			    }
 			});
 		} else {		
 			window.open(url, "_blank");
