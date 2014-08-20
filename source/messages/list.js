@@ -601,7 +601,7 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 					this.doShowPanel({
 						name: this.name
 					});
-				};
+				}.bind(this);
 			}
 		}
 	}
