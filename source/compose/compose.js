@@ -134,8 +134,7 @@ create: function()
 	this.textChanged();
 	this.imagesChanged();
 
-	this.$.send.show();
-	// this.$.cancel.setDisabled(false);
+	this.setSendState('enabled');
 
 	/*
 		Ensure we have a fresh copy of the users array, since it may be modified
@@ -199,6 +198,33 @@ destroy: function()
 	}
 
 	this.inherited(arguments);
+},
+
+/*
+	Set the state of the send button
+
+	Value may be, 'enabled', 'busy' or 'disabled'.
+*/
+setSendState: function(state)
+{
+	this.$.send.removeClass('endspin');
+	this.$.send.removeClass('spin');
+	this.$.send.removeClass('disabled');
+
+	switch (state) {
+		default:
+		case 'disabled':
+			this.$.send.addClass('disabled');
+			break;
+
+		case 'enabled':
+			this.$.send.addClass('endspin');
+			break;
+
+		case 'busy':
+			this.$.send.addClass('spin');
+			break;
+	}
 },
 
 imagesChanged: function()
@@ -908,9 +934,7 @@ if (false) {
 
 	this.autocomplete();
 	if (this.instant) {
-		this.$.send.hide();
-		// this.$.cancel.setDisabled(true);
-
+		this.setSendState('busy');
 		this.send(true);
 	}
 },
@@ -927,6 +951,11 @@ send: function(splitConfirmed)
 	if (this.sendstate && this.sendstate.todo && this.sendstate.todo.length > 0) {
 		/* Retry */
 		this.sendParts();
+		return;
+	}
+
+	if (this.$.send.hasClass('disabled') || this.$.send.hasClass('spin')) {
+		/* Ignore tapping on this button while it is busy or disabled */
 		return;
 	}
 
@@ -1040,11 +1069,8 @@ sendParts: function(success, response)
 
 	if ('undefined' != typeof(success)) {
 		if (!success) {
-			this.$.info.setContent($L("Send failed"));
-			this.$.send.setContent($L("Retry"));
-
-			this.$.send.show();
-			// this.$.cancel.setDisabled(false);
+			ex($L("Send failed"));
+			this.setSendState('enabled');
 
 			if (this.sendcount == 0) {
 				/*
@@ -1064,9 +1090,7 @@ sendParts: function(success, response)
 		this.sentcount = 0;
 
 		this.$.text.setDisabled(true);
-
-		this.$.send.hide();
-		// this.$.cancel.setDisabled(true);
+		this.setSendState('busy');
 	}
 
 	/*
@@ -1076,9 +1100,6 @@ sendParts: function(success, response)
 	if (!(details = this.sendstate.todo[0])) {
 		/* All done */
 		this.closing = true;
-
-		this.$.send.hide();
-		// this.$.cancel.setDisabled(true);
 
 		this.doCloseToaster();
 		ex($L("Message Sent"), 2000);

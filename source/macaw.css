@@ -212,6 +212,10 @@ body.Pre3 {
 	-ms-transform:          rotate(0deg);
 }
 
+.disabled {
+	opacity:				0.5;
+}
+
 /*
 .tab-timeline {
 	background:				url(../assets/icons/tweets.png)		center center no-repeat;
