@@ -848,7 +848,7 @@ compose: function(sender, options)
 
 	this.$.toasters.push(options, {
 		owner:		this,
-		noscrim:	true,
+		noscrim:	false,
 		nobg:		true,
 		modal:		true,
 		notitle:	true,
