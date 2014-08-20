@@ -57,5 +57,6 @@
 	</feature>
 	  <feature id="blackberry.invoke"/>
 	  <feature id="blackberry.invoked" version="1.0.0" required="true" />
+	<feature id="blackberry.invoke.card" />
 </widget>
 

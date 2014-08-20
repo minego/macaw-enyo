@@ -232,7 +232,14 @@ openLink: function(sender, event)
 	) {
 		this.showPreview(url);
 	} else {
-		window.open(url, "_blank");
+		if (-1 != navigator.userAgent.toLowerCase().indexOf("bb10")) {
+			blackberry.invoke.invoke({
+			    target: "sys.browser",
+			    uri: url
+			});
+		} else {		
+			window.open(url, "_blank");
+		}
 	}
 
 	return(true);

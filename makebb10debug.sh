@@ -8,7 +8,7 @@ cd deploy/macaw-enyo/
 zip -r ../../macawbb10.zip *
 cd ..
 cd ..
-${BB10SDK}/bbwp macawbb10.zip -g ${BB10SIGNPASS} --buildId 1
+${BB10SDK}/bbwp macawbb10.zip -d
 mv simulator/macawbb10.bar macawbb10-simulator.bar
 mv device/macawbb10.bar macawbb10-device.bar
 rm -R simulator
