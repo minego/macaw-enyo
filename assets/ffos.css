@@ -148,14 +148,9 @@ body {
 }
 
 /* Toasters */
-.themeFfos .toaster.bg {
-	background:				#373737;
-}
-
+.themeFfos .toaster.bg,
 .themeFfos .compose {
-	background:				#2c393b;
-}
-.themeFfos .compose .text {
+	background:				#373737;
 }
 
 .themeFfos .toaster .controls {
@@ -168,9 +163,6 @@ body {
 
 .themeFfos .smart-menu .controls {
 	background:				#2d2d2d;
-}
-
-.themeFfos .compose {
 }
 
 .smart-menu .controls {
