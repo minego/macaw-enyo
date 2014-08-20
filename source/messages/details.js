@@ -238,7 +238,7 @@ openLink: function(sender, event)
 			    target: "sys.browser",
 			    uri: url
 			});
-		} else if (navigator.userAgent.indexOf("Gecko") > -1) {
+		} else if (enyo.platform.firefoxOS) {
 			//Firefox OS
 			var openURL = new MozActivity({
 			name: "view",
@@ -247,7 +247,7 @@ openLink: function(sender, event)
 				url: url
 			    }
 			});
-		} else {		
+		} else {
 			window.open(url, "_blank");
 		}
 	}
