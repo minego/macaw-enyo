@@ -533,15 +533,18 @@ panelActivity: function(sender, event)
 
 panelRefreshStart: function(sender, event)
 {
-	var icon	= this.$['tabicon'	+ sender.index];
-	var count	= this.$['tabcount'	+ sender.index];
-	var refresh	= this.$.refreshbtn;
+	if (sender) {
+		var icon	= this.$['tabicon'	+ sender.index];
+		var count	= this.$['tabcount'	+ sender.index];
 
-	icon.removeClass("endspin");
-	icon.addClass("spin");
+		icon.removeClass("endspin");
+		icon.addClass("spin");
+	}
 
 	/* Spin the refresh icon as well */
 	if (this.spincount == 0) {
+		var refresh	= this.$.refreshbtn;
+
 		refresh.removeClass("endspin");
 		refresh.addClass("spin");
 
@@ -552,8 +555,6 @@ panelRefreshStart: function(sender, event)
 
 panelRefreshStop: function(sender, event)
 {
-	var refresh	= this.$.refreshbtn;
-
 	if (sender) {
 		var icon	= this.$['tabicon'	+ sender.index];
 		var count	= this.$['tabcount'	+ sender.index];
@@ -566,11 +567,12 @@ panelRefreshStop: function(sender, event)
 
 		icon.removeClass("spin");
 		icon.addClass("endspin");
-
-		this.spincount--;
 	}
+	this.spincount--;
 
 	if (this.spincount == 0) {
+		var refresh	= this.$.refreshbtn;
+
 		refresh.removeClass("spin");
 		refresh.addClass("endspin");
 
@@ -1079,9 +1081,19 @@ handleCommand: function(sender, event)
 			break;
 
 		case "refresh":
-			for (var i = 0, p; p = this.$['panel' + i]; i++) {
-				p.refresh();
-			}
+			/*
+				Start spinning this icon before doing the refresh to feel more
+				responsive.
+			*/
+			this.panelRefreshStart();
+
+			setTimeout(function() {
+				for (var i = 0, p; p = this.$['panel' + i]; i++) {
+					p.refresh();
+				}
+
+				this.panelRefreshStop();
+			}.bind(this), 5);
 			break;
 
 		case "redraw":
