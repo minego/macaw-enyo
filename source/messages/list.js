@@ -197,7 +197,7 @@ rendered: function()
 	}
 
 	if (results && results.length) {
-		this.loading = true;
+		this.setLoading(true);
 		this.doRefreshStart();
 
 		this.gotMessages(true, results, false);
@@ -229,11 +229,10 @@ refresh: function(autorefresh, index)
 {
 	this.setTimer();
 
-	if (this.loading) {
-		setTimeout(this.refresh.bind(this), 1000);
+	if (this.getLoading(1000)) {
+		console.log('This column has refreshed too recently...');
 		return;
 	}
-	// console.log('refreshing ' + this.name);
 
 	if (autorefresh) {
 		var at	= new Date(prefs.get('refreshAt:' + this.name));
@@ -269,7 +268,7 @@ refresh: function(autorefresh, index)
 		}
 	}
 
-	this.loading = true;
+	this.setLoading(true);
 	this.doRefreshStart();
 
 	var params = {
@@ -411,6 +410,31 @@ removeIndicators: function(insertIndex, autorefresh, cb)
 	}), 300);
 },
 
+setLoading: function(loading)
+{
+	if (this.loading && !loading) {
+		this.lastRefreshTime = new Date();
+	}
+	this.loading = loading;
+},
+
+getLoading: function(mindelay)
+{
+	if (this.loading) {
+		return(true);
+	}
+
+	if (!this.lastRefreshTime) {
+		return(false);
+	}
+
+	if (((new Date()) - this.lastRefreshTime) < mindelay) {
+		return(true);
+	}
+
+	return(false);
+},
+
 gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 {
 	var changed			= false;
@@ -448,7 +472,7 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 
 		this.$.list.refresh();
 		this.$.list.completePull();
-		this.loading = false;
+		this.setLoading(false);
 
 		this.doRefreshStop({
 			count:		0,
@@ -783,10 +807,10 @@ gotMessages: function(success, results, autorefresh, insertIndex, newCountIndex)
 			}
 
 			this.writeCache();
-			this.loading = false;
+			this.setLoading(false);
 		}), 300);
 	} else {
-		this.loading = false;
+		this.setLoading(false);
 	}
 
 	if (this.results.length == 0) {
