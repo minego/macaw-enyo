@@ -243,8 +243,8 @@ openLink: function(sender, event)
 			var openURL = new MozActivity({
 			name: "view",
 			    data: {
-				type: "url", // Possibly text/html in future versions
-				url: url
+					type: "url", // Possibly text/html in future versions
+					url: url
 			    }
 			});
 		} else {

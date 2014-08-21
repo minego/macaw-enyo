@@ -176,7 +176,7 @@ profileChanged: function()
 			{ field:	'verified',			label:	$L('Verified Account')	},
 			{ field:	'private',			label:	$L('Private Account')	},
 			{ field:	'description'										},
-			{ field:	'url'												},
+			{ field:	'url',				ontap:	'openurl'				},
 			{ field:	'location'											},
 			{ field:	'relationship',		name:	$L('relationship')		}
 		],
@@ -215,6 +215,10 @@ profileChanged: function()
 			}
 
 			component.classes += ' item';
+
+			if (item.ontap) {
+				component.ontap = item.ontap;
+			}
 
 			switch (typeof value) {
 				case 'number':
@@ -269,6 +273,32 @@ profileChanged: function()
 		case 1:	this.showList('history',	true);	break;
 		case 2:	this.showList('mentions',	true);	break;
 		case 3:	this.showList('favorite',	true);	break;
+	}
+},
+
+openurl: function()
+{
+	var url;
+
+	if ((url = this.profile.url)) {
+		if (-1 != navigator.userAgent.toLowerCase().indexOf("bb10")) {
+			//Blackberry 10
+			blackberry.invoke.invoke({
+			    target: "sys.browser",
+			    uri: url
+			});
+		} else if (enyo.platform.firefoxOS) {
+			//Firefox OS
+			var openURL = new MozActivity({
+			name: "view",
+			    data: {
+					type: "url", // Possibly text/html in future versions
+					url: url
+			    }
+			});
+		} else {
+			window.open(url, "_blank");
+		}
 	}
 },
 
