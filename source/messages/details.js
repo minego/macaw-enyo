@@ -188,7 +188,7 @@ openYouTube: function(url)
 
 openLink: function(sender, event)
 {
-	var url = event.url.trim();
+	var url = (event ? event.url : sender).trim();
 
 	// TODO	Actually open in a browser on android, bb10, etc...
 
@@ -379,6 +379,11 @@ handleCommand: function(sender, event)
 				menucmd:		"hide"
 			});
 
+			options.push({
+				content:		$L("Translate"),
+				menucmd:		"translate"
+			});
+
 			this.doOpenToaster({
 				component: {
 					kind:					"smart-menu",
@@ -520,6 +525,14 @@ handleCommand: function(sender, event)
 				action:		'delete',
 				item:		this.item
 			});
+			break;
+
+		case "translate":
+			var lang	= $L.getLocale()[0];
+			var url		= 'https://translate.google.com/#auto/' + lang + '/';
+
+			url += encodeURI(this.item.stripped);
+			this.openLink(url);
 			break;
 
 		case "repost":
