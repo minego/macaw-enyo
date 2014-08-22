@@ -29,6 +29,8 @@ events: {
 components: [
 	{
 		kind:								enyo.Scroller,
+		name:								"scroller",
+
 		components: [
 			{
 				name:						"accounts",
@@ -139,6 +141,22 @@ show: function()
 	this.inherited(arguments);
 
 	this.createAccountList();
+},
+
+rendered: function()
+{
+	this.inherited(arguments);
+	this.resizeHandler();
+},
+
+resizeHandler: function(sender, event)
+{
+	this.inherited(arguments);
+
+	/* Fix the scroller height */
+	this.$.scroller.applyStyle('max-height',
+						(document.body.clientHeight - 34) + 'px');
 }
+
 
 });

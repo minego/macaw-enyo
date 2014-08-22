@@ -28,6 +28,7 @@ events: {
 components: [
 	{
 		kind:													enyo.Scroller,
+		name:													"scroller",
 		components: [
 			{
 				classes:										"panel",
@@ -185,6 +186,21 @@ themeChanged: function(sender, event)
 {
 	prefs.set("theme", this.$.theme.getSelected().value);
 	this.doOptionsChanged({});
+},
+
+rendered: function()
+{
+	this.inherited(arguments);
+	this.resizeHandler();
+},
+
+resizeHandler: function(sender, event)
+{
+	this.inherited(arguments);
+
+	/* Fix the scroller height */
+	this.$.scroller.applyStyle('max-height',
+						(document.body.clientHeight - 34) + 'px');
 }
 
 });

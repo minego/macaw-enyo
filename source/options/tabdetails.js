@@ -28,8 +28,10 @@ published: {
 	tabIndex:										-1
 },
 
-components: [
-	{
+components: [{
+	kind:											enyo.Scroller,
+	name:											"scroller",
+	components: [{
 		classes:									"section",
 
 		components: [
@@ -93,8 +95,8 @@ components: [
 				onSelect:							"handleButton"
 			}
 		]
-	}
-],
+	}]
+}],
 
 create: function()
 {
@@ -211,6 +213,21 @@ handleButton: function(sender, event)
 			this.doCloseToaster();
 			break;
 	}
+},
+
+rendered: function()
+{
+	this.inherited(arguments);
+	this.resizeHandler();
+},
+
+resizeHandler: function(sender, event)
+{
+	this.inherited(arguments);
+
+	/* Fix the scroller height */
+	this.$.scroller.applyStyle('max-height',
+						(document.body.clientHeight - 34) + 'px');
 }
 
 });
