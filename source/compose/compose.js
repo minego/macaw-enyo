@@ -127,6 +127,17 @@ components: [
 	}
 ],
 
+/* Allow overriding preferences handling for this kind */
+getpref: function(name)
+{
+	return(prefs.get(name));
+},
+
+setpref: function(name, value)
+{
+	return(prefs.set(name, value));
+},
+
 create: function()
 {
 	this.inherited(arguments);
@@ -156,7 +167,7 @@ create: function()
 		/* Select the users that where previously enabled */
 		var enabled;
 
-		if ((enabled = prefs.get('crosspostusers')) && enabled.length > 0) {
+		if ((enabled = this.getpref('crosspostusers')) && enabled.length > 0) {
 			for (var i = 0, u; u = this.users[i]; i++) {
 				u.enabled = false;
 
@@ -344,7 +355,7 @@ userChanged: function()
 
 		/* Remember the users that where selected */
 		if (!this.dm && !this.replyto) {
-			prefs.set('crosspostusers', tosave);
+			this.setpref('crosspostusers', tosave);
 		}
 	} else {
 		/* Make sure only one user is selected */
@@ -925,7 +936,7 @@ if (false) {
 		ctrl+enter			send
 	*/
 	if (event && event.which == 13) {
-		if (event.ctrlKey || prefs.get('submitOnEnter')) {
+		if (event.ctrlKey || this.getpref('submitOnEnter')) {
 			this.handleCommand(this, {
 				command: "send"
 			});

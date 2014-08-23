@@ -865,6 +865,53 @@ compose: function(sender, options)
 	});
 },
 
+// TODO Add options to the compose dialog to let it be used for search...
+//
+//		- Change the send icon
+//		- Only allow selecting a single account
+//		- Change "Message" to "Search for..."
+//		- Change action to load a conversation view with the results. It can
+//		  call .getMessages() on the account with q set in the params
+//		- The conversation view should show a menu with an option to save the
+//		  search as a permanent column.
+//
+//		Should it be a new kind that overrides compose?
+
+search: function(sender, options)
+{
+	options = options || {};
+
+	options.kind		= "Search";
+	options.user		= options.user;
+	options.users		= this.users;
+
+	options.images		= [];
+
+	if (!options.user && !options.users) {
+		return;
+	}
+
+	if (options.replaceToaster) {
+		this.$.toasters.pop(1, true, true);
+	}
+
+	this.$.toasters.push(options, {
+		owner:		this,
+		noscrim:	false,
+		nobg:		true,
+		modal:		false,
+		notitle:	true,
+
+		/*
+			On devices with a virtual keyboard it can be annoying to move the
+			compose toaster around if it shows/hides. So, simply make it full
+			height to avoid this.
+		*/
+		tall:		this.vkb ? true : false,
+		alwaysshow:	this.vkb ? true : false
+	});
+},
+
 conversation: function(sender, options)
 {
 	options = options || {};
@@ -1035,6 +1082,9 @@ showAppMenu: function(title, items)
 			content:	$L("Compose"),
 			menucmd:	"compose"
 		}, {
+			content:	$L("Search"),
+			menucmd:	"search"
+		}, {
 			content:	$L("Preferences"),
 			menucmd:	"preferences"
 		}],
@@ -1102,6 +1152,10 @@ handleCommand: function(sender, event)
 
 		case "compose":
 			this.compose(this, {});
+			break;
+
+		case "search":
+			this.search(this, {});
 			break;
 
 		case "preferences":

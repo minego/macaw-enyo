@@ -375,6 +375,7 @@ getMessages: function(resource, cb, params)
 		case 'search':
 		default:
 			console.log('getMessages does not yet support: ' + resource);
+			cb(false, []);
 			return;
 	}
 

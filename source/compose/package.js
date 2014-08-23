@@ -1,4 +1,6 @@
 enyo.depends(
 	"compose.js",
-	"compose.css"
+	"compose.css",
+
+	"search.js"
 );

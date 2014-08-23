@@ -256,6 +256,11 @@ body.Pre3 {
 .send.icon {
 	background:				url(../assets/icons/send.png)		center center no-repeat;
 }
+.search .send.icon,
+.search.icon {
+	background:				url(../assets/icons/search.png)		center center no-repeat;
+}
+
 .compose.icon {
 	background:				url(../assets/icons/compose.png)	center center no-repeat;
 }
