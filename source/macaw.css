@@ -154,6 +154,15 @@ body.Pre3 {
 	background:				none;
 }
 
+.tabbar .tab:active,
+.titlebar .imgbtn:active {
+	background:				rgba(0,0,0,0.1) !important;
+}
+.tabbar .tab.spin:active,
+.titlebar .imgbtn.spin:active {
+	background:				none !!important;
+}
+
 .bottombar .indicator {
 	bottom:					48px;
 	background:				url(../assets/indicator-up.png)		no-repeat;
