@@ -13,9 +13,6 @@
 		- Emoji
 		- Compose in new card/window?
 
-+ Preview
-	- Implement options menu
-
 + Implement filters
 	- Display list of filters in options panel
 	- Hide tweets that match a filter. Can be applied in either the list kind or
@@ -34,10 +31,8 @@
 	- User tweets
 	- DM on ADN
 
+- Show a conversation like view when tapping on a hashtag
+- Implement search, and open results in a conversation like view
+- Allow saving a search as a permanent column
 
-
-- Wake to refresh on FFOS
-- Change style for showing refresh in progress
-- Correct events when clicking on an avatar on FFOS
-- Allow clicking on the URL in a profile
 

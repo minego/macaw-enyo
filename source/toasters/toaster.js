@@ -147,7 +147,7 @@ getTop: function()
 push: function(component, options)
 {
 	var toaster;
-	var scrim;
+	var scrim	= null;
 	var last;
 	var classes	= [];
 
@@ -195,7 +195,7 @@ push: function(component, options)
 		for (var i = this.toasters.length - 1, t; t = this.toasters[i]; i--) {
 			if (t.scrim) {
 				/* A scrim was found */
-				options.noscrim = true;
+				scrim = t.scrim;
 				break;
 			}
 
@@ -206,7 +206,7 @@ push: function(component, options)
 		}
 	}
 
-	if (!options.noscrim) {
+	if (!options.noscrim && !scrim) {
 		/* If there is not already a scrim in place them create one */
 		scrim = this.createComponent({
 			kind:					"toasterscrim",
@@ -215,8 +215,6 @@ push: function(component, options)
 		}, { owner: this });
 
 		scrim.render();
-	} else {
-		scrim = null;
 	}
 
 	toaster = this.createComponent({
@@ -230,10 +228,13 @@ push: function(component, options)
 	}, { owner: options.owner });
 
 	if (scrim) {
-		scrim.toaster = toaster;
+		if (!scrim.toaster) {
+			scrim.toaster = toaster;
+		}
+
+		toaster.scrim = scrim;
 	}
 
-	toaster.scrim = scrim;
 	toaster.options = options;
 	toaster.render();
 
@@ -275,7 +276,11 @@ pop: function(count, backevent, ignored)
 		}
 
 		if ((toaster = this.toasters.pop())) {
-			if (toaster.scrim) {
+			/*
+				Multiple toasters can point to the same scrim, but the scrim
+				will only point back to the toaster that created it.
+			*/
+			if (toaster.scrim && toaster.scrim.toaster == toaster) {
 				toaster.scrim.deactivate();
 				setTimeout(function() {
 					toaster.scrim.destroy();
@@ -312,19 +317,17 @@ showTopToaster: function()
 
 handleScrim: function(sender, event)
 {
-	if (sender.toaster && sender.toaster.options &&
-		sender.toaster.options.modal
-	) {
-		/* The toaster is modal, don't allow closing by tapping on the scrim */
-		return(true);
-	}
-
 	/*
 		Find the index (from the end) of the toaster that this scrim belongs to
 		and pop off that many items.
 	*/
-	for (var i = this.toasters.length - 1, t; t = this.toasters[t]; i--) {
-		if (t == sender.toaster) {
+	for (var i = this.toasters.length - 1, t; t = this.toasters[i]; i--) {
+		if (t.scrim == sender) {
+			if (t.options.modal) {
+				/* The toaster is modal, don't allow closing by tapping on the scrim */
+				return(true);
+			}
+
 			this.pop(this.toasters.length - i);
 			return(true);
 		}
