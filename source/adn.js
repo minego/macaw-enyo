@@ -371,8 +371,15 @@ getMessages: function(resource, cb, params)
 			url += 'users/' + user + '/stars';
 			break;
 
-		case 'messages':
 		case 'search':
+			url = 'https://api.app.net/posts/search';
+			params.order	= params.order || 'score';
+			params.query	= params.q;
+
+			delete params.q;
+			break;
+
+		case 'messages':
 		default:
 			console.log('getMessages does not yet support: ' + resource);
 			cb(false, []);
