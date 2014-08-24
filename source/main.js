@@ -865,18 +865,6 @@ compose: function(sender, options)
 	});
 },
 
-// TODO Add options to the compose dialog to let it be used for search...
-//
-//		- Change the send icon
-//		- Only allow selecting a single account
-//		- Change "Message" to "Search for..."
-//		- Change action to load a conversation view with the results. It can
-//		  call .getMessages() on the account with q set in the params
-//		- The conversation view should show a menu with an option to save the
-//		  search as a permanent column.
-//
-//		Should it be a new kind that overrides compose?
-
 search: function(sender, options)
 {
 	options = options || {};
@@ -1001,10 +989,7 @@ accountCreated: function(sender, event)
 			notify:		false
 		});
 
-		if (account.servicename != 'adn') {
-			// TODO	Add support for the PM panel in ADN
-			/* We don't support the private message panel in ADN yet */
-
+		if (account.features.dm) {
 			this.tabs.push({
 				type:		'messages',
 				label:		'@' + account.screenname + ' ' + account.service.terms.PMs,

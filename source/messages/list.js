@@ -940,7 +940,7 @@ itemTap: function(sender, event)
 		var senderid;
 		convo = [];
 
-		if (item.user.id !== this.user.id) {
+		if (item.user.id !== this.user.id || !item.recipient) {
 			senderid = item.user.id;
 		} else {
 			senderid = item.recipient.id;

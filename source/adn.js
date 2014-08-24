@@ -8,7 +8,7 @@ var ADNAPI = function(user, readycb) {
 	};
 
 	this.features = {
-		// TODO	Implement DM support for ADN
+		// TODO	Change to true when PM support is finished
 		dm:				false,
 		mute:			true,
 		spam:			false
@@ -328,6 +328,60 @@ changeUser: function(action, cb, params)
 	}, method);
 },
 
+/*
+	Get the recipient for each channel where we are the sender of the recent
+	message.
+*/
+getPMRecips: function(messages, cb)
+{
+	/* Get the user objects for the users we are talking to */
+	var		ids = [];
+
+	url = 'https://api.app.net/users';
+
+	for (var i = 0, msg; msg = messages[i]; i++) {
+		if (msg.user.id != this.user.id) {
+			msg.recipient = this.user;
+			continue;
+		}
+
+		if (!msg.channel || !msg.channel.writers || !msg.channel.writers.user_ids) {
+			continue;
+		}
+
+		for (var x = 0, w; w = msg.channel.writers.user_ids[x]; x++) {
+			ids.push(w);
+		}
+	}
+
+	this.get(this.buildURL(url, { ids: ids.join(',') }), function(sender, res) {
+		/* Assign the recipients to the messages */
+		var users = res.data || [];
+
+		for (var i = 0, msg; msg = messages[i]; i++) {
+			if (msg.recipient) {
+				continue;
+			}
+
+			if (!msg.channel || !msg.channel.writers || !msg.channel.writers.user_ids) {
+				continue;
+			}
+
+			for (var x = 0, w; w = msg.channel.writers.user_ids[x]; x++) {
+				for (var u = 0, user; user = users[u]; u++) {
+					if (user.id == w) {
+						msg.recipient = this.cleanupUser(user);
+						break;
+					}
+				}
+			}
+		}
+
+		cb(messages);
+	}.bind(this));
+
+},
+
 getMessages: function(resource, cb, params)
 {
 	var plural	= true;
@@ -380,6 +434,21 @@ getMessages: function(resource, cb, params)
 			break;
 
 		case 'messages':
+			url = 'https://api.app.net/channels';
+			params.channel_types			= 'net.app.core.pm';
+			params.include_recent_message	= 1;
+			params.include_user_annotations	= 1;
+			break;
+
+		case 'channel':
+			url = 'https://api.app.net/channels/';
+
+			url += params.channel;
+			delete params.channel;
+
+			url += '/messages';
+			break;
+
 		default:
 			console.log('getMessages does not yet support: ' + resource);
 			cb(false, []);
@@ -399,6 +468,13 @@ getMessages: function(resource, cb, params)
 
 			if (plural) {
 				results = this.cleanupMessages(response.data);
+
+				if ('messages' === resource) {
+					this.getPMRecips(results, function(results) {
+						cb(true, results, response.responseHeaders);
+					}.bind(this));
+					return;
+				}
 			} else {
 				results = this.cleanupMessage(response.data);
 			}
@@ -407,7 +483,7 @@ getMessages: function(resource, cb, params)
 		} else {
 			cb(false, []);
 		}
-	});
+	}.bind(this));
 },
 
 /*
@@ -489,6 +565,25 @@ cleanupMessages: function(messages)
 */
 cleanupMessage: function(message)
 {
+	if (message.recent_message) {
+		/*
+			If this response is a channel instead of a message then use the
+			recent message, but keep a link back to the channel.
+		*/
+		var tmp = message;
+
+		message = tmp.recent_message;
+		message.channel = tmp;
+
+		delete tmp.recent_message;
+
+		message.dm = true;
+
+		// TODO	We need to be able to reply to a channel...
+		// TODO	We need to be able to delete a message from a channel
+		// TODO We need to be able to create a new channel to DM a user...
+	}
+
 	/*
 		If this is a repost then we want to act on the original message, not the
 		wrapper. Keep the wrapper around so that the details of the sender can
@@ -558,7 +653,11 @@ cleanupMessage: function(message)
 			delete message.annotations;
 		}
 
-		message.media = EntityAPI.media(message.entities.urls, message.media);
+		if (message.entities) {
+			message.media = EntityAPI.media(message.entities.urls, message.media);
+		} else {
+			message.media = [];
+		}
 	}
 
 	return(message);
@@ -684,7 +783,8 @@ authorize: function(cb, token)
 
 		cb({
 			servicename:		'adn',
-			accesstoken:		token
+			accesstoken:		token,
+			features:			this.features
 		});
 	}
 }

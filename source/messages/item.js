@@ -143,7 +143,7 @@ setupMessage: function(item, service, changecb)
 		this.addClass('favorite');
 	}
 
-	if (item.dm && item.user.id === this.service.user.id) {
+	if (item.dm && item.user.id === this.service.user.id && item.recipient) {
 		this.$.screenname.setContent($L("To") + ': @' + item.recipient.screenname);
 		this.$.username.setContent('');
 	} else {

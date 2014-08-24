@@ -139,8 +139,10 @@ itemChanged: function()
 		this.$['repost'		].addClass("hide");
 		this.$['favorite'	].addClass("hide");
 
-		if (!this.convo || this.convo.length <= 1) {
-			this.$['convo'		].addClass("hide");
+		if (!this.item.channel) {
+			if (!this.convo || this.convo.length <= 1) {
+				this.$['convo'		].addClass("hide");
+			}
 		}
 	} else {
 		if (!this.user || !this.item.user ||

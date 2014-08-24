@@ -71,10 +71,16 @@ rendered: function()
 	this.results = [];
 
 	if (this.items && this.items.length > 0) {
-		this.results = this.items;
-
-		this.gotMessage(true, null);
+		if (1 == this.items.length && this.items[0].channel) {
+			/* ADN channel mode */
+			this.gotMessage(true, this.item);
+		} else {
+			/* Twitter pre-loaded messages mode */
+			this.results = this.items;
+			this.gotMessage(true, null);
+		}
 	} else if (this.item) {
+		/* Normal conversation mode */
 		this.gotMessage(true, this.item);
 	}
 },
@@ -110,11 +116,49 @@ gotMessage: function(success, result)
 		this.setBounds({ height: pb.height * 0.8 });
 	}
 
-	/* Get the next item */
-	if (result && result.replyto) {
-		this.service.getMessages('show', this.gotMessage.bind(this), {
-			id:	result.replyto
-		});
+	/* Get the next item(s) */
+	if (result) {
+		if (result.replyto) {
+			/* Get the next message */
+			this.service.getMessages('show', this.gotMessage.bind(this), {
+				id:	result.replyto
+			});
+		} else if (result.channel) {
+			/* Get the messages in this channel */
+			this.service.getMessages('channel', this.gotMessages.bind(this), {
+				channel: result.channel.id
+			});
+		}
+	}
+},
+
+gotMessages: function(success, results)
+{
+	if (!success || this.destroyed) {
+		/* Failed */
+		return;
+	}
+
+	this.results = results || [];
+
+	this.$.list.setCount(this.results.length);
+	this.$.list.refresh();
+
+	/* Resize the toaster */
+	var p = this;
+
+	while (p.parent) {
+		p = p.parent;
+	}
+
+	var pb = p.getBounds();
+	var lb = this.$.list.getScrollBounds();
+
+	this.log(pb, lb);
+	if (lb.height <= pb.height * 0.8) {
+		this.setBounds({ height: lb.height });
+	} else {
+		this.setBounds({ height: pb.height * 0.8 });
 	}
 },
 
