@@ -144,7 +144,7 @@ setupMessage: function(item, service, changecb)
 	}
 
 	if (item.dm && item.user.id === this.service.user.id) {
-		this.$.screenname.setContent($L("To") + ': @' + item.recipient_screen_name);
+		this.$.screenname.setContent($L("To") + ': @' + item.recipient.screenname);
 		this.$.username.setContent('');
 	} else {
 		this.$.screenname.setContent('@' + item.user.screenname);

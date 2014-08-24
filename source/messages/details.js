@@ -400,9 +400,20 @@ handleCommand: function(sender, event)
 			break;
 
 		case "reply":
+			var dm = null;
+
+			if (this.item.dm) {
+				if (this.item.user.id === this.service.user.id) {
+					dm = this.item.recipient;
+				} else {
+					dm = this.item.user;
+				}
+			}
+
 			this.doCompose({
 				replyto:	this.item,
-				user:		this.user
+				user:		this.user,
+				dm:			dm
 			});
 			break;
 
