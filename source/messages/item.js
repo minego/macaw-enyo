@@ -143,8 +143,13 @@ setupMessage: function(item, service, changecb)
 		this.addClass('favorite');
 	}
 
-	this.$.screenname.setContent('@' + item.user.screenname);
-	this.$.username.setContent(item.user.name);
+	if (item.dm && item.user.id === this.service.user.id) {
+		this.$.screenname.setContent($L("To") + ': @' + item.recipient_screen_name);
+		this.$.username.setContent('');
+	} else {
+		this.$.screenname.setContent('@' + item.user.screenname);
+		this.$.username.setContent(item.user.name);
+	}
 
 	this.$.avatar.applyStyle('background-image', 'none');
 	xhrImages.load(item.user.blobavatar || item.user.avatar, function(url, inline) {
