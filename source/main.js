@@ -943,6 +943,7 @@ createAccount: function(options, force)
 accountCreated: function(sender, event)
 {
 	var account = event.account;
+	var service	= event.service;
 
 	/* Store the list of accounts with the new account included */
 	this.prepareAccount(account, function() {
@@ -989,7 +990,7 @@ accountCreated: function(sender, event)
 			notify:		false
 		});
 
-		if (account.features.dm) {
+		if (service.features.dm) {
 			this.tabs.push({
 				type:		'messages',
 				label:		'@' + account.screenname + ' ' + account.service.terms.PMs,

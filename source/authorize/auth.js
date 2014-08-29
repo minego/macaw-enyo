@@ -262,7 +262,7 @@ step3done: function()
 {
 	/* Done */
 	this.$.step3.hide();
-	this.doSuccess({ account: this.account });
+	this.doSuccess({ account: this.account, service: this.service });
 },
 
 selectStep: function(sender, event)
