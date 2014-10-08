@@ -33,7 +33,6 @@ ${DEPLOY}/appinfo.json: ${DEPLOY} appinfo.json
 	@cat appinfo.json | sed -e s/autoversion/$(VERSION)/ > ${DEPLOY}/appinfo.json
 
 deploy/${APPID}_${VERSION}_all.ipk: ${DEPLOY}/appinfo.json
-	@cat webos-index.html | sed 's/device-width/320/' > ${DEPLOY}/index.html
 	@cp macaw.png ${DEPLOY}
 	@palm-package --exclude=assets/old-images ${DEPLOY}
 
