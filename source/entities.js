@@ -45,7 +45,8 @@ text: function(message)
 		text = EntityAPI.replace(message, text);
 	}
 
-	message.text = text;
+	var re = new RegExp('\n', 'g');
+	message.text = text.replace(re, '<br/>');
 },
 
 /*
