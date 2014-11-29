@@ -790,25 +790,58 @@ countChars: function(text)
 	return(count);
 },
 
+getText: function()
+{
+	var node;
+	var text;
+	var re;
+
+	if ((node = this.$.text.hasNode()) && !this.$.text.hasClass('empty')) {
+		if ('string' === typeof node.innerText) {
+			text = node.innerText;
+		} else {
+			/*
+				On Firefox OS .textContent does not behave properly. It strips
+				newlines entirely.
+
+				So instead we will have to rely on innerHTML. Convert any <br>
+				tag to a newline and filter out all other tags (there shouldn't
+				be any).
+			*/
+			text = node.innerHTML;
+
+			/* Replace any <br> tags with a newline */
+			re = new RegExp('<br[^>]*>', 'g');
+			text = (text || '').replace(re, '\n');
+
+			/*
+				Strip any remaining HTML tags. This isn't the most elegant of
+				solutions for stripping but we shouldn't be dealing with any
+				complex HTML here.
+			*/
+			re = new RegExp('<[^>]*>', 'g');
+			text = (text || '').replace(re, '');
+		}
+	} else {
+		text = '';
+	}
+
+	/* Replace any non-breaking spaces with regular spaces */
+	text = (text || '').replace(/\u00A0/g, ' ');
+
+	return(text.trim());
+},
+
 autocomplete: function()
 {
 	// TODO	Get the cursor position. For now we will assume the cursor is at the
 	//		end of the text, but this is not always valid.
-	var value;
-	var end;
 	var start;
 	var word;
-	var node;
 	var c;
-
-	if ((node = this.$.text.hasNode())) {
-		if (!(value = node.innerText)) {
-			value = node.textContent;
-		}
-	} else {
-		value = '';
-	}
-	end = value.length;
+	var node	= this.$.text.hasNode();
+	var value	= this.getText();
+	var end		= value.length;
 
 	this.$.autocomplete.destroyClientControls();
 
@@ -897,25 +930,14 @@ autocomplete: function()
 autocompletetap: function(sender, event)
 {
 	var word	= event.originator.getContent();
-	var node;
-	var value;
 	var end;
 	var start;
-
-	if ((node = this.$.text.hasNode())) {
-		try {
-			this.text = node.innerText;
-		} catch (e) {
-			this.text = node.textContent;
-		}
-	} else {
-		this.text = '';
-	}
+	var node	= this.$.text.hasNode();
+	var value	= this.getText();
+	var end		= value.length;
 
 	// TODO	Get the cursor position. For now we will assume the cursor is at the
 	//		end of the text, but this is not always valid.
-	value = this.text;
-	end = value.length;
 
 	for (start = end - 1; c = value.charAt(start); start--) {
 		if (/\s/.test(c)) {
@@ -935,18 +957,12 @@ autocompletetap: function(sender, event)
 
 change: function(sender, event)
 {
-	var node;
 	var count;
+	var node	= this.$.text.hasNode();
+	var value	= this.getText();
+	var end		= value.length;
 
-	if ((node = this.$.text.hasNode())) {
-		try {
-			this.text = node.innerText.trim();
-		} catch (e) {
-			this.text = node.textContent.trim();
-		}
-	} else {
-		this.text = '';
-	}
+	this.text	= value;
 
 	count = this.countChars(this.text);
 
@@ -1031,18 +1047,7 @@ send: function(splitConfirmed)
 		node.blur();
 	}
 
-	if ((node = this.$.text.hasNode()) && !this.$.text.hasClass('empty')) {
-		try {
-			text = node.innerText.trim();
-		} catch (e) {
-			text = node.textContent.trim();
-		}
-	} else {
-		text = '';
-	}
-
-	/* Replace any non-breaking spaces with regular spaces */
-	text = text.replace(/\u00A0/g, " ");
+	text = this.getText();
 
 	/* Build a list of enabled users */
 	for (var i = 0, u; u = this.users[i]; i++) {
@@ -1194,8 +1199,6 @@ sendParts: function(success, response)
 
 split: function(max)
 {
-	var node;
-	var text;
 	var words;
 	var todone		= false;
 	var to			= [];
@@ -1204,19 +1207,11 @@ split: function(max)
 	var padding		= 0;
 	var parts		= [];
 	var count;
+	var node		= this.$.text.hasNode();
+	var text		= this.getText();
 
 	if (isNaN(max)) {
 		max = this.getMaxLength();
-	}
-
-	if ((node = this.$.text.hasNode())) {
-		try {
-			text = node.innerText.trim();
-		} catch (e) {
-			text = node.textContent.trim();
-		}
-	} else {
-		text = '';
 	}
 
 	count = this.countChars(text);
