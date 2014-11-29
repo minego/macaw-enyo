@@ -183,6 +183,11 @@ create: function()
 	*/
 	this.users = this.users.slice(0);
 
+	/* Cleanup from any previous comopse dialogs */
+	for (var i = 0, u; u = this.users[i]; i++) {
+		delete u.following;
+	}
+
 	if (this.dm || this.replyto) {
 		/*
 			Only allow switching between accounts on the same service when
@@ -216,9 +221,6 @@ create: function()
 			Check the relationship and display a warning if we are trying to
 			send a DM to someone that doesn't follow us.
 		*/
-		for (var i = 0, u; u = this.users[i]; i++) {
-			delete u.following;
-		}
 		this.loadRelationships();
 	} else {
 		/* Update the display of the avatar and/or counters */
@@ -731,6 +733,7 @@ handleCommand: function(sender, event)
 			break;
 
 		case "selectAccounts":
+			this.user = null;
 			this.setUsers(sender.users.slice(0));
 			break;
 
