@@ -256,10 +256,13 @@ setSendState: function(state)
 	this.$.send.removeClass('spin');
 	this.$.send.removeClass('disabled');
 
+	this.$.text.setDisabled(false);
+
 	switch (state) {
 		default:
 		case 'disabled':
 			this.$.send.addClass('disabled');
+			this.$.text.setDisabled(true);
 			break;
 
 		case 'enabled':
@@ -268,6 +271,7 @@ setSendState: function(state)
 
 		case 'busy':
 			this.$.send.addClass('spin');
+			this.$.text.setDisabled(true);
 			break;
 	}
 },
@@ -1141,7 +1145,6 @@ sendParts: function(success, response)
 					Nothing has been sent so the user can change the message
 					before retrying.
 				*/
-				this.$.text.setDisabled(true);
 				delete this.sendstate;
 			}
 			return;
@@ -1153,7 +1156,6 @@ sendParts: function(success, response)
 	} else {
 		this.sentcount = 0;
 
-		this.$.text.setDisabled(true);
 		this.setSendState('busy');
 	}
 
