@@ -36,7 +36,9 @@ var TwitterAPI = function(user, readycb) {
 		RP:					$L("RT"),
 		PM:					$L("DM"),
 		PMs:				$L("DMs"),
-		DeleteQuestion:		$L("Are you sure you want to delete this tweet?")
+		DeleteQuestion:		$L("Are you sure you want to delete this tweet?"),
+
+		NotFollowing:		$L("A DM can not be sent to a user that is not following you")
 	};
 
 	if (this.user && this.user.options) {

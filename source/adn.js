@@ -33,7 +33,9 @@ var ADNAPI = function(user, readycb) {
 		RP:				$L("RP"),
 		PM:				$L("PM"),
 		PMs:			$L("PMs"),
-		DeleteQuestion:	$L("Are you sure you want to delete this post?")
+		DeleteQuestion:	$L("Are you sure you want to delete this post?"),
+
+		NotFollowing:	$L("A PM can not be sent to a user that is not following you")
 	};
 
 	if (this.user) {

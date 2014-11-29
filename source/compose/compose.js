@@ -138,6 +138,36 @@ setpref: function(name, value)
 	return(prefs.set(name, value));
 },
 
+/*
+	Get the relationship status of this user to each of the configured users and
+	filter the list of users that can be used to those that this user is
+	following.
+
+	This has the upshot of automatically selecting the right user if only one
+	is able to send.
+*/
+loadRelationships: function()
+{
+	for (var i = 0; i < this.users.length; i++) {
+		(function(user) {
+			if ('boolean' === typeof user.following) {
+				/* We already have the relationship */
+				return;
+			}
+
+			user.service.getUser('@' + this.dm.screenname, function(success, result) {
+				if (success && -1 != result.indexOf('followed_by')) {
+					user.following = true;
+				} else {
+					user.following = false;
+				}
+
+				this.usersChanged();
+			}.bind(this), 'relationship');
+		}).bind(this)(this.users[i]);
+	}
+},
+
 create: function()
 {
 	this.inherited(arguments);
@@ -181,16 +211,18 @@ create: function()
 		}
 	}
 
-	/* Update the display of the avatar and/or counters */
-	if (this.user) {
-		this.userChanged();
+	if (this.dm) {
+		/*
+			Check the relationship and display a warning if we are trying to
+			send a DM to someone that doesn't follow us.
+		*/
+		for (var i = 0, u; u = this.users[i]; i++) {
+			delete u.following;
+		}
+		this.loadRelationships();
 	} else {
+		/* Update the display of the avatar and/or counters */
 		this.usersChanged();
-	}
-
-	/* Hide the options menu if there are no appropriate options */
-	if (this.dm && this.users.length <= 1) {
-		this.$.optionsButton.destroy();
 	}
 },
 
@@ -306,10 +338,28 @@ getMaxLength: function(service)
 
 usersChanged: function()
 {
-	this.service	= null;
-	this.user		= null;
+	this.service = null;
 
-	/* The userChanged() callback will handle this ... */
+	/* Filter out any users without a valid relationship */
+	if (this.users.length > 0) {
+		for (var i = this.users.length - 1, u; u = this.users[i]; i--) {
+			if ('boolean' == typeof u.following && !u.following) {
+				this.users.splice(i, 1);
+			}
+		}
+
+		if (this.dm && !this.users.length) {
+			this.doCloseToaster();
+			ex(this.user.service.terms.NotFollowing);
+			return;
+		}
+	}
+
+	if (-1 == this.users.indexOf(this.user)) {
+		this.user = null;
+	}
+
+	/* Make the userChanged callback fixup the user */
 	this.userChanged();
 },
 
