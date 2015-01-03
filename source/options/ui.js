@@ -164,12 +164,12 @@ themeTypeChanged: function(sender, event)
 				{ content: $L("Light"),		value: "material"					},
 				{ content: $L("Dark"),		value: "material,material-dark"		},
 				{ content: $L("Blue Grey"),	value: "material,material-blue-grey"},
-				{ content: $L("Cyan"),		value: "material,material-Cyan"		},
-				{ content: $L("Green"),		value: "material,material-Green"	},
-				{ content: $L("Orange"),	value: "material,material-Orange"	},
-				{ content: $L("Teal"),		value: "material,material-Teal"		},
-				{ content: $L("Indigo"),	value: "material,material-Indigo"	},
-				{ content: $L("Red"),		value: "material,material-Red"		}
+				{ content: $L("Cyan"),		value: "material,material-cyan"		},
+				{ content: $L("Green"),		value: "material,material-green"	},
+				{ content: $L("Orange"),	value: "material,material-orange"	},
+				{ content: $L("Teal"),		value: "material,material-teal"		},
+				{ content: $L("Indigo"),	value: "material,material-indigo"	},
+				{ content: $L("Red"),		value: "material,material-red"		}
 			]);
 			break;
 
