@@ -8,7 +8,15 @@
 }
 
 body {
-	background:				#fefefe !important;
+	background:				#fcfcfc !important;
+}
+
+.panels.padtop {
+	top:				3.1rem;
+}
+
+.panels.padbottom {
+	bottom:				3.1rem;
 }
 
 .themeFfos .toolbar {
@@ -26,9 +34,10 @@ body {
 }
 
 .themeFfos .toolbar.titlebar {
+	height:				3.1rem;
 	background-color:		#f97c17 !important;
 	color:					white;
-	font-weight:			200;
+	font-weight:			300;
 	font-style:				italic;
 	font-size:				1.3rem;
 }
@@ -42,7 +51,7 @@ body {
 .themeFfos .titlebar .imgbtn {
 	height:					30px;
 	width:					30px;
-	padding:				9px 10px;
+	padding:				10px 10px;
 	background-size:		auto 100%;
 }
 
@@ -53,7 +62,7 @@ body {
 
 .themeFfos .titlebar .title {
 	left:					52px !important;
-	/* text-align:				center; */
+	top:				2px;
 }
 
 .themeFfos .listitem {
@@ -69,17 +78,21 @@ body {
 
 .themeFfos .tabbar {
 	background:				white;
+	height:				3rem;
 }
 
 .themeFfos .tabbar .count {
 	color:					#5F5F5F;
+	font-weight:			500;
 }
 
 .themeFfos .tabbar.bottombar {
 	border-top:				0.1rem solid #e7e7e7;
+	margin-bottom:				1px;
 }
 .themeFfos .tabbar.topbar {
 	border-bottom:			0.1rem solid #e7e7e7;
+	margin-top:				1px;
 }
 
 .themeFfos .tabbar .tab {
@@ -88,50 +101,47 @@ body {
 
 .themeFfos .tab:active,
 .themeFfos .titlebar .imgbtn:active {
-	background:				rgba(0,0,0,0.1) !important;
+	background:				rgba(0,0,0,0.05) !important;
 }
 .themeFfos .imgbtn.spin {
 	background:				none !important;
 }
 
 .themeFfos .indicator {
-	background:				none;
-	border-bottom:			3px solid #00aacc;
+	background:			none;
+	border-bottom:			3px solid #0ac;
+	margin-top:			-0.6rem;
+	margin-bottom:			-0.1rem;
 }
 
 .themeFfos button,
 .themeFfos button.onyx-negative {
 	box-shadow:				none;
-
 	font-weight:			normal;
 	font-style:				italic;
-
 	color:					#333;
 	border-radius:			0px;
-
-
 	background:				#D8D8D8;
 	border:					none;
 }
 
 .themeFfos button:active {
 	border:					none;
-	background:				#00aacc;
-	background-size:		auto 100%;
+	background:				#0ac;
 	color:					#fff;
 }
 
 .themeFfos button.onyx-affirmative {
-	background-color:		#00aacc;
+	background-color:		#0ac;
 	border:					none;
-	color:					#333;
+	color:					#fff;
 	font-weight:			normal;
 }
 
-.themeFfos .smart-menu .menu-item-button {
+.smart-menu .menuitem {
 	background:				#4e4e4e;
-	border:					none;
-	font-weight:			normal;
+	font-weight: 400;
+	border:				none;
 }
 
 .themeFfos .smart-menu .menu-cancel-button,
@@ -141,6 +151,7 @@ body {
 	height:					2.5rem;
 	font-weight:			normal;
 	font-style:				italic;
+	margin-bottom:			1rem;
 }
 
 .themeFfos .smart-menu .menu-item-button {
@@ -153,20 +164,41 @@ body {
 	background:				#373737;
 }
 
+.themeFfos .toaster .title {
+	text-align:			center;
+	font-weight:			400;
+	font-style:			italic;
+	font-size:			1.2rem;
+}
+
 .themeFfos .toaster .controls {
-	background:				black;
+	background:				#4E4E4E;
 }
 
 .themeFfos .smart-menu {
-	background:				#373737;
+	background:				none;
 }
 
 .themeFfos .smart-menu .controls {
-	background:				#2d2d2d;
+	margin-top: 0.6rem;
+	background:				#4E4E4E;
 }
 
 .smart-menu .controls {
 	height:					40px;
+}
+
+.message .rt {
+	margin-top:			0.2rem;
+}
+
+.message .rt .avatar {
+	margin-top:			-0.3rem;
+	margin-left:			-0.2rem;
+}
+
+.themeFfos .onyx-button.active, .onyx-button.pressed {
+	background:			#ccc;
 }
 
 .options .panel .button,

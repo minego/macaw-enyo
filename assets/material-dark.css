@@ -1,5 +1,13 @@
-.themeMaterial-dark #main {
-	background:			#37474F;
+.themeMaterial-dark .panels {
+	background:			#37474F !important;
+}
+
+.themeMaterial-dark .enyo-puller {
+	color:				#e0e0e0;
+}
+
+.themeMaterial-dark .message a, .message a:link {
+	color:				rgba(255,255,255,0.4);
 }
 
 .themeMaterial-dark .panel {
@@ -42,7 +50,7 @@
 	color:				rgba(255,255,255,0.8);
 }
 
-.themeMaterial-dark .smart-menu .menuitem {
+.smart-menu .menuitem {
 	background:			rgba(255,255,255,0.2);
 	color:				#fafafa;
 }
