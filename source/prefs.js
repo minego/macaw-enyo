@@ -17,7 +17,7 @@
 var deftheme	= 'light';
 
 if (window.android) {
-	deftheme	= 'holo-dark';
+	deftheme	= 'material';
 } else if (	-1 != navigator.userAgent.toLowerCase().indexOf("firefox") &&
 			-1 != navigator.userAgent.toLowerCase().indexOf("mobile;")
 ) {

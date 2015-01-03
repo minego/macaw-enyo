@@ -43,8 +43,9 @@ components: [
 						onSelect:								"themeTypeChanged",
 						options: [
 							{ content: $L("Original"),			value: "original"	},
-							{ content: $L("Holo"),				value: "holo"		},
-							{ content: $L("Firefox OS"),		value: "ffos"		}
+							{ content: $L("Firefox OS"),		value: "ffos"		},
+							{ content: $L("Material"),			value: "material"	},
+							{ content: $L("Holo"),				value: "holo"		}
 						]
 					}, {
 						tag:									"br"
@@ -151,6 +152,20 @@ themeTypeChanged: function(sender, event)
 			this.$.theme.setOptions([
 				{ content: $L("Light"),		value: "light"					},
 				{ content: $L("Dark"),		value: "dark"					}
+			]);
+			break;
+
+		case "material":
+			this.$.theme.setOptions([
+				{ content: $L("Light"),		value: "material"					},
+				{ content: $L("Dark"),		value: "material,material-dark"		},
+				{ content: $L("Blue Grey"),	value: "material,material-blue-grey"},
+				{ content: $L("Cyan"),		value: "material,material-Cyan"		},
+				{ content: $L("Green"),		value: "material,material-Green"	},
+				{ content: $L("Orange"),	value: "material,material-Orange"	},
+				{ content: $L("Teal"),		value: "material,material-Teal"		},
+				{ content: $L("Indigo"),	value: "material,material-Indigo"	},
+				{ content: $L("Red"),		value: "material,material-Red"		}
 			]);
 			break;
 

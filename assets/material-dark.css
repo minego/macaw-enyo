@@ -1,0 +1,62 @@
+#main {
+	background:			#37474F;
+}
+
+.panel {
+	color:				#F0F0F0;
+}
+
+.themeMaterial .message .screenname,
+.themeMaterial .message .username,
+.themeMaterial .message .time,
+.themeMaterial .newcount {
+	color:				#80CBC4;
+}
+
+.themeMaterial .toolbar.titlebar {
+	background-color:		#263238 !important;
+}
+
+.themeMaterial .listitem {
+	border-bottom:			1px solid #333;
+}
+
+.themeMaterial .tabbar {
+	background:			#202A30 !important;
+}
+
+.themeMaterial .tabbar .count {
+	color:				#fafafa;
+}
+
+.themeMaterial .indicator {
+	border-bottom-color:		#80CBC4;
+}
+
+.themeMaterial .toaster.bg {
+	background:			#37474F;
+	color:				#fafafa;
+}
+
+.themeMaterial .toaster .title {
+	color:				rgba(255,255,255,0.8);
+}
+
+.themeMaterial .smart-menu .menuitem {
+	background:			rgba(255,255,255,0.2);
+	color:				#fafafa;
+}
+
+.themeMaterial button,
+.themeMaterial button.onyx-negative {
+	background:			rgba(255,255,255,0.4);
+	color:				#fafafa;
+}
+
+.themeMaterial .toaster .controls {
+	background:			#232E34;
+}
+
+.themeMaterial .listmsg {
+	background:			rgba(255,255,255,0.1);
+}

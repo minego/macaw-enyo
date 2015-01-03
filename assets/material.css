@@ -1,0 +1,242 @@
+/*
+	A theme meant to mimic the Firefox OS look and feel
+*/
+
+.themeMaterial @font-face {
+	font-family:			"Roboto",sans-serif;
+	src:				url(Roboto.ttf) format("truetype");
+}
+
+body {
+	background:			#FCFCFC !important;
+}
+
+.panels.padtop {
+	top:				3.5rem;
+}
+
+.panels.padbottom {
+	bottom:				3.5rem;
+}
+
+.themeMaterial .toolbar {
+	background:			none;
+	border:				none;
+}
+
+.themeMaterial .toolbar.topbar {
+	padding-bottom:			0px;
+	border:				none;
+}
+
+.themeMaterial .toolbar.bottombar {
+	padding-top:			0px;
+
+}
+
+.themeMaterial .toolbar.titlebar {
+	height:				3.5rem;
+	background-color:		#2196f3 !important;
+	box-shadow:			0px 2px 5px rgba(0, 0, 0, 0.26);
+	color:				white;
+	font-size:			1.2rem;
+}
+
+/* move the buttons to the right */
+.themeMaterial .toolbar.titlebar div:last-child {
+	position:			absolute;
+	right:				0px;
+}
+
+.themeMaterial .titlebar .imgbtn {
+	height:				auto;
+	width:				auto;
+	margin-left:			6px;
+	padding:				16px 10px;
+	background-size:		auto 100%;
+}
+
+.themeMaterial .titlebar .title {
+	left:				56px !important;
+	top:				4px;
+}
+
+.themeMaterial .listitem {
+	border-bottom:			0.1rem solid #E0E0E0;
+}
+
+.themeMaterial .message .screenname,
+.themeMaterial .message .username,
+.themeMaterial .message .time,
+.themeMaterial .newcount {
+	color:				#5F5F5F;
+}
+
+.themeMaterial .tabbar {
+	background:			#e9e9e9;
+	height:				3.5rem;
+}
+
+.themeMaterial .tabbar .count {
+	color:				rgba(0,0,0,0.45);
+	font-weight:			500;
+}
+
+.themeMaterial .tabbar.bottombar {
+	box-shadow:			0px -2px 2px rgba(0, 0, 0, 0.05);
+}
+
+.themeMaterial .tabbar.topbar {
+	box-shadow:			0px 2px 2px rgba(0, 0, 0, 0.05);
+}
+
+.themeMaterial .tabbar .tab {
+	background:			none;
+}
+
+.themeMaterial .tab:active,
+.themeMaterial .titlebar .imgbtn:active {
+	background:			rgba(0,0,0,0.05) !important;
+}
+.themeMaterial .imgbtn.spin {
+	background:			none !important;
+}
+
+.themeMaterial .indicator {
+	background:			none;
+	border-bottom:			2px solid rgba(0,0,0,0.5);
+	margin-bottom:			0.35rem;
+}
+
+.themeMaterial button,
+.themeMaterial button.onyx-negative {
+	box-shadow:			none;
+	font-weight:			normal;
+	border-radius:			0;
+	color:				#fafafa;
+	background:			#37474F;
+	box-shadow:			0px 2px 5px rgba(0, 0, 0, 0.1);
+	border:				none;
+}
+
+.themeMaterial button:active {
+	background-color:		#475C66;
+	border:				none;
+	box-shadow:			0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.themeMaterial button.onyx-affirmative {
+	color:				#fafafa;
+	background:			#37474F;
+	font-weight:			normal;
+}
+
+.themeMaterial .smart-menu .menu-item-button {
+	height:				2.5rem;
+	color:				#fafafa;
+	font-weight:			normal;
+}
+
+.smart-menu .menuitem {
+	color:				#fafafa;
+	background:			#37474F;
+	border:				none;
+}
+
+.themeMaterial .smart-menu .menu-cancel-button,
+.themeMaterial .add-button
+ {
+	height:				2.5rem;
+	font-weight:			normal;
+	margin-bottom:			1rem;
+}
+
+.themeMaterial .imgbtn {
+	height:				auto;
+	width:				auto;
+}
+
+/* Toasters */
+.themeMaterial .toaster.bg {
+	background:			#c9c9c9;
+	color:				#37474F;
+}
+
+.themeMaterial .compose {
+	background:			#37474F;
+}
+
+.themeMaterial .toaster .title {
+	color:				#263238;
+	text-align:			center;
+	font-weight:			400;
+	font-size:			1.2rem;
+}
+
+.themeMaterial .toaster .controls {
+	background:			#ddd;
+}
+
+.themeMaterial .smart-menu {
+	background:			none;
+}
+
+.themeMaterial .smart-menu .controls {
+	background:			none;
+	height:				40px;
+}
+
+.message .avatar {
+	margin-top:			0.6rem;
+	border-radius:			2rem;
+	height:				48px;
+	width:				48px;
+}
+
+.message .rt {
+	margin-top:			0.2rem;
+}
+
+.message .rt .avatar {
+	margin-top:			-0.3rem;
+	margin-left:			-0.2rem;
+}
+
+.themeMaterial .onyx-button.active, .onyx-button.pressed {
+	background:			#ccc;
+}
+
+.themeMaterial .listmsg {
+	font-weight:			400;
+	font-size:			1rem;
+}
+
+.options .panel .button,
+.tabdetails .button {
+	width:				128px;
+}
+
+.themeMaterial .back.icon {
+	background:			url(ffos/icons/back.png) center center no-repeat;
+}
+.themeMaterial .delete.icon {
+	background:			url(ffos/icons/delete.png) center center no-repeat;
+}
+.themeMaterial .favorite.icon {
+	background:			url(ffos/icons/favorite.png) center center no-repeat;
+}
+.themeMaterial .favorite.icon.active {
+	background:			url(ffos/icons/favorite-active.png) center center no-repeat;
+}
+.themeMaterial .reply.icon {
+	background:			url(ffos/icons/reply.png) center center no-repeat;
+}
+.themeMaterial .repost.icon {
+	background:			url(ffos/icons/repost.png) center center no-repeat;
+}
+.themeMaterial .convo.icon {
+	background:			url(ffos/icons/convo.png) center center no-repeat;
+}
+.themeMaterial .options.icon {
+	background:			url(ffos/icons/menu.png) center center no-repeat;
+}
