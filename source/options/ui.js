@@ -139,6 +139,10 @@ create: function()
 		case "ffos":
 			this.$.themetype.setSelected("ffos");
 			break;
+
+		case "material":
+			this.$.themetype.setSelected("material");
+			break;
 	}
 	this.themeTypeChanged();
 },
