@@ -4,21 +4,29 @@
 
 .themeFfos @font-face {
 	font-family:			'MozTTLight';
-	src:					url(FiraSans-ExtraLightItalic.ttf) format("truetype");
+	src:				url(FiraSans-ExtraLightItalic.ttf) format("truetype");
 }
 
 body {
-	background:				#fefefe !important;
+	background:			#fcfcfc !important;
+}
+
+.panels.padtop {
+	top:				3.1rem;
+}
+
+.panels.padbottom {
+	bottom:				3.1rem;
 }
 
 .themeFfos .toolbar {
-	background:				none;
-	border:					none;
+	background:			none;
+	border:				none;
 }
 
 .themeFfos .toolbar.topbar {
 	padding-bottom:			0px;
-	border:					none;
+	border:				none;
 }
 
 .themeFfos .toolbar.bottombar {
@@ -26,23 +34,24 @@ body {
 }
 
 .themeFfos .toolbar.titlebar {
+	height:				3.1rem;
 	background-color:		#f97c17 !important;
-	color:					white;
-	font-weight:			200;
-	font-style:				italic;
-	font-size:				1.3rem;
+	color:				white;
+	font-weight:			300;
+	font-style:			italic;
+	font-size:			1.3rem;
 }
 
 /* move the buttons to the right */
 .themeFfos .toolbar.titlebar div:last-child {
-	position:				absolute;
-	right:					0px;
+	position:			absolute;
+	right:				0px;
 }
 
 .themeFfos .titlebar .imgbtn {
-	height:					30px;
-	width:					30px;
-	padding:				9px 10px;
+	height:				30px;
+	width:				30px;
+	padding:			10px 10px;
 	background-size:		auto 100%;
 }
 
@@ -52,8 +61,8 @@ body {
 }
 
 .themeFfos .titlebar .title {
-	left:					52px !important;
-	/* text-align:				center; */
+	left:				52px !important;
+	top:				2px;
 }
 
 .themeFfos .listitem {
@@ -64,138 +73,160 @@ body {
 .themeFfos .message .username,
 .themeFfos .message .time,
 .themeFfos .newcount {
-	color:					#5F5F5F;
+	color:				#5F5F5F;
 }
 
 .themeFfos .tabbar {
-	background:				white;
+	background:			white;
+	height:				3rem;
 }
 
 .themeFfos .tabbar .count {
-	color:					#5F5F5F;
+	color:				#5F5F5F;
+	font-weight:			500;
 }
 
 .themeFfos .tabbar.bottombar {
-	border-top:				0.1rem solid #e7e7e7;
+	border-top:			0.1rem solid #e7e7e7;
+	margin-bottom:			1px;
 }
 .themeFfos .tabbar.topbar {
 	border-bottom:			0.1rem solid #e7e7e7;
+	margin-top:			1px;
 }
 
 .themeFfos .tabbar .tab {
-	background:				none;
+	background:			none;
 }
 
 .themeFfos .tab:active,
 .themeFfos .titlebar .imgbtn:active {
-	background:				rgba(0,0,0,0.1) !important;
+	background:			rgba(0,0,0,0.05) !important;
 }
 .themeFfos .imgbtn.spin {
-	background:				none !important;
+	background:			none !important;
 }
 
 .themeFfos .indicator {
-	background:				none;
-	border-bottom:			3px solid #00aacc;
+	background:			none;
+	border-bottom:			3px solid #0ac;
+	margin-top:			-0.6rem;
+	margin-bottom:			-0.1rem;
 }
 
 .themeFfos button,
 .themeFfos button.onyx-negative {
-	box-shadow:				none;
-
+	box-shadow:			none;
 	font-weight:			normal;
-	font-style:				italic;
-
-	color:					#333;
+	font-style:			italic;
+	color:				#333;
 	border-radius:			0px;
-
-
-	background:				#D8D8D8;
-	border:					none;
+	background:			#D8D8D8;
+	border:				none;
 }
 
 .themeFfos button:active {
-	border:					none;
-	background:				#00aacc;
-	background-size:		auto 100%;
-	color:					#fff;
+	border:				none;
+	background:			#0ac;
+	color:				#fff;
 }
 
 .themeFfos button.onyx-affirmative {
-	background-color:		#00aacc;
-	border:					none;
-	color:					#333;
+	background-color:		#0ac;
+	border:				none;
+	color:				#fff;
 	font-weight:			normal;
 }
 
-.themeFfos .smart-menu .menu-item-button {
-	background:				#4e4e4e;
-	border:					none;
-	font-weight:			normal;
+.smart-menu .menuitem {
+	background:			#4e4e4e;
+	font-weight:			400;
+	border:				none;
 }
 
 .themeFfos .smart-menu .menu-cancel-button,
 .themeFfos .add-button
  {
 	border-radius:			2rem;
-	height:					2.5rem;
+	height:				2.5rem;
 	font-weight:			normal;
-	font-style:				italic;
+	font-style:			italic;
+	margin-bottom:			1rem;
 }
 
 .themeFfos .smart-menu .menu-item-button {
-	height:					2.5rem;
+	height:				2.5rem;
 }
 
 /* Toasters */
 .themeFfos .toaster.bg,
 .themeFfos .compose {
-	background:				#373737;
+	background:			#373737;
+}
+
+.themeFfos .toaster .title {
+	text-align:			center;
+	font-weight:			400;
+	font-style:			italic;
+	font-size:			1.2rem;
 }
 
 .themeFfos .toaster .controls {
-	background:				black;
+	background:			#4E4E4E;
 }
 
 .themeFfos .smart-menu {
-	background:				#373737;
+	background:			none;
 }
 
 .themeFfos .smart-menu .controls {
-	background:				#2d2d2d;
+	margin-top: 0.6rem;
+	background:			#4E4E4E;
 }
 
 .smart-menu .controls {
-	height:					40px;
+	height:				40px;
+}
+
+.message .rt {
+	margin-top:			0.2rem;
+}
+
+.message .rt .avatar {
+	margin-top:			-0.3rem;
+	margin-left:			-0.2rem;
+}
+
+.themeFfos .onyx-button.active, .onyx-button.pressed {
+	background:			#ccc;
 }
 
 .options .panel .button,
 .tabdetails .button {
-	width:					128px;
+	width:				128px;
 }
 
 .themeFfos .back.icon {
-	background:				url(ffos/icons/back.png)		center center no-repeat;
+	background:			url(ffos/icons/back.png)		center center no-repeat;
 }
 .themeFfos .delete.icon {
-	background:				url(ffos/icons/delete.png)		center center no-repeat;
+	background:			url(ffos/icons/delete.png)		center center no-repeat;
 }
 .themeFfos .favorite.icon {
-	background:				url(ffos/icons/favorite.png)	center center no-repeat;
+	background:			url(ffos/icons/favorite.png)		center center no-repeat;
 }
 .themeFfos .favorite.icon.active {
-	background:				url(ffos/icons/favorite-active.png)
-															center center no-repeat;
+	background:			url(ffos/icons/favorite-active.png)	center center no-repeat;
 }
 .themeFfos .reply.icon {
-	background:				url(ffos/icons/reply.png)		center center no-repeat;
+	background:			url(ffos/icons/reply.png)		center center no-repeat;
 }
 .themeFfos .repost.icon {
-	background:				url(ffos/icons/repost.png)		center center no-repeat;
+	background:			url(ffos/icons/repost.png)		center center no-repeat;
 }
 .themeFfos .convo.icon {
-	background:				url(ffos/icons/convo.png)		center center no-repeat;
+	background:			url(ffos/icons/convo.png)		center center no-repeat;
 }
 .themeFfos .options.icon {
-	background:				url(ffos/icons/menu.png)		center center no-repeat;
+	background:			url(ffos/icons/menu.png)		center center no-repeat;
 }

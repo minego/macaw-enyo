@@ -1,9 +1,9 @@
 #main {
-	background:				#1B1E1F;
+	background:			#1B1E1F;
 }
 
 .panel {
-	color:					white;
+	color:				white;
 }
 
 .themeFfos .toolbar.titlebar {
@@ -15,7 +15,7 @@
 }
 
 .themeFfos .tabbar.bottombar {
-	border-top:				0.1rem solid #333;
+	border-top:			0.1rem solid #333;
 }
 
 .themeFfos .tabbar.topbar {
@@ -23,14 +23,14 @@
 }
 
 .themeFfos .tabbar {
-	background:				black !important;
+	background:			black !important;
 }
 
 .themeFfos .tabbar .count {
-	color:					white;
+	color:				white;
 }
 
 .themeFfos .indicator {
-	background:				none;
+	background:			none;
 	border-bottom:			2px solid #00aacc;
 }
