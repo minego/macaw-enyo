@@ -4,11 +4,11 @@
 
 .themeFfos @font-face {
 	font-family:			'MozTTLight';
-	src:					url(FiraSans-ExtraLightItalic.ttf) format("truetype");
+	src:				url(FiraSans-ExtraLightItalic.ttf) format("truetype");
 }
 
 body {
-	background:				#fcfcfc !important;
+	background:			#fcfcfc !important;
 }
 
 .panels.padtop {
@@ -20,13 +20,13 @@ body {
 }
 
 .themeFfos .toolbar {
-	background:				none;
-	border:					none;
+	background:			none;
+	border:				none;
 }
 
 .themeFfos .toolbar.topbar {
 	padding-bottom:			0px;
-	border:					none;
+	border:				none;
 }
 
 .themeFfos .toolbar.bottombar {
@@ -36,22 +36,22 @@ body {
 .themeFfos .toolbar.titlebar {
 	height:				3.1rem;
 	background-color:		#f97c17 !important;
-	color:					white;
+	color:				white;
 	font-weight:			300;
-	font-style:				italic;
-	font-size:				1.3rem;
+	font-style:			italic;
+	font-size:			1.3rem;
 }
 
 /* move the buttons to the right */
 .themeFfos .toolbar.titlebar div:last-child {
-	position:				absolute;
-	right:					0px;
+	position:			absolute;
+	right:				0px;
 }
 
 .themeFfos .titlebar .imgbtn {
-	height:					30px;
-	width:					30px;
-	padding:				10px 10px;
+	height:				30px;
+	width:				30px;
+	padding:			10px 10px;
 	background-size:		auto 100%;
 }
 
@@ -61,7 +61,7 @@ body {
 }
 
 .themeFfos .titlebar .title {
-	left:					52px !important;
+	left:				52px !important;
 	top:				2px;
 }
 
@@ -73,38 +73,38 @@ body {
 .themeFfos .message .username,
 .themeFfos .message .time,
 .themeFfos .newcount {
-	color:					#5F5F5F;
+	color:				#5F5F5F;
 }
 
 .themeFfos .tabbar {
-	background:				white;
+	background:			white;
 	height:				3rem;
 }
 
 .themeFfos .tabbar .count {
-	color:					#5F5F5F;
+	color:				#5F5F5F;
 	font-weight:			500;
 }
 
 .themeFfos .tabbar.bottombar {
-	border-top:				0.1rem solid #e7e7e7;
-	margin-bottom:				1px;
+	border-top:			0.1rem solid #e7e7e7;
+	margin-bottom:			1px;
 }
 .themeFfos .tabbar.topbar {
 	border-bottom:			0.1rem solid #e7e7e7;
-	margin-top:				1px;
+	margin-top:			1px;
 }
 
 .themeFfos .tabbar .tab {
-	background:				none;
+	background:			none;
 }
 
 .themeFfos .tab:active,
 .themeFfos .titlebar .imgbtn:active {
-	background:				rgba(0,0,0,0.05) !important;
+	background:			rgba(0,0,0,0.05) !important;
 }
 .themeFfos .imgbtn.spin {
-	background:				none !important;
+	background:			none !important;
 }
 
 .themeFfos .indicator {
@@ -116,31 +116,31 @@ body {
 
 .themeFfos button,
 .themeFfos button.onyx-negative {
-	box-shadow:				none;
+	box-shadow:			none;
 	font-weight:			normal;
-	font-style:				italic;
-	color:					#333;
+	font-style:			italic;
+	color:				#333;
 	border-radius:			0px;
-	background:				#D8D8D8;
-	border:					none;
+	background:			#D8D8D8;
+	border:				none;
 }
 
 .themeFfos button:active {
-	border:					none;
-	background:				#0ac;
-	color:					#fff;
+	border:				none;
+	background:			#0ac;
+	color:				#fff;
 }
 
 .themeFfos button.onyx-affirmative {
 	background-color:		#0ac;
-	border:					none;
-	color:					#fff;
+	border:				none;
+	color:				#fff;
 	font-weight:			normal;
 }
 
 .smart-menu .menuitem {
-	background:				#4e4e4e;
-	font-weight: 400;
+	background:			#4e4e4e;
+	font-weight:			400;
 	border:				none;
 }
 
@@ -148,20 +148,20 @@ body {
 .themeFfos .add-button
  {
 	border-radius:			2rem;
-	height:					2.5rem;
+	height:				2.5rem;
 	font-weight:			normal;
-	font-style:				italic;
+	font-style:			italic;
 	margin-bottom:			1rem;
 }
 
 .themeFfos .smart-menu .menu-item-button {
-	height:					2.5rem;
+	height:				2.5rem;
 }
 
 /* Toasters */
 .themeFfos .toaster.bg,
 .themeFfos .compose {
-	background:				#373737;
+	background:			#373737;
 }
 
 .themeFfos .toaster .title {
@@ -172,20 +172,20 @@ body {
 }
 
 .themeFfos .toaster .controls {
-	background:				#4E4E4E;
+	background:			#4E4E4E;
 }
 
 .themeFfos .smart-menu {
-	background:				none;
+	background:			none;
 }
 
 .themeFfos .smart-menu .controls {
 	margin-top: 0.6rem;
-	background:				#4E4E4E;
+	background:			#4E4E4E;
 }
 
 .smart-menu .controls {
-	height:					40px;
+	height:				40px;
 }
 
 .message .rt {
@@ -203,31 +203,30 @@ body {
 
 .options .panel .button,
 .tabdetails .button {
-	width:					128px;
+	width:				128px;
 }
 
 .themeFfos .back.icon {
-	background:				url(ffos/icons/back.png)		center center no-repeat;
+	background:			url(ffos/icons/back.png)		center center no-repeat;
 }
 .themeFfos .delete.icon {
-	background:				url(ffos/icons/delete.png)		center center no-repeat;
+	background:			url(ffos/icons/delete.png)		center center no-repeat;
 }
 .themeFfos .favorite.icon {
-	background:				url(ffos/icons/favorite.png)	center center no-repeat;
+	background:			url(ffos/icons/favorite.png)		center center no-repeat;
 }
 .themeFfos .favorite.icon.active {
-	background:				url(ffos/icons/favorite-active.png)
-															center center no-repeat;
+	background:			url(ffos/icons/favorite-active.png)	center center no-repeat;
 }
 .themeFfos .reply.icon {
-	background:				url(ffos/icons/reply.png)		center center no-repeat;
+	background:			url(ffos/icons/reply.png)		center center no-repeat;
 }
 .themeFfos .repost.icon {
-	background:				url(ffos/icons/repost.png)		center center no-repeat;
+	background:			url(ffos/icons/repost.png)		center center no-repeat;
 }
 .themeFfos .convo.icon {
-	background:				url(ffos/icons/convo.png)		center center no-repeat;
+	background:			url(ffos/icons/convo.png)		center center no-repeat;
 }
 .themeFfos .options.icon {
-	background:				url(ffos/icons/menu.png)		center center no-repeat;
+	background:			url(ffos/icons/menu.png)		center center no-repeat;
 }
