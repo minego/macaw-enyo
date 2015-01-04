@@ -154,7 +154,7 @@ themeTypeChanged: function(sender, event)
 	try {
 		type = this.$.themetype.getSelected().value;
 	} catch (e) {
-		type = 'original';
+		type = 'light';
 	}
 
 	switch (type) {

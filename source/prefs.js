@@ -37,14 +37,16 @@ defaults: {
 	toolbar:			"top",
 	tabs:				"bottom",
 
-	hideAvatar:			false,
 	showUserName:		true,
 	showScreenName:		true,
 	showVia:			false,
 	showTime:			"relative",
 	submitOnEnter:		false,
 
-	thumbnails:			"large"
+	thumbnails:			"large",
+
+	hideAvatar:			false,
+	avatarType:			"square"
 },
 
 ready: function(cb)
@@ -181,6 +183,28 @@ set: function set(name, value, account)
 	}
 },
 
+/* Upgrade any old values as needed */
+upgrade: function()
+{
+	/*
+		Originally we just allowed hiding or showing the avatar, but we have now
+		added an option to make the avatar round. Update the old value if needed
+		here.
+	*/
+	var type	= this.get('avatarType');
+	var hidden	= this.get('hideAvatar');
+
+	if (typeof hidden === 'boolean') {
+		this.set('hideAvatar', 'deprecated');
+
+		if (hidden) {
+			this.set('avatarType', 'none');
+		} else {
+			this.set('avatarType', 'square');
+		}
+	}
+},
+
 /* Add a class based on the name of each boolean option if enabled */
 updateClasses: function(component)
 {
@@ -198,6 +222,8 @@ updateClasses: function(component)
 	if (!component) {
 		return;
 	}
+
+	this.upgrade();
 
 	for (var key in this.defaults) {
 		if (key === "theme") {

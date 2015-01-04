@@ -96,10 +96,6 @@
 	background-size:		48px;
 }
 
-.message .avatar.round {
-	border-radius:			24px;
-}
-
 .message .rt .avatar {
 	left:					-25px;
 
@@ -127,14 +123,22 @@
 	pointer-events:			none;
 }
 
-.hideAvatar .messagelist,
-.hideAvatar .messagelist .rt {
+.avatarTypeNone .messagelist,
+.avatarTypeNone .messagelist .rt {
 	margin-left:			0px;
 	min-height:				auto;
 }
 
-.hideAvatar .messagelist .message .avatar {
+.avatarTypeNone .messagelist .message {
+	margin-left:			0px;
+}
+
+.avatarTypeNone .messagelist .message .avatar {
 	display:				none;
+}
+
+.avatarTypeRound .message .avatar {
+	border-radius:			24px;
 }
 
 .message .details,

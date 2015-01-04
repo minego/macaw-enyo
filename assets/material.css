@@ -189,9 +189,6 @@ body {
 
 .message .avatar {
 	margin-top:			0.6rem;
-	border-radius:		2rem;
-	height:				48px;
-	width:				48px;
 }
 
 .message .rt {

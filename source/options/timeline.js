@@ -37,11 +37,13 @@ components: [
 					items: [
 						{
 							label:					$L("Avatar"),
-							key:					"hideAvatar",
+							key:					"avatarType",
 
-							onContent:				"Show",
-							offContent:				"Hide",
-							negate:					true
+							options: [
+								{ label: $L("Square"),	value: "square"	},
+								{ label: $L("Round"),	value: "round"	},
+								{ label: $L("None"),	value: "none"	}
+							]
 						},
 						{
 							label:					$L("Name"),
