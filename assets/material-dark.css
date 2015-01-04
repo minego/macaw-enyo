@@ -46,13 +46,19 @@
 	color:				#fafafa;
 }
 
-.themeMaterial-dark .toaster .title {
-	color:				rgba(255,255,255,0.8);
+.themeMaterial-dark .toaster .messagedetails {
+	background:			#37474F;
+	color:				#fafafa;
 }
 
-.smart-menu .menuitem {
-	background:			rgba(255,255,255,0.2);
-	color:				#fafafa;
+.themeMaterial-dark .toaster .title {
+	color:				rgba(255,255,255,0.8) !important;
+}
+
+.themeMaterial-dark .smart-menu .menuitem,
+.themeMaterial-dark .smart-menu .menu-item-button {
+	background:			#37474F !important;
+	color:				#fafafa !important;
 }
 
 .themeMaterial-dark button,
@@ -68,3 +74,21 @@
 .themeMaterial-dark .listmsg {
 	background:			rgba(255,255,255,0.1);
 }
+
+.themeMaterial-dark .compose {
+	background:			#37474F;
+}
+
+.themeMaterial-dark .compose,
+.themeMaterial-dark .compose.counter {
+	color:				rgba(255,255,255, 0.54) !important;
+}
+
+.themeMaterial-dark .compose .text {
+	color:				rgba(255,255,255, 0.87) !important;
+}
+
+.themeMaterial-dark .send.icon {
+	background:			url(material-dark/icons/compose.png) center center no-repeat;
+}
+

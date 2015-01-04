@@ -2,20 +2,20 @@
 	A theme meant to mimic the Android Lollipop look and feel
 */
 
-.themeMaterial @font-face {
-	font-family:			"Roboto",sans-serif;
-	src:				url(Roboto.ttf) format("truetype");
-}
-
-body {
+.themeMaterial body {
 	background:			#FCFCFC !important;
 }
 
-.panels.padtop {
+.themeMaterial @font-face {
+	font-family:		"Roboto",sans-serif;
+	src:				url(Roboto.ttf) format("truetype");
+}
+
+.themeMaterial .panels.padtop {
 	top:				3.5rem;
 }
 
-.panels.padbottom {
+.themeMaterial .panels.padbottom {
 	bottom:				3.5rem;
 }
 
@@ -110,9 +110,9 @@ body {
 
 .themeMaterial button,
 .themeMaterial button.onyx-negative {
-	box-shadow:			none;
-	font-weight:			normal;
-	border-radius:			0;
+	box-shadow:			none !important;
+	font-weight:		normal;
+	border-radius:		0;
 	color:				#fafafa;
 	background:			#37474F;
 	box-shadow:			0px 2px 5px rgba(0, 0, 0, 0.1);
@@ -120,7 +120,7 @@ body {
 }
 
 .themeMaterial button:active {
-	background-color:		#475C66;
+	background-color:	#475C66;
 	border:				none;
 	box-shadow:			0px 2px 5px rgba(0, 0, 0, 0.1);
 }
@@ -128,19 +128,21 @@ body {
 .themeMaterial button.onyx-affirmative {
 	color:				#fafafa;
 	background:			#37474F;
-	font-weight:			normal;
+	font-weight:		normal;
 }
 
 .themeMaterial .smart-menu .menu-item-button {
 	height:				2.5rem;
-	color:				#fafafa;
-	font-weight:			normal;
+	color:				rgba(0, 0, 0, 0.87) !important;
+	font-weight:		normal;
+	background:			#fff;
 }
 
-.smart-menu .menuitem {
+.themeMaterial .smart-menu .menuitem {
+	color:				rgba(0, 0, 0, 0.87) !important;
 	color:				#fafafa;
-	background:			#37474F;
 	border:				none;
+	background:			#fff !important;
 }
 
 .themeMaterial .smart-menu .menu-cancel-button,
@@ -158,32 +160,38 @@ body {
 
 /* Toasters */
 .themeMaterial .toaster.bg {
+	color:				rgba(0, 0, 0, 0.87);
+	background:			#fff;
+}
+
+.themeMaterial .toaster .messagedetails {
 	background:			#c9c9c9;
 	color:				#37474F;
 }
 
 .themeMaterial .compose {
-	background:			#37474F;
+	color:				rgba(0, 0, 0, 0.54) !important;
+	background:			#fff;
+}
+
+.themeMaterial .compose .text {
+	color:				rgba(0, 0, 0, 0.87) !important;
 }
 
 .themeMaterial .toaster .title {
-	color:				#263238;
-	text-align:			center;
-	font-weight:			400;
-	font-size:			1.2rem;
+	color:				rgba(0, 0, 0, 0.54) !important;
+	text-align:			left !important;
 }
 
 .themeMaterial .toaster .controls {
 	margin-top:			0.6rem;
-	background:			#ddd;
 }
 
 .themeMaterial .smart-menu {
-	background:			none;
 }
-
+`
 .themeMaterial .smart-menu .controls {
-	background:			none;
+	background:			#fff !important;
 	height:				40px;
 }
 
@@ -237,4 +245,7 @@ body {
 }
 .themeMaterial .options.icon {
 	background:			url(material/icons/menu.png) center center no-repeat;
+}
+.themeMaterial .send.icon {
+	background:			url(material/icons/compose.png) center center no-repeat;
 }
