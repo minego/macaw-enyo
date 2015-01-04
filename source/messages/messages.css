@@ -96,6 +96,10 @@
 	background-size:		48px;
 }
 
+.message .avatar.round {
+	border-radius:			24px;
+}
+
 .message .rt .avatar {
 	left:					-25px;
 

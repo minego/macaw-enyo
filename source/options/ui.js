@@ -149,7 +149,13 @@ create: function()
 
 themeTypeChanged: function(sender, event)
 {
-	var		type = this.$.themetype.getSelected().value;
+	var type;
+
+	try {
+		type = this.$.themetype.getSelected().value;
+	} catch (e) {
+		type = 'original';
+	}
 
 	switch (type) {
 		case "original":
