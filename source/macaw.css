@@ -114,12 +114,16 @@ body.Pre3 {
 	has used the arrow keys to select a column.
 */
 .indicator {
-	display:			none;
+	display:				none;
 }
 
 .skinny .indicator,
 .manualIndex .indicator {
-	display:			block;
+	display:				block;
+}
+
+.skinny .panels > div {
+	width:					100%;
 }
 
 .tabbar .tab {

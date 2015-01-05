@@ -449,6 +449,7 @@ createTabs: function()
 		name:								"panels",
 		classes:							"panels",
 		arrangerKind:						"CarouselArranger",
+		narrowFit:							false,
 
 		onTransitionFinish:					"selectedTab",
 
@@ -692,9 +693,15 @@ handleResize: function()
 
 	for (var t = 0, p; p = this.$['panel' + t]; t++) {
 		this.$['panel' + t].container.applyStyle('width', w);
+		this.$['panel' + t].container.container.applyStyle('width', w);
 	}
 
 	this.adjustTabs();
+
+	/* Force the panels to notice the resize */
+	this.$.panels.resized();
+	this.$.toolbar.resized();
+	this.$.tabbar.resized();
 },
 
 /*
