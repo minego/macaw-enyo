@@ -29,8 +29,8 @@
 		<rim:permit>post_notifications</rim:permit>
 		<rim:permit>access_shared</rim:permit>
 	</rim:permissions>
-    
-      <rim:invoke-target id="net.minego.macaw">
+
+	<rim:invoke-target id="net.minego.macaw">
 	<type>APPLICATION</type>
 	<filter>
 	    <action>bb.action.SHARE</action>
@@ -46,10 +46,13 @@
 		<image public="true"> icon358.png</image>
 	</icon>
     </rim:invoke-target>
-    
+
+<!-- These images don't exist yet, and the build fails with these tags in place -->
+<!--
 	<rim:splash src="splash-600x1024.png"/>
 	<rim:splash src="splash-1024x600.png"/>
 	<rim:splash src="splash-icon.png"/>
+-->
 	<icon src="icon512.png"/>
 
 	<feature id="blackberry.app" >
