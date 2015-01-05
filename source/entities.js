@@ -20,6 +20,14 @@ text: function(message)
 	message.stripped = message.text || '';
 	text = message.stripped;
 
+	var re;
+
+	re = new RegExp('<', 'g');
+	text = text.replace(re, '&lt;');
+
+	re = new RegExp('>', 'g');
+	text = text.replace(re, '&gt;');
+
 	if (message.entities) {
 		/* We prefer the 'urls' name */
 		if (message.entities.links) {
@@ -45,7 +53,7 @@ text: function(message)
 		text = EntityAPI.replace(message, text);
 	}
 
-	var re = new RegExp('\n', 'g');
+	re = new RegExp('\n', 'g');
 	message.text = text.replace(re, '<br/>');
 },
 
