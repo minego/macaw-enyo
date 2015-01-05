@@ -30,7 +30,7 @@
 		<rim:permit>access_shared</rim:permit>
 	</rim:permissions>
 
-	<rim:invoke-target id="net.minego.macaw">
+	<rim:invoke-target id="net.minego.macawenyo">
 	<type>APPLICATION</type>
 	<filter>
 	    <action>bb.action.SHARE</action>
