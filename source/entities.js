@@ -120,23 +120,6 @@ replace: function(message, text)
 	return(parts.join(''));
 },
 
-/*
-	Adjust all entities with a position > the specified pos by the specified
-	length to account for replacing the value for an entity.
-*/
-adjustPositions: function(message, pos, len)
-{
-	for (var i = 0, t; t = EntityAPI.types[i]; i++) {
-		var list = message.entities[t.name];
-
-		for (var x = 0, e; e = list[x]; x++) {
-			if (e.pos > pos) {
-				e.pos += len;
-			}
-		}
-	}
-},
-
 sanitize: function(list, type, text)
 {
 	list = list || [];
