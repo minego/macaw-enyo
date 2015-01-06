@@ -21,19 +21,6 @@ text: function(message)
 	message.stripped = message.text || '';
 	text = message.stripped;
 
-/*
-	// TODO	We need to sanitize < and > but if we do it here then the offsets
-	//		will be wrong for replacing entities. If we do it later then there
-	//		will be < and > from the replacements that we do not want to
-	//		sanitize... we need to find a better solution.
-
-	re = new RegExp('<', 'g');
-	text = text.replace(re, '&lt;');
-
-	re = new RegExp('>', 'g');
-	text = text.replace(re, '&gt;');
-*/
-
 	if (message.entities) {
 		/* We prefer the 'urls' name */
 		if (message.entities.links) {
@@ -90,24 +77,47 @@ CPCountToLen: function(text, count)
 */
 replace: function(message, text)
 {
+	var entities	= [];
+	var parts		= [];
+	var x;
+
+	var clean		= function(txt) {
+		var re;
+
+		re = new RegExp('<', 'g');
+		txt = txt.replace(re, '&lt;');
+
+		re = new RegExp('>', 'g');
+		txt = txt.replace(re, '&gt;');
+
+		return(txt);
+	};
+
+	/* Build a single list of entities that we can sort */
 	for (var i = 0, t; t = EntityAPI.types[i]; i++) {
 		var list = message.entities[t.name];
 
 		if (!list) continue;
 
 		for (var x = 0, e; e = list[x]; x++) {
-			var t = text.slice(0, e.pos) +
-					e.html +
-					text.slice(e.pos + e.len);
-
-			text = t;
-			delete t;
-
-			EntityAPI.adjustPositions(message, e.pos, e.html.length - e.len);
+			entities.push(e);
 		}
 	}
+	entities.sort(function(a, b) {
+		return(a.pos - b.pos);
+	});
 
-	return(text);
+	/* Split the parts for the entities */
+	x = 0;
+	for (var i = 0, e; e = entities[i]; i++) {
+		parts.push(clean(text.slice(x, e.pos)));
+		parts.push(e.html);
+
+		x = e.pos + e.len;
+	}
+	parts.push(clean(text.slice(x)));
+
+	return(parts.join(''));
 },
 
 /*
