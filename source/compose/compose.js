@@ -751,6 +751,8 @@ handleCommand: function(sender, event)
 
 wordLen: function(word)
 {
+	var i, len, cp, tmp;
+
 	if (this.service && this.service.limits) {
 		var linklen = {};
 
@@ -773,7 +775,21 @@ wordLen: function(word)
 		}
 	}
 
-	return(word.length);
+	/*
+		Count the code points, not the bytes
+
+		This isn't the most efficient method we could use, but it does the trick
+		for now.
+	*/
+	for (i = len = 0; cp = word.codePointAt(i); len++) {
+		if (!(tmp = String.fromCodePoint(cp))) {
+			break;
+		}
+
+		i += tmp.length;
+	}
+
+	return(len);
 },
 
 countChars: function(text)
@@ -782,7 +798,9 @@ countChars: function(text)
 	var words	= text.split(/\s/);
 	var len;
 
-	for (var i = 0, word; word = words[i]; i++) {
+	for (var i = 0, word; i < words.length; i++) {
+		word = words[i];
+
 		count -= word.length;
 		count += this.wordLen(word);
 	}
