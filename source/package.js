@@ -1,5 +1,6 @@
 enyo.depends(
     "$lib/simplelang",
+    "$lib/polyfills",
 	"$lib/moment-with-langs.js",
 	"$lib/layout",
 	"$lib/onyx",

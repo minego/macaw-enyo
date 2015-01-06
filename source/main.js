@@ -697,11 +697,6 @@ handleResize: function()
 	}
 
 	this.adjustTabs();
-
-	/* Force the panels to notice the resize */
-	this.$.panels.resized();
-	this.$.toolbar.resized();
-	this.$.tabbar.resized();
 },
 
 /*

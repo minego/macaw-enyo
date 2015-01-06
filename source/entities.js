@@ -11,6 +11,7 @@ types: [
 text: function(message)
 {
 	var text;
+	var re;
 
 	if (message.stripped) {
 		/* Already done */
@@ -20,13 +21,18 @@ text: function(message)
 	message.stripped = message.text || '';
 	text = message.stripped;
 
-	var re;
+/*
+	// TODO	We need to sanitize < and > but if we do it here then the offsets
+	//		will be wrong for replacing entities. If we do it later then there
+	//		will be < and > from the replacements that we do not want to
+	//		sanitize... we need to find a better solution.
 
 	re = new RegExp('<', 'g');
 	text = text.replace(re, '&lt;');
 
 	re = new RegExp('>', 'g');
 	text = text.replace(re, '&gt;');
+*/
 
 	if (message.entities) {
 		/* We prefer the 'urls' name */
@@ -46,7 +52,7 @@ text: function(message)
 			consistent naming and have the final html for each entity.
 		*/
 		for (var i = 0, t; t = EntityAPI.types[i]; i++) {
-			message.entities[t.name] = EntityAPI.sanitize(message.entities[t.name], t.type);
+			message.entities[t.name] = EntityAPI.sanitize(message.entities[t.name], t.type, text);
 		}
 
 		/* Replace the values in the text */
@@ -58,13 +64,36 @@ text: function(message)
 },
 
 /*
-	Replace the source of the entities with the html and adjust all other offsets
-	to deal with it.
+	The positions and lengths in the entities are a count of UTF-32 code points
+	and NOT a javascript length (which is UTF-16 characters).
+*/
+CPCountToLen: function(text, count)
+{
+	var len	= 0;
+	var cp;
+	var str;
+
+	for (var i = 0; i < count; i++) {
+		if ((cp = text.codePointAt(i)) &&
+			(str = String.fromCodePoint(cp))
+		) {
+			len += str.length;
+		}
+	}
+
+	return(len);
+},
+
+/*
+	Replace the source of the entities with the html and adjust all other
+	offsets to deal with it.
 */
 replace: function(message, text)
 {
 	for (var i = 0, t; t = EntityAPI.types[i]; i++) {
 		var list = message.entities[t.name];
+
+		if (!list) continue;
 
 		for (var x = 0, e; e = list[x]; x++) {
 			var t = text.slice(0, e.pos) +
@@ -98,7 +127,7 @@ adjustPositions: function(message, pos, len)
 	}
 },
 
-sanitize: function(list, type)
+sanitize: function(list, type, text)
 {
 	list = list || [];
 
@@ -130,6 +159,17 @@ sanitize: function(list, type)
 
 			delete e.indices;
 		}
+
+		/* Save the code point counts */
+		if (!e.codepoint) {
+			e.codepoint = {
+				pos:	e.pos,
+				len:	e.len
+			};
+		}
+
+		e.pos = EntityAPI.CPCountToLen(text, e.codepoint.pos);
+		e.len = EntityAPI.CPCountToLen(text, e.codepoint.pos + e.codepoint.len) - e.pos;
 
 		if (e.name) {
 			switch (type) {
