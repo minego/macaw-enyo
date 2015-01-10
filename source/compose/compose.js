@@ -876,9 +876,13 @@ autocomplete: function()
 		}
 	}
 
+	/*
+		Don't change the autocorrect attribute on BB10. It causes weird
+		behaviors with the virutal keyboard.
+	*/
 	if (start < 0 || start == end) {
 		/* Either we are in whitespace, or there are no words */
-		if (node) {
+		if (node && !enyo.platform.blackberry) {
 			node.setAttribute("autocorrect", "on");
 		}
 		return;
@@ -891,13 +895,13 @@ autocomplete: function()
 	} else if (0 == word.indexOf('.@')) {
 		word = word.slice(2);
 	} else {
-		if (node) {
+		if (node && !enyo.platform.blackberry) {
 			node.setAttribute("autocorrect", "on");
 		}
 		word = null;
 	}
 
-	if (node) {
+	if (node && !enyo.platform.blackberry) {
 		node.setAttribute("autocorrect", "off");
 	}
 
