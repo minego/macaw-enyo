@@ -1578,20 +1578,11 @@ var ex = function(error)
 	})));
 };
 
-if (enyo.platform.webos) {
-	var element = document.getElementById("webos"); //document.body;
-	new net.minego.macaw.main().renderInto(element);
-} else {
-	/*
-		Packaged chrome apps can not run inline javascript in the html document
-		so we need to initialize here instead of in the html.
-	*/
-	window.addEventListener('load', function() {
-		prefs.ready(function() {
-			new net.minego.macaw.main().renderInto(document.body);
-		});
-	}, false);
-}
+window.addEventListener('load', function() {
+	prefs.ready(function() {
+		new net.minego.macaw.main().renderInto(document.body);
+	});
+}, false);
 
 if (enyo.platform.blackberry) {
 	window.addEventListener('load', function(e) {
@@ -1601,4 +1592,3 @@ if (enyo.platform.blackberry) {
 		return(false);
 	}, false);
 }
-
