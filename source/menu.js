@@ -260,7 +260,8 @@ setSelected: function(sel)
 	for (var i = 0, option; option = this.options[i]; i++) {
 		if (sel === option || sel === option.value) {
 			this.selectedIndex = i;
-			this.$.select.setSelected(this.selectedIndex);
+			if (this.$.select) 
+				this.$.select.setSelected(this.selectedIndex);
 			this.$.button.setContent(option.content);
 			return;
 		}
@@ -269,7 +270,8 @@ setSelected: function(sel)
 	/* Maybe they meant it as an index? */
 	if (!isNaN(sel)) {
 		this.selectedIndex = sel;
-		this.$.select.setSelected(this.selectedIndex);
+		if (this.$.select)
+			this.$.select.setSelected(this.selectedIndex);
 
 		if (this.options[sel]) {
 			this.$.button.setContent(this.options[sel].content);
