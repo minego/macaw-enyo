@@ -65,6 +65,11 @@
 		"es": {
 			"launch_path":		"/index.html?lang=es",
 			"description":		"Un cliente de micro-blogging de código abierto, con soporte para ADN (app.net) y Twitter (twitter.com)."
+		},
+
+		"de": {
+			"launch_path":		 "/index.html?lang=de",
+			"description":  	 "Ein quellofferner Micro-Blogging-Client mit Unterstützung für ADN (app.net) und Twitter (twitter.com)."
 		}
 	}
 }
