@@ -140,7 +140,7 @@ barsigned: ${DEPLOY_WW}/macaw/config.xml
 	@cp -r ${DEPLOY}/* ${DEPLOY_WW}/macaw/www/
 	@cp framework_config.json *.html icon*.png ${DEPLOY_WW}/macaw/www/
 	@echo "Building webworks bar"
-	@cd ${DEPLOY_WW}/macaw && webworks build --release --keystorepass ${BB10SIGNPASS}
+	@cd ${DEPLOY_WW}/macaw && webworks build --release --keystorepass ${BB10SIGNPASS} --web-inspector
 	@mv ${DEPLOY_WW}/macaw/platforms/blackberry10/build/simulator/bb10app.bar macaw-simulator.bar
 	@mv ${DEPLOY_WW}/macaw/platforms/blackberry10/build/device/bb10app.bar macaw-device.bar
 
