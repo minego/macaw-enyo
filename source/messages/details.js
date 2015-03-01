@@ -194,24 +194,24 @@ openLink: function(sender, event)
 
 	// TODO	Actually open in a browser on android, bb10, etc...
 
-	if (0 == url.indexOf('http://yfrog.com')) {
+	if (0 == url.indexOf('://yfrog.com')) {
 		this.showPreview(url + ':medium', url);
-	} else if (0 == url.indexOf('http://twitpic.com')) {
+	} else if (0 == url.indexOf('://twitpic.com')) {
 		img = url.substr(url.indexOf('/', 8) + 1);
 		this.showPreview('http://twitpic.com/show/large/' + img, url);
-	} else if (url.indexOf('plixi') > -1 || url.indexOf('http://lockerz.com/s/') > -1) {
+	} else if (url.indexOf('plixi') > -1 || url.indexOf('://lockerz.com/s/') > -1) {
 		this.showPreview('http://api.plixi.com/api/tpapi.svc/imagefromurl?size=large&url=' + url, url);
 	} else if (url.indexOf('img.ly') > -1) {
 		img = 'http://img.ly/show/full/' + url.substr(url.indexOf('.ly/') + 4);
 		this.showPreview(img, url);
-	} else if (url.indexOf('http://instagr.am/p/') > -1 || url.indexOf('http://instagram.com/p/') > -1) {
+	} else if (url.indexOf('://instagr.am/p/') > -1 || url.indexOf('://instagram.com/p/') > -1) {
 		this.showPreview(url + 'media/?size=l', url);
-	} else if (url.indexOf('http://mlkshk.com/p/') > -1) {
+	} else if (url.indexOf('://mlkshk.com/p/') > -1) {
 		img = url.replace('/p/', '/r/');
 		this.showPreview(img, url);
 	} else if (url.indexOf('campl.us') > -1) {
 		this.showPreview('http://phnxapp.com/services/preview.php?u=' + url);
-	} else if (url.indexOf('http://phnx.ws/') > -1) {
+	} else if (url.indexOf('://phnx.ws/') > -1) {
 		this.showPreview(url + '/normal');
 	} else if (url.indexOf('youtube.com/watch') > -1) {
 		this.openYouTube(url);
@@ -224,7 +224,7 @@ openLink: function(sender, event)
 	} else if (-1 != url.indexOf('://twitter.com/#!/' + this.twitterUsername + '/status/' + this.twitterId)) {
 		// TODO	Open a message details toaster for this url...
 		window.open(url, "_blank");
-	} else if (	 0 == url.indexOf('https://files.app.net') &&
+	} else if (	 0 == url.indexOf('://files.app.net') &&
 				-1 != url.indexOf('?image')
 	) {
 		/* ADN image based on annotation, "?image" was added by us */

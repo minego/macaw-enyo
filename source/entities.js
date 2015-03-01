@@ -212,22 +212,22 @@ media: function(urls, merge)
 
 		var url = link.url.toLowerCase();
 
-		if (-1 != url.indexOf('http://instagr.am/p/') ||
-			-1 != url.indexOf('http://instagram.com/p/')
+		if (-1 != url.indexOf('://instagr.am/p/') ||
+			-1 != url.indexOf('://instagram.com/p/')
 		) {
 			// Changed from ?size=t so Touchpad details looks better
 			media.push({
 				thumbnail:	link.url + "media/?size=m",
 				link:		link.url
 			});
-		} else if (-1 != url.indexOf('http://twitpic.com')) {
+		} else if (-1 != url.indexOf('://twitpic.com')) {
 			var img = link.url.substr(link.url.indexOf('/', 8) + 1);
 
 			media.push({
 				thumbnail:	"http://twitpic.com/show/thumb/" + img,
 				link:		link.url
 			});
-		} else if (-1 != url.indexOf('http://youtu.be')) {
+		} else if (-1 != url.indexOf('://youtu.be')) {
 			var img = link.url.substr(link.url.indexOf("/", 8) + 1);
 
 			if (-1 != img.indexOf('&', 0)) {
@@ -266,7 +266,7 @@ media: function(urls, merge)
 				thumbnail:	"http://img.youtube.com/vi/" + img + "/hqdefault.jpg",
 				link:		link.url
 			});
-		} else if (-1 != url.indexOf('http://yfrog.com')) {
+		} else if (-1 != url.indexOf('://yfrog.com')) {
 			media.push({
 				thumbnail:	link.url + ":iphone",
 				link:		link.url
@@ -278,7 +278,7 @@ media: function(urls, merge)
 				thumbnail:	"http://img.ly/show/medium/" + img,
 				link:		link.url
 			});
-		} else if (-1 != url.indexOf('http://phnx.ws/')) {
+		} else if (-1 != url.indexOf('://phnx.ws/')) {
 			media.push({
 				thumbnail:	link.url + "/thumb",
 				link:		link.url
