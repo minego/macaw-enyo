@@ -190,7 +190,8 @@ openYouTube: function(url)
 
 openLink: function(sender, event)
 {
-	var url = (event ? event.url : sender).trim();
+	var url		= (event ? event.url : sender).trim();
+	var parts	= url.split('/');
 
 	// TODO	Actually open in a browser on android, bb10, etc...
 
@@ -224,6 +225,35 @@ openLink: function(sender, event)
 	} else if (-1 != url.indexOf('://twitter.com/#!/' + this.twitterUsername + '/status/' + this.twitterId)) {
 		// TODO	Open a message details toaster for this url...
 		window.open(url, "_blank");
+	} else if (parts.length == 6 && -1 != url.indexOf('://twitter.com/') &&
+		parts[4] === 'status'
+	) {
+		/* This looks like it may be pointing to a tweet? */
+		var user	= parts[3];
+		var tweetid	= parts[5];
+
+		this.service.getMessages('show', function(success, result) {
+			if (!success || this.destroyed) {
+				/* Failed */
+				window.open(url, "_blank");
+				return;
+			}
+
+			this.doOpenToaster({
+				component: {
+					kind:			"MessageDetails",
+					item:			result,
+					user:			this.user
+				},
+
+				options:{
+					notitle:		true,
+					kind:			"SubMessageDetails"
+				}
+			});
+		}.bind(this), {
+			id:	tweetid
+		});
 	} else if (	 0 == url.indexOf('://files.app.net') &&
 				-1 != url.indexOf('?image')
 	) {
