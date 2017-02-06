@@ -1,6 +1,7 @@
 const electron		= require('electron');
 const app			= electron.app;
 const BrowserWindow	= electron.BrowserWindow;
+const shell			= require('electron').shell;
 
 /*
 	Keep a global reference to the window object to keep it from being garbage
@@ -23,6 +24,11 @@ function createWindow()
 	mainWindow.on('closed', function () {
 		mainWindow = null;
 	});
+
+	mainWindow.webContents.on('new-window', function(event, url) {
+		event.preventDefault();
+		shell.openExternal(url);
+	});
 }
 
 app.on('ready', createWindow);
@@ -37,4 +43,5 @@ app.on('activate', function ()
 		createWindow();
 	}
 });
+
 
