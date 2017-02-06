@@ -25,9 +25,11 @@ function createWindow()
 		mainWindow = null;
 	});
 
-	mainWindow.webContents.on('new-window', function(event, url) {
-		event.preventDefault();
-		shell.openExternal(url);
+	mainWindow.webContents.on('new-window', function(event, url, framename) {
+		if (!framename || framename === "_blank") {
+			event.preventDefault();
+			shell.openExternal(url);
+		}
 	});
 }
 

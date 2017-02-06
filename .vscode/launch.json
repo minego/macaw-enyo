@@ -1,0 +1,13 @@
+{
+	"version":"0.2.0",
+	"configurations":[
+		{
+			"name":"Attach",
+			"type":"node",
+			"request":"attach",
+			"port": 5858,
+			"cwd":"${workspaceRoot}",
+			"program":"${workspaceRoot}/electron/electron.js"
+		}
+	]
+}
