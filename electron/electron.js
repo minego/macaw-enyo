@@ -14,9 +14,9 @@ function createWindow()
 	mainWindow = new BrowserWindow({
 		webPreferences: {
 			nodeIntegration: false
-		},
-		frame: false
+		}
 	});
+	mainWindow.setMenuBarVisibility(false);
 	mainWindow.loadURL(`file://${__dirname}/index.html`);
 
 	// mainWindow.webContents.openDevTools();
