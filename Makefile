@@ -18,6 +18,7 @@ ${DEPLOY}:
 	@cp -r assets enyo lib source package.js *.png ${DEPLOY}
 	@cp framework_config.json manifest.* *.html icon*.png ${DEPLOY}/
 	@cp  chrome/* ${DEPLOY}/
+	@cp  electron/* ${DEPLOY}/
 	@(cd ${DEPLOY} && zip -r ../macaw-enyo.zip *)
 
 release:
@@ -26,6 +27,7 @@ release:
 	@./tools/deploy.sh
 	@cp framework_config.json manifest.* index.html icon*.png ${DEPLOY}/
 	@cp chrome/* ${DEPLOY}/
+	@cp electron/* ${DEPLOY}/
 	@rm -rf build
 	@(cd ${DEPLOY} && zip -r ../macaw-enyo.zip *)
 
