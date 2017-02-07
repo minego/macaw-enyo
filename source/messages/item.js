@@ -97,7 +97,9 @@ components: [
 		components: [
 			{ name:					"thumb0" },
 			{ name:					"thumb1" },
-			{ name:					"thumb2" }
+			{ name:					"thumb2" },
+			{ name:					"thumb3" },
+			{ name:					"thumb4" }
 		]
 	}
 ],
