@@ -117,7 +117,7 @@ var TwitterAPI = function(user, readycb) {
 
 	var incomplete = 0;
 	var complete = function() {
-		if (0 == --incomplete) {
+		if (0 === --incomplete) {
 			if (readycb) {
 				readycb();
 			}
@@ -400,6 +400,8 @@ getMessages: function(resource, cb, params)
 	}
 	url += '.json';
 
+	params['tweet_mode'] = 'extended';
+
 	this.oauth.get(this.buildURL(url, params),
 		function(response) {
 			var results = enyo.json.parse(response.text);
@@ -656,6 +658,11 @@ cleanupMessage: function(tweet)
 		default:
 			tweet.created = new Date(tweet.created_at);
 			break;
+	}
+
+	if (tweet.full_text) {
+		tweet.text = tweet.full_text;
+		tweet.full_text = null;
 	}
 
 	EntityAPI.text(tweet);
@@ -1065,7 +1072,7 @@ updateUsers: function(relationship, screen_name, users, cb)
 				}
 			}
 
-			if (result.next_cursor == 0) {
+			if (result.next_cursor === 0) {
 				/*
 					The results array now contains an entry for each user, with
 					an id and possibly a screen_name. We must now make another
