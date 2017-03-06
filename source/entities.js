@@ -32,11 +32,11 @@ text: function(message)
 			}
 
 			if (message.extended_entities[t.name]) {
-				message.entities[t.name].concat(message.extended_entities[t.name]);
+				message.entities[t.name] = message.extended_entities[t.name];
 				message.extended_entities[t.name] = null;
 			}
 		}
-			message.extended_entities = null;
+		message.extended_entities = null;
 	}
 
 	if (message.entities) {
