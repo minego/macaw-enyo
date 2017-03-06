@@ -9,6 +9,8 @@ const shell			= require('electron').shell;
 */
 let mainWindow;
 
+app.commandLine.appendSwitch('touch-events', 'enabled');
+
 function createWindow()
 {
 	mainWindow = new BrowserWindow({
