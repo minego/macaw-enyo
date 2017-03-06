@@ -167,15 +167,16 @@ themeTypeChanged: function(sender, event)
 
 		case "material":
 			this.$.theme.setOptions([
-				{ content: $L("Light"),		value: "material"					},
-				{ content: $L("Dark"),		value: "material,material-dark"		},
-				{ content: $L("Blue Grey"),	value: "material,material-blue-grey"},
-				{ content: $L("Cyan"),		value: "material,material-cyan"		},
-				{ content: $L("Green"),		value: "material,material-green"	},
-				{ content: $L("Orange"),	value: "material,material-orange"	},
-				{ content: $L("Teal"),		value: "material,material-teal"		},
-				{ content: $L("Indigo"),	value: "material,material-indigo"	},
-				{ content: $L("Red"),		value: "material,material-red"		}
+				{ content: $L("Light"),			value: "material"						},
+				{ content: $L("Dark"),			value: "material,material-dark"			},
+				{ content: $L("Blue Grey"),		value: "material,material-blue-grey"	},
+				{ content: $L("Cyan"),			value: "material,material-cyan"			},
+				{ content: $L("Green"),			value: "material,material-green"		},
+				{ content: $L("Orange"),		value: "material,material-orange"		},
+				{ content: $L("Light Orange"),	value: "material,material-lightorange"	},
+				{ content: $L("Teal"),			value: "material,material-teal"			},
+				{ content: $L("Indigo"),		value: "material,material-indigo"		},
+				{ content: $L("Red"),			value: "material,material-red"			}
 			]);
 			break;
 
