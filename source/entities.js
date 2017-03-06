@@ -21,6 +21,24 @@ text: function(message)
 	message.stripped = message.text || '';
 	text = message.stripped;
 
+	if (!message.entities) {
+		message.entities = {};
+	}
+
+	if (message.extended_entities) {
+		for (var i = 0, t; t = EntityAPI.types[i]; i++) {
+			if (!message.entities[t.name]) {
+				message.entities[t.name] = [];
+			}
+
+			if (message.extended_entities[t.name]) {
+				message.entities[t.name].concat(message.extended_entities[t.name]);
+				message.extended_entities[t.name] = null;
+			}
+		}
+			message.extended_entities = null;
+	}
+
 	if (message.entities) {
 		/* We prefer the 'urls' name */
 		if (message.entities.links) {

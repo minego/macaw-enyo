@@ -665,11 +665,6 @@ cleanupMessage: function(tweet)
 		tweet.full_text = null;
 	}
 
-	if (tweet.extended_entities) {
-		tweet.entities = tweet.extended_entities;
-		tweet.extended_entities = null;
-	}
-
 	EntityAPI.text(tweet);
 	tweet.media = EntityAPI.media(tweet.entities.urls);
 
